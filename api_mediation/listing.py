@@ -1,6 +1,5 @@
 
-from .price import Price
-from api_mediation.attribute_factory import AttributeFactory
+from api_mediation.price import Price
 from item import Item
 
 

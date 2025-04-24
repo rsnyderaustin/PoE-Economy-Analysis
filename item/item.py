@@ -1,11 +1,17 @@
 
+from abc import ABC
 
-class Item:
+from item.attributes.mod import Mod
+from api_mediation import AttributeFactory
+
+
+class Item(ABC):
 
     def __init__(self,
                  name: str,
                  base_type: str,
                  ilvl: int,
+                 corrupted: bool,
                  enchant_mods: list[str] = None,
                  rune_mods: list[Mod] = None,
                  explicit_mods: list[Mod] = None,
@@ -15,6 +21,7 @@ class Item:
         self.name = name
         self.base_type = base_type
         self.ilvl = ilvl
+        self.corrupted = corrupted
 
         self.rune_mods = rune_mods if rune_mods else []
         self.explicit_mods = explicit_mods if explicit_mods else []
