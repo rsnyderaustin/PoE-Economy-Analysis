@@ -1,6 +1,8 @@
 
 import requests
 
+from utils import EnvLoader, EnvVar
+
 
 class TradeConnectionManager:
 
@@ -9,10 +11,23 @@ class TradeConnectionManager:
     fetch_url = base_url + "fetch/"
 
     header = {
-        'Content-Type': 'application/json',
-        'User-Agent': '5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-        'Cookie': f'POESESSID={your_poesessid}',
-        'Accept': '*/*',
-        'Connection': 'keep-alive'
+        'content-type': 'application/json',
+        'user-agent': '5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+        'cookie': f'POESESSID={EnvLoader.get_env(env_variable=EnvVar.POSSESSID}}',
+        'accept': '*/*',
+        'connection': 'keep-alive'
     }
+
+    @classmethod
+    def _post_for_search_id(cls):
+
+        
+
+        response = requests.post(url=cls.search_url,
+                                 headers=cls.header,
+                                 json=query)
+
+    def search(self):
+        pass
+
 

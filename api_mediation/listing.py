@@ -1,6 +1,6 @@
 
 from api_mediation.price import Price
-from item import Item
+from items import Item
 
 
 class Listing:

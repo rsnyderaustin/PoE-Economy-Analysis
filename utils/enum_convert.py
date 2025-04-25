@@ -40,4 +40,5 @@ class _RawToEnum:
         return cls._enum_conversions[enum_class.__name__][enum_value]
 
 
+
 RawToEnum = _RawToEnum()
