@@ -16,7 +16,8 @@ class Armour(Modifiable):
                  enchant_mods: list[str] = None,
                  rune_mods: list[Mod] = None,
                  explicit_mods: list[Mod] = None,
-                 fractured_mods: list[Mod] = None
+                 fractured_mods: list[Mod] = None,
+                 granted_skills: list[Mod] = None
                  ):
         super(Modifiable).__init__(item_id=item_id,
                                    name=name,
