@@ -1,5 +1,6 @@
 
 import requests
+import time
 
 from utils import EnvLoader, EnvVar
 
@@ -66,6 +67,8 @@ class TradeItemFetcher:
             json_data = response.json()
             result = json_data['result']
             response_items.extend(result)
+
+            time.sleep(2)
 
         return response_items
 
