@@ -1,9 +1,9 @@
 
-from dotenv import load_dotenv
 import os
 
-from .env_enums import EnvVar
+from dotenv import load_dotenv
 
+from .env_enums import EnvVar
 
 load_dotenv()
 

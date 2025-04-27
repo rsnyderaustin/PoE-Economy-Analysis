@@ -1,8 +1,6 @@
-
-from .attribute_factory import AttributeFactory
 from .price import Price
-from items import Item
-from utils import Currency, Rarity, RawToEnum
+from utils import Currency, RawToEnum
+from .price import Price
 
 
 class ApiInterfacer:

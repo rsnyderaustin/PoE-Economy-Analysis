@@ -1,7 +1,4 @@
-
-import logging
-
-from items import Gem, Item, Jewel, Modifiable
+from items import Gem, Item
 from utils import Currency, ItemAttributes, Rarity
 
 

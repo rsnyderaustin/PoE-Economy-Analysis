@@ -4,5 +4,4 @@ from .gem import Gem
 from .jewel import Jewel
 from .jewellery import Jewellery
 from .socketer import Socketer
-from .tablet import Tablet
 from .weapon import Weapon

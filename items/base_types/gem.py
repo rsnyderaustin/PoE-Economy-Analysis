@@ -1,5 +1,5 @@
 
-from items import Item, Modifiable
+from items import Modifiable
 
 
 class Gem(Modifiable):

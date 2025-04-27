@@ -1,9 +1,5 @@
 
-from abc import ABC, abstractmethod
-
-from items.attributes.mod import Mod
-from api_mediation import AttributeFactory
-from utils import ItemType
+from abc import ABC
 
 
 class Item(ABC):

@@ -1,4 +1,4 @@
-from items import Item, Mod, Modifiable
+from items import Mod, Modifiable
 from utils import ItemAttributes, Rarity
 
 

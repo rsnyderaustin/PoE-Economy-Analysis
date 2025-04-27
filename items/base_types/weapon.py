@@ -1,5 +1,5 @@
 
-from items import Item, Mod, Modifiable, Skill
+from items import Mod, Modifiable
 from utils import ItemAttributes, Rarity
 
 

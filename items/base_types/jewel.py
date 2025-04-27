@@ -1,6 +1,6 @@
 
-from items import Item, Mod, Modifiable
-from utils import ItemAttributes, JewelRadius, Rarity, RawToEnum
+from items import Mod, Modifiable
+from utils import ItemAttributes, JewelRadius, Rarity
 
 
 class Jewel(Modifiable):

@@ -1,8 +1,8 @@
-import inspect
 import importlib
+import inspect
 from enum import Enum
 
-module = importlib.import_module("enums")
+module = importlib.import_module("enum")
 
 
 class _RawToEnum:

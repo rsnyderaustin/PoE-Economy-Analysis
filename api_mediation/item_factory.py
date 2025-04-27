@@ -1,6 +1,6 @@
 
-from .attribute_factory import AttributeFactory
 from utils import Rarity, RawToEnum
+from .attribute_factory import AttributeFactory
 
 
 def determine_item_class(item_type: str):
