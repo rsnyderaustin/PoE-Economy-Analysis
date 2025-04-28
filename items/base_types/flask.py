@@ -14,12 +14,13 @@ class Flask(Modifiable):
                  corrupted: bool,
                  explicit_mods: list[Mod] = None
                  ):
-        setattr(self, ItemAttributes.MiscAttribute.ILVL.value, ilvl)
-        setattr(self, ItemAttributes.MiscAttribute.RARITY.value, rarity)
-        setattr(self, ItemAttributes.MiscAttribute.CORRUPTED.value, corrupted)
         super(Modifiable).__init__(item_id=item_id,
                                    name=name,
                                    base_type=base_type,
                                    quality=quality,
                                    explicit_mods=explicit_mods)
+
+        self.ilvl = ilvl
+        self.rarity = rarity
+        self.corrupted = corrupted
 

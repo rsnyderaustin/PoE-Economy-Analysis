@@ -1,6 +1,6 @@
 
-from items import Mod, Modifiable
-from utils import ItemAttributes, Rarity
+from items import Mod, Modifiable, Skill
+from utils.enums import ItemAttributes, Rarity
 
 
 class Weapon(Modifiable):
@@ -18,8 +18,7 @@ class Weapon(Modifiable):
                  enchant_mods: list[str] = None,
                  rune_mods: list[Mod] = None,
                  explicit_mods: list[Mod] = None,
-                 fractured_mods: list[Mod] = None,
-                 granted_skills: list[Mod] = None):
+                 granted_skills: list[Skill] = None):
         super(Modifiable).__init__(item_id=item_id,
                                    name=name,
                                    base_type=base_type,
@@ -27,12 +26,11 @@ class Weapon(Modifiable):
                                    implicit_mods=implicit_mods,
                                    explicit_mods=explicit_mods,
                                    enchant_mods=enchant_mods,
-                                   rune_mods=rune_mods,
-                                   fractured_mods=fractured_mods)
+                                   rune_mods=rune_mods)
 
-        setattr(self, ItemAttributes.MiscAttribute.RARITY.value, rarity)
-        setattr(self, ItemAttributes.MiscAttribute.ILVL.value, ilvl)
-        setattr(self, ItemAttributes.MiscAttribute.CORRUPTED.value, corrupted)
+        self.ilvl = ilvl
+        self.rarity = rarity
+        self.corrupted = corrupted
 
 
 

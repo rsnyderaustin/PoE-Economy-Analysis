@@ -25,11 +25,10 @@ class Jewellery(Modifiable):
                                    implicit_mods=implicit_mods,
                                    explicit_mods=explicit_mods,
                                    enchant_mods=enchant_mods,
-                                   rune_mods=rune_mods,
-                                   fractured_mods=fractured_mods)
+                                   rune_mods=rune_mods)
 
-        setattr(self, ItemAttributes.MiscAttribute.ILVL.value, ilvl)
-        setattr(self, ItemAttributes.MiscAttribute.RARITY.value, rarity)
-        setattr(self, ItemAttributes.MiscAttribute.CORRUPTED.value, corrupted)
+        self.ilvl = ilvl
+        self.rarity = rarity
+        self.corrupted = corrupted
 
 
