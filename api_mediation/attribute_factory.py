@@ -2,8 +2,7 @@
 import logging
 import re
 
-from items.attributes.mod import Mod
-from items.attributes.skill import Skill
+from items.attributes import Mod, Skill
 
 
 class AttributeFactory:

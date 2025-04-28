@@ -1,11 +1,9 @@
 
-from abc import ABC
-
 from items import Item, Mod
-from utils import ItemAttributes
+from utils.enums import ItemAttributes, ModAffixType
 
 
-class Modifiable(ABC, Item):
+class Modifiable(Item):
 
     def __init__(self,
                  item_id: str,
@@ -22,13 +20,12 @@ class Modifiable(ABC, Item):
             name=name,
             base_type=base_type
         )
-        setattr(self, ItemAttributes.MiscAttribute.QUALITY.value, quality)
+        self.quality = quality
 
-        setattr(self, ItemAttributes.Modifier.IMPLICIT.value, implicit_mods or [])
-        setattr(self, ItemAttributes.Modifier.EXPLICIT.value, explicit_mods or [])
-        setattr(self, ItemAttributes.Modifier.ENCHANT.value, enchant_mods or [])
-        setattr(self, ItemAttributes.Modifier.RUNE.value, rune_mods or [])
-        setattr(self, ItemAttributes.Modifier.FRACTURED.value, fractured_mods or [])
+        self.implicit_mods = implicit_mods or []
+        self.explicit_mods = explicit_mods or []
+        self.enchant_mods = enchant_mods or []
+        self.rune_mods = rune_mods or []
 
     @property
     def modifiers(self) -> list[Mod]:
@@ -40,7 +37,13 @@ class Modifiable(ABC, Item):
 
     @property
     def prefixes(self):
-        return [mod for mod in self.]
+        return [mod for mod in getattr(self, ItemAttributes.Modifier.EXPLICIT.value)
+                if mod.mod_type_enum == ModAffixType.PREFIX]
+
+    @property
+    def suffixes(self):
+        return [mod for mod in getattr(self, ItemAttributes.Modifier.EXPLICIT.value)
+                if mod.mod_type_enum == ModAffixType.SUFFIX.value]
 
 
 

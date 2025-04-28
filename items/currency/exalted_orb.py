@@ -2,7 +2,7 @@
 from .base_currency import Currency
 from crafting import CraftingOutcome
 from items import Item, Modifiable
-from utils.enums import ModifierType
+from utils.enums import ModType
 
 class ExaltedOrb(Currency):
 

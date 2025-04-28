@@ -10,3 +10,4 @@ class CraftingOutcome:
     item_outcome: Item
     price: Price
     chance: float
+

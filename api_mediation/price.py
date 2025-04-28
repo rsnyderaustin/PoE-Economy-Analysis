@@ -1,7 +1,7 @@
 
 from dataclasses import dataclass
 
-from utils import Currency
+from utils.enums import Currency
 
 
 @dataclass

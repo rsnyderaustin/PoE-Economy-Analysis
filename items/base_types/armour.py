@@ -1,5 +1,5 @@
 from items import Mod, Modifiable
-from utils import ItemAttributes, Rarity
+from utils.enums import ItemAttributes, Rarity
 
 
 class Armour(Modifiable):

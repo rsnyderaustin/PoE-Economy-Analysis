@@ -1,10 +1,6 @@
 
 from enum import Enum
 
-from utils import StatFilterType
-from .meta_filters_group import MetaFiltersGroup, MetaSearchType
-from .stats_filter_group import StatsFiltersGroup
-
 
 class MiscSearchParameter(Enum):
     FILTERS = 'filters'

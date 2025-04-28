@@ -1,15 +1,5 @@
 
 
-from dataclasses import dataclass
-
-
-@dataclass
-class ModTier:
-    mod_id: str
-    ilvl_requirement: int
-    values_range: tuple
-    weighting: int
-
 
 class ModDetails:
 
@@ -42,7 +32,11 @@ class Compiler:
         # Boots, Gloves, Body Armours, Charms, Flasks, etc
         self.base_group_by_base_group_id = bases_data['bgroup']
 
-        self.mod_text_by_mod_id = bases_data['mod']
+        self.mod_text_by_mod_id = {
+            mod_id: mod_text.lower().lstrip('+').lstrip('-')
+            for mod_id, mod_text in bases_data['mod'].items()
+        }
+        self.mod_id_by_mod_text = {v: k for k, v in self.mod_text_by_mod_id.items()}
         self.base_item_name_by_base_item_id = bases_data['bitem']
         self.socketer_name_by_socketer_id = bases_data['socketable']
 
@@ -56,5 +50,3 @@ class Compiler:
             mod_type_dict['id_mtype']: mod_type_dict['name_mtype']
             for mod_type_dict in mods_data['mtypes']['seq']
         }
-
-        self.mod_details_by_mod_id

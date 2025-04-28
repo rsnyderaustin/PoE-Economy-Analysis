@@ -1,8 +1,10 @@
 
+import json
 import logging
 import requests
 
 import craft_of_exile_api
+from api_mediation.craft_of_exile_to_official_poe import CraftOfExileToOfficialPoe
 
 logging.basicConfig(level=logging.INFO)
 
@@ -13,7 +15,19 @@ coe_puller = craft_of_exile_api.CraftOfExileDataPuller()
 mods_data = coe_puller.pull_data(endpoint=craft_of_exile_api.Endpoint.MODS_AND_WEIGHTS)
 base_data = coe_puller.pull_data(endpoint=craft_of_exile_api.Endpoint.BASE_TYPES)
 
-craft_of_exile_api.Compiler.compile(mods_data=weights_data, bases_data=base_data)
+with open("/Users/austinsnyder/Programming_application_projects/GitHub/PoE-Economy-Analysis/poe_api/json_data/stats.json", 'r') as f:
+    official_mods_data = json.load(f)
+    official_mods_data = {
+        k: v for k, v in official_mods_data.items()
+        if k in ['explicit']
+    }
+
+mods = [mod for mod in official_mods_data['explicit']
+        if 'Energy Shield' in mod['text'] and 'Mana' in mod['text']]
+coe_compiler = craft_of_exile_api.Compiler(mods_data=mods_data, bases_data=base_data)
+
+coe_to_official = CraftOfExileToOfficialPoe(coe_compiler=coe_compiler,
+                                            official_mod_data=official_mods_data)
 response = requests.get('https://www.craftofexile.com/data/affix.json')
 data = response.json()
 """

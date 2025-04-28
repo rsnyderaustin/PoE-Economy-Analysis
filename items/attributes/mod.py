@@ -2,13 +2,13 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from utils import ItemAttributes
+from utils.enums import ModAffixType
 
 
 @dataclass
 class Mod:
-    mod_enum: Enum
-    mod_class: ItemAttributes.Modifier
+    official_poe_mod_id: str
+    readable_name: str
     numeric_values: list
-    mod_string: str
+    affix_type: ModAffixType
 
