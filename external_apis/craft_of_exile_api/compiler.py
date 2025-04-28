@@ -61,7 +61,7 @@ class CoECompiler:
             for mod_id, mod_types in self.mod_id_to_mod_types.items()
         }
 
-        self.mod_id_to_mod_tiers = dict()
+        self.mod_tiers_raw_data = mods_data['tiers']
         # self.base_type_mods_manager = BaseTypeModsManager(coe_tiers_data=mods_data['tiers'])
 
         self.mods_manager = self._fill_mods_manager()
@@ -84,11 +84,20 @@ class CoECompiler:
 
         return new_mods
 
+
     def _fill_mods_manager(self) -> CoEModsManager:
         mods_manager = CoEModsManager()
         mods = self._create_mods()
 
         for mod in mods:
             mods_manager.add_mod(mod=mod)
+
+        # Fill the mods with their tier data
+        tiered_mod_ids = set(self.mod_tiers_raw_data.keys())
+
+        for mod_id in tiered_mod_ids:
+            base_type_id_to_tiers_data = self.mod_tiers_raw_data[mod_id]
+            for base_type_id, tiers_data_list in base_type_id_to_tiers_data.items():
+                
 
         return mods_manager

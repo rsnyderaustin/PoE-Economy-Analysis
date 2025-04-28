@@ -18,7 +18,7 @@ class OfficialCompiler:
 
     def _create_official_mods(self) -> list[OfficialMod]:
         new_mods = list()
-        for mod_class, mod_data_list in self.static_data.items():
+        for mod_class, mod_data_list in self.stats_data.items():
             for mod_data in mod_data_list:
                 new_mod = OfficialMod(
                     mod_id=mod_data['id'],

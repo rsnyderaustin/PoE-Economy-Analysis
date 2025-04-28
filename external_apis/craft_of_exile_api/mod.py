@@ -12,6 +12,8 @@ class CoEMod:
         self.mod_types = mod_types
         self.affix_type = affix_type
 
+        self.mod_tiers = list()
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False

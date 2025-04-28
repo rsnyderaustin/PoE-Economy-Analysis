@@ -3,6 +3,8 @@ import json
 import logging
 import os
 import re
+from pathlib import Path
+
 import requests
 
 from utils import StringProcessor
@@ -12,7 +14,7 @@ class BaseEndpointToJson(ABC):
 
     def __init__(self,
                  official_data_source_base_url: str,
-                 json_output_path: str,
+                 json_output_path: Path,
                  endpoint: str):
         self.endpoint = endpoint
         self.api_url = (StringProcessor(string=official_data_source_base_url)
@@ -20,11 +22,7 @@ class BaseEndpointToJson(ABC):
                         .string
                         )
 
-        self.json_output_path = (StringProcessor(os.getcwd())
-                                 .attach_file_path_endpoint(json_output_path)
-                                 .attach_file_path_endpoint(endpoint=f"/{self.endpoint}.json")
-                                 .string
-                                 )
+        self.json_output_path = json_output_path
 
         self.headers = {
             'Accept': 'image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5',
@@ -47,10 +45,11 @@ class BaseEndpointToJson(ABC):
         return data
     
     def _output_data_to_json(self, data: dict):
-        with open(self.json_output_path, 'w') as json_file:
+        with self.json_output_path.open('w') as json_file:
             json.dump(data, json_file, indent=4)
 
-    def execute(self):
+    def execute(self) -> dict:
         data = self._load_api_data()
         data = self._format_data(data=data)
         self._output_data_to_json(data=data)
+        return data

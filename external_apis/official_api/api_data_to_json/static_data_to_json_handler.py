@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from .base_endpoint_to_json import BaseEndpointToJson
 
 
@@ -5,7 +7,7 @@ class StaticDataToJsonHandler(BaseEndpointToJson):
 
     def __init__(self,
                  official_data_source_base_url: str,
-                 json_output_path: str,):
+                 json_output_path: Path):
         super().__init__(official_data_source_base_url=official_data_source_base_url,
                          json_output_path=json_output_path,
                          endpoint='/static')

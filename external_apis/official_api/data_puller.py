@@ -22,7 +22,7 @@ class OfficialDataPuller:
             logging.error(f"Could not find Official static JSON path:\n\t{cls.static_json_path}. Attempting to create.")
             static_to_json = StaticDataToJsonHandler(
                 official_data_source_base_url=OfficialConfig.API_JSON_DATA_BASE_URL.value,
-                json_output_path=OfficialConfig.JSON_FILE_PATH.value
+                json_output_path=cls.static_json_path
             )
             static_to_json.execute()
 
@@ -34,9 +34,9 @@ class OfficialDataPuller:
         if not cls.stats_json_path.exists() or reload_data:
             stats_to_json = StatDataToJsonHandler(
                 official_data_source_base_url=OfficialConfig.API_JSON_DATA_BASE_URL.value,
-                json_output_path=OfficialConfig.JSON_FILE_PATH.value
+                json_output_path=cls.stats_json_path
             )
-            stats_to_json.execute()
+            data = stats_to_json.execute()
 
-        with cls.static_json_path.open('r', encoding='utf-8') as static_file:
+        with cls.stats_json_path.open('r', encoding='utf-8') as static_file:
             return json.load(static_file)
