@@ -1,8 +1,8 @@
 
 from dataclasses import dataclass
 
-from api_mediation import Price
-from items import Item
+from compiled_data import Price
+from things.items import Item
 
 
 @dataclass

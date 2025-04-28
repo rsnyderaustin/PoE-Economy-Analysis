@@ -1,12 +1,9 @@
 
 import re
 
-import inflect
 
-inflect_eng = inflect.engine()
-
-
-def _convert_to_word(match):
-    number = int(match.group())
-    return inflect_eng.number_to_words(number).upper()
-
+# Normalizes mod cleaning across all sources
+def format_item_mod(mod_text):
+    mod_text = mod_text.strip(' ')
+    mod_text = re.sub(r'([+-])(?=#)', '', mod_text)
+    return mod_text

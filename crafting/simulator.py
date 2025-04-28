@@ -1,29 +1,35 @@
 
 import logging
 
-from api_mediation import Price, ModTierInfo
+from compiled_data import Price, ModTierInfo
+from external_apis.craft_of_exile_api import BaseTypeModsManager
 from crafting import CraftingOutcome
-from items import Gem, Item, Modifiable
-from utils import Currency, ItemAttributes, Rarity, ModifierType
+from things.items import Modifiable
+from things.items import Gem
 from utils.enums import ModAffixType
 
 
 class CraftingSimulator:
 
-    def _corrupt_item(self, item: Item, omen_used: bool):
-        if isinstance(item, Gem):
-            return
-
-        if not hasattr(item, ItemAttributes.MiscAttribute.RARITY.value):
-            raise AttributeError(f"Attempted to corrupt non-gem {item.name} of class {type(item)}.")
-
-        if item.rarity == Rarity.UNIQUE:
+    def __init__(self, base_type_mods_manager: BaseTypeModsManager):
+        self.base_type_mods_manager = base_type_mods_manager
 
     def _fetch_mod_tiers(self,
                          item: Modifiable,
                          affix_type: ModAffixType,
-                         mod_type: ModifierType = None) -> list[ModTierInfo]:
-        pass
+                         mod_type: ModAffixType = None) -> list[ModTierInfo]:
+
+        if isinstance(item, Gem):
+            return []
+
+        mods = self.base_type_mods_manager.fetch_modifiers(
+            base_type=item.base_type,
+            max_ilvl=item.ilvl,
+            mod_affix_type=affix_type,
+            force_mod_type=mod_type
+        )
+
+
 
     def roll_new_modifier(self,
                           item: Modifiable,
