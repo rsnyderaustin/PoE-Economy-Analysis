@@ -1,6 +1,6 @@
 
 
-class ModTier:
+class CoEModTier:
 
     def __init__(self,
                  coe_mod_id: str,

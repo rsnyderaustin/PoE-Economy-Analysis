@@ -1,12 +1,30 @@
+import ast
 
 from .mod import CoEMod
 from .mods_manager import CoEModsManager
+from .mod_tier import CoEModTier
+
 
 def _parse_mtypes_string(mtypes_string: str) -> list:
     if not mtypes_string:
         return []
     parsed = [part for part in mtypes_string.split('|') if part]
     return parsed
+
+
+def _parse_nvalues(nvalues: str) -> tuple:
+    # Safely evaluate the string to a Python object
+    parsed = ast.literal_eval(nvalues)
+
+    if not parsed:
+        return None, None
+
+    if isinstance(parsed[0], list):
+        # [[a, b]] -> [a, b]
+        return float(parsed[0][0]), float(parsed[0][1])
+    else:
+        # [a] -> a
+        return float(parsed[0]), float(parsed[0])
 
 
 class CoECompiler:
@@ -84,7 +102,6 @@ class CoECompiler:
 
         return new_mods
 
-
     def _fill_mods_manager(self) -> CoEModsManager:
         mods_manager = CoEModsManager()
         mods = self._create_mods()
@@ -98,6 +115,16 @@ class CoECompiler:
         for mod_id in tiered_mod_ids:
             base_type_id_to_tiers_data = self.mod_tiers_raw_data[mod_id]
             for base_type_id, tiers_data_list in base_type_id_to_tiers_data.items():
-                
+                base_type_name = self.base_type_id_to_base_type[base_type_id]
+
+                for tiers_data in tiers_data_list:
+                    new_mod_tier = CoEModTier(
+                        coe_mod_id=mod_id,
+                        ilvl=tiers_data['ilvl'],
+                        values_range=_parse_nvalues(tiers_data['nvalues']),
+                        base_type=base_type_name
+                    )
+
+                    mods_manager.add_mod_tier(mod_tier=new_mod_tier)
 
         return mods_manager
