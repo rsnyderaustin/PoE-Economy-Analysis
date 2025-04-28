@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 
-from .env_enums import EnvVar
+from .enums import EnvVar
 
 load_dotenv()
 

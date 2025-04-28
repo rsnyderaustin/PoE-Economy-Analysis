@@ -13,6 +13,7 @@ class Weapon(Modifiable):
                  quality: int,
                  rarity: Rarity,
                  corrupted: bool,
+                 sockets: list,
                  implicit_mods: list[str] = None,
                  enchant_mods: list[str] = None,
                  rune_mods: list[Mod] = None,

@@ -1,5 +1,6 @@
-from items import Gem, Item
-from utils import Currency, ItemAttributes, Rarity
+from crafting import CraftingOutcome
+from items import Gem, Item, Modifiable
+from utils import Currency, ItemAttributes, Rarity, ModifierType
 
 
 class CraftingSimulator:
@@ -13,11 +14,7 @@ class CraftingSimulator:
 
         if item.rarity == Rarity.UNIQUE:
 
-
-
-
-
-    @classmethod
-    def simulate(cls, item: Item, currency: Currency):
+    def roll_new_modifier(self, item: Modifiable, modifier_types: list[ModifierType]) -> list[CraftingOutcome]:
+        open_prefixes = itenm
 
 

@@ -1,24 +1,34 @@
 
 import logging
+import requests
 
-import trade_api
-from trade_api import *
-from utils import ItemAttributes
+import craft_of_exile_api
 
 logging.basicConfig(level=logging.INFO)
 
+"""poe_api.StaticItemsToJson().execute()
+poe_api.StatModifiersToJson().execute()"""
 
+coe_puller = craft_of_exile_api.CraftOfExileDataPuller()
+mods_data = coe_puller.pull_data(endpoint=craft_of_exile_api.Endpoint.MODS_AND_WEIGHTS)
+base_data = coe_puller.pull_data(endpoint=craft_of_exile_api.Endpoint.BASE_TYPES)
+
+craft_of_exile_api.Compiler.compile(mods_data=weights_data, bases_data=base_data)
+response = requests.get('https://www.craftofexile.com/data/affix.json')
+data = response.json()
+"""
 corrupted_filter = query_classes.MetaModFilter(
     meta_mod_name_enum=ItemAttributes.MiscAttribute.CORRUPTED,
     mod_value='true'
 )
-meta_filters_group = trade_api.MetaFiltersGroup(
-    search_type=trade_api.MetaSearchType.MISC,
+meta_filters_group = poe_api.MetaFiltersGroup(
+    search_type=poe_api.MetaSearchType.MISC,
     meta_mod_filters=[corrupted_filter]
 )
-query = trade_api.TradeQueryConstructor.create_trade_query(
+query = poe_api.TradeQueryConstructor.create_trade_query(
     meta_filters_groups=[meta_filters_group]
 )
 
-response = trade_api.TradeItemFetcher.fetch_items(query=query)
-x=0
+response = poe_api.TradeItemFetcher.fetch_items(query=query)"""
+
+

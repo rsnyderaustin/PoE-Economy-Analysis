@@ -15,8 +15,7 @@ class Modifiable(ABC, Item):
                  implicit_mods: list[Mod] = None,
                  explicit_mods: list[Mod] = None,
                  enchant_mods: list[Mod] = None,
-                 rune_mods: list[Mod] = None,
-                 fractured_mods: list[Mod] = None
+                 rune_mods: list[Mod] = None
                  ):
         super(Item).__init__(
             item_id=item_id,
@@ -38,6 +37,10 @@ class Modifiable(ABC, Item):
         ]
         mods = [mod for mod_list in mod_lists for mod in mod_list]
         return mods
+
+    @property
+    def prefixes(self):
+        return [mod for mod in self.]
 
 
 

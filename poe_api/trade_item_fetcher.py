@@ -1,8 +1,9 @@
 
+import logging
 import requests
 import time
 
-from utils import EnvLoader, EnvVar
+from utils import Config, EnvLoader, EnvVar
 
 
 def chunk_list(items: list, chunk_size: int = 10):
@@ -15,7 +16,7 @@ class TradeItemFetcher:
     get_url = "https://www.pathofexile.com/api/trade2/fetch/"
 
     post_endpoint = "fetch"
-    post_filename_starter = '/api/trade2/fetch/'
+    post_filename_starter = '/poe_api/trade2/fetch/'
 
     possess_id = EnvLoader.get_env(env_variable=EnvVar.POSSESSID)
     headers = {
@@ -33,15 +34,18 @@ class TradeItemFetcher:
 
     @classmethod
     def _post_for_search_id(cls, query):
-
+        logging.info("Fetching item IDs.")
         response = requests.post(url=cls.post_url,
                                  headers=cls.headers,
                                  json=query)
         response.raise_for_status()
-        return response.json()
+        json_data = response.json()
+        logging.info(f"Successfully fetched {len(json_data['result'])} item IDs")
+        return json_data
 
     @classmethod
     def _get_with_item_ids(cls, search_id, item_ids):
+        logging.info(f"Getting items with item IDs..")
         chunked_list = chunk_list(items=item_ids, chunk_size=10)
 
         params = {
@@ -64,11 +68,13 @@ class TradeItemFetcher:
                                     cookies=cookies
                                     )
             response.raise_for_status()
+            logging.info("Successfully sent a GET for items with item IDs.")
             json_data = response.json()
             result = json_data['result']
             response_items.extend(result)
 
-            time.sleep(2)
+            logging.info(f"Waiting {Config.QUERY_WAIT_TIME.value} seconds to send another GET for items.")
+            time.sleep(Config.QUERY_WAIT_TIME.value)
 
         return response_items
 

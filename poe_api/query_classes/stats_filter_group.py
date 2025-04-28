@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from utils import modifier_enum_classes, StatFilterType
+from utils import StatFilterType
 
 
 class StatModFilter:

@@ -1,6 +1,6 @@
 
 
-class SearchFillIn:
+class MissingModFinder:
 
     fill_in_file_path = ''
 
