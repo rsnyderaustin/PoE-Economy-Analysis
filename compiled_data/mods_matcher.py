@@ -7,7 +7,10 @@ from external_apis import CoECompiler, OfficialCompiler
 
 class MatchResult:
 
-    def __init__(self, coe_mod_text: str, official_mod_texts: list[str], success: bool):
+    def __init__(self,
+                 coe_mod_text: str,
+                 official_mod_texts: list[str],
+                 success: bool):
         self.coe_mod_text = coe_mod_text
         self.official_mod_texts = official_mod_texts
         self.success = success
@@ -36,6 +39,13 @@ class ModsMatcher:
                 success=True
             )
 
+        fuzzy_match = self._fuzzy_match_coe_mod_text(coe_mod_text)
+        if fuzzy_match:
+            return fuzzy_match
+
+
+
+
 
     def find_matches(self) -> list[MatchResult]:
         match_results = []
@@ -43,12 +53,18 @@ class ModsMatcher:
             match_results.append(self._match_coe_mod_text(coe_mod_text=coe_mod_text))
         return match_results
 
-
-    def _fuzzy_match_coe_mod_text(self, coe_mod_text) -> str | None:
+    def _fuzzy_match_coe_mod_text(self, coe_mod_text) -> MatchResult | None:
         match, score, idx = rapidfuzz.process.extractOne(coe_mod_text, set(self.official_mod_text_to_id.keys()))
         logging.info(f"Craft of Exile mod '{coe_mod_text}' matched best with {match} at a fuzzy match score of {score}.")
 
-        return match if match >= 85 else None
+        if score >= 95:
+            return MatchResult(
+                coe_mod_text=coe_mod_text,
+                official_mod_texts=match,
+                success=True
+            )
+
+        return None
 
     @staticmethod
     def _format_official_mod_data_into_dict(official_mod_data) -> dict:
@@ -64,14 +80,17 @@ class ModsMatcher:
     def _check_hybrid_match(self, coe_mod_text: str) -> MatchResult | None:
         hybrid_mods = coe_mod_text.split(",")
 
-        matched_mods = [mod for mod in hybrid_mods if mod in self.official_mod_text_to_id]
-        unmatched_mods = [coe_mod for coe_mod in hybrid_mods if coe_mod not in self.official_mod_text_to_id]
+        matched_mods = [mod for mod in hybrid_mods if mod in self.official_mod_texts]
+        unmatched_mods = [coe_mod for coe_mod in hybrid_mods if coe_mod not in self.official_mod_texts]
 
         if len(hybrid_mods) == len(matched_mods):
-            return HybridMatchResult(
-                matched_mods=matched_mods,
-                unmatched_mods=unmatched_mods
+            return MatchResult(
+                coe_mod_text=coe_mod_text,
+                official_mod_texts=matched_mods,
+                success=True
             )
+
+        
 
         # Fuzzy match now
         fuzzy_matched_mods = [self._fuzzy_match_coe_mod_text(unmatched_mod) for unmatched_mod in unmatched_mods]
