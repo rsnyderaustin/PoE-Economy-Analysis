@@ -17,6 +17,6 @@ class ExaltedOrb(CurrencyEngine):
                 item_outcome=item,
                 chance=1.00
             )
-        
+
         outcomes = CraftingEngine.roll_new_modifier(item=item)
         return outcomes
