@@ -1,10 +1,6 @@
-
-import logging
-
-from .base_item_type_mods_manager import BaseItemTypeModsManager
 from .mods_matcher import ModsMatcher
 from .compiled_mod_factory import CompiledModFactory
-from .compiled_mods_manager import CompiledModsManager
+from compiled_data.mods_management.base_item_type_mods_manager import BaseItemTypeModsManager
 from external_apis import (CoECompiler, CoEDataPuller, CoEEndpoint, OfficialCompiler,
                            OfficialDataPuller, CoEJsonPath)
 
@@ -43,17 +39,12 @@ class ApisCompiler:
             official_mods_manager=official_compiler.mods_manager,
             match_results=mod_matches
         )
-        compiled_mods_manager = CompiledModsManager()
+        base_type_to_mods_manager = dict()
+        compiled_mods_manager = BaseItemTypeModsManager()
         for compiled_mod in compiled_mods:
+            base_type = compiled_mod.base
             compiled_mods_manager.add_compiled_mod(compiled_mod)
 
-        base_item_type_managers = {
-            base_item_type_id: BaseItemTypeModsManager(
-                base_item_type=coe_compiler.base_type_id_to_base_type[base_item_type_id],
-                base_item_id=base_item_type_id
-            )
-            for base_item_type_id in coe_compiler.base_item_type_ids
-        }
         for mod_tier in coe_compiler.mod_tiers_generator():
             # Mods that were not matched between CoE and the Official API were not compiled into a mod,
             # so we skip those

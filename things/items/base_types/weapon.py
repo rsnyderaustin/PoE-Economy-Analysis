@@ -8,7 +8,7 @@ class Weapon(Modifiable):
     def __init__(self,
                  item_id: str,
                  name: str,
-                 base_type: str,
+                 base_type_name: str,
                  ilvl: int,
                  quality: int,
                  rarity: Rarity,
@@ -21,7 +21,7 @@ class Weapon(Modifiable):
                  granted_skills: list[Skill] = None):
         super(Modifiable).__init__(item_id=item_id,
                                    name=name,
-                                   base_type=base_type,
+                                   base_type_name=base_type_name,
                                    quality=quality,
                                    implicit_mods=implicit_mods,
                                    explicit_mods=explicit_mods,

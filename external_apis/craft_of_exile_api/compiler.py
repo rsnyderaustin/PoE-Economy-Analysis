@@ -35,6 +35,9 @@ class CoECompiler:
     # Base Groups: Boots, Gloves, Body Armours, etc
 
     def __init__(self, mods_data: dict, bases_data: dict):
+        self.mods_data = mods_data
+        self.bases_data = bases_data
+
         # Same id to same thing name
         self.base_type_id_to_base_type = bases_data['base']
         self.base_type_to_base_type_id = {
@@ -85,6 +88,18 @@ class CoECompiler:
         }
 
         self.mod_tiers_raw_data = mods_data['tiers']
+        mod_id_to_base_type_ids = mods_data['modbases']
+
+        self.base_type_name_to_mod_text = dict()
+        for mod_id, base_type_ids in mod_id_to_base_type_ids.items():
+            for base_type_id in base_type_ids:
+                base_type_name = self.base_type_id_to_base_type[base_type_id]
+                if base_type_name not in self.base_type_name_to_mod_text:
+                    self.base_type_name_to_mod_text[base_type_name] = set()
+
+                self.base_type_name_to_mod_text[base_type_name].add(
+                    self.mod_id_to_mod_text[mod_id]
+                )
         # self.base_type_mods_manager = BaseTypeModsManager(coe_tiers_data=mods_data['tiers'])
 
         self.mods_manager = self._fill_mods_manager()

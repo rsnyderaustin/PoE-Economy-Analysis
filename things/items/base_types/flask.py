@@ -7,7 +7,7 @@ class Flask(Modifiable):
     def __init__(self,
                  item_id: str,
                  name: str,
-                 base_type: str,
+                 base_type_name: str,
                  ilvl: int,
                  quality: int,
                  rarity: Rarity,
@@ -16,7 +16,7 @@ class Flask(Modifiable):
                  ):
         super(Modifiable).__init__(item_id=item_id,
                                    name=name,
-                                   base_type=base_type,
+                                   base_type_name=base_type_name,
                                    quality=quality,
                                    explicit_mods=explicit_mods)
 

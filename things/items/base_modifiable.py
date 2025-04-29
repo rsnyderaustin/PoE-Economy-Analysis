@@ -1,6 +1,7 @@
 
-from things.items import Item, Mod
-from utils.enums import ItemAttributes, ModAffixType
+from .mod import Mod
+from .base_item import Item
+from utils.enums import Modifier, ModAffixType
 
 
 class Modifiable(Item):
@@ -8,8 +9,10 @@ class Modifiable(Item):
     def __init__(self,
                  item_id: str,
                  name: str,
-                 base_type: str,
+                 base_type_name: str,
                  quality: int,
+                 corrupted: bool,
+                 ilvl: int,
                  implicit_mods: list[Mod] = None,
                  explicit_mods: list[Mod] = None,
                  enchant_mods: list[Mod] = None,
@@ -19,9 +22,11 @@ class Modifiable(Item):
         super(Item).__init__(
             item_id=item_id,
             name=name,
-            base_type=base_type
+            base_type_name=base_type_name,
+            corrupted=corrupted,
+            quality=quality
         )
-        self.quality = quality
+        self.ilvl = ilvl
 
         self.implicit_mods = implicit_mods or []
         self.explicit_mods = explicit_mods or []
@@ -30,21 +35,13 @@ class Modifiable(Item):
         self.fractured_mods = fractured_mods or []
 
     @property
-    def modifiers(self) -> list[Mod]:
-        mod_lists = [
-            getattr(self, mod_type.value) for mod_type in ItemAttributes.Modifier
-        ]
-        mods = [mod for mod_list in mod_lists for mod in mod_list]
-        return mods
-
-    @property
     def prefixes(self):
-        return [mod for mod in getattr(self, ItemAttributes.Modifier.EXPLICIT.value)
+        return [mod for mod in getattr(self, Modifier.EXPLICIT.value)
                 if mod.mod_type_enum == ModAffixType.PREFIX]
 
     @property
     def suffixes(self):
-        return [mod for mod in getattr(self, ItemAttributes.Modifier.EXPLICIT.value)
+        return [mod for mod in getattr(self, Modifier.EXPLICIT.value)
                 if mod.mod_type_enum == ModAffixType.SUFFIX.value]
 
 
