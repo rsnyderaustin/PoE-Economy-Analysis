@@ -4,7 +4,7 @@ import logging
 import os
 from pathlib import Path
 
-from .api_data_to_json import StatDataToJsonHandler, StaticDataToJsonHandler
+from .api_data_to_json import StatsDataToJsonHandler, StaticDataToJsonHandler
 from .official_enums import OfficialConfig
 
 
@@ -31,7 +31,7 @@ class OfficialDataPuller:
     @classmethod
     def pull_stats_data(cls, reload_data: bool = True):
         if not cls.stats_json_path.exists() or reload_data:
-            stats_to_json = StatDataToJsonHandler(
+            stats_to_json = StatsDataToJsonHandler(
                 official_data_source_base_url=OfficialConfig.API_JSON_DATA_BASE_URL.value,
                 json_output_path=cls.stats_json_path
             )

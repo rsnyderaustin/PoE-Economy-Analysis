@@ -8,6 +8,7 @@ from .compiled_mods_manager import CompiledModsManager
 from external_apis import (CoECompiler, CoEDataPuller, CoEEndpoint, OfficialCompiler,
                            OfficialDataPuller, CoEJsonPath)
 
+
 class ApisCompiler:
 
     def __init__(self):
@@ -54,6 +55,10 @@ class ApisCompiler:
             for base_item_type_id in coe_compiler.base_item_type_ids
         }
         for mod_tier in coe_compiler.mod_tiers_generator():
+            # Mods that were not matched between CoE and the Official API were not compiled into a mod,
+            # so we skip those
+            if mod_tier.coe_mod_id not in compiled_mods_manager.coe_mod_ids:
+                continue
             compiled_mod = compiled_mods_manager.fetch_compiled_mod(coe_mod_id=mod_tier.coe_mod_id)
             base_item_type_manager = base_item_type_managers[mod_tier.base_type_id]
             base_item_type_manager.add_mod_tier(
@@ -64,7 +69,7 @@ class ApisCompiler:
                 values_range=mod_tier.values_range,
                 weighting=mod_tier.weighting
             )
-        x=0
+        return base_item_type_managers
 
 
 

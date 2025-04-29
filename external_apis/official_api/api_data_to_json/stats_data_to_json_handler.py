@@ -3,7 +3,7 @@ from pathlib import Path
 from .base_endpoint_to_json import BaseEndpointToJson
 
 
-class StatDataToJsonHandler(BaseEndpointToJson):
+class StatsDataToJsonHandler(BaseEndpointToJson):
 
     def __init__(self,
                  official_data_source_base_url: str,

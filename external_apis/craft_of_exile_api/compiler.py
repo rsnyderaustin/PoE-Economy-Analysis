@@ -37,6 +37,9 @@ class CoECompiler:
     def __init__(self, mods_data: dict, bases_data: dict):
         # Same id to same thing name
         self.base_type_id_to_base_type = bases_data['base']
+        self.base_type_to_base_type_id = {
+            v: k for k, v in self.base_type_id_to_base_type.items()
+        }
         self.base_group_id_to_base_group = bases_data['bgroup']
         self.mod_id_to_mod_text = {
             mod_id: mod_text
@@ -103,8 +106,13 @@ class CoECompiler:
         for coe_mod_id, base_item_type_tiers in self.mod_tiers_raw_data.items():
             for base_item_type_id, tiers_data_list in base_item_type_tiers.items():
                 if base_item_type_id not in valid_base_item_type_ids:
-                    logging.info(f"Base item type ID {base_item_type_id} from tiers data is invalid because "
-                                 f"it is not present in base item type ID dict. Skipping.")
+                    continue
+
+                base_item_type = self.base_type_id_to_base_type[base_item_type_id]
+
+                if base_item_type_id not in valid_base_item_type_ids:
+                    """logging.info(f"Base item type ID {base_item_type_id} from tiers data is invalid because "
+                                 f"it is not present in base item type ID dict. Skipping.")"""
                     continue
                 for tier_data in tiers_data_list:
                     yield ModTier(
