@@ -1,4 +1,5 @@
 import ast
+import logging
 
 from .mod import CoEMod
 from .mods_manager import CoEModsManager
@@ -84,6 +85,14 @@ class CoECompiler:
 
         self.mods_manager = self._fill_mods_manager()
 
+        # This is just for testing - to show that mods do pair up correctly with their base types
+        self.mod_name_to_base_types = {
+            self.mod_id_to_mod_text[mod_id]: [self.base_type_id_to_base_type[base_type_id]
+                                              for base_type_id in list(base_types.keys())
+                                              if base_type_id in self.base_type_id_to_base_type]
+            for mod_id, base_types in self.mod_tiers_raw_data.items()
+        }
+
     def _create_mods(self) -> list[CoEMod]:
         new_mods = list()
         mod_ids = set(self.mod_id_to_mod_text.keys())
@@ -109,12 +118,13 @@ class CoECompiler:
         for mod in mods:
             mods_manager.add_mod(mod=mod)
 
-        # Fill the mods with their tier data
-        tiered_mod_ids = set(self.mod_tiers_raw_data.keys())
-
-        for mod_id in tiered_mod_ids:
-            base_type_id_to_tiers_data = self.mod_tiers_raw_data[mod_id]
+        for mod_id, base_type_id_to_tiers_data in self.mod_tiers_raw_data.items():
             for base_type_id, tiers_data_list in base_type_id_to_tiers_data.items():
+                if base_type_id not in self.base_type_id_to_base_type:
+                    logging.info(f"Base type ID {base_type_id} from PoECD data not in base type data. "
+                                 f"Likely not implemented in the base game yet. Skipping this base type.")
+                    continue
+
                 base_type_name = self.base_type_id_to_base_type[base_type_id]
 
                 for tiers_data in tiers_data_list:

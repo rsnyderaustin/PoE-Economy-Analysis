@@ -1,6 +1,7 @@
 
 import json
 import logging
+import os
 from pathlib import Path
 
 from .api_data_to_json import StatDataToJsonHandler, StaticDataToJsonHandler
@@ -9,12 +10,11 @@ from .official_enums import OfficialConfig
 
 class OfficialDataPuller:
 
-    stats_json_path = Path(
-        'C:/Users/austisnyder/Documents/GitHub/PoE-Economy-Analysis/external_apis/official_api/json_data/stats.json'
-    )
-    static_json_path = Path(
-        'C:/Users/austisnyder/Documents/GitHub/PoE-Economy-Analysis/external_apis/official_api/json_data/static.json'
-    )
+    stats_endpoint = 'external_apis/official_api/json_data/stats.json'
+    static_endpoint = 'external_apis/official_api/json_data/static.json'
+
+    stats_json_path = Path.cwd() / stats_endpoint
+    static_json_path = Path.cwd() / static_endpoint
 
     @classmethod
     def pull_static_data(cls, reload_data: bool = True):

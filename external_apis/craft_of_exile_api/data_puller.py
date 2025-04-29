@@ -35,18 +35,24 @@ class CoEDataPuller:
     }
 
     @classmethod
-    def pull_data(cls, endpoint: CoEEndpoint):
-        api_url = (StringProcessor(string=CoEUrl.BASE_URL.value)
-                   .attach_url_endpoint(endpoint=endpoint.value)
-                   .string)
-        response = requests.get(
-            api_url,
-            headers=cls.headers,
-            cookies=cls.cookies
-        )
+    def pull_data(cls, endpoint: CoEEndpoint = None, json_file_path: str = None):
+        if endpoint:
+            api_url = (StringProcessor(string=CoEUrl.BASE_URL.value)
+                       .attach_url_endpoint(endpoint=endpoint.value)
+                       .string)
+            response = requests.get(
+                api_url,
+                headers=cls.headers,
+                cookies=cls.cookies
+            )
 
-        content = response.content.decode('utf-8')
-        content = re.sub(r'^[^{]*', '', content)
-        json_data = json.loads(content)
-        return json_data
+            content = response.content.decode('utf-8')
+            content = re.sub(r'^[^{]*', '', content)
+            json_data = json.loads(content)
+            return json_data
+        elif json_file_path:
+            with open(json_file_path, 'r') as f:
+                data = json.load(f)
+            return data
+
 

@@ -9,3 +9,9 @@ class CoEEndpoint(Enum):
 
 class CoEUrl(Enum):
     BASE_URL = 'https://www.craftofexile.com/json/poe2/'
+
+
+class CoEJsonPath(Enum):
+    PATH = ('/Users/austinsnyder/Programming_application_projects/GitHub/'
+            'PoE-Economy-Analysis/external_apis/craft_of_exile_api/json_data/poecd_stats.json')
+

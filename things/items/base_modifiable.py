@@ -13,7 +13,8 @@ class Modifiable(Item):
                  implicit_mods: list[Mod] = None,
                  explicit_mods: list[Mod] = None,
                  enchant_mods: list[Mod] = None,
-                 rune_mods: list[Mod] = None
+                 rune_mods: list[Mod] = None,
+                 fractured_mods: list[Mod] = None
                  ):
         super(Item).__init__(
             item_id=item_id,
@@ -26,6 +27,7 @@ class Modifiable(Item):
         self.explicit_mods = explicit_mods or []
         self.enchant_mods = enchant_mods or []
         self.rune_mods = rune_mods or []
+        self.fractured_mods = fractured_mods or []
 
     @property
     def modifiers(self) -> list[Mod]:
