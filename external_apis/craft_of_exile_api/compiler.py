@@ -4,6 +4,7 @@ import logging
 from .mod import CoEMod
 from .mods_manager import CoEModsManager
 from .mod_tier import CoEModTier
+from things import ModTier
 
 
 def _parse_mtypes_string(mtypes_string: str) -> list:
@@ -92,6 +93,27 @@ class CoECompiler:
                                               if base_type_id in self.base_type_id_to_base_type]
             for mod_id, base_types in self.mod_tiers_raw_data.items()
         }
+
+    @property
+    def base_item_type_ids(self):
+        return set(self.base_type_id_to_base_type.keys())
+
+    def mod_tiers_generator(self):
+        valid_base_item_type_ids = self.base_item_type_ids
+        for coe_mod_id, base_item_type_tiers in self.mod_tiers_raw_data.items():
+            for base_item_type_id, tiers_data_list in base_item_type_tiers.items():
+                if base_item_type_id not in valid_base_item_type_ids:
+                    logging.info(f"Base item type ID {base_item_type_id} from tiers data is invalid because "
+                                 f"it is not present in base item type ID dict. Skipping.")
+                    continue
+                for tier_data in tiers_data_list:
+                    yield ModTier(
+                        base_type_id=base_item_type_id,
+                        coe_mod_id=coe_mod_id,
+                        ilvl=tier_data['ilvl'],
+                        values_range=_parse_nvalues(tier_data['nvalues']),
+                        weighting=tier_data['weighting']
+                    )
 
     def _create_mods(self) -> list[CoEMod]:
         new_mods = list()

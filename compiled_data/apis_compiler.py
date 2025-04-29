@@ -1,6 +1,10 @@
 
 import logging
 
+from .base_item_type_mods_manager import BaseItemTypeModsManager
+from .mods_matcher import ModsMatcher
+from .compiled_mod_factory import CompiledModFactory
+from .compiled_mods_manager import CompiledModsManager
 from external_apis import (CoECompiler, CoEDataPuller, CoEEndpoint, OfficialCompiler,
                            OfficialDataPuller, CoEJsonPath)
 
@@ -27,7 +31,44 @@ class ApisCompiler:
             stats_data=official_stats_data,
             static_data=official_static_data
         )
+
+        mods_matcher = ModsMatcher(
+            coe_mod_texts=coe_compiler.mods_manager.mod_texts,
+            official_mod_texts=official_compiler.mods_manager.mod_texts
+        )
+        mod_matches = mods_matcher.match_mods()
+        compiled_mods = CompiledModFactory.create_compiled_mods(
+            coe_mods_manager=coe_compiler.mods_manager,
+            official_mods_manager=official_compiler.mods_manager,
+            match_results=mod_matches
+        )
+        compiled_mods_manager = CompiledModsManager()
+        for compiled_mod in compiled_mods:
+            compiled_mods_manager.add_compiled_mod(compiled_mod)
+
+        base_item_type_managers = {
+            base_item_type_id: BaseItemTypeModsManager(
+                base_item_type=coe_compiler.base_type_id_to_base_type[base_item_type_id],
+                base_item_id=base_item_type_id
+            )
+            for base_item_type_id in coe_compiler.base_item_type_ids
+        }
+        for mod_tier in coe_compiler.mod_tiers_generator():
+            compiled_mod = compiled_mods_manager.fetch_compiled_mod(coe_mod_id=mod_tier.coe_mod_id)
+            base_item_type_manager = base_item_type_managers[mod_tier.base_type_id]
+            base_item_type_manager.add_mod_tier(
+                base_type_id=mod_tier.base_type_id,
+                coe_mod_id=mod_tier.base_type_id,
+                mod=compiled_mod,
+                ilvl=mod_tier.ilvl,
+                values_range=mod_tier.values_range,
+                weighting=mod_tier.weighting
+            )
         x=0
+
+
+
+
 
 
 

@@ -19,7 +19,6 @@ class OfficialDataPuller:
     @classmethod
     def pull_static_data(cls, reload_data: bool = True):
         if not cls.static_json_path.exists() or reload_data:
-            logging.error(f"Could not find Official static JSON path:\n\t{cls.static_json_path}. Attempting to create.")
             static_to_json = StaticDataToJsonHandler(
                 official_data_source_base_url=OfficialConfig.API_JSON_DATA_BASE_URL.value,
                 json_output_path=cls.static_json_path

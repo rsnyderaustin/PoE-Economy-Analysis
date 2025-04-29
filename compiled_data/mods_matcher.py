@@ -1,4 +1,3 @@
-
 import logging
 import rapidfuzz
 
@@ -31,8 +30,26 @@ class ModsMatcher:
         self.coe_mod_texts = coe_mod_texts
         self.official_mod_texts = official_mod_texts
 
+    def match_mods(self) -> list[MatchResult]:
+        matches = [self._match_coe_mod_text(coe_mod_text)
+                   for coe_mod_text in self.coe_mod_texts]
+        successful_matches = [match for match in matches
+                              if match.success]
+        unsuccessful_matches = [match for match in matches
+                                if not match.success]
+
+        logging.info(f"Successfully matched {len(successful_matches)} of {len(self.coe_mod_texts)} "
+                     f"CoE mods.")
+        if unsuccessful_matches:
+            logging.info("Unsuccessfully matched CoE mods:\n%s",
+                         "\n".join(f"\t{match.coe_mod_text}" for match in unsuccessful_matches))
+
+        return successful_matches
+
     def _match_coe_mod_text(self, coe_mod_text: str) -> MatchResult:
+        logging.info(f"Attempting to match CoE Mod '{coe_mod_text}'")
         if coe_mod_text in self.official_mod_texts:
+            logging.info(f"\tMatched exactly to '{coe_mod_text}'")
             return MatchResult(
                 coe_mod_text=coe_mod_text,
                 official_mod_texts=[coe_mod_text],
@@ -41,103 +58,59 @@ class ModsMatcher:
 
         fuzzy_match = self._fuzzy_match_coe_mod_text(coe_mod_text)
         if fuzzy_match:
-            return fuzzy_match
-
-
-
-
-
-    def find_matches(self) -> list[MatchResult]:
-        match_results = []
-        for coe_mod_text in self.coe_mod_texts:
-            match_results.append(self._match_coe_mod_text(coe_mod_text=coe_mod_text))
-        return match_results
-
-    def _fuzzy_match_coe_mod_text(self, coe_mod_text) -> MatchResult | None:
-        match, score, idx = rapidfuzz.process.extractOne(coe_mod_text, set(self.official_mod_text_to_id.keys()))
-        logging.info(f"Craft of Exile mod '{coe_mod_text}' matched best with {match} at a fuzzy match score of {score}.")
-
-        if score >= 95:
+            logging.info(f"\tSuccessfully fuzzy matched to '{fuzzy_match}'")
             return MatchResult(
                 coe_mod_text=coe_mod_text,
-                official_mod_texts=match,
+                official_mod_texts=[fuzzy_match],
                 success=True
             )
 
+        hybrid_matches = self._attempt_hybrid_match(coe_mod_text=coe_mod_text)
+        if hybrid_matches:
+            return MatchResult(
+                coe_mod_text=coe_mod_text,
+                official_mod_texts=hybrid_matches,
+                success=True
+            )
+
+        return MatchResult(
+            coe_mod_text=coe_mod_text,
+            official_mod_texts=[],
+            success=False
+        )
+    logging.info("\n")
+
+    def _fuzzy_match_coe_mod_text(self, coe_mod_text) -> str | None:
+        match, score, idx = rapidfuzz.process.extractOne(coe_mod_text, self.official_mod_texts)
+        logging.info(
+            f"Craft of Exile mod '{coe_mod_text}' matched best with '{match}' at a fuzzy match score of {score}.")
+
+        if score >= 95:
+            return match
+
         return None
 
-    @staticmethod
-    def _format_official_mod_data_into_dict(official_mod_data) -> dict:
-        official_mod_text_to_id = dict()
-        for mod_class, mods_list in official_mod_data.items():
-            for mod_data_dict in mods_list:
-                official_id = mod_data_dict['id']
-                mod_text = mod_data_dict['text'].lower()
-                official_mod_text_to_id[mod_text] = official_id
-
-        return official_mod_text_to_id
-
-    def _check_hybrid_match(self, coe_mod_text: str) -> MatchResult | None:
+    def _attempt_hybrid_match(self, coe_mod_text: str) -> list[str] | None:
+        logging.info(f"\tAttempting to hybrid match.")
         hybrid_mods = coe_mod_text.split(",")
 
         matched_mods = [mod for mod in hybrid_mods if mod in self.official_mod_texts]
         unmatched_mods = [coe_mod for coe_mod in hybrid_mods if coe_mod not in self.official_mod_texts]
 
         if len(hybrid_mods) == len(matched_mods):
-            return MatchResult(
-                coe_mod_text=coe_mod_text,
-                official_mod_texts=matched_mods,
-                success=True
-            )
+            return matched_mods
 
-        
+        logging.info(f"\t\tHybrid exactly matched to hybrids {matched_mods}.\nAttempting to fuzzy match {unmatched_mods}")
 
-        # Fuzzy match now
-        fuzzy_matched_mods = [self._fuzzy_match_coe_mod_text(unmatched_mod) for unmatched_mod in unmatched_mods]
-        matched_mods.extend(fuzzy_matched_mods)
-        unmatched_mods = [mod for mod in unmatched_mods if mod not in fuzzy_matched_mods]
+        # Fuzzy match the unmatched mods now
+        fuzzy_matches = [self._fuzzy_match_coe_mod_text(unmatched_mod) for unmatched_mod in unmatched_mods]
+        successful_fuzzies = [fuzzy_match for fuzzy_match in fuzzy_matches
+                              if fuzzy_match is not None]
+        logging.info(f"\t\tSuccessfully fuzzy matched hybrids {successful_fuzzies}")
+        matched_mods.extend(successful_fuzzies)
 
-        return HybridMatchResult(
-            matched_mods=matched_mods,
-            unmatched_mods=unmatched_mods
-        )
+        # We were only successful if all of the suspected hybrid mods were matched
+        successfully_fuzzy_matched = len(hybrid_mods) == len(matched_mods)
+        logging.info(f"\tFuzzy match success: {successfully_fuzzy_matched}")
 
-    def pair_non_matching_coe_mod_to_official(self, coe_mod_text: str, official_mod_texts: list[str]) -> str | None:
-        match, score, idx = rapidfuzz.process.extractOne(coe_mod_text, official_mod_texts)
-
-        return match if score >= 90 else None
-
-    @classmethod
-    def create_compiled_mods(cls, coe_compiler: CoECompiler, official_compiler: OfficialCompiler):
-        coe_mod_text_to_id = coe_compiler.mod_text_to_mod_id
-
-        # Attempt to pair CoE mod texts with Official PoE mod texts
-        official_mod_id_to_coe_mod_id = dict()
-        for coe_mod_text, coe_mod_id in coe_mod_text_to_id.items():
-            coe_mod_text = coe_mod_text.replace('charm slots', 'charm slot')
-            # If it's not in the official mod data then we suspect that it could be a hybrid mod or the increased/decreased is wonky
-            if coe_mod_text not in self.official_mod_text_to_id:
-                fuzzy_match = self._fuzzy_match_coe_mod_text(coe_mod_text=coe_mod_text)
-                if fuzzy_match:
-                    official_mod = official_api.OfficialMod(
-                        mod_texts=[coe_mod_text],
-                        mod_ids=[self.official_mod_text_to_id[coe_mod_text]]
-                    )
-                    coe_mod = craft_of_exile_api.CoEMod(
-                        coe_mod_id=coe_mod_id,
-                        mod_text=coe_mod_text
-                    )
-
-                hybrid_match_result = self._match_hybrid_mod(coe_mod_text=coe_mod_text)
-                for matched_mod in hybrid_match_result.matched_mods:
-                    official_mod_id = self.official_mod_text_to_id[matched_mod]
-                    coe_mod_id = self.coe_mod_text_to_id[matched_mod]
-
-                    official_mod_id_to_coe_mod_id[official_mod_id]
-            else:
-                poe_mod = official_api.OfficialMod(
-                    mod_texts=[coe_mod_text],
-                    mod_ids=[self.official_mod_text_to_id[coe_mod_text]]
-                )
-
-
+        return matched_mods if successfully_fuzzy_matched else None

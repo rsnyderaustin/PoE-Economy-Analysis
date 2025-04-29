@@ -6,6 +6,7 @@ from pathlib import Path
 from compiled_data import ApisCompiler
 
 logging.basicConfig(level=logging.INFO)
+logging.info("test")
 
 compiler = ApisCompiler.compile()
 

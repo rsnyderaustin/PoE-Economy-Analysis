@@ -25,7 +25,7 @@ class CoEModsManager:
         mod = self.mod_id_to_mod_text[mod_tier.coe_mod_id]
         mod.mod_tiers.append(mod)
 
-    def fetch_mod(self, mod_id: str = None, mod_text: str = None):
+    def fetch_mod(self, mod_id: str = None, mod_text: str = None) -> CoEMod:
         if mod_id:
             return self.mod_id_to_mod_text[mod_id]
         elif mod_text:

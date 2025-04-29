@@ -1,1 +1,2 @@
-from .tiered_mod import TieredMod
+from .compiled_mod import CompiledMod
+from .mod_tier import ModTier
