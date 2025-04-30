@@ -23,6 +23,7 @@ class ApisCompiler:
             stats_data=official_stats_data,
             static_data=official_static_data
         )
+        x=0
 
     def _create_mods(self):
         pass

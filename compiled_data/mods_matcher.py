@@ -35,6 +35,8 @@ class ModsMatcher:
         self.coe_mods_manager = coe_mods_manager
         self.official_mods_manager = official_mods_manager
 
+        self.official_mods_texts = self.official_mods_manager
+
         self._coe_mod_match_replacements = {
             '# additional': 'an additional',
             'an additional': '# additional',
@@ -53,7 +55,7 @@ class ModsMatcher:
             coe_mod = self.coe_mods_manager.fetch_mod(mod_id=coe_mod_id)
             match_result = self._match_coe_mod_text(coe_mod.coe_mod_text)
             if not match_result.success:
-                match_result = self._match_coe_mod_text(coe_mod_text,
+                match_result = self._match_coe_mod_text(coe_mod_text=coe_mod.coe_mod_text,
                                                         replace_and_remove=True)
 
             match_results.append(match_result)
