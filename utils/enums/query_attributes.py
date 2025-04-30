@@ -64,3 +64,7 @@ class JewelRadius(Enum):
     LARGE = 'large'
     VERY_LARGE = 'very_large'
     MASSIVE = 'massive'
+
+
+class ItemCategory(Enum):
+    QUARTERSTAFF = 'weapon.warstaff'

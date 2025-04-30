@@ -11,7 +11,7 @@ class Mod:
                  mod_text: str,
                  mod_values: tuple,
                  mod_name: str = None,
-                 value_ranges: tuple = None,
+                 values_ranges: tuple = None,
                  mod_tier: int = None,
                  affix_type: str = None):
         self.mod_class = mod_class
@@ -19,6 +19,6 @@ class Mod:
         self.mod_text = mod_text
         self.mod_name = mod_name
         self.mod_values = mod_values
-        self.value_ranges = value_ranges
+        self.values_ranges = values_ranges
         self.mod_tier = mod_tier
         self.affix_type = affix_type

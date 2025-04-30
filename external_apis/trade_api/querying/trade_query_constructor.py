@@ -7,7 +7,6 @@ from .stats_filters_group import StatsFiltersGroup
 from utils.enums import MetaSearchType, StatFilterType, MiscSearchParameter
 
 
-
 def _fill_in_min_max(relevant_dict: dict, values_range: tuple):
     min_val = values_range[0]
     max_val = values_range[1]
@@ -21,8 +20,7 @@ class TradeQueryConstructor:
     def __init__(self):
         self.query = {
             'query': {
-                MiscSearchParameter.STATUS.value:
-                    {MiscSearchParameter.OPTION.value: 'online'}
+                MiscSearchParameter.STATUS.value: {MiscSearchParameter.OPTION.value: 'online'}
             }
         }
 
@@ -35,7 +33,7 @@ class TradeQueryConstructor:
         if stats_filter_groups:
             self._handle_stats_query(stats_filters_groups=stats_filter_groups)
         else:
-            self.query['stats'] = [
+            self.query['query']['stats'] = [
                 {
                     'filters': [],
                     'type': 'and'
@@ -45,8 +43,8 @@ class TradeQueryConstructor:
         return self.query
 
     def _handle_meta_query(self, meta_filters_groups: list[MetaFiltersGroup]):
-        self.query['filters'] = dict()
-        meta_query = self.query['filters']
+        self.query['query']['filters'] = dict()
+        meta_query = self.query['query']['filters']
         for meta_filters_group in meta_filters_groups:
             if meta_filters_group.search_type not in MetaSearchType:
                 raise ValueError(f"Enum {meta_filters_group.search_type} not in acceptable "

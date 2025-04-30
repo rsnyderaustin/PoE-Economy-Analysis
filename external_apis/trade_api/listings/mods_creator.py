@@ -69,6 +69,18 @@ class ModsCreator:
         return values_range
 
     @classmethod
+    def _combine_mods(cls,
+                      orig_mod: Mod,
+                      new_values_range: tuple):
+        orig_values_ranges = orig_mod.values_ranges
+        if orig_values_ranges[-1] is None:
+            new_values_ranges = orig_values_ranges[:-1] + (new_values_range,)
+        else:
+            new_values_ranges = orig_values_ranges + (new_values_range,)
+
+        orig_mod.values_ranges = new_values_ranges
+
+    @classmethod
     def create_mods(cls, item_data: dict, mod_class: ModClass) -> list:
         abbrev_mod_class = cls._mod_class_name_to_abbrev[mod_class.value]
         hashes_list = item_data['extended']['hashes'][abbrev_mod_class]
@@ -109,13 +121,27 @@ class ModsCreator:
 
             submods = []
 
+            processed_mods_by_id = dict()
             for magnitude in mod_data['magnitudes']:
                 mod_id = magnitude['hash']
+
+                # When a mod ID is present twice in a set of mod data, it's because the first mod represents the lower
+                # value range, and the second mod represents the higher value range. So we just add data to the current mod
+                # and skip this one
+                if mod_id in processed_mods_by_id:
+                    orig_mod = processed_mods_by_id[mod_id]
+                    cls._combine_mods(orig_mod=orig_mod,
+                                      new_values_range=cls._determine_mod_values_range(magnitude))
+                    continue
+
                 mod_text = mod_id_to_text.get(mod_id, "")
-                value_ranges = cls._determine_mod_values_range(magnitude)
+
+                # We wrap this in a tuple because sometimes mods have two ranges, and so there would be a second tuple to add
+                # for that second range
+                value_ranges = (cls._determine_mod_values_range(magnitude), None)
                 mod_values = cls._parse_values_from_mod_text(mod_text)
 
-                submods.append(Mod(
+                new_mod = Mod(
                     mod_class=mod_class,
                     mod_name=mod_name,
                     affix_type=affix_type,
@@ -123,8 +149,10 @@ class ModsCreator:
                     mod_values=mod_values,
                     mod_id=mod_id,
                     mod_text=mod_text,
-                    value_ranges=value_ranges,
-                ))
+                    values_ranges=value_ranges,
+                )
+                submods.append(new_mod)
+                processed_mods_by_id[mod_id] = new_mod
 
             if len(submods) > 1:
                 mods.append(HybridMod(mods=submods,

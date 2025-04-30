@@ -2,7 +2,7 @@ from .api_data_saver import ApiDataSaver
 from .trade_items_fetcher import TradeItemsFetcher
 from .querying import (MetaFiltersGroup, MetaModFilter, StatsFiltersGroup,
                        StatModFilter, TradeQueryConstructor)
-from utils.enums import MetaSearchType, MiscQueryAttribute, Rarity
+from utils.enums import ItemCategory, MetaSearchType, MiscQueryAttribute, Rarity
 from .listings import ListingsCreator
 
 
@@ -19,7 +19,7 @@ class TradeApiCoordinator:
         )
         quarterstaff_filter = MetaModFilter(
             meta_attribute_enum=MiscQueryAttribute.CATEGORY,
-            mod_value='Quarterstaff'
+            mod_value=ItemCategory.QUARTERSTAFF.value
         )
         meta_filters_group = MetaFiltersGroup(
             search_type=MetaSearchType.TYPE,
@@ -32,7 +32,6 @@ class TradeApiCoordinator:
         api_items = self.api_data_fetcher.fetch_items(query=query)
 
         listings = ListingsCreator.create_listings(api_items_responses=api_items)
-        x=0
 
 
 
