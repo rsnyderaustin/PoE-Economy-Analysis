@@ -17,9 +17,13 @@ class TradeApiCoordinator:
             meta_attribute_enum=MiscQueryAttribute.RARITY,
             mod_value=Rarity.RARE.value
         )
+        quarterstaff_filter = MetaModFilter(
+            meta_attribute_enum=MiscQueryAttribute.CATEGORY,
+            mod_value='Quarterstaff'
+        )
         meta_filters_group = MetaFiltersGroup(
             search_type=MetaSearchType.TYPE,
-            meta_mod_filters=[rarity_filter]
+            meta_mod_filters=[rarity_filter, quarterstaff_filter]
         )
         query = TradeQueryConstructor().create_trade_query(
             meta_filter_groups=[meta_filters_group]

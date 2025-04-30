@@ -39,7 +39,7 @@ class ModsCreator:
         return mod_affix
 
     @classmethod
-    def _determine_mod_tier(cls, mod_dict: dict):
+    def _determine_mod_tier(cls, mod_dict: dict) -> int:
         mod_tier = None
         if mod_dict['tier']:
             mod_tier_match = re.search(r'\d+', mod_dict['tier'])
@@ -48,7 +48,7 @@ class ModsCreator:
             else:
                 logging.error(f"Did not find a tier number for item tier {mod_dict['tier']}")
                 mod_tier = None
-        return mod_tier
+        return int(mod_tier) if mod_tier else None
 
     @classmethod
     def _determine_mod_ids(cls, mod_dict: dict):
@@ -83,6 +83,7 @@ class ModsCreator:
             for mod_id, mod_text in list(zip(mod_id_display_order, mod_text_display_order))
         }
 
+        # Rune mods don't have tier, affix type, etc
         if mod_class == ModClass.RUNE:
             rune_mods = []
             for mod_id in mod_id_display_order:
@@ -108,11 +109,6 @@ class ModsCreator:
 
             submods = []
 
-            # Magnitudes are not included for implicit mods
-            if mod_class == ModClass.IMPLICIT:
-                new_mod = Mod(
-
-                )
             for magnitude in mod_data['magnitudes']:
                 mod_id = magnitude['hash']
                 mod_text = mod_id_to_text.get(mod_id, "")
@@ -131,7 +127,11 @@ class ModsCreator:
                 ))
 
             if len(submods) > 1:
-                mods.append(HybridMod(mod_class=mod_class, mods=submods))
+                mods.append(HybridMod(mods=submods,
+                                      mod_class=mod_class,
+                                      affix_type=affix_type,
+                                      mod_name=mod_name,
+                                      mod_tier=mod_tier))
             else:
                 mods.append(submods[0])
 
