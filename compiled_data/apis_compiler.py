@@ -3,14 +3,14 @@ from .mods_management import CompiledModsManager
 from .compiled_mod_factory import CompiledModFactory
 from compiled_data.mods_management.btype_mods_manager import BtypeModsManager
 from external_apis import (CoECompiler, CoEDataPuller, CoEEndpoint, OfficialCompiler,
-                           OfficialDataPuller, CoEJsonPath)
-from .global_btypes_manager import GlobalBtypesManager
+                           OfficialDataPuller)
+from external_apis.craft_of_exile_api.global_btypes_manager import GlobalBtypesManager
 
 
 class ApisCompiler:
 
     def __init__(self):
-        coe_mods_data = CoEDataPuller.pull_data(json_file_path=CoEJsonPath.PATH.value)
+        coe_mods_data = CoEDataPuller.pull_data(endpoint=CoEEndpoint.MODS_AND_WEIGHTS)
         coe_bases_data = CoEDataPuller.pull_data(endpoint=CoEEndpoint.BASE_TYPES)
         self.coe_compiler = CoECompiler(
             mods_data=coe_mods_data,

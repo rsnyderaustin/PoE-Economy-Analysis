@@ -1,7 +1,7 @@
 
 import logging
 
-from external_apis import CoEModTier
+from external_apis import ModTier
 from .compiled_mod import CompiledMod
 from .compiled_mod_with_tiers import CompiledModWithTiers
 from utils.enums import ModAffixType
@@ -60,7 +60,7 @@ class BtypeModsManager:
         self._coe_mod_id_to_mod_tiers_data[compiled_mod.coe_mod_id] = dict()
 
     def add_mod_tier(self,
-                     mod_tier: CoEModTier):
+                     mod_tier: ModTier):
         if mod_tier.coe_mod_id not in self._coe_mod_id_to_mod_tiers_data:
             logging.error(f"Could not add CoEModTier to BtypesModManager {self.btype_name}."
                           f"\nCoE Mod ID {mod_tier.coe_mod_id} not present.")

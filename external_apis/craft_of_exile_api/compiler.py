@@ -3,7 +3,7 @@ import logging
 
 from .mod import CoEMod
 from .mods_manager import CoEModsManager
-from .mod_tier import CoEModTier
+from .mod_tier import ModTier
 
 
 def _parse_mtypes_string(mtypes_string: str) -> list:
@@ -58,7 +58,7 @@ class CoECompiler:
                 tiers_data_list = self.mod_tiers_raw_data[coe_mod_id][btype_id]
 
                 for tier_data in tiers_data_list:
-                    yield CoEModTier(
+                    yield ModTier(
                         btype_name=self.btype_id_to_btype_name[btype_id],
                         coe_mod_id=coe_mod_id,
                         ilvl=tier_data['ilvl'],

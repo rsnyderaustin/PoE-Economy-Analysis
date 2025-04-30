@@ -7,7 +7,7 @@ from pathlib import Path
 
 import requests
 
-from utils import StringProcessor
+from utils import PathProcessor
 
 
 class BaseEndpointToJson(ABC):
@@ -17,7 +17,7 @@ class BaseEndpointToJson(ABC):
                  json_output_path: Path,
                  endpoint: str):
         self.endpoint = endpoint
-        self.api_url = (StringProcessor(string=official_data_source_base_url)
+        self.api_url = (PathProcessor(string=official_data_source_base_url)
                         .attach_url_endpoint(endpoint=self.endpoint)
                         .string
                         )

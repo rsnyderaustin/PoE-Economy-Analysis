@@ -1,0 +1,18 @@
+
+
+    Okay so the plan is to ingest items from the PoE Trade API. After ingesting, we
+determine what items are possible to craft or even just relist for profit. Obviously
+the more difficult of these two tasks it to determine what crafts should happen to maximize
+profit and minimize risk. To do so, we first of all need to understand the different mods
+and weights of mods that go into each item base type (btype). This data comes from
+Craft of Exile / Forbidden Library Discord (CoE / FLD). Mods have different ID's between PoE Trade API
+and Craft of Exile's mod data, so we need to pair up the mods between the two.
+
+-- Program Outline:
+
+1. Ingest PoE trade items and build a foundation of mods by base item type. This should be
+updated constantly throughout the runtime of the program, but will need to be the only focus
+for some time. Mods data should include item base type and item base name.
+2. Build a model for predicting the price of an item.
+3. Build the engine for crafting, including predicting the price of each craft outcome.
+This is where pairing up CoE / FLD to Trade API mods will be necessary.

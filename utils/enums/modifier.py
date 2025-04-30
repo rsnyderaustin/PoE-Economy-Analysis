@@ -3,11 +3,11 @@ from enum import Enum
 
 
 class ModClass(Enum):
-    EXPLICIT = 'explicit'
-    IMPLICIT = 'implicit'
-    ENCHANT = 'encahnt'
-    RUNE = 'rune'
-    SKILL = 'skill'
+    IMPLICIT = 'implicitMods'
+    ENCHANT = 'enchantMods'
+    EXPLICIT = 'explicitMods'
+    FRACTURED = 'fracturedMods'
+    RUNE = 'runeMods'
 
 
 class ModAffixType(Enum):

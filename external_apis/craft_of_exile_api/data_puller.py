@@ -3,11 +3,14 @@ import json
 import re
 import requests
 
-from utils import StringProcessor
-from .coe_enums import CoEEndpoint, CoEUrl
+from utils import PathProcessor
+from .coe_enums import CoEEndpoint
 
 
 class CoEDataPuller:
+
+    base_source_url = 'https://www.craftofexile.com/json/poe2/'
+
     cookies = {
         'PHPSESSID': '7p4qt447dai0mudpdmqhg763n9',
         'hbmd': '0',
@@ -35,24 +38,21 @@ class CoEDataPuller:
     }
 
     @classmethod
-    def pull_data(cls, endpoint: CoEEndpoint = None, json_file_path: str = None):
-        if endpoint:
-            api_url = (StringProcessor(string=CoEUrl.BASE_URL.value)
-                       .attach_url_endpoint(endpoint=endpoint.value)
-                       .string)
-            response = requests.get(
-                api_url,
-                headers=cls.headers,
-                cookies=cls.cookies
-            )
+    def pull_data(cls, endpoint: CoEEndpoint):
+        api_url = (PathProcessor(cls.base_source_url)
+                   .attach_url_endpoint(endpoint=endpoint.value)
+                   .path
+                   )
 
-            content = response.content.decode('utf-8')
-            content = re.sub(r'^[^{]*', '', content)
-            json_data = json.loads(content)
-            return json_data
-        elif json_file_path:
-            with open(json_file_path, 'r') as f:
-                data = json.load(f)
-            return data
+        response = requests.get(
+            str(api_url),
+            headers=cls.headers,
+            cookies=cls.cookies
+        )
+
+        content = response.content.decode('utf-8')
+        content = re.sub(r'^[^{]*', '', content)
+        json_data = json.loads(content)
+        return json_data
 
 

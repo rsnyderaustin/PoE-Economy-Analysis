@@ -1,5 +1,5 @@
 from utils.enums import ModAffixType
-from compiled_data.global_btypes_manager import GlobalBtypesManager
+from external_apis.craft_of_exile_api.global_btypes_manager import GlobalBtypesManager
 from .outcomes import CraftingOutcome
 from things.items import Modifiable
 

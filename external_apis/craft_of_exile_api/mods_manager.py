@@ -1,6 +1,6 @@
 
 from .mod import CoEMod
-from .mod_tier import CoEModTier
+from .mod_tier import ModTier
 
 
 class CoEModsManager:
