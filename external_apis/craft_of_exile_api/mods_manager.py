@@ -18,12 +18,8 @@ class CoEModsManager:
         return set(self.mod_text_to_mod_id.keys())
 
     def add_mod(self, mod: CoEMod):
-        self.mod_id_to_mod_text[mod.mod_id] = mod
-        self.mod_text_to_mod_id[mod.mod_text] = mod
-
-    def add_mod_tier(self, mod_tier: CoEModTier):
-        mod = self.mod_id_to_mod_text[mod_tier.coe_mod_id]
-        mod.mod_tiers.append(mod)
+        self.mod_id_to_mod_text[mod.coe_mod_id] = mod
+        self.mod_text_to_mod_id[mod.coe_mod_text] = mod
 
     def fetch_mod(self, mod_id: str = None, mod_text: str = None) -> CoEMod:
         if mod_id:

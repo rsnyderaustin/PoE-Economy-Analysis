@@ -1,13 +1,14 @@
+
 import logging
 import rapidfuzz
 
-from external_apis import CoECompiler, OfficialCompiler
+from external_apis import CoEModsManager, OfficialModsManager
 
 
 class MatchResult:
 
     def __init__(self,
-                 coe_mod_text: str,
+                 coe_mod_id: str,
                  official_mod_texts: list[str],
                  match_score: float,
                  success: bool,
@@ -20,7 +21,7 @@ class MatchResult:
         :param success:
         :param unsuccessful_official_hybrid_matches:
         """
-        self.coe_mod_text = coe_mod_text
+        self.coe_mod_id = coe_mod_id
         self.official_mod_texts = official_mod_texts
         self.match_score = match_score
         self.success = success
@@ -30,9 +31,9 @@ class MatchResult:
 
 class ModsMatcher:
 
-    def __init__(self, coe_mod_texts: set[str], official_mod_texts: set[str]):
-        self.coe_mod_texts = coe_mod_texts
-        self.official_mod_texts = official_mod_texts
+    def __init__(self, coe_mods_manager: CoEModsManager, official_mods_manager: OfficialModsManager):
+        self.coe_mods_manager = coe_mods_manager
+        self.official_mods_manager = official_mods_manager
 
         self._coe_mod_match_replacements = {
             '# additional': 'an additional',
@@ -48,8 +49,9 @@ class ModsMatcher:
 
     def match_mods(self) -> list[MatchResult]:
         match_results = []
-        for coe_mod_text in self.coe_mod_texts:
-            match_result = self._match_coe_mod_text(coe_mod_text)
+        for coe_mod_id in self.coe_mods_manager.mod_ids:
+            coe_mod = self.coe_mods_manager.fetch_mod(mod_id=coe_mod_id)
+            match_result = self._match_coe_mod_text(coe_mod.coe_mod_text)
             if not match_result.success:
                 match_result = self._match_coe_mod_text(coe_mod_text,
                                                         replace_and_remove=True)
@@ -58,21 +60,12 @@ class ModsMatcher:
 
         successful_matches = [match for match in match_results
                               if match.success]
-        unsuccessful_matches = [match for match in match_results
-                                if not match.success]
-
-        logging.info(f"Successfully matched {len(successful_matches)} of {len(self.coe_mod_texts)} "
-                     f"CoE mods.")
-        if unsuccessful_matches:
-            logging.info("Unsuccessfully matched CoE mods:\n%s",
-                         "\n".join(f"\t{match.coe_mod_text}" for match in unsuccessful_matches))
-
+        unsuccessful_matches = [match for match in match_results if not match.success]
+        logging.info(f"Could not match CoE mods: {[match.coe_mod_text for match in unsuccessful_matches]}")
         return successful_matches
 
     def _match_coe_mod_text(self, coe_mod_text: str, replace_and_remove: bool = False) -> MatchResult:
-        logging.info(f"\nAttempting to match CoE Mod '{coe_mod_text}'")
         if coe_mod_text in self.official_mod_texts:
-            logging.info(f"\tMatched exactly to '{coe_mod_text}'")
             return MatchResult(
                 coe_mod_text=coe_mod_text,
                 official_mod_texts=[coe_mod_text],
@@ -84,7 +77,6 @@ class ModsMatcher:
                                                      min_fuzzy_score=95,
                                                      replace_and_remove=replace_and_remove)
         if fuzzy_match.success:
-            logging.info(f"\tSuccessfully fuzzy matched to '{fuzzy_match}' with a score of {fuzzy_match.match_score}")
             return fuzzy_match
 
         hybrid_match = self._attempt_hybrid_match(coe_mod_text=coe_mod_text,
@@ -97,7 +89,6 @@ class ModsMatcher:
                                                      min_fuzzy_score=90,
                                                      replace_and_remove=replace_and_remove)
         if fuzzy_match.success:
-            logging.info(f"\tSuccessfully fuzzy matched to '{fuzzy_match}'")
             return fuzzy_match
 
         hybrid_match = self._attempt_hybrid_match(coe_mod_text=coe_mod_text,
@@ -111,8 +102,6 @@ class ModsMatcher:
                                   min_fuzzy_score: int,
                                   replace_and_remove: bool = False) -> MatchResult:
         match, orig_score, idx = rapidfuzz.process.extractOne(coe_mod_text, self.official_mod_texts)
-        logging.info(
-            f"Craft of Exile mod '{coe_mod_text}'\nmatched best with '{match}' at a fuzzy match score of {orig_score}.")
 
         was_success = (orig_score >= min_fuzzy_score)
 
@@ -156,7 +145,6 @@ class ModsMatcher:
 
 
     def _attempt_hybrid_match(self, coe_mod_text: str, min_fuzzy_score: int, replace_and_remove: bool = False) -> MatchResult:
-        logging.info(f"\tAttempting to hybrid match {coe_mod_text} with a minimum fuzzy score of {min_fuzzy_score}.")
         hybrid_mods = coe_mod_text.split(",")
         hybrid_mods = [hybrid_mod.strip() for hybrid_mod in hybrid_mods]
 

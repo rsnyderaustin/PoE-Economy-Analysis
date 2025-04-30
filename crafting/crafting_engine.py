@@ -1,13 +1,12 @@
 from utils.enums import ModAffixType
-from .global_mods_manager import GlobalModsManager
+from compiled_data.global_btypes_manager import GlobalBtypesManager
 from .outcomes import CraftingOutcome
-from things import Currency
 from things.items import Modifiable
 
 
 class CraftingEngine:
 
-    def __init__(self, global_mods_manager: GlobalModsManager):
+    def __init__(self, global_mods_manager: GlobalBtypesManager):
         self.global_mods_manager = global_mods_manager
 
     def roll_new_modifier(self,
@@ -40,10 +39,10 @@ class CraftingEngine:
             open_affix_types.append(ModAffixType.PREFIX)
 
         mods_with_tiers = self.global_mods_manager.fetch_mods_and_tiers(
-            base_item_type_name=item.base_type,
+            btype_name=item.btype,
             ilvl=item.ilvl,
             force_mod_type=force_type,
-            ignore_mod_ids=set(mod.mod_id for mod in item.explicit_mods),
+            ignore_mod_ids=set(mod.coe_mod_id for mod in item.explicit_mods),
             affix_types=open_affix_types
         )
 

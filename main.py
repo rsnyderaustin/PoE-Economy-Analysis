@@ -1,14 +1,11 @@
 
-import json
 import logging
-from pathlib import Path
 
-from compiled_data import ApisCompiler
+from program_management import ProgramManager
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
 logging.info("test")
 
-compiler = ApisCompiler.compile()
-
-json_path = '/external_apis/craft_of_exile_api/json_data/poecd_stats.json'
+prog_manager = ProgramManager()
+x=0

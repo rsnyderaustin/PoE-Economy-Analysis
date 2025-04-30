@@ -4,7 +4,6 @@ import logging
 from .mod import CoEMod
 from .mods_manager import CoEModsManager
 from .mod_tier import CoEModTier
-from things import ModTier
 
 
 def _parse_mtypes_string(mtypes_string: str) -> list:
@@ -38,24 +37,30 @@ class CoECompiler:
         self.mods_data = mods_data
         self.bases_data = bases_data
 
-        # Same id to same thing name
-        self.base_type_id_to_base_type = bases_data['base']
-        self.base_type_to_base_type_id = {
-            v: k for k, v in self.base_type_id_to_base_type.items()
-        }
-        self.base_group_id_to_base_group = bases_data['bgroup']
-        self.mod_id_to_mod_text = {
-            mod_id: mod_text
-            for mod_id, mod_text in bases_data['mod'].items()
-        }
-        self.base_item_id_to_base_item_name = bases_data['bitem']
-        self.socketer_id_to_socketer_name = bases_data['socketable']
+        btype_id_to_btype = bases_data['base']
+        self.valid_btype_ids = set(btype_id_to_btype.keys())
+        self.valid_btype_names = set(
+            btype_id_to_btype[btype_id]
+            for btype_id in self.valid_btype_ids
+        )
 
-        # Same thing name to same id
-        self.mod_text_to_mod_id = {v: k for k, v in self.mod_id_to_mod_text.items()}
+        self.mod_id_to_mod_text = self.bases_data['mod']
+        self.valid_coe_mod_ids = set(self.mod_id_to_mod_text.keys())
+        self.valid_coe_mod_texts = set(self.mod_id_to_mod_text.values())
 
-        # Conversion
-        self.base_type_id_to_mod_ids = mods_data['basemods']
+        self.mod_text_to_mod_id = {
+            v: k
+            for k, v in self.mod_id_to_mod_text.items()
+        }
+
+        base_group_id_to_base_group = self.bases_data['bgroup']
+        self.btype_id_to_btype_name = self.bases_data['base']
+        self.valid_btype_ids = set(self.btype_id_to_btype_name.keys())
+        self.btype_name_to_mod_ids = {
+            self.btype_id_to_btype_name[btype_id]: mod_ids
+            for btype_id, mod_ids in self.mods_data['basemods'].items()
+            if btype_id in self.valid_btype_ids
+        }
 
         # Armour: ['5', '6', etc],
         # Weapons: ['11', '12', etc]
@@ -82,56 +87,43 @@ class CoECompiler:
             for mod_id, mod_type_ids in self.mod_id_to_mod_type_ids.items()
         }
 
-        self.mod_text_to_mod_types = {
-            self.mod_id_to_mod_text[mod_id]: mod_types
-            for mod_id, mod_types in self.mod_id_to_mod_types.items()
-        }
-
-        self.mod_tiers_raw_data = mods_data['tiers']
-        mod_id_to_base_type_ids = mods_data['modbases']
-
-        self.base_type_name_to_mod_text = dict()
-        for mod_id, base_type_ids in mod_id_to_base_type_ids.items():
-            for base_type_id in base_type_ids:
-                base_type_name = self.base_type_id_to_base_type[base_type_id]
-                if base_type_name not in self.base_type_name_to_mod_text:
-                    self.base_type_name_to_mod_text[base_type_name] = set()
-
-                self.base_type_name_to_mod_text[base_type_name].add(
-                    self.mod_id_to_mod_text[mod_id]
-                )
-        # self.base_type_mods_manager = BaseTypeModsManager(coe_tiers_data=mods_data['tiers'])
-
         self.mods_manager = self._fill_mods_manager()
 
         # This is just for testing - to show that mods do pair up correctly with their base types
-        self.mod_name_to_base_types = {
-            self.mod_id_to_mod_text[mod_id]: [self.base_type_id_to_base_type[base_type_id]
-                                              for base_type_id in list(base_types.keys())
-                                              if base_type_id in self.base_type_id_to_base_type]
-            for mod_id, base_types in self.mod_tiers_raw_data.items()
+        self.mod_name_to_btypes = {
+            self.mod_id_to_mod_text[mod_id]: [self.btype_id_to_btype_name[btype_id]
+                                              for btype_id in list(btypes.keys())
+                                              if btype_id in self.btype_id_to_btype_name]
+            for mod_id, btypes in self.mod_tiers_raw_data.items()
         }
 
     @property
-    def base_item_type_ids(self):
-        return set(self.base_type_id_to_base_type.keys())
+    def mod_tiers_raw_data(self):
+        return self.mods_data['tiers']
+
+    @property
+    def base_group_id_to_base_group(self):
+        return self.bases_data['bgroup']
+
+    @property
+    def base_item_id_to_base_item_name(self):
+        return self.bases_data['bitem']
 
     def mod_tiers_generator(self):
-        valid_base_item_type_ids = self.base_item_type_ids
-        for coe_mod_id, base_item_type_tiers in self.mod_tiers_raw_data.items():
-            for base_item_type_id, tiers_data_list in base_item_type_tiers.items():
-                if base_item_type_id not in valid_base_item_type_ids:
-                    continue
+        btype_name_to_btype_id = {
+            v: k
+            for k, v in self.btype_id_to_btype_name.items()
+        }
 
-                base_item_type = self.base_type_id_to_base_type[base_item_type_id]
+        for btype_id in self.valid_btype_ids:
+            btype_name = self.btype_id_to_btype_name[btype_id]
+            valid_mod_ids = self.btype_name_to_mod_ids[btype_name]
+            for coe_mod_id in valid_mod_ids:
+                tiers_data_list = self.mod_tiers_raw_data[coe_mod_id][btype_id]
 
-                if base_item_type_id not in valid_base_item_type_ids:
-                    """logging.info(f"Base item type ID {base_item_type_id} from tiers data is invalid because "
-                                 f"it is not present in base item type ID dict. Skipping.")"""
-                    continue
                 for tier_data in tiers_data_list:
-                    yield ModTier(
-                        base_type_id=base_item_type_id,
+                    yield CoEModTier(
+                        btype_name=self.btype_id_to_btype_name[btype_id],
                         coe_mod_id=coe_mod_id,
                         ilvl=tier_data['ilvl'],
                         values_range=_parse_nvalues(tier_data['nvalues']),
@@ -147,8 +139,8 @@ class CoECompiler:
             affix_type = self.mod_id_to_affix_type[mod_id]
 
             new_mod = CoEMod(
-                mod_text=mod_text,
-                mod_id=mod_id,
+                coe_mod_text=mod_text,
+                coe_mod_id=mod_id,
                 mod_types=mod_types,
                 affix_type=affix_type
             )
@@ -162,24 +154,5 @@ class CoECompiler:
 
         for mod in mods:
             mods_manager.add_mod(mod=mod)
-
-        for mod_id, base_type_id_to_tiers_data in self.mod_tiers_raw_data.items():
-            for base_type_id, tiers_data_list in base_type_id_to_tiers_data.items():
-                if base_type_id not in self.base_type_id_to_base_type:
-                    logging.info(f"Base type ID {base_type_id} from PoECD data not in base type data. "
-                                 f"Likely not implemented in the base game yet. Skipping this base type.")
-                    continue
-
-                base_type_name = self.base_type_id_to_base_type[base_type_id]
-
-                for tiers_data in tiers_data_list:
-                    new_mod_tier = CoEModTier(
-                        coe_mod_id=mod_id,
-                        ilvl=tiers_data['ilvl'],
-                        values_range=_parse_nvalues(tiers_data['nvalues']),
-                        base_type=base_type_name
-                    )
-
-                    mods_manager.add_mod_tier(mod_tier=new_mod_tier)
 
         return mods_manager

@@ -2,7 +2,7 @@
 import logging
 
 from compiled_data import Price, ModTierInfo
-from external_apis.craft_of_exile_api import BaseTypeModsManager
+from external_apis.craft_of_exile_api import BtypeManager
 from crafting import CraftingOutcome
 from things.items import Modifiable
 from things.items import Gem
@@ -11,8 +11,8 @@ from utils.enums import ModAffixType
 
 class CraftingSimulator:
 
-    def __init__(self, base_type_mods_manager: BaseTypeModsManager):
-        self.base_type_mods_manager = base_type_mods_manager
+    def __init__(self, btype_mods_manager: BtypeManager):
+        self.btype_mods_manager = btype_mods_manager
 
     def _fetch_mod_tiers(self,
                          item: Modifiable,
@@ -22,8 +22,8 @@ class CraftingSimulator:
         if isinstance(item, Gem):
             return []
 
-        mods = self.base_type_mods_manager.fetch_modifiers(
-            base_type=item.base_type,
+        mods = self.btype_mods_manager.fetch_modifiers(
+            btype=item.btype,
             max_ilvl=item.ilvl,
             mod_affix_type=affix_type,
             force_mod_type=mod_type

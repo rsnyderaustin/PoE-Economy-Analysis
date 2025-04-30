@@ -8,7 +8,7 @@ class Jewel(Modifiable):
     def __init__(self,
                  item_id: str,
                  name: str,
-                 base_type_name: str,
+                 btype_name: str,
                  quality: int,
                  ilvl: int,
                  corrupted: bool,
@@ -22,7 +22,7 @@ class Jewel(Modifiable):
                  ):
         super(Modifiable).__init__(item_id=item_id,
                                    name=name,
-                                   base_type_name=base_type_name,
+                                   btype_name=btype_name,
                                    quality=quality,
                                    implicit_mods=implicit_mods,
                                    explicit_mods=explicit_mods,

@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 
 from .compiled_mod import CompiledMod
-from .mod_tier import ModTier
+from external_apis import CoEModTier
 
 
 @dataclass
@@ -12,4 +12,4 @@ class CompiledModWithTiers:
     Just a returnable.
     """
     compiled_mod: CompiledMod
-    mod_tiers: list[ModTier]
+    mod_tiers: list[CoEModTier]

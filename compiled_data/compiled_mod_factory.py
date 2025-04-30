@@ -19,9 +19,9 @@ class CompiledModFactory:
             ]
 
             new_compiled_mod = CompiledMod(
-                coe_mod_id=coe_mod.mod_id,
-                official_mod_ids=[official_mod.mod_id for official_mod in official_mods],
-                readable_mod_text=coe_mod.mod_text,
+                coe_mod_id=coe_mod.coe_mod_id,
+                official_mod_ids=[official_mod.coe_mod_id for official_mod in official_mods],
+                coe_mod_text=coe_mod.coe_mod_text,
                 mod_types=coe_mod.mod_types,
                 affix_type=coe_mod.affix_type
             )
