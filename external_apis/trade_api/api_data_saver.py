@@ -40,12 +40,15 @@ class ApiDataSaver:
                 raise TypeError(f"Unrecognized mod type {type(mod)}.")
 
     @classmethod
-    def save_runes(cls, item_btype: str, runes: list[Rune]):
-        if item_btype not in cls.rune_effects_dict:
-            cls.rune_effects_dict[item_btype] = dict()
+    def save_runes(cls, item_atype: str, runes: list[Rune]):
+        if item_atype not in cls.rune_effects_dict:
+            logging.info(f"Item atype {item_atype} not in rune_effects_dict. Adding atype.")
+            cls.rune_effects_dict[item_atype] = dict()
 
         for rune in runes:
-            cls.rune_effects_dict[item_btype][rune.rune_name] = rune.rune_effect
+            if rune.rune_name not in cls.rune_effects_dict[item_atype]:
+                logging.info(f"Adding rune {rune.rune_name} to atype {item_atype}.")
+                cls.rune_effects_dict[item_atype][rune.rune_name] = rune.rune_effect
 
     @classmethod
     def export_data(cls):

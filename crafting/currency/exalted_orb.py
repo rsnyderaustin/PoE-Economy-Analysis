@@ -1,9 +1,10 @@
 
-from .base_currency_engine import CurrencyEngine
-from crafting.crafting_engine import CraftingEngine
 from crafting import CraftingOutcome
+from crafting.crafting_engine import CraftingEngine
 from things.items import Modifiable
 from utils.enums import Rarity
+from .base_currency_engine import CurrencyEngine
+
 
 class ExaltedOrb(CurrencyEngine):
 

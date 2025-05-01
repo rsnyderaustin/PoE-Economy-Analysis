@@ -1,45 +1,69 @@
-
-from abc import ABC
-
 from enum import Enum
 
 
+class StatSearchType(Enum):
+    AND = 'and'
+    WEIGHTED = 'weight'
+    WEIGHTED_V2 = 'weight2'
+    IF_PRESENT = 'if'
+    COUNT = 'count'
+
+
+class MetaSearchType(Enum):
+    TYPE = 'type_filters'
+    EQUIPMENT = 'equipment_filters'
+    REQUIREMENT = 'req_filters'
+    MISC = 'misc_filters'
+    TRADE = 'trade_filters'
+
+
+class TypeFilters(Enum):
+    ITEM_CATEGORY = 'category'
+    ITEM_RARITY = 'rarity'
+    ITEM_LEVEL = 'ilvl'
+    ITEM_QUALITY = 'quality'
+
+
+class EquipmentAttribute(Enum):
+    SPIRIT = 'spirit'
+    RUNE_SOCKETS = 'rune_sockets'
+
+
 class WeaponAttribute(Enum):
+    DAMAGE = 'damage'
     ATTACKS_PER_SECOND = 'aps'
     CRIT_CHANCE = 'crit'
-    DAMAGE = 'damage'
     DPS = 'dps'
-    ELEMENTAL_DPS = 'edps'
     PHYSICAL_DPS = 'pdps'
+    ELEMENTAL_DPS = 'edps'
 
 
 class ArmourAttribute(Enum):
     ARMOUR = 'ar'
-    BLOCK = 'block'
-    ENERGY_SHIELD = 'es'
     EVASION = 'ev'
+    ENERGY_SHIELD = 'es'
+    BLOCK = 'block'
 
 
-class MiscQueryAttribute(Enum):
-    CATEGORY = 'category'
-    ILVL = 'ilvl'
-    QUALITY = 'quality'
-    CORRUPTED = 'corrupted'
-    IDENTIFIED = 'identified'
-    MIRRORED = 'mirrored'
-    RARITY = 'rarity'
-    RUNE_SOCKETS = 'rune_sockets'
-    SPIRIT = 'spirit'
-
-
-class Requirement(Enum):
+class RequirementFilters(Enum):
     LEVEL = 'lvl'
     STRENGTH = 'str'
-    INTELLIGENCE = 'int'
     DEXTERITY = 'dex'
+    INTELLIGENCE = 'int'
 
 
-class Modifier(Enum):
+class MiscFilters(Enum):
+    IDENTIFIED = 'identified'
+    CORRUPTED = 'corrupted'
+    MIRRORED = 'mirrored'
+
+
+class TradeFilters(Enum):
+    LISTED = 'indexed'
+    PRICE = 'price'
+
+
+class ModifierClass(Enum):
     IMPLICIT = 'implicitMods'
     EXPLICIT = 'explicitMods'
     ENCHANT = 'enchantMods'
@@ -67,40 +91,64 @@ class JewelRadius(Enum):
 
 
 class ItemCategory(Enum):
+    ANY_ARMOUR = 'armour'
+    ANY_WEAPON = 'weapon'
+    ANY_ONE_HANDED_MELEE_WEAPON = 'weapon.onemelee'
+    ANY_TWO_HANDED_MELEE_WEAPON = 'weapon.twomelee'
+
+    UNARMED = 'weapon.unarmed'
+    CLAW = 'weapon.claw'
+    DAGGER = 'weapon.dagger'
+    ONE_HANDED_SWORD = 'weapon.onesword'
+    ONE_HANDED_AXE = 'weapon.oneaxe'
+    ONE_HANDED_MACE = 'weapon.onemace'
+    SPEAR = 'weapon.spear'
+    FLAIL = 'weapon.flail'
+
+    TWO_HANDED_SWORD = 'weapon.twosword'
+    TWO_HANDED_AXE = 'weapon.twoaxe'
+    TWO_HANDED_MACE = 'weapon.twomace'
     QUARTERSTAFF = 'weapon.warstaff'
+    ANY_RANGED_WEAPON = 'weapon.ranged'
+    BOW = 'weapon.bow'
+    CROSSBOW = 'weapon.crossbow'
+    ANY_CASTER_WEAPON = 'weapon.caster'
+    WAND = 'weapon.wand'
+    SCEPTRE = 'weapon.sceptre'
+    STAFF = 'weapon.staff'
+
+    HELMET = 'armour.helmet'
+    BODY_ARMOUR = 'armour.chest'
+    GLOVES = 'armour.gloves'
+    BOOTS = 'armour.boots'
+    QUIVER = 'armour.quiver'
+    SHIELD = 'armour.shield'
+    FOCUS = 'armour.focus'
+    BUCKLER = 'armour.buckler'
+
+    ANY_ACCESSORY = 'accessory'
+    AMULET = 'accessory.amulet'
+    BELT = 'accessory.belt'
+    RING = 'accessory.ring'
+
+    ANY_GEM = 'gem'
+    SKILL_GEM = 'gem.activegem'
+    SUPPORT_GEM = 'gem.supportgem'
+    META_GEM = 'gem.metagem'
+
+    ANY_JEWEL = 'jewel'
+
+    ANY_FLASK = 'flask'
+    LIFE_FLASK = 'flask.life'
+    MANA_FLASK = 'flask.mana'
+
+    WAYSTONE = 'map.waystone'
+    MAP_FRAGMENT = 'map.waystone'
+
+    SOCKETABLE = 'currency.socketable'
     RUNE = 'currency.rune'
-    GEM = 'gem'
-
-
-class StatFilterType(Enum):
-    AND = 'and'
-    WEIGHTED = 'weight'
-    WEIGHTED_V2 = 'weight2'
-    IF_PRESENT = 'if'
-    COUNT = 'count'
-
-
-class MetaSearchType(Enum):
-    EQUIPMENT = 'equipment_filters'
-    TRADE = 'trade_filters'
-    REQUIREMENT = 'req_filters'
-    TYPE = 'type_filters'
-    MISC = 'misc_filters'
-
-
-class MiscSearchParameter(Enum):
-    FILTERS = 'filters'
-    STATS = 'stats'
-    STATUS = 'status'
-    DISABLED = 'disabled'
-    OPTION = 'option'
-    PRICE = 'price'
-    MIN = 'min'
-    MAX = 'max'
-    VALUE = 'value'
-    ID = 'id'
-    WEIGHT = 'weight'
-    TYPE = 'type'
+    SOUL_CORE = 'currency.soulcore'
+    TALISMAN = 'currency.talisman'
 
 
 class ListedSince(Enum):

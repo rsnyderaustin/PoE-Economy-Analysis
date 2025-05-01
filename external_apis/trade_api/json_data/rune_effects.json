@@ -1,3 +1,9 @@
 {
-
+    "One Hand Mace": {
+        "Lesser Iron Rune": "15% increased Physical Damage",
+        "Greater Storm Rune": "Adds 1 to 30 Lightning Damage",
+        "Greater Robust Rune": "+10 to Strength",
+        "Stone Rune": "Causes 25% increased Stun Buildup",
+        "Iron Rune": "20% increased Physical Damage"
+    }
 }

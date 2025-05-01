@@ -1,6 +1,6 @@
-from .mods_matcher import MatchResult
-from external_apis import OfficialModsManager, CoEModsManager
 from compiled_data.mods_management.compiled_mod import CompiledMod
+from external_apis import OfficialModsManager, CoEModsManager
+from .mods_matcher import MatchResult
 
 
 class CompiledModFactory:

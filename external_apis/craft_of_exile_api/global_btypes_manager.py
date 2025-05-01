@@ -1,5 +1,5 @@
 
-from compiled_data.mods_management import BtypeModsManager, CompiledMod, CompiledModWithTiers
+from compiled_data.mods_management import BtypeModsManager, CompiledModWithTiers
 from utils.enums import ModAffixType
 
 

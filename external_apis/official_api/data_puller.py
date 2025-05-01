@@ -1,7 +1,5 @@
 
 import json
-import logging
-import os
 from pathlib import Path
 
 from .api_data_to_json import StatsDataToJsonHandler, StaticDataToJsonHandler

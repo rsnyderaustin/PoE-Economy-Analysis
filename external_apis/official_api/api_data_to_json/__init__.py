@@ -1,3 +1,3 @@
-from .stats_data_to_json_handler import StatsDataToJsonHandler
 from .static_data_to_json_handler import StaticDataToJsonHandler
+from .stats_data_to_json_handler import StatsDataToJsonHandler
 

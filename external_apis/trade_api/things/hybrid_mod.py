@@ -1,6 +1,6 @@
 
-from .mod import Mod
 from utils.enums import ModClass, ModAffixType
+from .mod import Mod
 
 
 class HybridMod:

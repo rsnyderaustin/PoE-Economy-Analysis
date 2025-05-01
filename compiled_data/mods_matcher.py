@@ -1,5 +1,6 @@
 
 import logging
+
 import rapidfuzz
 
 from external_apis import CoEModsManager, OfficialModsManager

@@ -1,10 +1,3 @@
-
-from dataclasses import dataclass
-import logging
-
-from utils.enums import ModAffixType
-
-
 class CompiledMod:
 
     def __init__(self, official_mod_ids: list[str], coe_mod_id: str, coe_mod_text: str, mod_types: list[str], affix_type: str):

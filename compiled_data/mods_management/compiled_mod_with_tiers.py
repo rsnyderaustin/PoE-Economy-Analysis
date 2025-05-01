@@ -1,8 +1,8 @@
 
 from dataclasses import dataclass
 
-from .compiled_mod import CompiledMod
 from external_apis import ModTier
+from .compiled_mod import CompiledMod
 
 
 @dataclass

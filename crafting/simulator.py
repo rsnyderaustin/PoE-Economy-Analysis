@@ -2,10 +2,10 @@
 import logging
 
 from compiled_data import Price, ModTierInfo
-from external_apis.craft_of_exile_api import BtypeManager
 from crafting import CraftingOutcome
-from things.items import Modifiable
+from external_apis.craft_of_exile_api import BtypeManager
 from things.items import Gem
+from things.items import Modifiable
 from utils.enums import ModAffixType
 
 

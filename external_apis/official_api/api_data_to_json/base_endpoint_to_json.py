@@ -1,8 +1,6 @@
-from abc import ABC, abstractmethod
 import json
 import logging
-import os
-import re
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 import requests

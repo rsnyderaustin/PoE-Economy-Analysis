@@ -1,7 +1,7 @@
-from utils.enums import ModAffixType
 from external_apis.craft_of_exile_api.global_btypes_manager import GlobalBtypesManager
-from .outcomes import CraftingOutcome
 from things.items import Modifiable
+from utils.enums import ModAffixType
+from .outcomes import CraftingOutcome
 
 
 class CraftingEngine:

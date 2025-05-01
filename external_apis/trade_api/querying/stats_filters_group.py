@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from utils.enums import StatFilterType
+from utils.enums import StatSearchType
 
 
 class StatModFilter:
@@ -18,6 +18,6 @@ class StatModFilter:
 
 @dataclass
 class StatsFiltersGroup:
-    filter_type: StatFilterType
+    filter_type: StatSearchType
     mod_filters: list[StatModFilter]
     value_range: tuple = None

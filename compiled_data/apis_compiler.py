@@ -1,10 +1,10 @@
-from .mods_matcher import ModsMatcher
-from .mods_management import CompiledModsManager
-from .compiled_mod_factory import CompiledModFactory
 from compiled_data.mods_management.btype_mods_manager import BtypeModsManager
 from external_apis import (CoECompiler, CoEDataPuller, CoEEndpoint, OfficialCompiler,
                            OfficialDataPuller)
 from external_apis.craft_of_exile_api.global_btypes_manager import GlobalBtypesManager
+from .compiled_mod_factory import CompiledModFactory
+from .mods_management import CompiledModsManager
+from .mods_matcher import ModsMatcher
 
 
 class ApisCompiler:

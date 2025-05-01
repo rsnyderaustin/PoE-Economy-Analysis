@@ -2,10 +2,10 @@
 import logging
 
 from external_apis.trade_api.things.item_listing import ItemListing
+from utils.enums import ModClass, ItemCategory
 from .mods_creator import ModsCreator
 from .skills_creator import SkillsCreator
-from utils.enums import ModClass, ItemCategory
-from ..raw_btype_to_btye import RawATypeToAType
+from ..atype_clasifier import ATypeClassifier
 
 
 class ListingCreator:
@@ -15,7 +15,7 @@ class ListingCreator:
     }
 
     _unmodifiable_btypes = {
-        ItemCategory.GEM.value
+        ItemCategory.ANY_GEM.value
     }
 
     @classmethod
@@ -62,7 +62,7 @@ class ListingCreator:
 
         if 'properties' in it and 'name' in it['properties'][0]:
             raw_atype = it['properties'][0]['name']
-            atype = RawATypeToAType.convert(
+            atype = ATypeClassifier.convert(
                 raw_atype=raw_atype,
                 str_requirement=str_requirement,
                 int_requirement=int_requirement,

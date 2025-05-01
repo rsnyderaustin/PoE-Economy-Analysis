@@ -2,7 +2,6 @@
 import logging
 
 from external_apis import TradeApiCoordinator
-from program_management import ProgramManager
 
 logging.basicConfig(level=logging.INFO,
                     force=True)

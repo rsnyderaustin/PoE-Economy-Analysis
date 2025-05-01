@@ -2,9 +2,9 @@
 import logging
 
 from external_apis import ModTier
+from utils.enums import ModAffixType
 from .compiled_mod import CompiledMod
 from .compiled_mod_with_tiers import CompiledModWithTiers
-from utils.enums import ModAffixType
 
 
 class BtypeModsManager:

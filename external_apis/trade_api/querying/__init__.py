@@ -1,3 +1,3 @@
-from .meta_filters_group import MetaFiltersGroup, MetaModFilter
+from .meta_filters_group import MetaModFilter
 from .stats_filters_group import StatsFiltersGroup, StatModFilter
 from .trade_query_constructor import TradeQueryConstructor

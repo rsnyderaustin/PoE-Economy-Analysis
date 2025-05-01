@@ -1,9 +1,6 @@
-import ast
-import logging
-
 from .mod import CoEMod
-from .mods_manager import CoEModsManager
 from .mod_tier import ModTier
+from .mods_manager import CoEModsManager
 
 
 def _parse_mtypes_string(mtypes_string: str) -> list:

@@ -1,7 +1,7 @@
 
-from .mod import Mod
+from utils.enums import ModifierClass, ModAffixType
 from .base_item import Item
-from utils.enums import Modifier, ModAffixType
+from .mod import Mod
 
 
 class Modifiable(Item):
@@ -36,12 +36,12 @@ class Modifiable(Item):
 
     @property
     def prefixes(self):
-        return [mod for mod in getattr(self, Modifier.EXPLICIT.value)
+        return [mod for mod in getattr(self, ModifierClass.EXPLICIT.value)
                 if mod.mod_type_enum == ModAffixType.PREFIX]
 
     @property
     def suffixes(self):
-        return [mod for mod in getattr(self, Modifier.EXPLICIT.value)
+        return [mod for mod in getattr(self, ModifierClass.EXPLICIT.value)
                 if mod.mod_type_enum == ModAffixType.SUFFIX.value]
 
 
