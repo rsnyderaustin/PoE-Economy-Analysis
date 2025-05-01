@@ -1,18 +1,43 @@
 
 import json
+import logging
 
 from utils import PathProcessor
-from .listings import ItemListing
+from .things import ItemListing, HybridMod, Mod
 
 
 class ApiDataSaver:
 
-    btype_mods_path = PathProcessor.create_relative_file_path(
-        endpoint='/external_apis/trade_api/json_data/btype_mods.json'
+    category_mods_path = PathProcessor.create_relative_file_path(
+        endpoint='/external_apis/trade_api/json_data/item_category_mods.json'
     )
-    with open(btype_mods_path, 'r', encoding='utf-8') as json_file:
-        btype_mods_dict = json.load(json_file)
+    with open(category_mods_path, 'r', encoding='utf-8') as json_file:
+        category_mods_dict = json.load(json_file)
 
-    def save_data(self, listing: ItemListing):
-        pass
+    @classmethod
+    def save_data(cls, listing: ItemListing):
+        if listing.item_btype not in cls.category_mods_dict:
+            cls.category_mods_dict[listing.item_category] = dict()
+
+        for mod in listing.mods:
+            if isinstance(mod, HybridMod):
+                mod_ids = [sub_mod.mod_id for sub_mod in mod.mods]
+                if mod.mod_name not in cls.category_mods_dict[listing.item_category]:
+                    logging.info(f"Found new hybrid mod {mod.mod_name} for item category {listing.item_category}.")
+                    cls.category_mods_dict[listing.item_category][mod.mod_name] = mod_ids
+
+            elif isinstance(mod, Mod):
+                if mod.mod_name not in cls.category_mods_dict[listing.item_category]:
+                    logging.info(f"Found new mod {mod.mod_name} for item category {listing.item_category}.")
+                    cls.category_mods_dict[listing.item_category][mod.mod_name] = mod.mod_id
+            else:
+                raise TypeError(f"Unrecognized mod type {type(mod)}.")
+
+    @classmethod
+    def export_data(cls):
+        with open(cls.category_mods_path, "w") as f:
+            json.dump(cls.category_mods_dict, f, indent=4)
+
+
+
 

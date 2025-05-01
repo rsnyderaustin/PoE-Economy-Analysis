@@ -15,3 +15,5 @@ class HybridMod:
         self.mod_class = mod_class
         self.mods = mods
         self.affix_type = affix_type
+        self.mod_name = mod_name
+        self.mod_tier = mod_tier

@@ -11,7 +11,8 @@ class ItemListing:
                  price_currency: str,
                  price_amount: int,
                  item_name: str,
-                 raw_item_btype: str, # Body Armour, Gloves, One Handed Mace, etc
+                 item_btype: str, # Hunting Shoes, Lunar Amulet, etc
+                 item_category: str, # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
                  item_bgroup: str, # Armour, Weapon, etc
                  rarity: str,
                  ilvl: int,
@@ -33,7 +34,8 @@ class ItemListing:
         self.price_currency = price_currency
         self.price_amount = price_amount
         self.item_name = item_name
-        self.raw_item_btype = raw_item_btype
+        self.item_btype = item_btype
+        self.item_category = item_category
         self.item_bgroup = item_bgroup
         self.rarity = rarity
         self.ilvl = ilvl
@@ -49,3 +51,14 @@ class ItemListing:
         self.item_skills = item_skills
         self.fractured_mods = fractured_mods
         self.explicit_mods = explicit_mods
+
+    @property
+    def mods(self) -> list[Mod]:
+        all_mods = (
+                self.implicit_mods +
+                self.enchant_mods +
+                self.rune_mods +
+                self.fractured_mods +
+                self.explicit_mods
+        )
+        return all_mods

@@ -1,0 +1,260 @@
+{
+    "Boots DEX/INT": {
+        "Stout": "explicit.stat_3299347043",
+        "Cobalt": "explicit.stat_1050105434",
+        "of Stone Skin": "explicit.stat_915769802",
+        "of the Whelpling": "explicit.stat_3372524247"
+    },
+    "Gloves STR/DEX": {
+        "Brute's": [
+            "explicit.stat_2451402625",
+            "explicit.stat_3299347043"
+        ],
+        "of Rejuvenation": "explicit.stat_2797971005",
+        "of the Seal": "explicit.stat_4220027924",
+        "Cobalt": "explicit.stat_1050105434",
+        "of the Kiln": "explicit.stat_3372524247"
+    },
+    "Helmet STR/DEX": {
+        "of the Worthy": "explicit.stat_3639275092",
+        "of Archaeology": "explicit.stat_3917489142",
+        "Rhex's": [
+            "explicit.stat_2451402625",
+            "explicit.stat_1050105434"
+        ],
+        "Durable": [
+            "explicit.stat_3484657501",
+            "explicit.stat_53045048"
+        ],
+        "of the Thunderhead": "explicit.stat_1671376347"
+    },
+    "[Buckler]": {
+        "null": "rune.stat_3523867985",
+        "Moth's": [
+            "explicit.stat_124859000",
+            "explicit.stat_915769802"
+        ],
+        "Agile": "explicit.stat_53045048",
+        "of Steel Skin": "explicit.stat_915769802",
+        "Stout": "explicit.stat_3299347043"
+    },
+    "[Quarterstaff]": {
+        "Snapping": "explicit.stat_3336890334",
+        "of Nourishment": "explicit.stat_821021828",
+        "Smoking": "explicit.stat_709508406",
+        "of the Thirsty": "explicit.stat_669069897"
+    },
+    "Body Armour DEX": {
+        "of Thick Skin": "explicit.stat_915769802",
+        "of the Cloud": "explicit.stat_1671376347",
+        "Hale": "explicit.stat_3299347043",
+        "Shade's": "explicit.stat_124859000"
+    },
+    "Boots STR/INT": {
+        "of the Flatworm": "explicit.stat_3325883026",
+        "Runner's": "explicit.stat_2250533757",
+        "of Granite Skin": "explicit.stat_915769802",
+        "of the Sage": "explicit.stat_328541901"
+    },
+    "[Bow]": {
+        "Frosted": "explicit.stat_1037193709",
+        "Arcing": "explicit.stat_3336890334",
+        "Infusing": "explicit.stat_387439868",
+        "of Consumption": "explicit.stat_1368271171",
+        "of Regrowth": "explicit.stat_821021828"
+    },
+    "Body Armour STR/DEX": {
+        "Baronness'": "explicit.stat_3981240776",
+        "of the Mongoose": "explicit.stat_3261801346",
+        "of the Hydra": "explicit.stat_3325883026"
+    },
+    "[Crossbow]": {
+        "": "implicit.stat_1967051901",
+        "Hunter's": "explicit.stat_691932474",
+        "of Light": [
+            "explicit.stat_691932474",
+            "explicit.stat_1263695895"
+        ],
+        "of Success": "explicit.stat_3695891184",
+        "Frozen": "explicit.stat_1037193709",
+        "Serrated": "explicit.stat_1509134228"
+    },
+    "null": {
+        "Protective": "explicit.stat_4015621042",
+        "Healthy": "explicit.stat_3299347043",
+        "of the Student": "explicit.stat_328541901",
+        "of the Newt": "explicit.stat_3325883026"
+    },
+    "[Focus]": {
+        "of the Squall": "explicit.stat_1671376347",
+        "Alpine": "explicit.stat_3291658075",
+        "of the Kiln": "explicit.stat_3372524247",
+        "of Nimbleness": "explicit.stat_2891184298",
+        "Aqua": "explicit.stat_1050105434"
+    },
+    "Helmet INT": {
+        "Teal": "explicit.stat_1050105434",
+        "Serene": [
+            "explicit.stat_4015621042",
+            "explicit.stat_1050105434"
+        ],
+        "of the Seal": "explicit.stat_4220027924",
+        "Prior's": [
+            "explicit.stat_4015621042",
+            "explicit.stat_3299347043"
+        ],
+        "of the Student": "explicit.stat_328541901"
+    },
+    "Body Armour STR": {
+        "Hale": "explicit.stat_3299347043",
+        "Encased": "explicit.stat_3484657501",
+        "of the Cloud": "explicit.stat_1671376347",
+        "of Quashing": "explicit.stat_986397080",
+        "of Convalescence": "explicit.stat_3325883026"
+    },
+    "[Staff]": {
+        "Apprentice's": "explicit.stat_2974417149",
+        "of Success": "explicit.stat_3695891184",
+        "of Anger": "explicit.stat_274716455",
+        "Conjuror's": [
+            "explicit.stat_2974417149",
+            "explicit.stat_1050105434"
+        ],
+        "of the Prodigy": "explicit.stat_328541901"
+    },
+    "[Wand]": {
+        "of Rage": "explicit.stat_274716455",
+        "Cobalt": "explicit.stat_1050105434",
+        "of Absorption": "explicit.stat_1368271171",
+        "of the Enchanter": "explicit.stat_124131830"
+    },
+    "Gloves DEX": {
+        "null": "rune.stat_3299347043",
+        "of the Drake": "explicit.stat_3372524247",
+        "of Raiding": "explicit.stat_3917489142",
+        "of the Worthy": "explicit.stat_3639275092",
+        "Frosted": "explicit.stat_4067062424"
+    },
+    "[Sceptre]": {
+        "of Expertise": "explicit.stat_289128254",
+        "of Warmth": [
+            "explicit.stat_789117908",
+            "explicit.stat_1263695895"
+        ],
+        "Counselor's": [
+            "explicit.stat_3984865854",
+            "explicit.stat_1050105434"
+        ],
+        "Focused": "explicit.stat_3169585282"
+    },
+    "[Mace|One Hand Mace]": {
+        "Heavy": "explicit.stat_1509134228",
+        "Humming": "explicit.stat_3336890334",
+        "of Shining": [
+            "explicit.stat_691932474",
+            "explicit.stat_1263695895"
+        ],
+        "Frosted": "explicit.stat_1037193709",
+        "of Skill": "explicit.stat_210067635"
+    },
+    "[Spear]": {
+        "Deliberate": "explicit.stat_691932474",
+        "of the Brawler": "explicit.stat_791928121",
+        "Honed": "explicit.stat_1940865751",
+        "of Ease": "explicit.stat_210067635"
+    },
+    "[Quiver]": {
+        "": "implicit.stat_1443060084",
+        "Burnished": "explicit.stat_3032590688",
+        "Crackling": "explicit.stat_1754445556",
+        "of Menace": "explicit.stat_2194114101",
+        "of Infusion": "explicit.stat_1368271171"
+    },
+    "Helmet DEX/INT": {
+        "Consistent": "explicit.stat_803737631",
+        "Evanescent": "explicit.stat_1999113824",
+        "of Plunder": "explicit.stat_3917489142",
+        "Magpie's": "explicit.stat_3917489142"
+    },
+    "Body Armour DEX/INT": {
+        "of the Antitoxin": "explicit.stat_3301100256",
+        "Stout": "explicit.stat_3299347043",
+        "of the Penguin": "explicit.stat_4220027924",
+        "Bard's": [
+            "explicit.stat_1999113824",
+            "explicit.stat_3299347043"
+        ]
+    },
+    "Boots STR/DEX": {
+        "of Convection": "explicit.stat_1874553720",
+        "Pliant": [
+            "explicit.stat_3484657501",
+            "explicit.stat_53045048"
+        ],
+        "of the Gorilla": "explicit.stat_4080418644"
+    },
+    "Boots DEX": {
+        "Sprinter's": "explicit.stat_2250533757",
+        "of the Mongoose": "explicit.stat_3261801346",
+        "Beryl": "explicit.stat_1050105434",
+        "Shade's": "explicit.stat_124859000"
+    },
+    "Ring": {
+        "": "implicit.stat_3917489142",
+        "of Elation": "explicit.stat_789117908",
+        "Fleet": "explicit.stat_2144192055",
+        "of Banishment": "explicit.stat_2923486259"
+    },
+    "Belt": {
+        "": "implicit.stat_821241191",
+        "of Steel Skin": "explicit.stat_915769802",
+        "of the Newt": "explicit.stat_3325883026",
+        "of the Wrestler": "explicit.stat_4080418644",
+        "Lacquered": "explicit.stat_809229260"
+    },
+    "[Mace|Two Hand Mace]": {
+        "": "implicit.stat_3675300253",
+        "Reaver's": [
+            "explicit.stat_1509134228",
+            "explicit.stat_691932474"
+        ],
+        "of Consumption": "explicit.stat_1368271171",
+        "Consistent": "explicit.stat_691932474",
+        "Shocking": "explicit.stat_3336890334",
+        "of Radiance": [
+            "explicit.stat_691932474",
+            "explicit.stat_1263695895"
+        ],
+        "of the Talented": "explicit.stat_3639275092"
+    },
+    "Body Armour INT": {
+        "of the Storm": "explicit.stat_1671376347",
+        "of the Seal": "explicit.stat_4220027924",
+        "Glittering": "explicit.stat_4052037485",
+        "Healthy": "explicit.stat_3299347043"
+    },
+    "Boots INT": {
+        "of the Kiln": "explicit.stat_3372524247",
+        "Sanguine": "explicit.stat_3299347043",
+        "of the Narwhal": "explicit.stat_4220027924",
+        "Beryl": "explicit.stat_1050105434",
+        "of Plunder": "explicit.stat_3917489142",
+        "Pixie's": [
+            "explicit.stat_4015621042",
+            "explicit.stat_915769802"
+        ]
+    },
+    "Boots STR": {
+        "of Stone Skin": "explicit.stat_915769802",
+        "Teal": "explicit.stat_1050105434",
+        "of the Salamander": "explicit.stat_3372524247",
+        "of the Penguin": "explicit.stat_4220027924"
+    },
+    "[Shield]": {
+        "of the Cloud": "explicit.stat_1671376347",
+        "Healthy": "explicit.stat_3299347043",
+        "Thorny": "explicit.stat_2881298780",
+        "of the Penguin": "explicit.stat_4220027924",
+        "of the Whelpling": "explicit.stat_3372524247"
+    }
+}

@@ -2,8 +2,8 @@
 import logging
 import re
 
-from .hybrid_mod import HybridMod
-from .mod import Mod
+from external_apis.trade_api.things.hybrid_mod import HybridMod
+from external_apis.trade_api.things.mod import Mod
 from utils.enums import ModAffixType, ModClass
 
 

@@ -1,5 +1,5 @@
 
-from .skill import Skill
+from external_apis.trade_api.things.skill import Skill
 
 
 class SkillsCreator:
