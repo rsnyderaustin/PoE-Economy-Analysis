@@ -3,25 +3,9 @@ import logging
 import re
 
 from utils.enums import ModClass
+from .. import helper_funcs
 from ..things import Rune
 
-
-def _process_mod_text(mod_text: str):
-    if '[' in mod_text and ']' in mod_text:
-        # Remove the brackets and take the part after the pipe if it exists
-        match = re.search(r'\[([^\]]+)\]', mod_text)
-        if match:
-            bracket_content = match.group(1)
-
-            # If there is a pipe, split by pipe and take the right side
-            if '|' in bracket_content:
-                return mod_text.replace('[' + bracket_content + ']', bracket_content.split('|')[1])
-            else:
-                # If no pipe, just remove the brackets
-                return mod_text.replace('[' + bracket_content + ']', bracket_content)
-
-        # If no brackets, return the original string
-    return mod_text
 
 class RunesCreator:
 
@@ -50,7 +34,7 @@ class RunesCreator:
         rune_mod_text = item_data[ModClass.RUNE.value][0]
 
         # Rune mod text has this weird [text|text] format sometimes - the part after the pipe is all we need
-        rune_mod_text = _process_mod_text(mod_text=rune_mod_text)
+        rune_mod_text = helper_funcs.remove_piped_brackets(text=rune_mod_text)
 
         new_rune = Rune(
             rune_name=rune_name,

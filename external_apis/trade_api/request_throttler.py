@@ -1,4 +1,3 @@
-
 import logging
 import time
 
@@ -44,7 +43,7 @@ class Deque:
             self.register_request(now=now)
 
     def remove_expired_timestamps(self, now):
-        while self.requests and now - self.requests[0] > self.seconds_interval:
+        while self.requests and (now - self.requests[0]) > self.seconds_interval:
             self.requests.popleft()
 
     def register_request(self, now):
@@ -88,11 +87,11 @@ class RequestThrottler:
             max_requests = limit[0]
             seconds_interval = limit[1]
             current_requests = state[0]
-            logging.info(f"For function '{func_name}' setting limit of maximum {max_requests} requests "
-                         f"\nwithin {seconds_interval} seconds.\n\tCurrently at {current_requests} requests.")
+            logging.info(f"For function '{func_name}' setting limit of maximum {max_requests} requests within {seconds_interval} seconds."
+                         f"\n\tCurrently at {current_requests} requests in the last {seconds_interval} seconds..")
             self.request_deques[func_name].append(
                 Deque(
-                    maximum_requests=max_requests,
+                    maximum_requests=max_requests - 1, # We lower the max requests by 1 to stay conservative
                     seconds_interval=seconds_interval,
                     current_requests=current_requests
                 )
@@ -140,17 +139,20 @@ class RequestThrottler:
 
         self._wait_if_needed(func_name=func_name)
 
+        logging.info(f"Sending '{request_func}' request.")
         now = time.time()
         response = request_func(*args, **kwargs)
 
         ip_state = _parse_rate_string(response.headers['x-rate-limit-ip-state'])
         account_state = _parse_rate_string(response.headers['x-rate-limit-account-state'])
-        logging.info(f"Post-{func_name} request limit states:"
-                     f"\n\tIP state: {ip_state[0]} hits in the last {ip_state[1]} seconds."
-                     f"\n\tAccount state: {account_state[0]} hits in the last {account_state[1]} seconds.")
+        logging.info(f"After '{func_name}' request limit states:")
+
+        for state in ip_state:
+            logging.info(f"\n\tIP state: {state[0]} hits in the last {state[1]} seconds.")
+
+        for state in account_state:
+            logging.info(f"\n\tAccount state: {state[0]} hits in the last {state[1]} seconds.")
 
         self._register_requests(now=now,
                                 func_name=func_name)
         return response
-
-

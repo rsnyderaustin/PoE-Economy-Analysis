@@ -34,11 +34,11 @@ class ListingCreator:
             ]
 
     @classmethod
-    def create_listing(cls, api_items_response: dict):
-        cls._clean_api_item_response(api_items_response)
+    def create_listing(cls, api_item_response: dict):
+        cls._clean_api_item_response(api_item_response)
 
-        li = api_items_response['listing']
-        it = api_items_response['item']
+        li = api_item_response['listing']
+        it = api_item_response['item']
 
         if it['baseType'] in cls._invalid_btypes:
             logging.error(f"Received API item response for btype {it['baseType']}. Skipping.")
@@ -86,7 +86,7 @@ class ListingCreator:
             skills = SkillsCreator.create_skills(it['grantedSkills']) if 'grantedSkills' in it else []
 
         new_listing = ItemListing(
-            listing_id=api_items_response['id'],
+            listing_id=api_item_response['id'],
             date_fetched=li['indexed'],
             price_currency=li['price']['currency'],
             price_amount=li['price']['amount'],

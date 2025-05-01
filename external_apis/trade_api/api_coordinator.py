@@ -5,7 +5,7 @@ from utils import classifications
 from utils.enums import Currency, TradeFilters, TypeFilters, Rarity, ModClass, EquipmentAttribute
 from .api_data_saver import ApiDataSaver
 from .atype_clasifier import ATypeClassifier
-from .creators.runes_creator import RunesCreator
+from .creators import RunesCreator, ListingCreator
 from .querying import (MetaModFilter, TradeQueryConstructor)
 from .trade_items_fetcher import TradeItemsFetcher
 
@@ -18,8 +18,8 @@ class TradeApiCoordinator:
 
     def fill_internal_data(self):
         price_ranges = []
-        for i in range(0, 300, 3):
-            price_ranges.append((i, i + 2))
+        for i in range(0, 100, 11):
+            price_ranges.append((i, i + 10))
 
         currencies = [
             Currency.CHAOS_ORB,
@@ -41,12 +41,12 @@ class TradeApiCoordinator:
 
             rarity_filter = MetaModFilter(
                 meta_filter_enum=TypeFilters.ITEM_RARITY,
-                mod_value=Rarity.MAGIC.value
+                mod_value=Rarity.RARE.value
             )
             price_filter = MetaModFilter(
                 meta_filter_enum=TradeFilters.PRICE,
                 mod_value=(price_range[0], price_range[1]),
-                price_currency_enum=Currency.EXALTED_ORB
+                price_currency_enum=currency
             )
             rune_socket_filter = MetaModFilter(
                 meta_filter_enum=EquipmentAttribute.RUNE_SOCKETS,
@@ -77,3 +77,8 @@ class TradeApiCoordinator:
                 )
 
                 self.api_data_saver.export_data()
+
+            for item_response in api_items:
+                listing = ListingCreator.create_listing(api_item_response=item_response)
+
+                self.api_data_saver.save_listing(listing=listing)
