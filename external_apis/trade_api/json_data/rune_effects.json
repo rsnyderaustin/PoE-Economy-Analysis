@@ -1,3 +1,12 @@
 {
-
+    "One Hand Mace": {
+        "Greater Iron Rune": "25% increased Physical Damage",
+        "Stone Rune": "Causes 25% increased Stun Buildup",
+        "Lesser Iron Rune": "15% increased Physical Damage",
+        "Greater Robust Rune": "+10 to Strength",
+        "Lesser Desert Rune": "Adds 4 to 6 Fire Damage",
+        "Greater Rebirth Rune": "Gain 30 Life per Enemy Killed",
+        "Soul Core of Citaqualotl": "30% increased Elemental Damage with Attacks",
+        "Greater Desert Rune": "Adds 13 to 16 Fire Damage"
+    }
 }

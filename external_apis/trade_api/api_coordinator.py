@@ -8,6 +8,7 @@ from .atype_clasifier import ATypeClassifier
 from .creators import RunesCreator, ListingCreator
 from .querying import (MetaModFilter, TradeQueryConstructor)
 from .trade_items_fetcher import TradeItemsFetcher
+from . import helper_funcs
 
 
 class TradeApiCoordinator:
@@ -71,8 +72,11 @@ class TradeApiCoordinator:
                 if not runes:
                     continue
 
+                item_atype = ATypeClassifier.convert(item_data=item_response['item'])
+                item_atype = helper_funcs.remove_piped_brackets(item_atype)
+
                 self.api_data_saver.save_runes(
-                    item_atype=ATypeClassifier.convert(item_data=item_response['item']),
+                    item_atype=item_atype,
                     runes=runes
                 )
 

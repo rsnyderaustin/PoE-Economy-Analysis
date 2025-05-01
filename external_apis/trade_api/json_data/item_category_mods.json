@@ -71,7 +71,7 @@
         ],
         "of the Polar Bear": "explicit.stat_4220027924"
     },
-    "[Crossbow]": {
+    "Crossbow": {
         "of Anger": "explicit.stat_2694482655",
         "of the Parched": "explicit.stat_669069897",
         "of Light": [
@@ -89,7 +89,7 @@
         "Hale": "explicit.stat_3299347043",
         "of the Whelpling": "explicit.stat_3372524247"
     },
-    "[Focus]": {
+    "Focus": {
         "of Expertise": "explicit.stat_2891184298",
         "Adept's": "explicit.stat_2974417149",
         "Sizzling": "explicit.stat_3962278098"
@@ -107,14 +107,14 @@
         "of the Apt": "explicit.stat_3639275092",
         "Thickened": "explicit.stat_1062208444"
     },
-    "[Staff]": {
+    "Staff": {
         "Professor's": "explicit.stat_2974417149",
         "Searing": "explicit.stat_3962278098",
         "Infernal": "explicit.stat_3015669065",
         "of Disaster": "explicit.stat_737908626",
         "of Ignition": "explicit.stat_2968503605"
     },
-    "[Wand]": {
+    "Wand": {
         "of Success": "explicit.stat_3695891184",
         "of Snow": "explicit.stat_2254480358",
         "of Excitement": "explicit.stat_789117908",
@@ -129,27 +129,20 @@
         "Beryl": "explicit.stat_1050105434",
         "of Restoration": "explicit.stat_2797971005"
     },
-    "[Sceptre]": {
+    "Sceptre": {
         "of Talent": "explicit.stat_289128254",
         "Instigative": "explicit.stat_1798257884",
         "of Ire": "explicit.stat_3057012405",
         "Smoking": "explicit.stat_849987426",
         "Teal": "explicit.stat_1050105434"
     },
-    "[Mace|One Hand Mace]": {
-        "": "implicit.stat_1559935218",
-        "Smouldering": "explicit.stat_709508406",
-        "of Dazing": "explicit.stat_748522257",
-        "Deliberate": "explicit.stat_691932474",
-        "of the Boxer": "explicit.stat_791928121"
-    },
-    "[Spear]": {
+    "Spear": {
         "null": "rune.stat_3336890334",
         "Crackling": "explicit.stat_3336890334",
         "of the Pugilist": "explicit.stat_791928121",
         "of the Parasite": "explicit.stat_55876295"
     },
-    "[Quiver]": {
+    "Quiver": {
         "": "implicit.stat_681332047",
         "Smouldering": "explicit.stat_1573130764",
         "Honed": "explicit.stat_3032590688",
@@ -205,12 +198,6 @@
         "of the Wrestler": "explicit.stat_4080418644",
         "Lacquered": "explicit.stat_809229260"
     },
-    "[Mace|Two Hand Mace]": {
-        "Unleashed": "explicit.stat_387439868",
-        "of Rejuvenation": "explicit.stat_821021828",
-        "Glinting": "explicit.stat_1940865751",
-        "Buzzing": "explicit.stat_3336890334"
-    },
     "Body Armour INT": {
         "Fearless": "explicit.stat_4015621042",
         "of the Augur": "explicit.stat_328541901",
@@ -228,7 +215,7 @@
         "of the Newt": "explicit.stat_3325883026",
         "of Insulation": "explicit.stat_99927264"
     },
-    "[Shield]": {
+    "Shield": {
         "of the Cloud": "explicit.stat_1671376347",
         "Healthy": "explicit.stat_3299347043",
         "Thorny": "explicit.stat_2881298780",
