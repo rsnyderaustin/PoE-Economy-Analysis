@@ -82,6 +82,17 @@ class ModsCreator:
 
     @classmethod
     def create_mods(cls, item_data: dict, mod_class: ModClass) -> list:
+        if mod_class == ModClass.RUNE:
+            mod_socket_dicts = [
+                socketer_data
+                for socketer_data in item_data['sockets']
+                if socketer_data['type'] == 'rune'
+            ]
+            num_runes = len(mod_socket_dicts)
+            rune_texts = item_data['runeMods']
+
+            for socket_dict in item_data['sockete\s']:
+
         abbrev_mod_class = cls._mod_class_name_to_abbrev[mod_class.value]
         hashes_list = item_data['extended']['hashes'][abbrev_mod_class]
 
