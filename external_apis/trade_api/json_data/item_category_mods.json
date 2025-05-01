@@ -85,10 +85,9 @@
         "Catalysing": "explicit.stat_387439868"
     },
     "null": {
-        "Precise": "explicit.stat_803737631",
-        "Reinforced": "explicit.stat_1062208444",
-        "of the Mongoose": "explicit.stat_3261801346",
-        "of Success": "explicit.stat_3695891184"
+        "of Thick Skin": "explicit.stat_915769802",
+        "Hale": "explicit.stat_3299347043",
+        "of the Whelpling": "explicit.stat_3372524247"
     },
     "[Focus]": {
         "of Expertise": "explicit.stat_2891184298",
@@ -281,11 +280,6 @@
             "explicit.stat_1050105434"
         ],
         "of Convalescence": "explicit.stat_3325883026"
-    },
-    "null": {
-        "of Thick Skin": "explicit.stat_915769802",
-        "Hale": "explicit.stat_3299347043",
-        "of the Whelpling": "explicit.stat_3372524247"
     },
     "Gloves INT": {
         "of Rage": "explicit.stat_3556824919",

@@ -1,4 +1,4 @@
-from .listings_creator import ListingsCreator
+from .listing_creator import ListingCreator
 from .mods_creator import ModsCreator
 from .skills_creator import SkillsCreator
 

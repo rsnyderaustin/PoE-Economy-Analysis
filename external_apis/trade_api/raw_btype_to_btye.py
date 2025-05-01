@@ -1,34 +1,34 @@
 
 
-class RawCategoryToCategory:
+class RawATypeToAType:
 
-    _convertable_raw_categories = {
+    _convertable_raw_atypes = {
         'Body Armour', 'Boots', 'Gloves', 'Helmet', 'Shield'
     }
 
     @classmethod
     def convert(cls,
-                raw_category: str,
+                raw_atype: str,
                 str_requirement: int,
                 int_requirement: int,
                 dex_requirement: int):
-        if raw_category in cls._convertable_raw_categories:
+        if raw_atype in cls._convertable_raw_atypes:
             if dex_requirement:
                 if int_requirement:
-                    return f"{raw_category} DEX/INT"
+                    return f"{raw_atype} DEX/INT"
 
                 if str_requirement:
-                    return f"{raw_category} STR/DEX"
+                    return f"{raw_atype} STR/DEX"
 
-                return f"{raw_category} DEX"
+                return f"{raw_atype} DEX"
 
             if int_requirement:
                 if str_requirement:
-                    return f"{raw_category} STR/INT"
+                    return f"{raw_atype} STR/INT"
 
-                return f"{raw_category} INT"
+                return f"{raw_atype} INT"
 
             if str_requirement:
-                return f"{raw_category} STR"
+                return f"{raw_atype} STR"
         else:
-            return raw_category
+            return raw_atype

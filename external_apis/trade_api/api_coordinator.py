@@ -2,11 +2,12 @@
 import time
 
 from .api_data_saver import ApiDataSaver
+from .creators.runes_creator import RunesCreator
 from .trade_items_fetcher import TradeItemsFetcher
 from .querying import (MetaFiltersGroup, MetaModFilter, StatsFiltersGroup,
                        StatModFilter, TradeQueryConstructor)
-from utils.enums import ItemCategory, MetaSearchType, MiscQueryAttribute, Rarity
-from .creators import ListingsCreator
+from utils.enums import ItemCategory, MetaSearchType, MiscQueryAttribute, Rarity, ModClass
+from .creators import ListingCreator
 
 
 class TradeApiCoordinator:
@@ -17,7 +18,7 @@ class TradeApiCoordinator:
 
     def fill_internal_data(self):
         start_time = time.time()
-        while time.time() - start_time < 300:
+        while time.time() - start_time < 10:
             rarity_filter = MetaModFilter(
                 meta_attribute_enum=MiscQueryAttribute.RARITY,
                 mod_value=Rarity.RARE.value
@@ -32,9 +33,19 @@ class TradeApiCoordinator:
 
             api_items = self.api_data_fetcher.fetch_items(query=query)
 
-            listings = ListingsCreator.create_listings(api_items_responses=api_items)
-            for listing in listings:
-                self.api_data_saver.save_data(listing)
+            for item_response in api_items:
+                if ModClass.RUNE.value in item_response['item']:
+                    runes = RunesCreator.create_runes(item_response['item'])
+                else:
+                    continue
+
+                if not runes:
+                    continue
+
+                self.api_data_saver.save_runes(
+                    item_btype=item_response['item']['baseType'],
+                    runes=runes
+                )
 
         self.api_data_saver.export_data()
 

@@ -5,6 +5,7 @@ import re
 from external_apis.trade_api.things.hybrid_mod import HybridMod
 from external_apis.trade_api.things.mod import Mod
 from utils.enums import ModAffixType, ModClass
+from external_apis.trade_api import helper_funcs
 
 
 class ModsCreator:
@@ -16,11 +17,6 @@ class ModsCreator:
         'fractureMods': 'fracture',
         'runeMods': 'rune'
     }
-
-    @classmethod
-    def _parse_values_from_mod_text(cls, mod_text: str) -> tuple:
-        numbers = tuple(map(int, re.findall(r'\b\d+\b', mod_text)))
-        return numbers
 
     @classmethod
     def _determine_mod_affix_type(cls, mod_dict: dict):
@@ -83,15 +79,9 @@ class ModsCreator:
     @classmethod
     def create_mods(cls, item_data: dict, mod_class: ModClass) -> list:
         if mod_class == ModClass.RUNE:
-            mod_socket_dicts = [
-                socketer_data
-                for socketer_data in item_data['sockets']
-                if socketer_data['type'] == 'rune'
-            ]
-            num_runes = len(mod_socket_dicts)
-            rune_texts = item_data['runeMods']
-
-            for socket_dict in item_data['sockete\s']:
+            logging.error(f"Mod class {ModClass.RUNE.value} not currently supported for creating mods."
+                          f"Requires more internal data to implement in the future.")
+            return []
 
         abbrev_mod_class = cls._mod_class_name_to_abbrev[mod_class.value]
         hashes_list = item_data['extended']['hashes'][abbrev_mod_class]
@@ -111,7 +101,7 @@ class ModsCreator:
             rune_mods = []
             for mod_id in mod_id_display_order:
                 mod_text = mod_id_to_text[mod_id]
-                mod_values = cls._parse_values_from_mod_text(mod_text)
+                mod_values = helper_funcs.parse_values_from_mod_text(mod_text)
                 rune_mod = Mod(
                     mod_class=mod_class,
                     mod_id=mod_id,
@@ -150,7 +140,7 @@ class ModsCreator:
                 # We wrap this in a tuple because sometimes mods have two ranges, and so there would be a second tuple to add
                 # for that second range
                 value_ranges = (cls._determine_mod_values_range(magnitude), None)
-                mod_values = cls._parse_values_from_mod_text(mod_text)
+                mod_values = helper_funcs.parse_values_from_mod_text(mod_text)
 
                 new_mod = Mod(
                     mod_class=mod_class,

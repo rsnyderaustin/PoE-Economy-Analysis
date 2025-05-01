@@ -13,6 +13,9 @@ def _parse_mtypes_string(mtypes_string: str) -> list:
     return parsed
 
 
+import ast
+
+
 def _parse_nvalues(nvalues: str) -> tuple:
     # Safely evaluate the string to a Python object
     parsed = ast.literal_eval(nvalues)

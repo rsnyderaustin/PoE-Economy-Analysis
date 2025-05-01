@@ -11,9 +11,9 @@ class ItemListing:
                  price_currency: str,
                  price_amount: int,
                  item_name: str,
-                 item_btype: str, # Hunting Shoes, Lunar Amulet, etc
-                 item_category: str, # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
-                 item_bgroup: str, # Armour, Weapon, etc
+                 item_btype: str,  # Hunting Shoes, Lunar Amulet, etc
+                 item_atype: str,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
+                 item_bgroup: str,  # Armour, Weapon, etc
                  rarity: str,
                  ilvl: int,
                  identified: bool,
@@ -28,14 +28,14 @@ class ItemListing:
                  item_skills: list[Skill],
                  fractured_mods: list[Mod],
                  explicit_mods: list[Mod]
-    ):
+                 ):
         self.listing_id = listing_id
         self.date_fetched = date_fetched
         self.price_currency = price_currency
         self.price_amount = price_amount
         self.item_name = item_name
         self.item_btype = item_btype
-        self.item_category = item_category
+        self.item_atype = item_atype
         self.item_bgroup = item_bgroup
         self.rarity = rarity
         self.ilvl = ilvl
