@@ -28,7 +28,7 @@ class CraftingEngine:
         :param item:
         :param affix_types:
         :param force_type:
-        :param exclude_mod_ids: If not supplied, the function assumes that all mods on the item are not eligible to roll.
+        :param exclude_mod_ids: If not supplied, the function assumes that all current mods on the item are not eligible to roll.
         :return:
         """
 
@@ -36,7 +36,7 @@ class CraftingEngine:
             atype=item.atype,
             ilvl=item.ivl,
             force_mod_type=force_type,
-            exclude_mod_ids=set(mod.coe_mod_id for mod in item.explicit_mods) if not exclude_mod_ids else exclude_mod_ids,
+            exclude_mod_ids=set(mod.mod_id for mod in item.explicit_mods) if not exclude_mod_ids else exclude_mod_ids,
             affix_types=affix_types
         )
 
@@ -45,9 +45,9 @@ class CraftingEngine:
     def create_crafting_outcomes(self,
                                  item: Modifiable,
                                  mod_tiers: list[ModTier],
-                                 exclude_mod_ids: list[int] = None):
+                                 exclude_mod_ids: list[int] = None) -> list[CraftingOutcome]:
         mod_tiers = [mod_tier for mod_tier in mod_tiers
-                     if mod_tier.mod_id not in exclude_mod_ids]
+                     if mod_tier.parent_mod_id not in exclude_mod_ids]
         total_mod_weight = sum(
             mod_tier.weighting
             for mod_tier in mod_tiers
@@ -58,7 +58,7 @@ class CraftingEngine:
             crafting_outcome = CraftingOutcome(
                 original_item=item,
                 outcome_probability=mod_tier.weighting / total_mod_weight,
-                new_modifier=mod_tier
+                new_mod_tier=mod_tier
             )
             crafting_outcomes.append(crafting_outcome)
 

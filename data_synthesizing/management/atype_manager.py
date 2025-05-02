@@ -29,7 +29,7 @@ class ATypeManager:
 
     def fetch_mod_tiers(self,
                         ilvl: int,
-                        force_mod_type: ModType = None,
+                        force_mod_type: str = None,
                         exclude_mod_ids: set[str] = None,
                         affix_types: list[ModAffixType] = None):
         mod_tiers = list()
@@ -38,6 +38,9 @@ class ATypeManager:
                 continue
 
             if affix_types and mod.affix_type not in affix_types:
+                continue
+
+            if exclude_mod_ids and mod.mod_id in exclude_mod_ids:
                 continue
 
             viable_mod_tiers = mod.fetch_mod_tiers(max_ilvl=ilvl)

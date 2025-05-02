@@ -34,7 +34,7 @@ class Mod:
     def __init__(self,
                  sub_mods: list[SubMod],
                  mod_name: str = None,
-                 mod_types: list[ModType] = None,
+                 mod_types: list[str] = None,
                  atype: str = None,
                  mod_tier: int = None,
                  affix_type: ModAffixType = None):

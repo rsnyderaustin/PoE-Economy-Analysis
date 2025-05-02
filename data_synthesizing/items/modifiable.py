@@ -2,17 +2,18 @@
 import re
 
 from utils.enums import ModifierClass, ModAffixType, ItemCategory
-from .base_item import Item
-from .mod import Mod
+from data_synthesizing.mods import ModTier
+from things.items.mod import Mod
+from .socketer import Socketer
 
 
-class Modifiable(Item):
+class Modifiable:
 
     def __init__(self,
                  item_id: str,
                  name: str,
                  category: ItemCategory,
-                 btype_name: str,
+                 btype: str,
                  atype: str,
                  quality: int,
                  corrupted: bool,
@@ -26,13 +27,11 @@ class Modifiable(Item):
                  rune_mods: list[ModTier] = None,
                  fractured_mods: list[ModTier] = None
                  ):
-        super(Item).__init__(
-            item_id=item_id,
-            name=name,
-            btype_name=btype_name,
-            corrupted=corrupted,
-            quality=quality
-        )
+        self.item_id = item_id
+        self.name = name
+        self.btype = btype
+        self.corrupted = corrupted
+        self.quality = quality
         self.category = category
         self.ilvl = ilvl
         self.atype = atype

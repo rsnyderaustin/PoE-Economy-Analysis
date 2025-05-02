@@ -26,7 +26,7 @@ class GlobalATypesManager:
                         ilvl: int,
                         affix_types: list[ModAffixType],
                         force_mod_type=None,
-                        exclude_mod_ids: set[int] = None) -> list[CompiledModWithTiers]:
+                        exclude_mod_ids: set[int] = None) -> list[ModTier]:
         atype_manager = self._atype_to_manager[atype]
         mod_tiers = atype_manager.fetch_mod_tiers(ilvl=ilvl,
                                                   affix_types=affix_types,

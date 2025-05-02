@@ -1,5 +1,5 @@
 
-from things.items.base_item import Item
+from data_synthesizing.items.base_item_class import Item
 
 
 class Socketer(Item):
