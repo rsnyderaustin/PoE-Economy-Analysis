@@ -3,7 +3,6 @@ import logging
 
 from .atype_manager import ATypeManager
 from data_synthesizing.mods.mod_tier import ModTier
-from compiled_data.mods_management import BtypeModsManager, CompiledModWithTiers
 from utils.enums import ModAffixType
 
 

@@ -1,7 +1,7 @@
 from crafting import CraftingOutcome
 from crafting.crafting_engine import CraftingEngine
 from things.items import Modifiable
-from utils.enums import Rarity, ModAffixType, ItemCategory
+from utils.enums import ItemCategory
 from .base_currency_engine import CurrencyEngine
 
 

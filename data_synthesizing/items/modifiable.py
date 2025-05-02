@@ -1,9 +1,8 @@
 
 import re
 
-from utils.enums import ModifierClass, ModAffixType, ItemCategory
 from data_synthesizing.mods import ModTier
-from things.items.mod import Mod
+from utils.enums import ModAffixType, ItemCategory
 from .socketer import Socketer
 
 

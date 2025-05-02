@@ -1,12 +1,11 @@
 
 import logging
-import time
 
 import requests
 
 from external_apis.trade_api.request_throttler import RequestThrottler
 from utils import EnvLoader
-from utils.enums import EnvVar, TradeApiConfig
+from utils.enums import EnvVar
 
 
 def chunk_list(items: list, chunk_size: int = 10):

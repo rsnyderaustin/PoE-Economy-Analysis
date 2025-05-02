@@ -3,7 +3,7 @@ import json
 import logging
 
 from utils import PathProcessor
-from .things import ItemListing, HybridMod, Mod, Rune
+from .things import ItemListing, Rune
 
 
 class ApiDataSaver:
@@ -27,11 +27,10 @@ class ApiDataSaver:
 
         for mod in listing.mods:
 
-            if isinstance(mod, HybridMod):
-                mod_ids = [sub_mod.mod_id for sub_mod in mod.mods]
+            if mod.is_hybrid:
                 if mod.mod_text not in cls.category_mods_dict[listing.item_atype]:
                     logging.info(f"Found new hybrid mod {mod.mod_name} for item category {listing.item_atype}.")
-                    cls.category_mods_dict[listing.item_atype][mod.mod_name] = mod_ids
+                    cls.category_mods_dict[listing.item_atype][mod.mod_name] = mod.sub_mod_ids
 
             elif isinstance(mod, Mod):
                 if mod.mod_name not in cls.category_mods_dict[listing.item_atype]:

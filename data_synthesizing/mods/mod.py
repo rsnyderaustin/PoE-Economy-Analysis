@@ -1,6 +1,6 @@
 from utils.enums import ModAffixType
-from .sub_mod import SubMod
 from .mod_tier import ModTier
+from .sub_mod import SubMod
 
 
 def _determine_mod_id(atype: str, mod_ids: list[str]):
@@ -32,6 +32,7 @@ class Mod:
     # Some mod types (ex: enchant) do not have a mod name, tier, or affix type
     # Rune mods do not always have a mod ID, so for consistencies sake none of the runes will have IDs
     def __init__(self,
+                 mod_text: str,
                  sub_mods: list[SubMod],
                  mod_name: str = None,
                  mod_types: list[str] = None,
@@ -44,6 +45,7 @@ class Mod:
         :param mod_name:
         :param atype: Attribute type (ie: DEX Body Armour)
         """
+        self.mod_text = mod_text
         self.sub_mods = sub_mods
         self.mod_id = _determine_mod_id(atype=atype,
                                         mod_ids=[sub_mod.mod_id for sub_mod in sub_mods])
@@ -63,6 +65,10 @@ class Mod:
 
     def __hash__(self):
         return hash(self.mod_id)
+
+    @property
+    def sub_mod_ids(self) -> list[str]:
+        return [sub_mod.mod_id for sub_mod in self.sub_mods]
 
     @property
     def is_hybrid(self):

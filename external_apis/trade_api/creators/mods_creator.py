@@ -2,9 +2,10 @@
 import logging
 import re
 
-from external_apis.trade_api import helper_funcs
 from data_synthesizing.mods.hybrid_mod import HybridMod
+
 from data_synthesizing.mods.mod import Mod
+from external_apis.trade_api import helper_funcs
 from utils.enums import ModAffixType, ModClass
 
 

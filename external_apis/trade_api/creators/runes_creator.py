@@ -1,6 +1,5 @@
 
 import logging
-import re
 
 from utils.enums import ModClass
 from .. import helper_funcs
