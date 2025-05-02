@@ -9,15 +9,15 @@ from utils import classifications
 from .base_currency_engine import CurrencyEngine
 
 
-class BlacksmithsWhetstone(CurrencyEngine):
-    item_id = 'whetstone'
+class ArcanistsEtcher(CurrencyEngine):
+    item_id = 'etcher'
 
     @classmethod
     def apply(cls, crafting_engine: CraftingEngine, item: Modifiable) -> list[CraftingOutcome]:
         if item.corrupted:
             return [cls.no_outcome_change(item=item)]
 
-        if item.category not in classifications.martial_weapons:
+        if item.category not in classifications.non_martial_weapons:
             return [cls.no_outcome_change(item=item)]
 
         item_quality = item.quality if item.quality else 0

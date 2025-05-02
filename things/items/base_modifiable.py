@@ -1,7 +1,7 @@
 
 import re
 
-from utils.enums import ModifierClass, ModAffixType
+from utils.enums import ModifierClass, ModAffixType, ItemCategory
 from .base_item import Item
 from .mod import Mod
 
@@ -11,6 +11,7 @@ class Modifiable(Item):
     def __init__(self,
                  item_id: str,
                  name: str,
+                 category: ItemCategory,
                  btype_name: str,
                  atype: str,
                  quality: int,
@@ -32,6 +33,7 @@ class Modifiable(Item):
             corrupted=corrupted,
             quality=quality
         )
+        self.category = category
         self.ilvl = ilvl
         self.atype = atype
 

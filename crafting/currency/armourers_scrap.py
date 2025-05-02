@@ -5,6 +5,7 @@ from crafting import CraftingOutcome
 from crafting.crafting_engine import CraftingEngine
 from things.items import Modifiable
 from utils.enums import Rarity, ModAffixType
+from utils import classifications
 from .base_currency_engine import CurrencyEngine
 
 
@@ -16,7 +17,7 @@ class ArmourersScrap(CurrencyEngine):
         if item.corrupted:
             return [cls.no_outcome_change(item=item)]
 
-        if item.group != ItemGroup.ARMOUR:
+        if item.category not in classifications.armour:
             return [cls.no_outcome_change(item=item)]
 
         item_quality = item.quality if item.quality else 0
