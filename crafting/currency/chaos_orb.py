@@ -27,7 +27,7 @@ class ChaosOrb(CurrencyEngine):
         open_suffixes = 3 - len(item.suffixes)
 
         irremovable_mod_ids = set(
-            unremovable_mod.mod_id for unremovable_mod in item.permanent_mods
+            irremovable_mod.mod_id for irremovable_mod in item.permanent_mods
         )
 
         returnable_outcomes = []
@@ -56,7 +56,7 @@ class ChaosOrb(CurrencyEngine):
                 mod_tiers=viable_mod_tiers,
                 exclude_mod_ids=other_mod_ids,
             )
-            
+
             for outcome in crafting_outcomes:
                 outcome.remove_modifier = modifier
                 outcome.outcome_probability /= len(item.explicit_mods)

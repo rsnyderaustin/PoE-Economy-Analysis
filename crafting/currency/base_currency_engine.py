@@ -7,6 +7,7 @@ from things.items import Modifiable
 
 
 class CurrencyEngine(ABC):
+    item_id = None
 
     @abstractmethod
     def apply(self, crafting_engine: CraftingEngine, item: Modifiable):

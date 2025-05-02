@@ -1,4 +1,6 @@
 
+import re
+
 from utils.enums import ModifierClass, ModAffixType
 from .base_item import Item
 from .mod import Mod
@@ -15,6 +17,8 @@ class Modifiable(Item):
                  corrupted: bool,
                  ilvl: int,
                  rarity: str = None,
+                 num_sockets: int = None,
+                 socketed_items: list[Socketer] = None,
                  implicit_mods: list[ModTier] = None,
                  explicit_mods: list[ModTier] = None,
                  enchant_mods: list[ModTier] = None,
@@ -32,12 +36,21 @@ class Modifiable(Item):
         self.atype = atype
 
         self.rarity = rarity
+        self.num_sockets = num_sockets
+        self.socketed_items = socketed_items
 
         self.implicit_mods = implicit_mods or []
         self.explicit_mods = explicit_mods or []
         self.enchant_mods = enchant_mods or []
         self.rune_mods = rune_mods or []
         self.fractured_mods = fractured_mods or []
+
+    @property
+    def maximum_quality(self):
+        for mod in self.implicit_mods:
+            if bool(re.fullmatch(r"Maximum Quality is \d+%", mod.mod_text)):
+                return re.search(r'\d+', mod.mod_text).group()
+
 
     @property
     def mods(self):
@@ -58,6 +71,10 @@ class Modifiable(Item):
         return self.fractured_mods
 
     @property
+    def removable_mods(self) -> list:
+        return self.removable_prefixes + self.removable_suffixes
+
+    @property
     def removable_prefixes(self) -> list:
         changeable_prefixes = [mod for mod in self.explicit_mods
                                if mod.affix_type == ModAffixType.PREFIX]
@@ -68,11 +85,6 @@ class Modifiable(Item):
         changeable_suffixes = [mod for mod in self.explicit_mods
                                if mod.affix_type == ModAffixType.SUFFIX]
         return changeable_suffixes
-
-    def add_modifier(self, mod_tier: ModTier):
-        if mod_tier.affix_type == ModAffixType.PREFIX:
-            self.explicit_mods.append(mod_tier)
-
 
 
 
