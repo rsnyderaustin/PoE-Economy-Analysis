@@ -273,5 +273,39 @@
         "of Consumption": "explicit.stat_1368271171",
         "Athlete's": "explicit.stat_3299347043",
         "Deliberate": "explicit.stat_803737631"
+    },
+    "[Mace|One Hand Mace]": {
+        "": "enchant.stat_2694482655",
+        "Annealed": "explicit.stat_1940865751",
+        "of Consumption": "explicit.stat_1368271171",
+        "of the Brute": "explicit.stat_4080418644",
+        "of Victory": "explicit.stat_3695891184",
+        "Deliberate": "explicit.stat_691932474",
+        "Squire's": [
+            "explicit.stat_1509134228",
+            "explicit.stat_691932474"
+        ]
+    },
+    "[Spear]": {
+        "Mercenary's": [
+            "explicit.stat_1509134228",
+            "explicit.stat_691932474"
+        ],
+        "Catalysing": "explicit.stat_387439868",
+        "Consistent": "explicit.stat_691932474",
+        "of the Jaguar": "explicit.stat_3261801346",
+        "of Conquest": "explicit.stat_3695891184",
+        "of Anger": "explicit.stat_2694482655"
+    },
+    "[Mace|Two Hand Mace]": {
+        "of the Talented": "explicit.stat_3639275092",
+        "Electrocuting": "explicit.stat_3336890334",
+        "of the Wrestler": "explicit.stat_4080418644",
+        "Mercenary's": [
+            "explicit.stat_1509134228",
+            "explicit.stat_691932474"
+        ],
+        "of Slamming": "explicit.stat_748522257",
+        "Frozen": "explicit.stat_1037193709"
     }
 }

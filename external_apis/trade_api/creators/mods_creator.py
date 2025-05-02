@@ -14,7 +14,7 @@ class ModsCreator:
         'implicitMods': 'implicit',
         'enchantMods': 'enchant',
         'explicitMods': 'explicit',
-        'fractureMods': 'fracture',
+        'fracturedMods': 'fractured',
         'runeMods': 'rune'
     }
 
@@ -92,7 +92,7 @@ class ModsCreator:
         ]
         mod_text_display_order = item_data[mod_class.value]
         mod_id_to_text = {
-            mod_id: mod_text
+            mod_id: re.sub(r'\d+', '#', helper_funcs.remove_piped_brackets(mod_text))
             for mod_id, mod_text in list(zip(mod_id_display_order, mod_text_display_order))
         }
 

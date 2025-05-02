@@ -6,7 +6,7 @@ from utils.enums import Currency, TradeFilters, TypeFilters, Rarity, ModClass, E
 from .api_data_saver import ApiDataSaver
 from .atype_clasifier import ATypeClassifier
 from .creators import RunesCreator, ListingCreator
-from .querying import (MetaModFilter, TradeQueryConstructor)
+from .querying import (MetaFilter, TradeQueryConstructor)
 from .trade_items_fetcher import TradeItemsFetcher
 from . import helper_funcs
 
@@ -40,20 +40,20 @@ class TradeApiCoordinator:
                          f"\n\tCurrency: {currency}"
                          f"\n\tPrice range: {price_range}")
 
-            rarity_filter = MetaModFilter(
+            rarity_filter = MetaFilter(
                 meta_filter_enum=TypeFilters.ITEM_RARITY,
                 mod_value=Rarity.RARE.value
             )
-            price_filter = MetaModFilter(
+            price_filter = MetaFilter(
                 meta_filter_enum=TradeFilters.PRICE,
                 mod_value=(price_range[0], price_range[1]),
                 price_currency_enum=currency
             )
-            rune_socket_filter = MetaModFilter(
+            rune_socket_filter = MetaFilter(
                 meta_filter_enum=EquipmentAttribute.RUNE_SOCKETS,
                 mod_value=(1, 1)
             )
-            only_armour_filter = MetaModFilter(
+            only_armour_filter = MetaFilter(
                 meta_filter_enum=TypeFilters.ITEM_CATEGORY,
                 mod_value=item_category.value
             )

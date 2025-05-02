@@ -1,15 +1,23 @@
 from utils.enums import (MetaSearchType, StatSearchType, EquipmentAttribute,
                          WeaponAttribute, ArmourAttribute, TypeFilters, RequirementFilters, MiscFilters, TradeFilters)
-from .meta_filters_group import MetaModFilter
-from .stats_filters_group import StatsFiltersGroup
+from .meta_filter import MetaFilter
+from .stats_filters_group import StatsFiltersGroup, StatFilter
 
 
-def _handle_min_max(relevant_dict: dict, meta_mod_filter: MetaModFilter):
-    min_val = meta_mod_filter.mod_value[0]
-    max_val = meta_mod_filter.mod_value[1]
+def _handle_min_max(relevant_dict: dict, query_filter):
 
-    if meta_mod_filter.price_currency_enum:
-        relevant_dict['option'] = meta_mod_filter.price_currency_enum.value
+    if isinstance(query_filter, MetaFilter):
+        min_val = query_filter.mod_value[0]
+        max_val = query_filter.mod_value[1]
+
+        if query_filter.price_currency_enum:
+            relevant_dict['option'] = query_filter.price_currency_enum.value
+
+    elif isinstance(query_filter, StatFilter):
+        min_val = query_filter.values_range[0]
+        max_val = query_filter.values_range[1]
+    else:
+        raise TypeError(f"Variable with invalid type {type(query_filter)} passed into _handle_min_max.")
 
     if min_val:
         relevant_dict['min'] = min_val
@@ -51,7 +59,7 @@ class TradeQueryConstructor:
         }
 
     def create_trade_query(self,
-                           meta_mod_filters: list[MetaModFilter] = None,
+                           meta_mod_filters: list[MetaFilter] = None,
                            stats_filter_groups: list[StatsFiltersGroup] = None):
         if meta_mod_filters:
             self._handle_meta_query(meta_mod_filters=meta_mod_filters)
@@ -68,7 +76,7 @@ class TradeQueryConstructor:
 
         return self.query
 
-    def _handle_meta_query(self, meta_mod_filters: list[MetaModFilter]):
+    def _handle_meta_query(self, meta_mod_filters: list[MetaFilter]):
         self.query['query']['filters'] = dict()
         meta_query = self.query['query']['filters']
         for meta_filter in meta_mod_filters:
@@ -85,7 +93,7 @@ class TradeQueryConstructor:
 
             if isinstance(meta_filter.mod_value, tuple):
                 _handle_min_max(relevant_dict=meta_mod_dict,
-                                meta_mod_filter=meta_filter)
+                                query_filter=meta_filter)
             else:
                 meta_mod_dict['option'] = meta_filter.mod_value
 
@@ -143,7 +151,7 @@ class TradeQueryConstructor:
 
                         if mod_filter.values_range:
                             _handle_min_max(relevant_dict=mod_values_dict,
-                                            values_range=mod_filter.values_range)
+                                            query_filter=mod_filter)
                         if mod_filter.weight:
                             mod_values_dict['weight'] = mod_filter.weight
 

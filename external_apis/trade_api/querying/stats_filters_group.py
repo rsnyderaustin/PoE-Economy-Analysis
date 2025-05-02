@@ -5,7 +5,7 @@ from enum import Enum
 from utils.enums import StatSearchType
 
 
-class StatModFilter:
+class StatFilter:
 
     def __init__(self,
                  mod_enum: Enum,
@@ -19,5 +19,5 @@ class StatModFilter:
 @dataclass
 class StatsFiltersGroup:
     filter_type: StatSearchType
-    mod_filters: list[StatModFilter]
+    mod_filters: list[StatFilter]
     value_range: tuple = None

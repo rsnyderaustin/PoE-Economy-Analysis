@@ -22,10 +22,13 @@ class ApiDataSaver:
 
     @classmethod
     def save_listing(cls, listing: ItemListing):
-        if listing.item_btype not in cls.category_mods_dict:
+        if listing.item_atype not in cls.category_mods_dict:
             cls.category_mods_dict[listing.item_atype] = dict()
 
         for mod in listing.mods:
+            if mod.mod_id in cls.category_mods_dict[listing.item_atype]:
+                continue
+
             if isinstance(mod, HybridMod):
                 mod_ids = [sub_mod.mod_id for sub_mod in mod.mods]
                 if mod.mod_name not in cls.category_mods_dict[listing.item_atype]:

@@ -5,7 +5,7 @@ from typing import Any
 from utils.enums import Currency
 
 
-class MetaModFilter:
+class MetaFilter:
 
     def __init__(self,
                  meta_filter_enum: Enum,

@@ -2,7 +2,7 @@
 
     Okay so the plan is to ingest items from the PoE Trade API. After ingesting, we
 determine what items are possible to craft or even just relist for profit. Obviously
-the more difficult of these two tasks it to determine what crafts should happen to maximize
+the more difficult of these two tasks is to determine what crafts should happen to maximize
 profit and minimize risk. To do so, we first of all need to understand the different mods
 and weights of mods that go into each item base type (btype). This data comes from
 Craft of Exile / Forbidden Library Discord (CoE / FLD). Mods have different ID's between PoE Trade API
