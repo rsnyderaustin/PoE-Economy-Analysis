@@ -36,6 +36,8 @@ class ExaltedOrb(CurrencyEngine):
         if open_suffixes:
             affix_types.append(ModAffixType.SUFFIX)
 
-        outcomes = crafting_engine.roll_new_modifier(item=item,
-                                                     affix_types=affix_types)
-        return outcomes
+        possible_mod_tiers = crafting_engine.roll_new_modifier(item=item,
+                                                               affix_types=affix_types)
+        crafting_outcomes = crafting_engine.create_crafting_outcomes(item=item,
+                                                                     mod_tiers=possible_mod_tiers)
+        return crafting_outcomes

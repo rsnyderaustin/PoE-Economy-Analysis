@@ -1,5 +1,5 @@
 
-from .mod import Mod
+from data_synthesizing.mods.mod import Mod
 from .skill import Skill
 
 

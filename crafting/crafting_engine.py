@@ -1,20 +1,18 @@
-import copy
-
 from .crafting_outcome import CraftingOutcome
-from external_apis.craft_of_exile_api.global_btypes_manager import GlobalBtypesManager
+from data_synthesizing import GlobalATypesManager, ModTier
 from things.items import Modifiable
 from utils.enums import ModAffixType
 
 
 class CraftingEngine:
 
-    def __init__(self, global_mods_manager: GlobalBtypesManager):
-        self.global_mods_manager = global_mods_manager
+    def __init__(self, global_atypes_manager: GlobalATypesManager):
+        self.global_atypes_manager = global_atypes_manager
 
-    def fetch_mod_tiers(self,
-                        item: Modifiable,
-                        mod_ids: list[int]) -> list[ModTier]:
-        return self.global_mods_manager.fetch_specific_mod_tiers(
+    def fetch_atype_mod_tiers(self,
+                              item: Modifiable,
+                              mod_ids: list[int]) -> list[ModTier]:
+        return self.global_atypes_manager.fetch_specific_mod_tiers(
             atype=item.atype,
             ilvl=item.ilvl,
             mod_ids=mod_ids
@@ -34,11 +32,11 @@ class CraftingEngine:
         :return:
         """
 
-        atype_mod_tiers = self.global_mods_manager.fetch_atype_mod_tiers(
+        atype_mod_tiers = self.global_atypes_manager.fetch_mod_tiers(
             atype=item.atype,
             ilvl=item.ivl,
             force_mod_type=force_type,
-            ignore_mod_ids=set(mod.coe_mod_id for mod in item.explicit_mods) if not exclude_mod_ids else exclude_mod_ids,
+            exclude_mod_ids=set(mod.coe_mod_id for mod in item.explicit_mods) if not exclude_mod_ids else exclude_mod_ids,
             affix_types=affix_types
         )
 
@@ -48,7 +46,6 @@ class CraftingEngine:
                                  item: Modifiable,
                                  mod_tiers: list[ModTier],
                                  exclude_mod_ids: list[int] = None):
-
         mod_tiers = [mod_tier for mod_tier in mod_tiers
                      if mod_tier.mod_id not in exclude_mod_ids]
         total_mod_weight = sum(
