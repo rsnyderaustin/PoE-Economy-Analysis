@@ -26,12 +26,10 @@ class ApiDataSaver:
             cls.category_mods_dict[listing.item_atype] = dict()
 
         for mod in listing.mods:
-            if mod.mod_id in cls.category_mods_dict[listing.item_atype]:
-                continue
 
             if isinstance(mod, HybridMod):
                 mod_ids = [sub_mod.mod_id for sub_mod in mod.mods]
-                if mod.mod_name not in cls.category_mods_dict[listing.item_atype]:
+                if mod.mod_text not in cls.category_mods_dict[listing.item_atype]:
                     logging.info(f"Found new hybrid mod {mod.mod_name} for item category {listing.item_atype}.")
                     cls.category_mods_dict[listing.item_atype][mod.mod_name] = mod_ids
 

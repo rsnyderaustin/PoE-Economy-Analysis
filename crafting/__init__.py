@@ -1,1 +1,1 @@
-from .outcomes import CraftingOutcome
+from .crafting_outcome import CraftingOutcome

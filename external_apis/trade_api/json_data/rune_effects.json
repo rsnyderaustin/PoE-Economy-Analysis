@@ -23,7 +23,8 @@
         "Stone Rune": "Causes 25% increased Stun Buildup",
         "Greater Resolve Rune": "+10 to Intelligence",
         "Lesser Rebirth Rune": "Gain 10 Life per Enemy Killed",
-        "Soul Core of Citaqualotl": "30% increased Elemental Damage with Attacks"
+        "Soul Core of Citaqualotl": "30% increased Elemental Damage with Attacks",
+        "Lesser Storm Rune": "Adds 1 to 10 Lightning Damage"
     },
     "Spear": {
         "Greater Vision Rune": "+110 to Accuracy Rating",

@@ -10,14 +10,16 @@ class Modifiable(Item):
                  item_id: str,
                  name: str,
                  btype_name: str,
+                 atype: str,
                  quality: int,
                  corrupted: bool,
                  ilvl: int,
-                 implicit_mods: list[Mod] = None,
-                 explicit_mods: list[Mod] = None,
-                 enchant_mods: list[Mod] = None,
-                 rune_mods: list[Mod] = None,
-                 fractured_mods: list[Mod] = None
+                 rarity: str = None,
+                 implicit_mods: list[ModTier] = None,
+                 explicit_mods: list[ModTier] = None,
+                 enchant_mods: list[ModTier] = None,
+                 rune_mods: list[ModTier] = None,
+                 fractured_mods: list[ModTier] = None
                  ):
         super(Item).__init__(
             item_id=item_id,
@@ -27,6 +29,9 @@ class Modifiable(Item):
             quality=quality
         )
         self.ilvl = ilvl
+        self.atype = atype
+
+        self.rarity = rarity
 
         self.implicit_mods = implicit_mods or []
         self.explicit_mods = explicit_mods or []
@@ -35,14 +40,38 @@ class Modifiable(Item):
         self.fractured_mods = fractured_mods or []
 
     @property
+    def mods(self):
+        return self.explicit_mods + self.fractured_mods
+
+    @property
     def prefixes(self):
-        return [mod for mod in getattr(self, ModifierClass.EXPLICIT.value)
-                if mod.mod_type_enum == ModAffixType.PREFIX]
+        return [mod for mod in self.mods
+                if mod.affix_type == ModAffixType.PREFIX]
 
     @property
     def suffixes(self):
-        return [mod for mod in getattr(self, ModifierClass.EXPLICIT.value)
-                if mod.mod_type_enum == ModAffixType.SUFFIX.value]
+        return [mod for mod in self.mods
+                if mod.affix_type == ModAffixType.SUFFIX.value]
+
+    @property
+    def permanent_mods(self) -> list:
+        return self.fractured_mods
+
+    @property
+    def removable_prefixes(self) -> list:
+        changeable_prefixes = [mod for mod in self.explicit_mods
+                               if mod.affix_type == ModAffixType.PREFIX]
+        return changeable_prefixes
+
+    @property
+    def removable_suffixes(self) -> list:
+        changeable_suffixes = [mod for mod in self.explicit_mods
+                               if mod.affix_type == ModAffixType.SUFFIX]
+        return changeable_suffixes
+
+    def add_modifier(self, mod_tier: ModTier):
+        if mod_tier.affix_type == ModAffixType.PREFIX:
+            self.explicit_mods.append(mod_tier)
 
 
 

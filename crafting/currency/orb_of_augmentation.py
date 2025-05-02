@@ -6,28 +6,22 @@ from utils.enums import Rarity, ModAffixType
 from .base_currency_engine import CurrencyEngine
 
 
-class ExaltedOrb(CurrencyEngine):
-    item_id = 'exalt'
+class OrbOfAugmentation(CurrencyEngine):
+    item_id = 'aug'
 
     @classmethod
     def apply(cls, crafting_engine: CraftingEngine, item: Modifiable) -> list[CraftingOutcome]:
-        if item.rarity != Rarity.RARE:
-            return [
-                cls.no_outcome_change(item=item)
-            ]
-
         if item.corrupted:
-            return [
-                cls.no_outcome_change(item=item)
-            ]
+            return [cls.no_outcome_change(item=item)]
 
-        open_prefixes = 3 - len(item.prefixes)
-        open_suffixes = 3 - len(item.suffixes)
+        if item.rarity != Rarity.MAGIC:
+            return [cls.no_outcome_change(item=item)]
+
+        open_prefixes = 1 - len(item.prefixes)
+        open_suffixes = 1 - len(item.suffixes)
 
         if not open_prefixes and not open_suffixes:
-            return [
-                cls.no_outcome_change(item=item)
-            ]
+            return [cls.no_outcome_change(item=item)]
 
         affix_types = []
         if open_prefixes:
@@ -39,3 +33,4 @@ class ExaltedOrb(CurrencyEngine):
         outcomes = crafting_engine.roll_new_modifier(item=item,
                                                      affix_types=affix_types)
         return outcomes
+
