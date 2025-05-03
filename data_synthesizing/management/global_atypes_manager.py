@@ -1,10 +1,9 @@
 
 import logging
 
-from .atype_manager import ATypeManager
-from data_synthesizing.mods.mod_tier import ModTier
-from compiled_data.mods_management import BtypeModsManager, CompiledModWithTiers
+from data_synthesizing.things.mods.mod_tier import ModTier
 from utils.enums import ModAffixType
+from .atype_manager import ATypeManager
 
 
 class GlobalATypesManager:

@@ -1,5 +1,3 @@
-import copy
-
 from crafting import CraftingOutcome
 from crafting.crafting_engine import CraftingEngine
 from things.items import Modifiable

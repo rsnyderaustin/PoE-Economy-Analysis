@@ -1,12 +1,11 @@
 
 import logging
-import time
 
 import requests
 
 from external_apis.trade_api.request_throttler import RequestThrottler
 from utils import EnvLoader
-from utils.enums import EnvVar, TradeApiConfig
+from utils.enums import EnvVar
 
 
 def chunk_list(items: list, chunk_size: int = 10):
@@ -53,9 +52,9 @@ class TradeItemsFetcher:
         return json_data
 
     @classmethod
-    def _get_with_item_ids(cls, search_id, item_ids):
+    def _get_with_item_ids(cls, search_id, item_ids) -> list:
 
-        logging.info(f"Getting items with item IDs..")
+        logging.info(f"Getting things with item IDs..")
         chunked_list = chunk_list(items=item_ids, chunk_size=10)
 
         params = {
@@ -80,7 +79,7 @@ class TradeItemsFetcher:
                 cookies=cookies
             )
             response.raise_for_status()
-            logging.info("Successfully sent a GET for items with item IDs.")
+            logging.info("Successfully sent a GET for things with item IDs.")
             json_data = response.json()
             result = json_data['result']
             response_items.extend(result)

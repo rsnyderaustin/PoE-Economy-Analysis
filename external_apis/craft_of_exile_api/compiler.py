@@ -1,4 +1,4 @@
-from .mod import CoEMod
+from .coe_mod import CoEMod
 from .mod_tier import ModTier
 from .mods_manager import CoEModsManager
 
@@ -44,6 +44,11 @@ class CoECompiler:
 
         self.mod_id_to_mod_text = self.bases_data['mod']
         self.valid_coe_mod_ids = set(self.mod_id_to_mod_text.keys())
+        self.raw_mod_tiers = self.mods_data['tiers']
+
+        self.mods_manager = CoEModsManager()
+        mods = self._create_mods()
+
 
     def mod_tiers_generator(self):
         btype_name_to_btype_id = {
@@ -68,8 +73,7 @@ class CoECompiler:
 
     def _create_mods(self) -> list[CoEMod]:
         new_mods = list()
-        mod_ids = set(self.mod_id_to_mod_text.keys())
-        for mod_id in mod_ids:
+        for mod_id in self.mod_id_to_mod_text.keys():
             mod_text = self.mod_id_to_mod_text[mod_id]
             mod_types = self.mod_id_to_mod_types[mod_id]
             affix_type = self.mod_id_to_affix_type[mod_id]

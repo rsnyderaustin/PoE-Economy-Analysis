@@ -1,7 +1,7 @@
 
 import logging
 
-from data_synthesizing.mods.mod import Mod
+from data_synthesizing.things.mods.mod import Mod
 from utils.enums import ModAffixType
 
 

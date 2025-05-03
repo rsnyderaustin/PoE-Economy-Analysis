@@ -3,12 +3,11 @@ from itertools import product
 
 from utils import classifications
 from utils.enums import Currency, TradeFilters, TypeFilters, Rarity, ModClass, EquipmentAttribute
+from . import helper_funcs
 from .api_data_saver import ApiDataSaver
-from .atype_clasifier import ATypeClassifier
-from .creators import RunesCreator, ListingCreator
+from data_synthesizing.atype_clasifier import ATypeClassifier
 from .querying import (MetaFilter, TradeQueryConstructor)
 from .trade_items_fetcher import TradeItemsFetcher
-from . import helper_funcs
 
 
 class TradeApiCoordinator:
@@ -17,7 +16,7 @@ class TradeApiCoordinator:
         self.api_data_saver = ApiDataSaver()
         self.api_data_fetcher = TradeItemsFetcher()
 
-    def fill_internal_data(self):
+    def sample_items_generator(self):
         price_ranges = []
         for i in range(0, 100, 11):
             price_ranges.append((i, i + 10))
@@ -28,13 +27,15 @@ class TradeApiCoordinator:
             Currency.DIVINE_ORB
         ]
 
-        result = list(product(
-            list(classifications.socketable_item_categories),
-            currencies,
-            price_ranges
-        ))
+        query_combos = list(
+            product(
+                list(classifications.socketable_items),
+                currencies,
+                price_ranges
+            )
+        )
 
-        for item_category, currency, price_range in result:
+        for item_category, currency, price_range in query_combos:
             logging.info(f"Querying:"
                          f"\n\tItem Category: {item_category}"
                          f"\n\tCurrency: {currency}"
@@ -62,6 +63,9 @@ class TradeApiCoordinator:
             )
 
             api_items = self.api_data_fetcher.fetch_items(query=query)
+
+            for item in api_items:
+                return item
 
             for item_response in api_items:
                 if ModClass.RUNE.value in item_response['item']:

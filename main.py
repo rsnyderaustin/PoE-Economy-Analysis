@@ -1,11 +1,16 @@
 
 import logging
 
-from external_apis.craft_of_exile_api import CoEDataPuller, CoEEndpoint
+from external_apis.craft_of_exile_api import CoEApiManager
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
 
-coe_data = CoEDataPuller.pull_data(endpoint=CoEEndpoint.BASE_TYPES)
-coe_mods = CoEDataPuller.pull_data(endpoint=CoEEndpoint.MODS_AND_WEIGHTS)
+
+coe_data = CoEApiManager().pull_data(endpoint='bases',
+                                     load_locally=True)
+coe_mods = CoEApiManager().pull_data(endpoint='mods',
+                                     load_locally=True)
+
+
 x=0

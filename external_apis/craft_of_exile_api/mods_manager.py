@@ -1,5 +1,5 @@
 
-from .mod import CoEMod
+from .coe_mod import CoEMod
 
 
 class CoEModsManager:

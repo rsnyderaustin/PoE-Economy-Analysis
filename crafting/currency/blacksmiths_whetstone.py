@@ -4,8 +4,8 @@ import logging
 from crafting import CraftingOutcome
 from crafting.crafting_engine import CraftingEngine
 from things.items import Modifiable
-from utils.enums import Rarity, ModAffixType
 from utils import classifications
+from utils.enums import Rarity
 from .base_currency_engine import CurrencyEngine
 
 
