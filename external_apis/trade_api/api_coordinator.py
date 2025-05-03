@@ -1,11 +1,11 @@
 import logging
 from itertools import product
 
+from data_synthesizing.atype_clasifier import ATypeClassifier
 from utils import classifications
 from utils.enums import Currency, TradeFilters, TypeFilters, Rarity, ModClass, EquipmentAttribute
 from . import helper_funcs
 from .api_data_saver import ApiDataSaver
-from data_synthesizing.atype_clasifier import ATypeClassifier
 from .querying import (MetaFilter, TradeQueryConstructor)
 from .trade_items_fetcher import TradeItemsFetcher
 

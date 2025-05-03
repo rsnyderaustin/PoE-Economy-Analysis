@@ -2,10 +2,11 @@
 import logging
 
 from data_synthesizing.items.item_listing import ItemListing
+
+from data_synthesizing.atype_clasifier import ATypeClassifier
 from utils.enums import ModClass, ItemCategory
 from .mods_creator import ModsCreator
 from .skills_creator import SkillsCreator
-from data_synthesizing.atype_clasifier import ATypeClassifier
 
 
 class ListingCreator:

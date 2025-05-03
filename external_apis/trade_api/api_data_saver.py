@@ -2,8 +2,9 @@
 import json
 import logging
 
-from utils import PathProcessor
 from data_synthesizing.creators.things import ItemListing, Rune
+
+from utils import PathProcessor
 
 
 class ApiDataSaver:

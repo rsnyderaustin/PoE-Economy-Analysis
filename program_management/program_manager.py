@@ -1,6 +1,6 @@
 
-from external_apis import TradeApiCoordinator
 from data_synthesizing import ModsCreator, RunesCreator
+from external_apis import TradeApiCoordinator
 
 
 class ProgramManager:

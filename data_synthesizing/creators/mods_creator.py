@@ -2,7 +2,6 @@
 import logging
 import re
 
-from data_synthesizing.things.mods.mod import Mod
 from external_apis.trade_api import helper_funcs
 from utils.enums import ModAffixType, ModClass
 from ..things import Mod
@@ -104,7 +103,7 @@ class ModsCreator:
         """
         mod_classes = [e.value for e in ModClass if e != ModClass.RUNE]
         for mod_class in mod_classes:
-        abbrev_mod_class = cls._mod_class_name_to_abbrev[mod_class.value]
+            abbrev_mod_class = cls._mod_class_name_to_abbrev[mod_class.value]
         hashes_list = item_data['extended']['hashes'][abbrev_mod_class]
 
         mod_id_display_order = [

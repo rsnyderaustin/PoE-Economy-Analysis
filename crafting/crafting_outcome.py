@@ -1,6 +1,5 @@
 
-from data_synthesizing import ModTier
-from things.items import Modifiable
+from data_synthesizing import ModTier, Modifiable
 from utils.enums import Rarity
 
 
