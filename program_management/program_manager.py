@@ -14,5 +14,5 @@ class ProgramManager:
     def execute(self):
         for api_item_response in self.trade_coordinator.sample_items_generator():
             runes_for_internal_storage = RunesCreator.create_runes_for_internal_storage(item_data=item_data)
-            
+
 
