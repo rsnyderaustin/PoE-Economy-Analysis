@@ -1,5 +1,5 @@
 
-from data_synthesizing.things.mods.mod import Mod
+from data_synthesizing.things import ModTier
 from .skill import Skill
 
 
@@ -22,12 +22,12 @@ class ItemListing:
                  str_requirement: int,
                  int_requirement: int,
                  dex_requirement: int,
-                 implicit_mods: list[Mod],
-                 enchant_mods: list[Mod],
-                 rune_mods: list[Mod],
+                 implicit_mods: list[ModTier],
+                 enchant_mods: list[ModTier],
+                 rune_mods: list[ModTier],
                  item_skills: list[Skill],
-                 fractured_mods: list[Mod],
-                 explicit_mods: list[Mod]
+                 fractured_mods: list[ModTier],
+                 explicit_mods: list[ModTier]
                  ):
         self.listing_id = listing_id
         self.date_fetched = date_fetched

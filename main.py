@@ -1,16 +1,5 @@
-
-import logging
-
-from external_apis.craft_of_exile_api import CoEApiManager
-
-logging.basicConfig(level=logging.INFO,
-                    force=True)
+from program_management import ProgramManager
 
 
-coe_data = CoEApiManager().pull_data(endpoint='bases',
-                                     load_locally=True)
-coe_mods = CoEApiManager().pull_data(endpoint='mods',
-                                     load_locally=True)
-
-
-x=0
+prog_manager = ProgramManager()
+prog_manager.execute()

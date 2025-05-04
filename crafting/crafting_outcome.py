@@ -1,6 +1,6 @@
 
 from data_synthesizing import ModTier, Modifiable
-from utils.enums import Rarity
+from shared.enums import Rarity
 
 
 class CraftingOutcome:

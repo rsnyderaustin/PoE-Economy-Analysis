@@ -1,8 +1,8 @@
 
 import re
 
-from data_synthesizing.things.mods import ModTier
-from utils.enums import ModAffixType, ItemCategory
+from shared.enums import ModAffixType, ItemCategory
+from .mods import ModTier
 from .socketer import Socketer
 
 
@@ -51,19 +51,18 @@ class Modifiable:
             if bool(re.fullmatch(r"Maximum Quality is \d+%", mod.mod_text)):
                 return re.search(r'\d+', mod.mod_text).group()
 
-
     @property
-    def mods(self):
+    def affix_mods(self):
         return self.explicit_mods + self.fractured_mods
 
     @property
     def prefixes(self):
-        return [mod for mod in self.mods
+        return [mod for mod in self.affix_mods
                 if mod.affix_type == ModAffixType.PREFIX]
 
     @property
     def suffixes(self):
-        return [mod for mod in self.mods
+        return [mod for mod in self.affix_mods
                 if mod.affix_type == ModAffixType.SUFFIX.value]
 
     @property
