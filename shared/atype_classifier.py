@@ -7,12 +7,12 @@ class ATypeClassifier:
     }
 
     @classmethod
-    def convert(cls,
-                item_data: dict = None,
-                raw_atype: str = None,
-                str_requirement: int = None,
-                int_requirement: int = None,
-                dex_requirement: int = None):
+    def classify(cls,
+                 item_data: dict = None,
+                 raw_atype: str = None,
+                 str_requirement: int = None,
+                 int_requirement: int = None,
+                 dex_requirement: int = None):
         """
 
         :param item_data: Either the item data alone or ALL other attributes should be supplied. Designed this way so that

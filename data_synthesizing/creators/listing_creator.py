@@ -64,7 +64,7 @@ class ListingCreator:
 
         if 'properties' in it and 'name' in it['properties'][0]:
             raw_atype = it['properties'][0]['name']
-            atype = ATypeClassifier.convert(
+            atype = ATypeClassifier.classify(
                 raw_atype=raw_atype,
                 str_requirement=str_requirement,
                 int_requirement=int_requirement,

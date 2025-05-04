@@ -41,15 +41,15 @@ class ProgramManager:
 
         api_item_responses = external_apis.TradeItemsFetcher().fetch_items(query=query)
 
-        mods = [
-            data_ingestion.create_item_mods(item_data=api_item_response['item'])
-            for api_item_response in api_item_responses
-        ]
+        for api_item_response in api_item_responses:
+            mods = data_ingestion.create_item_mods(item_data=api_item_response['item'])
+            for mod in mods:
+                self.export_manager.save_mod(item_mod=mod)
 
-        runes = [
-            data_ingestion.create_socketer_for_internal_storage(item_data=api_item_response['item'])
-            for api_item_response in api_item_responses
-        ]
+            socketer = data_ingestion.create_socketer_for_internal_storage(item_data=api_item_response['item'])
+            self.export_manager.save_rune(atype=ATypeClassifier.classify(item_data=api_item_response['item']),
+                                          rune_name=socketer.name,
+                                          rune_effect=socketer.text)
 
-        x=0
+        self.export_manager.export_data()
 

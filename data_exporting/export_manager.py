@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 
+from instances_and_definitions import ItemMod
 from shared import PathProcessor
 
 
@@ -27,23 +28,23 @@ class ExportManager:
         with open(self.atype_mods_json_path, 'r') as atype_mods_file:
             self.atype_mods_data = json.load(atype_mods_file)
 
-    def save_mod(self, atype: str, mod_id: str, ):
-        if mod.atype not in self.atype_mods_data:
-            self.atype_mods_data[mod.atype] = dict()
+    def save_mod(self, item_mod: ItemMod):
+        if item_mod.atype not in self.atype_mods_data:
+            self.atype_mods_data[item_mod.atype] = dict()
 
-        atype_dict = self.atype_mods_data[mod.atype]
+        atype_dict = self.atype_mods_data[item_mod.atype]
 
-        if mod.mod_id not in self.atype_mods_data[mod.atype]:
-            atype_dict[mod.mod_id] = {
-                'sub_mod_ids': [sub_mod.mod_id for sub_mod in mod.sub_mods],
-                'mod_types': mod.mod_types,
-                'mod_texts': [sub_mod.mod_text for sub_mod in mod.sub_mods],
-                'affix_type': mod.affix_type.value,
+        if item_mod.mod_id not in self.atype_mods_data[item_mod.atype]:
+            atype_dict[item_mod.mod_id] = {
+                'sub_mod_ids': [sub_mod.mod_id for sub_mod in item_mod.sub_mods],
+                'mod_types': item_mod.mod_types,
+                'mod_texts': [sub_mod.mod_text for sub_mod in item_mod.sub_mods],
+                'affix_type': item_mod.affix_type.value,
                 'mod_tiers': dict()
             }
 
-            for ilvl, mod_tier in mod.ilvl_to_mod_tier.items():
-                atype_dict[mod.mod_id]['mod_tiers'] = {
+            for ilvl, mod_tier in item_mod.ilvl_to_mod_tier.items():
+                atype_dict[item_mod.mod_id]['mod_tiers'] = {
                     'ilvl': mod_tier.ilvl,
                     'mod_id_to_values_ranges': mod_tier.mod_id_to_values_ranges,
                     'weighting': mod_tier.weighting

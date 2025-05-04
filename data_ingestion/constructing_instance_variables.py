@@ -1,6 +1,7 @@
 import logging
 import json
 
+from shared import ATypeClassifier
 import instances_and_definitions
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod
 from shared import shared_utils
@@ -60,7 +61,7 @@ def _create_sub_mods(mod_id_to_sanitized_text: dict, mod_magnitudes: list) -> li
         ]
         sub_mod = SubMod(
             mod_id=mod_id,
-            text=mod_id_to_sanitized_text[mod_id],
+            mod_text=mod_id_to_sanitized_text[mod_id],
             values_ranges=values_ranges
         )
         sub_mods.append(sub_mod)
@@ -75,7 +76,7 @@ def _create_sub_mods(mod_id_to_sanitized_text: dict, mod_magnitudes: list) -> li
         ]
         sub_mod = SubMod(
             mod_id=mod_id,
-            text=mod_id_to_sanitized_text[mod_id],
+            mod_text=mod_id_to_sanitized_text[mod_id],
             values_ranges=value_range
         )
         sub_mods.append(sub_mod)
@@ -126,6 +127,7 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
             )
 
             item_mod = ItemMod(
+                atype=ATypeClassifier.classify(item_data=item_data),
                 mod_class=mod_class_enum,
                 mod_name=mod_name,
                 mod_affix_type=affix_type,
