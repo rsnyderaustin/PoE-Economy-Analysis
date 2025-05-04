@@ -30,13 +30,12 @@ class ProgramManager:
         )
 
         meta_mod_filters = [one_hand_mace_filter, price_filter, rarity_filter]
-        query = external_apis.TradeQueryConstructor.create_trade_query(
+        query = external_apis.TradeQueryConstructor().create_trade_query(
             meta_mod_filters=meta_mod_filters
         )
 
-        api_item_responses = external_apis.TradeItemsFetcher.fetch_items(
+        api_item_responses = external_apis.TradeItemsFetcher.fetch_items(query=query)
 
-        )
         for api_item_response in self.trade_coordinator.sample_items_generator():
             item_data = api_item_response['item']
             runes_for_internal_storage = RunesCreator.create_runes_for_internal_storage(
