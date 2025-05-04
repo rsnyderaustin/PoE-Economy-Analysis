@@ -1,3 +1,6 @@
+
+from abc import ABC
+
 from utils import ModClass, generate_mod_id
 
 
@@ -18,7 +21,17 @@ class ModTier:
         self.weighting = weighting
 
 
+class ModDefinition(ABC):
+    mod_classes = [e for e in ModClass]
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if not hasattr(cls, 'mod_classes'):
+            raise NotImplementedError(f"{cls.__name__} must define a class variable 'mod_classes'")
+
+
 class AffixedModDefinition:
+    mod_classes = [ModClass.FRACTURED, ModClass.EXPLICIT]
 
     def __init__(self,
                  mod_class: ModClass,
@@ -30,6 +43,7 @@ class AffixedModDefinition:
 
 
 class NonAffixedModDefinition:
+    mod_classes = [ModClass.RUNE, ModClass.ENCHANT]
 
     def __init__(self,
                  atype: str,

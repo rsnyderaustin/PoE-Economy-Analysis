@@ -1,26 +1,25 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
-from shared.enums import Currency, StatSearchType
+from . import trade_api_utils
 
 
 class MetaFilter:
 
     def __init__(self,
-                 meta_filter_enum: Enum,
-                 mod_value: Any,
-                 price_currency_enum: Currency = None):
+                 meta_enum: Enum,
+                 currency: trade_api_utils.Currency = None,
+                 currency_amount: tuple = None):
         """
 
-        :param meta_filter_enum:
-        :param mod_value: Should be a tuple if it represents a min and/or a max value (eg: 1 div minimum price should be (1,None)).
-        :param price_currency_enum: This is only for filtering the price. 'Price' is an unusual filter because its dict
-            includes a min/max (amount of currency) and an "option" (type of currency)
+        :param meta_enum:
+        :param currency:
+        :param currency_amount: First tuple element is min and second tuple element is max
         """
-        self.meta_filter_enum = meta_filter_enum
-        self.mod_value = mod_value
-        self.price_currency_enum = price_currency_enum
+        self.meta_enum = trade_api_utils.filter_enum_to_meta_search_type(meta_enum)
+
+        self.currency = currency
+        self.currency_amount = currency_amount
 
 
 class StatFilter:
@@ -36,7 +35,7 @@ class StatFilter:
 
 @dataclass
 class StatsFiltersGroup:
-    filter_type: StatSearchType
+    filter_type: trade_api_utils.StatSearchType
     mod_filters: list[StatFilter]
     value_range: tuple = None
 

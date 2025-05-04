@@ -1,7 +1,6 @@
-from shared.enums import (MetaSearchType, StatSearchType, EquipmentAttribute,
-                          WeaponAttribute, ArmourAttribute, TypeFilters, RequirementFilters, MiscFilters, TradeFilters)
-from external_apis.trade_api.query_filters import MetaFilter
-from external_apis.trade_api.querying.stats_filters_group import StatsFiltersGroup, StatFilter
+from .trade_api_utils import (MetaSearchType, StatSearchType, EquipmentAttribute,
+                              WeaponAttribute, ArmourAttribute, TypeFilters, RequirementFilters, MiscFilters, TradeFilters)
+from .query_filters import MetaFilter, StatsFiltersGroup, StatFilter
 
 
 def _handle_min_max(relevant_dict: dict, query_filter):

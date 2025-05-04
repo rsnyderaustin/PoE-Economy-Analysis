@@ -3,72 +3,11 @@ from collections import Counter
 import logging
 import re
 
-from external_apis.trade_api import utils
+from external_apis.trade_api import trade_api_utils
 from shared.enums import ModAffixType, ModClass
 from ..things.mods import Mod, SubMod, ModTier, TieredMod, SingletonMod
 from shared import helper_funcs
 
-
-def _sanitize_mod_text(mod_text: str):
-    mod_text = re.sub(r'\d+', '#', mod_text)
-    mod_text = helper_funcs.remove_piped_brackets(mod_text)
-    return mod_text
-
-def _determine_mod_affix_type(mod_dict: dict):
-    mod_affix = None
-    if mod_dict['tier']:
-        first_letter = mod_dict['tier'][0]
-        if first_letter == 'S':
-            mod_affix = ModAffixType.SUFFIX
-        elif first_letter == 'P':
-            mod_affix = ModAffixType.PREFIX
-        else:
-            logging.error(f"Did not recognize first character as an affix type for "
-                          f"item tier {mod_dict['tier']}")
-            mod_affix = None
-
-    return mod_affix
-
-
-def _determine_mod_tier(mod_dict: dict) -> int:
-    mod_tier = None
-    if mod_dict['tier']:
-        mod_tier_match = re.search(r'\d+', mod_dict['tier'])
-        if mod_tier_match:
-            mod_tier = mod_tier_match.group()
-        else:
-            logging.error(f"Did not find a tier number for item tier {mod_dict['tier']}")
-            mod_tier = None
-    return int(mod_tier) if mod_tier else None
-
-
-def _determine_mod_ids(mod_dict: dict):
-    mod_ids = [
-        mod_magnitude_dict['hash']
-        for mod_magnitude_dict in mod_dict['magnitudes']
-    ]
-    return mod_ids
-
-
-def _determine_mod_values_range(mod_magnitude_dict: dict) -> tuple:
-    if 'min' in mod_magnitude_dict and 'max' in mod_magnitude_dict:
-        values_range = mod_magnitude_dict['min'], mod_magnitude_dict['max']
-    else:
-        value = next(v for k, v in mod_magnitude_dict.items() if k != 'hash')
-        values_range = value, value
-
-    return values_range
-
-
-def _combine_mods(orig_mod: Mod,
-                  new_values_range: tuple):
-    orig_values_ranges = orig_mod.values_ranges
-    if orig_values_ranges[-1] is None:
-        new_values_ranges = orig_values_ranges[:-1] + (new_values_range,)
-    else:
-        new_values_ranges = orig_values_ranges + (new_values_range,)
-
-        orig_mod.values_ranges = new_values_ranges
 
 
 class ModsReturnable:

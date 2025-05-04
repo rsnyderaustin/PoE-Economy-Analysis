@@ -1,11 +1,10 @@
 
 import logging
-
 import requests
 
+import shared
+
 from external_apis.trade_api.request_throttler import RequestThrottler
-from shared import EnvLoader
-from shared.enums import EnvVar
 
 
 def chunk_list(items: list, chunk_size: int = 10):
@@ -20,11 +19,10 @@ class TradeItemsFetcher:
     post_endpoint = "fetch"
     post_filename_starter = '/official_api/trade2/fetch/'
 
-    possess_id = EnvLoader.get_env(env_variable=EnvVar.POSSESSID)
     headers = {
         'Content-Type': 'application/json',
         'User-Agent': '5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-        'Cookie': f'POESESSID={possess_id}',
+        'Cookie': f'POESESSID={shared.env.possess_id}',
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br, zstd',
         'Accept-Language': 'en-US,en;q=0.5',
@@ -69,7 +67,7 @@ class TradeItemsFetcher:
             get_url = f'{cls.get_url}{chunked_ids}'
 
             cookies = {
-                'POSSESSID': cls.possess_id
+                'POSSESSID': shared.env.possess_id
             }
             response = cls.request_throttler.send_request(
                 request_func=requests.get,

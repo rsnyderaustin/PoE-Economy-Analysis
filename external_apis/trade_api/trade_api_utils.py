@@ -64,6 +64,30 @@ class TradeFilters(Enum):
     PRICE = 'price'
 
 
+filter_enum_to_meta_search_type = {
+    **{
+        e: 'type_filters'
+        for e in TypeFilters
+    },
+    **{
+        e: 'equipment_filters'
+        for e in EquipmentAttribute
+    },
+    **{
+        e: 'req_filters'
+        for e in RequirementFilters
+    },
+    **{
+        e: 'misc_filters'
+        for e in MiscFilters
+    },
+    **{
+        e: 'trade_filters'
+        for e in TradeFilters
+    }
+}
+
+
 class ModifierClass(Enum):
     IMPLICIT = 'implicitMods'
     EXPLICIT = 'explicitMods'
@@ -162,4 +186,30 @@ class ListedSince(Enum):
     UP_TO_2_WEEKS = '2weeks'
     UP_TO_1_MONTH = '1month'
     UP_TO_2_MONTHS = '2months'
+
+
+class Currency(Enum):
+    TRANSMUTATION_SHARD = "transmutation-shard"
+    CHANCE_SHARD = "chance-shard"
+    REGAL_SHARD = "regal-shard"
+    ARTIFICERS_SHARD = "artificers-shard"
+    SCROLL_OF_WISDOM = "wisdom"
+    ORB_OF_TRANSMUTATION = "transmute"
+    ORB_OF_AUGMENTATION = "aug"
+    ORB_OF_CHANCE = "chance"
+    ORB_OF_ALCHEMY = "alch"
+    CHAOS_ORB = "chaos"
+    VAAL_ORB = "vaal"
+    REGAL_ORB = "regal"
+    EXALTED_ORB = "exalted"
+    DIVINE_ORB = "divine"
+    ORB_OF_ANNULMENT = "annul"
+    ARTIFICERS_ORB = "artificers"
+    FRACTURING_ORB = "fracturing-orb"
+    MIRROR_OF_KALANDRA = "mirror"
+    ARMOURERS_SCRAP = "scrap"
+    BLACKSMITHS_WHETSTONE = "whetstone"
+    ARCANISTS_ETCHER = "etcher"
+    GLASSBLOWERS_BAUBLE = "bauble"
+    GEMCUTTERS_PRISM = "gcp"
 
