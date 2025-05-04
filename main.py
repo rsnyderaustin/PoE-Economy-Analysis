@@ -1,4 +1,4 @@
-from program_management import ProgramManager
+from program_manager import ProgramManager
 
 
 prog_manager = ProgramManager()

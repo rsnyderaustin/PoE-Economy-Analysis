@@ -7,18 +7,19 @@ from . import trade_api_utils
 class MetaFilter:
 
     def __init__(self,
-                 meta_enum: Enum,
-                 currency: trade_api_utils.Currency = None,
+                 filter_type_enum: Enum,
+                 filter_value: Enum | bool,
                  currency_amount: tuple = None):
         """
 
-        :param meta_enum:
-        :param currency:
+        :param filter_type_enum:
+        :param filter_value:
         :param currency_amount: First tuple element is min and second tuple element is max
         """
-        self.meta_enum = trade_api_utils.filter_enum_to_meta_search_type(meta_enum)
+        self.meta_search_type = trade_api_utils.filter_enum_to_meta_search_type[filter_type_enum]
+        self.filter_type = filter_type_enum.value
+        self.filter_value = filter_value.value if isinstance(filter_value, Enum) else filter_value
 
-        self.currency = currency
         self.currency_amount = currency_amount
 
 

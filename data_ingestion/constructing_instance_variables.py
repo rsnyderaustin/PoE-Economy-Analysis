@@ -1,8 +1,10 @@
 import logging
+import json
 
-from instances_and_definitions import ItemAffixedMod, ItemNonAffixedMod, ItemSocketer, ModClass, ItemMod, SubMod
+import instances_and_definitions
+from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod
 from shared import shared_utils
-import utils
+from . import utils
 
 
 def create_socketer_for_internal_storage(item_data: dict) -> ItemSocketer | None:
@@ -10,8 +12,6 @@ def create_socketer_for_internal_storage(item_data: dict) -> ItemSocketer | None
     We can only determine socketer effects from items with only one socketer.
     """
     if ModClass.RUNE.value not in item_data:
-        logging.info(f"Requested to create runes when item does not have {ModClass.RUNE.value} attribute."
-                     f"\nItem data:\n{item_data}.")
         return None
 
     # We can only deterministically get rune data when there is one rune socketed, because different types of the same
@@ -26,7 +26,7 @@ def create_socketer_for_internal_storage(item_data: dict) -> ItemSocketer | None
     rune_mod_text = item_data[ModClass.RUNE.value][0]
 
     # Rune mod text has this weird [text|text] format sometimes - the part after the pipe is all we need
-    rune_mod_text = remove_piped_brackets(text=rune_mod_text)
+    rune_mod_text = shared_utils.remove_piped_brackets(text=rune_mod_text)
 
     item_socketer = ItemSocketer(
         name=rune_name,
@@ -35,8 +35,7 @@ def create_socketer_for_internal_storage(item_data: dict) -> ItemSocketer | None
     return item_socketer
 
 
-def _create_sub_mods(mod_id_to_sanitized_text: dict, extended_mods_data: dict) -> list[SubMod]:
-    mod_magnitudes = extended_mods_data['magnitudes']
+def _create_sub_mods(mod_id_to_sanitized_text: dict, mod_magnitudes: list) -> list[SubMod]:
     mod_ids = [
         magnitude['hash']
         for magnitude in mod_magnitudes
@@ -54,8 +53,8 @@ def _create_sub_mods(mod_id_to_sanitized_text: dict, extended_mods_data: dict) -
         ]
         values_ranges = [
             [
-                magnitude['min'] if 'min' in magnitude else None,
-                magnitude['max'] if 'max' in magnitude else None
+                float(magnitude['min']) if 'min' in magnitude else None,
+                float(magnitude['max']) if 'max' in magnitude else None
             ]
             for magnitude in same_mod_magnitudes
         ]
@@ -71,8 +70,8 @@ def _create_sub_mods(mod_id_to_sanitized_text: dict, extended_mods_data: dict) -
     for magnitude in singleton_magnitudes:
         mod_id = magnitude['hash']
         value_range = [
-            magnitude['min'],
-            magnitude['max']
+            float(magnitude['min']) if 'min' in magnitude else None,
+            float(magnitude['max']) if 'max' in magnitude else None
         ]
         sub_mod = SubMod(
             mod_id=mod_id,
@@ -96,70 +95,44 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
     """
     mods = []
 
-    for mod_class in ItemAffixedMod.mod_classes:
-        abbrev_class = utils.mod_class_to_abbrev(mod_class)
+    mod_class_enums = [e
+                       for e in [
+                           *instances_and_definitions.affixed_mod_classes,
+                           *instances_and_definitions.non_affixed_mod_classes
+                       ]
+                       ]
+    for mod_class_enum in mod_class_enums:
+        mod_class = mod_class_enum.value
+        if mod_class not in item_data:
+            continue
+        abbrev_class = utils.mod_class_to_abbrev[mod_class]
         mod_id_to_sanitized_text = utils.determine_mod_id_to_mod_text(
             mod_class=mod_class,
             item_data=item_data,
             sanitize_text=True
         )
 
-        extended_mods_data = item_data['extended']['mods'][abbrev_class]
+        extended_mods_list = item_data['extended']['mods'][abbrev_class]
 
-        # Each mod can have submods if it is hybrid
-        for mod_data in extended_mods_data:
+        # Each 'mod_data' represents data for an individual SubMod
+        for mod_data in extended_mods_list:
             mod_name = mod_data['name']
-            mod_tier = shared_utils.determine_mod_tier(mod_data)
-            affix_type = shared_utils.determine_mod_affix_type(mod_data)
+            mod_tier = utils.determine_mod_tier(mod_data)
+            affix_type = utils.determine_mod_affix_type(mod_data)
 
             sub_mods = _create_sub_mods(
                 mod_id_to_sanitized_text=mod_id_to_sanitized_text,
-                extended_mods_data=extended_mods_data
+                mod_magnitudes=mod_data['magnitudes']
             )
 
-            affixed_mod = ItemAffixedMod(
-                mod_class=mod_class,
+            item_mod = ItemMod(
+                mod_class=mod_class_enum,
                 mod_name=mod_name,
                 mod_affix_type=affix_type,
                 mod_tier=mod_tier,
                 sub_mods=sub_mods
             )
 
-            mods.append(affixed_mod)
-
-    for mod_class in ItemNonAffixedMod.mod_classes:
-        abbrev_class = utils.mod_class_to_abbrev(mod_class)
-        mod_id_to_sanitized_text = utils.determine_mod_id_to_mod_text(
-            mod_class=mod_class,
-            item_data=item_data,
-            sanitize_text=True
-        )
-
-        if abbrev_class not in item_data['extended']['mods']:
-            continue
-
-        if len(item_data['extended']['mods']) >= 2:
-            raise RuntimeError(f"{item_data}"
-                               f"\nItem with the above data has a non-affixed mod class with more than one magnitude."
-                               f"\nNeed to refactor to accommodate.")
-
-        extended_mod_data = item_data['extended']['mods'][abbrev_class][0]
-
-        # So far this only applies to spears, which have an empty Implicit representing skill 'Spear Throw'
-        if not extended_mod_data['name'] and not extended_mod_data['tier'] and not extended_mod_data['magnitude']:
-            continue
-
-        mod_id = extended_mod_data['magnitudes']['hash']
-        value_range = [
-            extended_mod_data['magnitudes']['min']
-        ]
-        new_mod = ItemNonAffixedMod(
-            mod_class=mod_class,
-            mod_text=mod_id_to_sanitized_text[mod_id],
-            mod_values=value_range,
-            mod_id=mod_id
-        )
-
-        mods.append(new_mod)
+            mods.append(item_mod)
 
     return mods

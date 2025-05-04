@@ -1,9 +1,9 @@
 
 import logging
 
-from data_synthesizing import Rune
-from external_apis.trade_api import trade_api_utils
 from shared.enums import ModClass
+
+from data_synthesizing import Rune
 
 
 class RunesCreator:

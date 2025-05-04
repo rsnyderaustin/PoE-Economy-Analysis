@@ -1,6 +1,8 @@
+import logging
+import re
 
+from instances_and_definitions import ModClass, ModAffixType
 from shared import shared_utils
-
 
 mod_class_to_abbrev = {
     'implicitMods': 'implicit',
@@ -20,7 +22,7 @@ def determine_mod_id_to_mod_text(mod_class: ModClass, item_data: dict, sanitize_
     hashes_list = item_data['extended']['hashes'][abbrev_class]
 
     mod_id_display_order = [mod_hash[0] for mod_hash in hashes_list]
-    mod_text_display_order = item_data[mod_class.value]
+    mod_text_display_order = item_data[mod_class]
 
     mod_id_to_text = {
         mod_id: mod_text
@@ -32,4 +34,32 @@ def determine_mod_id_to_mod_text(mod_class: ModClass, item_data: dict, sanitize_
         }
 
     return mod_id_to_text
+
+
+def determine_mod_affix_type(mod_dict: dict) -> ModAffixType:
+    mod_affix = None
+    if mod_dict['tier']:
+        first_letter = mod_dict['tier'][0]
+        if first_letter == 'S':
+            mod_affix = ModAffixType.SUFFIX
+        elif first_letter == 'P':
+            mod_affix = ModAffixType.PREFIX
+        else:
+            logging.error(f"Did not recognize first character as an affix type for "
+                          f"item tier {mod_dict['tier']}")
+            mod_affix = None
+
+    return mod_affix
+
+
+def determine_mod_tier(mod_dict: dict) -> int:
+    mod_tier = None
+    if mod_dict['tier']:
+        mod_tier_match = re.search(r'\d+', mod_dict['tier'])
+        if mod_tier_match:
+            mod_tier = mod_tier_match.group()
+        else:
+            logging.error(f"Did not find a tier number for item tier {mod_dict['tier']}")
+            mod_tier = None
+    return int(mod_tier) if mod_tier else None
 

@@ -1,6 +1,5 @@
-from .trade_api_utils import (MetaSearchType, StatSearchType, EquipmentAttribute,
-                              WeaponAttribute, ArmourAttribute, TypeFilters, RequirementFilters, MiscFilters, TradeFilters)
 from .query_filters import MetaFilter, StatsFiltersGroup, StatFilter
+from .trade_api_utils import (StatSearchType)
 
 
 def _handle_min_max(relevant_dict: dict, query_filter):
@@ -26,29 +25,6 @@ def _handle_min_max(relevant_dict: dict, query_filter):
 
 
 class TradeQueryConstructor:
-
-    _meta_filter_to_search_type = {
-        **{
-            enum: MetaSearchType.TYPE
-            for enum in TypeFilters
-        },
-        **{
-            enum: MetaSearchType.EQUIPMENT
-            for enum in list(EquipmentAttribute) + list(WeaponAttribute) + list(ArmourAttribute)
-        },
-        **{
-            enum: MetaSearchType.REQUIREMENT
-            for enum in RequirementFilters
-        },
-        **{
-            enum: MetaSearchType.MISC
-            for enum in MiscFilters
-        },
-        **{
-            enum: MetaSearchType.TRADE
-            for enum in TradeFilters
-        }
-    }
 
     def __init__(self):
         self.query = {
@@ -79,22 +55,20 @@ class TradeQueryConstructor:
         self.query['query']['filters'] = dict()
         meta_query = self.query['query']['filters']
         for meta_filter in meta_mod_filters:
-            meta_filter_group = self.__class__._meta_filter_to_search_type[meta_filter.meta_filter_enum].value
+            if meta_filter.meta_search_type not in meta_query:
+                meta_query[meta_filter.meta_search_type] = dict()
+                meta_query[meta_filter.meta_search_type]['filters'] = dict()
 
-            if meta_filter_group not in meta_query:
-                meta_query[meta_filter_group] = dict()
-                meta_query[meta_filter_group]['filters'] = dict()
+            filter_group_dict = meta_query[meta_filter.meta_search_type]['filters']
 
-            filter_group_dict = meta_query[meta_filter_group]['filters']
+            filter_group_dict[meta_filter.filter_type] = dict()
+            meta_mod_dict = filter_group_dict[meta_filter.filter_type]
 
-            filter_group_dict[meta_filter.meta_filter_enum.value] = dict()
-            meta_mod_dict = filter_group_dict[meta_filter.meta_filter_enum.value]
-
-            if isinstance(meta_filter.mod_value, tuple):
+            if isinstance(meta_filter.filter_value, tuple):
                 _handle_min_max(relevant_dict=meta_mod_dict,
                                 query_filter=meta_filter)
             else:
-                meta_mod_dict['option'] = meta_filter.mod_value
+                meta_mod_dict['option'] = meta_filter.filter_value
 
     def _handle_stats_query(self, stats_filters_groups: list[StatsFiltersGroup]):
         self.query['stats'] = dict()

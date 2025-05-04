@@ -1,9 +1,6 @@
 
 
 from .base_mod_class import Mod, generate_mod_id
-from shared.enums import ModAffixType
-from .mod_tier import ModTier
-from .sub_mod import SubMod
 
 
 class SingletonMod(Mod):

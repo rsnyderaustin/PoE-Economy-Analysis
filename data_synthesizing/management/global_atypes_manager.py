@@ -1,8 +1,9 @@
 
 import logging
 
-from data_synthesizing.things.mods.mod_tier import ModTier
 from shared.enums import ModAffixType
+
+from data_synthesizing.things.mods.mod_tier import ModTier
 from .atype_manager import ATypeManager
 
 

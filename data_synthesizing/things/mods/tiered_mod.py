@@ -1,8 +1,9 @@
 from shared.enums import ModAffixType
-from .singleton_mod import Mod
-from .mod_tier import ModTier
-from .. import SubMod
+
 from .base_mod_class import generate_mod_id
+from .mod_tier import ModTier
+from .singleton_mod import Mod
+from .. import SubMod
 
 
 class ModTiersManager:

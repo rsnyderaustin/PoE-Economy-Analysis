@@ -1,7 +1,7 @@
 
-
 import logging
 import re
+from collections import Counter
 
 
 def _process_bracketed_text(match):
@@ -44,36 +44,8 @@ def find_duplicate_values(items: list):
 
 def sanitize_mod_text(mod_text: str):
     mod_text = re.sub(r'\d+', '#', mod_text)
-    mod_text = helper_funcs.remove_piped_brackets(mod_text)
+    mod_text = remove_piped_brackets(mod_text)
     return mod_text
-
-
-def determine_mod_affix_type(mod_dict: dict):
-    mod_affix = None
-    if mod_dict['tier']:
-        first_letter = mod_dict['tier'][0]
-        if first_letter == 'S':
-            mod_affix = ModAffixType.SUFFIX
-        elif first_letter == 'P':
-            mod_affix = ModAffixType.PREFIX
-        else:
-            logging.error(f"Did not recognize first character as an affix type for "
-                          f"item tier {mod_dict['tier']}")
-            mod_affix = None
-
-    return mod_affix
-
-
-def determine_mod_tier(mod_dict: dict) -> int:
-    mod_tier = None
-    if mod_dict['tier']:
-        mod_tier_match = re.search(r'\d+', mod_dict['tier'])
-        if mod_tier_match:
-            mod_tier = mod_tier_match.group()
-        else:
-            logging.error(f"Did not find a tier number for item tier {mod_dict['tier']}")
-            mod_tier = None
-    return int(mod_tier) if mod_tier else None
 
 
 def determine_mod_ids(mod_dict: dict):

@@ -1,6 +1,7 @@
-from data_synthesizing import GlobalATypesManager, ModTier
-from things.items import Modifiable
 from shared.enums import ModAffixType
+from things.items import Modifiable
+
+from data_synthesizing import GlobalATypesManager, ModTier
 from .crafting_outcome import CraftingOutcome
 
 

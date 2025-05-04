@@ -2,7 +2,6 @@
 import json
 from pathlib import Path
 
-from data_synthesizing.things import Mod, Rune
 from shared import PathProcessor
 
 
@@ -12,7 +11,7 @@ class ExportManager:
 
         self.runes_json_path = (
             PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('internal_data/data_ingesting.txt')
+            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/rune_effects.json')
             .path
         )
 
@@ -21,7 +20,7 @@ class ExportManager:
 
         self.atype_mods_json_path = (
             PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('internal_data/atype_mods.txt')
+            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/item_category_mods.json')
             .path
         )
 

@@ -2,6 +2,7 @@
 import re
 
 from shared.enums import ModAffixType, ItemCategory
+
 from .mods import ModTier
 from .socketer import Socketer
 
