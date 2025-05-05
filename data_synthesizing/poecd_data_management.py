@@ -10,11 +10,15 @@ from instances_and_definitions import ModAffixType
 class PoecdMod:
 
     def __init__(self,
+                 atype_id: str,
+                 atype_name: str,
                  mod_id: int,
                  mod_text: str,
                  mod_types: list[str],
                  affix_type: str,
                  tiers_list: list):
+        self.atype_id = atype_id
+        self.atype_name = atype_name
         self.mod_id = mod_id
         self.mod_text = mod_text
 
@@ -70,18 +74,13 @@ class PoecdDataManager:
 
         self._normalize_data()
 
-        self.mod_id_to_text = self.stats_data['mods']
+        self.mod_id_to_text = self.bases_data['mod']
         self.mod_id_to_affix_type = {
             mod_data_dict['id_modifier']: mod_data_dict['affix']
             for mod_data_dict in self.stats_data['modifiers']['seq']
         }
-        self._atype_id_to_atype_name = self.bases_data['base']
-
-        self.atype_data_managers = dict()
-        self.valid_atype_ids = set(self._atype_id_to_atype_name.keys())
-        for atype_id in self.valid_atype_ids:
-            atype_name = self._atype_id_to_atype_name[atype_id]
-            self.atype_data_managers[atype_name] = ATypeDataManager(atype_id, atype_name)
+        self.atype_id_to_atype_name = self.bases_data['base']
+        self.valid_atype_ids = set(self.atype_id_to_atype_name.keys())
 
         mod_type_id_to_mod_type = {
             mod_type_dict['id_mtype']: mod_type_dict['name_mtype']
@@ -98,7 +97,16 @@ class PoecdDataManager:
             for mod_id, mod_type_ids in mod_id_to_mod_type_ids.items()
         }
 
-        self._build_lookup_tables()
+        mods = self._build_mods()
+        self.atype_data_managers = dict()
+        for atype_id in self.valid_atype_ids:
+            atype_name = self.atype_id_to_atype_name[atype_id]
+            self.atype_data_managers[atype_name] = ATypeDataManager(
+                atype_id,
+                atype_name,
+                mods=[mod for mod in mods if mod.atype_id == atype_id]
+            )
+
 
     def _load_json_file(self, relative_path):
         path = PathProcessor(Path.cwd()).attach_file_path_endpoint(relative_path).path
@@ -117,60 +125,39 @@ class PoecdDataManager:
             mod['id_modifier'] for mod in self.stats_data['modifiers']['seq']
             if mod['affix'] == 'socket'
         }
-        _mod_id_to_mod_text = self.bases_data['mod']
-
         atype_id_to_mod_ids = self.stats_data['basemods']
-        mod_id_to_tiers_list = dict()
+
+        # Create tiers lists for mod creation in next block
+        tiers_lists = dict()
         for mod_id, atype_dict in self.stats_data['tiers'].items():
             if mod_id in socketer_mod_ids:
                 continue
             for atype_id, tiers_list in atype_dict.items():
                 if atype_id not in self.valid_atype_ids:
                     continue
-                atype_name = self._atype_id_to_atype_name[atype_id]
+
+                if atype_id not in tiers_lists:
+                    tiers_lists[atype_id] = dict()
+
+                tiers_lists[atype_id][mod_id] = tiers_list
+
+        # Create mods
+        mods = list()
+        for atype_id, mod_ids in atype_id_to_mod_ids.items():
+            for mod_id in mod_ids:
+                mod_text = self.mod_id_to_text[mod_id]
+                mod_types = self.mod_id_to_mod_types[mod_id]
                 affix_type = self.mod_id_to_affix_type[mod_id]
-                manager = self.atype_data_managers[atype_name]
-                manager.insert_mod_tiers_list(mod_id=mod_id,
-                                              mod_text=_mod_id_to_mod_text[mod_id],
-                                              tiers_list=tiers_list,
-                                              affix_type=affix_type)
 
+                new_mod = PoecdMod(
+                    atype_id=atype_id,
+                    atype_name=self.atype_id_to_atype_name[atype_id],
+                    mod_id=mod_id,
+                    mod_text=mod_text,
+                    mod_types=mod_types,
+                    affix_type=affix_type,
+                    tiers_list=tiers_lists[atype_id][mod_id]
+                )
+                mods.append(new_mod)
 
-        mods = dict()
-        for mod_id in set(self.mod_text_to_mod_id.values()):
-            mod_text = self.mod_id_to_text[mod_id]
-            mod_types = self.mod_id_to_mod_types[mod_id]
-            affix_type = self.mod_id_to_affix_type[mod_id]
-
-            # Fetch mod tiers list
-            atype_dict = self.stats_data['tiers'][0]
-
-            new_mod = PoecdMod(
-                mod_id=mod_id,
-                mod_text=mod_text,
-                mod_types=mod_types,
-                affix_type=affix_type
-            )
-            mods[mod_id] = new_mod
-
-    def _build_lookup_tables(self):
-        self.mod_text_to_mod_id = {
-            text: mod_id for mod_id, text in self.bases_data['mod'].items()
-        }
-        self._atype_name_to_atype_id = {
-            name: id_ for id_, name in self.bases_data['base'].items()
-        }
-
-        mod_id_to_mtype_ids = {
-            m['id_modifier']: utils.parse_poecd_mtypes_string(m['mtypes'])
-            for m in self.stats_data['modifiers']['seq']
-        }
-        mtype_id_to_name = {
-            m['id_mtype']: m['name_mtype']
-            for m in self.stats_data['mtypes']['seq']
-        }
-        self._mod_id_to_mod_types = {
-            mod_id: [mtype_id_to_name[mt_id] for mt_id in mt_ids]
-            for mod_id, mt_ids in mod_id_to_mtype_ids.items()
-        }
-
+        return mods
