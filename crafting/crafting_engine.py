@@ -42,6 +42,7 @@ class CraftingEngine:
 
         return atype_mod_tiers
 
+
     def create_crafting_outcomes(self,
                                  item: Modifiable,
                                  mod_tiers: list[ModTier],

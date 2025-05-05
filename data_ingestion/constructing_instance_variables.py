@@ -1,9 +1,10 @@
 import logging
 import json
 
+from external_apis import ItemCategory
 from shared import ATypeClassifier
 import instances_and_definitions
-from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod
+from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill
 from shared import shared_utils
 from . import utils
 
@@ -138,3 +139,113 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
             mods.append(item_mod)
 
     return mods
+
+
+def create_skills(item_data: dict) -> list[ItemSkill]:
+    if 'grantedSkills' not in item_data:
+        return []
+
+    skills = []
+
+    raw_skill = item_data['grantedSkills']['values'][0]
+
+    if isinstance(raw_skill, str):
+        _, level_str, *skill_parts = raw_skill.split()
+        level = int(level_str)
+        skill_name = ' '.join(skill_parts)
+    else:
+        skill_name = raw_skill[0][0]
+        level = raw_skill[0][1]
+
+    new_skill = ItemSkill(
+        name=skill_name,
+        level=level
+    )
+
+    skills.append(new_skill)
+
+    return skills
+
+
+def _clean_item_data(item_data: dict):
+    """
+    Right now this is just used to clear empty implicits from spears granting skill Spear Throw.
+    """
+    if 'extended' in item_data and item_data['extended'] and 'implicit' in item_data['extended']['mods']:
+        implicit_mod_dicts = item_data['extended']['mods']['implicit']
+
+        implicit_mod_dicts[:] = [
+            implicit_mod_dict
+            for implicit_mod_dict in implicit_mod_dicts
+            if (implicit_mod_dict['magnitudes'] or implicit_mod_dict['name'] or implicit_mod_dict['tier'])
+        ]
+
+
+def create_listing(api_item_response: dict):
+    item_data = api_item_response['item']
+    listing_data = api_item_response['listing']
+
+    _clean_item_data(item_data)
+
+    if item_data['baseType'] == ItemCategory.RUNE.value:
+        logging.error(f"Received API item response for unsupported {ItemCategory.RUNE.value} item category. "
+                      f"Skipping.")
+        return
+
+    level_requirement = 0
+    str_requirement = 0
+    int_requirement = 0
+    dex_requirement = 0
+
+    if 'requirements' in item_data:
+        for req_dict in item_data['requirements']:
+            if req_dict['name'] == 'Level':
+                level_requirement = int(req_dict['values'][0][0])
+            if 'Str' in req_dict['name']:
+                str_requirement = int(req_dict['values'][0][0])
+            if 'Int' in req_dict['name']:
+                int_requirement = int(req_dict['values'][0][0])
+            if 'Dex' in req_dict['name']:
+                dex_requirement = int(req_dict['values'][0][0])
+
+    if 'properties' in item_data and 'name' in item_data['properties'][0]:
+        raw_atype = item_data['properties'][0]['name']
+        atype = ATypeClassifier.classify(
+            raw_atype=raw_atype,
+            str_requirement=str_requirement,
+            int_requirement=int_requirement,
+            dex_requirement=dex_requirement
+        )
+    else:
+        atype = item_data['baseType'] if 'baseType' in item_data else None
+
+    # Gems don't have mods
+    item_mods = create_item_mods(item_data) if item_data['baseType'] != ItemCategory.ANY_GEM.value else []
+
+    item_skills = create_skills(item_data)
+
+    new_listing = ItemListing(
+        listing_id=api_item_response['id'],
+        date_fetched=listing_data['indexed'],
+        price_currency=listing_data['price']['currency'],
+        price_amount=listing_data['price']['amount'],
+        item_name=item_data['name'],
+        item_btype=item_data['baseType'] if 'baseType' in item_data else None,
+        item_atype=atype,
+        item_bgroup=item_data['properties'][0]['name'],
+        rarity=item_data['rarity'] if 'rarity' in item_data else None,
+        ilvl=item_data['ilvl'] if 'ilvl' in item_data else None,
+        identified=item_data['identified'] if 'identified' in item_data else None,
+        corrupted='corrupted' in item_data and item_data['corrupted'],
+        level_requirement=level_requirement,
+        str_requirement=str_requirement,
+        int_requirement=int_requirement,
+        dex_requirement=dex_requirement,
+        implicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.IMPLICIT],
+        enchant_mods=[mod for mod in item_mods if mod.mod_class == ModClass.ENCHANT],
+        rune_mods=[mod for mod in item_mods if mod.mod_class == ModClass.RUNE],
+        fractured_mods=[mod for mod in item_mods if mod.mod_class == ModClass.FRACTURED],
+        explicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.EXPLICIT],
+        item_skills=item_skills
+    )
+    return new_listing

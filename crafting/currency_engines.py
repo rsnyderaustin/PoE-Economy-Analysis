@@ -6,6 +6,7 @@ from shared.enums import Rarity
 from crafting import CraftingOutcome
 from crafting.crafting_engine import CraftingEngine
 from data_synthesizing import Modifiable
+from external_apis import ItemCategory
 
 
 class CurrencyEngine(ABC):
@@ -95,7 +96,7 @@ class ArmourersScrap(CurrencyEngine):
 
 class ArtificersOrb(CurrencyEngine):
 
-    item_id='artificers'
+    item_id ='artificers'
 
     @classmethod
     def apply(cls, crafting_engine: CraftingEngine, item: Modifiable) -> list[CraftingOutcome]:
@@ -297,7 +298,7 @@ class GemcuttersPrism(CurrencyEngine):
 
 class GlassblowersBauble(CurrencyEngine):
 
-    item_id='artificers'
+    item_id = 'bauble'
 
     @classmethod
     def apply(cls, crafting_engine: CraftingEngine, item: Modifiable) -> list[CraftingOutcome]:

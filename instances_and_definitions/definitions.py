@@ -1,7 +1,8 @@
-
+import re
 from abc import ABC
 
-from .utils import ModClass, generate_mod_id
+from external_apis import ItemCategory
+from .utils import ModClass, generate_mod_id, ModAffixType
 
 
 class ModTier:
@@ -63,3 +64,4 @@ class SocketerDefinition:
         """
         self.name = name
         self.text = text
+
