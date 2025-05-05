@@ -1,0 +1,176 @@
+import json
+from enum import Enum
+from pathlib import Path
+
+from shared import PathProcessor
+from . import utils
+from instances_and_definitions import ModAffixType
+
+
+class PoecdMod:
+
+    def __init__(self,
+                 mod_id: int,
+                 mod_text: str,
+                 mod_types: list[str],
+                 affix_type: str,
+                 tiers_list: list):
+        self.mod_id = mod_id
+        self.mod_text = mod_text
+
+        self.mod_types = mod_types
+        self.affix_type = affix_type
+
+        self.ilvl_to_mod_tier = {
+            tier_data['ilvl']: tier_data
+            for tier_data in tiers_list
+        }
+
+
+class ATypeDataManager:
+
+    def __init__(self,
+                 atype_id: str,
+                 atype_name: str,
+                 mods: list[PoecdMod]):
+        self.atype_id = atype_id
+        self.atype_name = atype_name
+        self.mods = mods
+
+        self.prefix_mods_dict = { mod.mod_text: mod for mod in mods if mod.affix_type == 'prefix' }
+        self.suffix_mods_dict = { mod.mod_text: mod for mod in mods if mod.affix_type == 'suffix' }
+
+        self.mod_id_to_affix_type = { mod.mod_id: mod.affix_type for mod in mods }
+        self.mod_id_to_text = { mod.mod_id: mod.mod_text for mod in mods }
+        self.mod_text_to_id = { v: k for k, v in self.mod_id_to_text.items() }
+
+        self.hybrid_part_to_parent_id = self.create_hybrid_to_parent_dict(mods=mods)
+
+    @staticmethod
+    def create_hybrid_to_parent_dict(mods) -> dict:
+        hybrid_part_to_parent_id = dict()
+        for mod in mods:
+            if ',' in mod.mod_text:
+                hybrid_parts = [
+                    part.strip()
+                    for part in mod.mod_text.split(',')
+                ]
+                for part in hybrid_parts:
+                    if part not in hybrid_part_to_parent_id:
+                        hybrid_part_to_parent_id[part] = set()
+                    hybrid_part_to_parent_id[part].add(mod.mod_id)
+        return hybrid_part_to_parent_id
+
+
+class PoecdDataManager:
+
+    def __init__(self):
+        self.bases_data = self._load_json_file('testing_external_json_data/poecd_bases.json')
+        self.stats_data = self._load_json_file('testing_external_json_data/poecd_stats.json')
+
+        self._normalize_data()
+
+        self.mod_id_to_text = self.stats_data['mods']
+        self.mod_id_to_affix_type = {
+            mod_data_dict['id_modifier']: mod_data_dict['affix']
+            for mod_data_dict in self.stats_data['modifiers']['seq']
+        }
+        self._atype_id_to_atype_name = self.bases_data['base']
+
+        self.atype_data_managers = dict()
+        self.valid_atype_ids = set(self._atype_id_to_atype_name.keys())
+        for atype_id in self.valid_atype_ids:
+            atype_name = self._atype_id_to_atype_name[atype_id]
+            self.atype_data_managers[atype_name] = ATypeDataManager(atype_id, atype_name)
+
+        mod_type_id_to_mod_type = {
+            mod_type_dict['id_mtype']: mod_type_dict['name_mtype']
+            for mod_type_dict in self.stats_data['mtypes']['seq']
+        }
+
+        mod_id_to_mod_type_ids = {
+            mod_data['id_modifier']: utils.parse_poecd_mtypes_string(mod_data['mtypes'])
+            for mod_data in self.stats_data['modifiers']['seq']
+        }
+
+        self.mod_id_to_mod_types = {
+            mod_id: [mod_type_id_to_mod_type[mod_type_id] for mod_type_id in mod_type_ids]
+            for mod_id, mod_type_ids in mod_id_to_mod_type_ids.items()
+        }
+
+        self._build_lookup_tables()
+
+    def _load_json_file(self, relative_path):
+        path = PathProcessor(Path.cwd()).attach_file_path_endpoint(relative_path).path
+        with open(path, 'r') as f:
+            return json.load(f)
+
+    def _normalize_data(self):
+        self.bases_data['base'] = {
+            k: ('Quarterstaff' if v == 'Warstaff' else v)
+            for k, v in self.bases_data['base'].items()
+        }
+
+    def _build_mods(self) -> list[PoecdMod]:
+
+        socketer_mod_ids = {
+            mod['id_modifier'] for mod in self.stats_data['modifiers']['seq']
+            if mod['affix'] == 'socket'
+        }
+        _mod_id_to_mod_text = self.bases_data['mod']
+
+        atype_id_to_mod_ids = self.stats_data['basemods']
+        mod_id_to_tiers_list = dict()
+        for mod_id, atype_dict in self.stats_data['tiers'].items():
+            if mod_id in socketer_mod_ids:
+                continue
+            for atype_id, tiers_list in atype_dict.items():
+                if atype_id not in self.valid_atype_ids:
+                    continue
+                atype_name = self._atype_id_to_atype_name[atype_id]
+                affix_type = self.mod_id_to_affix_type[mod_id]
+                manager = self.atype_data_managers[atype_name]
+                manager.insert_mod_tiers_list(mod_id=mod_id,
+                                              mod_text=_mod_id_to_mod_text[mod_id],
+                                              tiers_list=tiers_list,
+                                              affix_type=affix_type)
+
+
+        mods = dict()
+        for mod_id in set(self.mod_text_to_mod_id.values()):
+            mod_text = self.mod_id_to_text[mod_id]
+            mod_types = self.mod_id_to_mod_types[mod_id]
+            affix_type = self.mod_id_to_affix_type[mod_id]
+
+            # Fetch mod tiers list
+            atype_dict = self.stats_data['tiers'][0]
+
+            new_mod = PoecdMod(
+                mod_id=mod_id,
+                mod_text=mod_text,
+                mod_types=mod_types,
+                affix_type=affix_type
+            )
+            mods[mod_id] = new_mod
+
+    def _build_lookup_tables(self):
+        self.mod_text_to_mod_id = {
+            text: mod_id for mod_id, text in self.bases_data['mod'].items()
+        }
+        self._atype_name_to_atype_id = {
+            name: id_ for id_, name in self.bases_data['base'].items()
+        }
+
+        mod_id_to_mtype_ids = {
+            m['id_modifier']: utils.parse_poecd_mtypes_string(m['mtypes'])
+            for m in self.stats_data['modifiers']['seq']
+        }
+        mtype_id_to_name = {
+            m['id_mtype']: m['name_mtype']
+            for m in self.stats_data['mtypes']['seq']
+        }
+        self._mod_id_to_mod_types = {
+            mod_id: [mtype_id_to_name[mt_id] for mt_id in mt_ids]
+            for mod_id, mt_ids in mod_id_to_mtype_ids.items()
+        }
+

@@ -68,4 +68,7 @@ class ExportManager:
         with open(self.runes_json_path, 'w') as rune_file:
             json.dump(self.runes_data, rune_file, indent=4)
 
+        with open(self.atype_mods_json_path, 'w') as atype_file:
+            json.dump(self.atype_mods_data, atype_file, indent=4)
+
 

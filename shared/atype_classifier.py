@@ -23,6 +23,18 @@ class ATypeClassifier:
         :param dex_requirement:
         :return:
         """
+
+        if item_data['baseType'] in ['Volatile Wand']:
+            return 'Fire Wand'
+        elif item_data['baseType'] in ['Withered Wand']:
+            return 'Chaos Wand'
+        elif item_data['baseType'] in ['Bone Wand']:
+            return 'Physical Wand'
+        elif item_data['baseType'] in ['Frigid Wand']:
+            return 'Cold Wand'
+        elif item_data['baseType'] in ['Galvanic Wand']:
+            return 'Lightning Wand'
+
         if item_data and 'properties' in item_data and 'name' in item_data['properties'][0]:
             raw_atype = item_data['properties'][0]['name']
 
@@ -48,20 +60,20 @@ class ATypeClassifier:
 
         if dex_requirement:
             if int_requirement:
-                return f"{raw_atype} DEX/INT"
+                return f"{raw_atype} (DEX/INT)"
 
             if str_requirement:
-                return f"{raw_atype} STR/DEX"
+                return f"{raw_atype} (STR/DEX)"
 
-            return f"{raw_atype} DEX"
+            return f"{raw_atype} (DEX)"
 
         if int_requirement:
             if str_requirement:
-                return f"{raw_atype} STR/INT"
+                return f"{raw_atype} (STR/INT)"
 
-            return f"{raw_atype} INT"
+            return f"{raw_atype} (INT)"
 
         if str_requirement:
-            return f"{raw_atype} STR"
+            return f"{raw_atype} (STR)"
 
         return raw_atype

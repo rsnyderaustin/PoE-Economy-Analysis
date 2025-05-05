@@ -1,6 +1,5 @@
 import logging
 
-import instances_and_definitions
 from external_apis import ItemCategory
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill
 from shared import ATypeClassifier
@@ -117,11 +116,16 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
             mod_tier = utils.determine_mod_tier(mod_data)
             mod_ilvl = mod_data['level']
             affix_type = utils.determine_mod_affix_type(mod_data)
+            magnitudes = mod_data['magnitudes']
 
-            sub_mods = _create_sub_mods(
-                mod_id_to_sanitized_text=mod_id_to_sanitized_text,
-                mod_magnitudes=mod_data['magnitudes']
-            )
+            # As of right now this condition only applies to spears, which for some reason have a blank
+            if not mod_name and not mod_tier and not affix_type and not magnitudes:
+                continue
+            else:
+                sub_mods = _create_sub_mods(
+                    mod_id_to_sanitized_text=mod_id_to_sanitized_text,
+                    mod_magnitudes=magnitudes
+                )
 
             item_mod = ItemMod(
                 atype=ATypeClassifier.classify(item_data=item_data),
@@ -164,25 +168,11 @@ def create_skills(item_data: dict) -> list[ItemSkill]:
     return skills
 
 
-def _clean_item_data(item_data: dict):
-    """
-    Right now this is just used to clear empty implicits from spears granting skill Spear Throw.
-    """
-    if 'extended' in item_data and item_data['extended'] and 'implicit' in item_data['extended']['mods']:
-        implicit_mod_dicts = item_data['extended']['mods']['implicit']
-
-        implicit_mod_dicts[:] = [
-            implicit_mod_dict
-            for implicit_mod_dict in implicit_mod_dicts
-            if (implicit_mod_dict['magnitudes'] or implicit_mod_dict['name'] or implicit_mod_dict['tier'])
-        ]
-
-
 def create_listing(api_item_response: dict):
     item_data = api_item_response['item']
     listing_data = api_item_response['listing']
 
-    _clean_item_data(item_data)
+    # _clean_item_data(item_data)
 
     if item_data['baseType'] == ItemCategory.RUNE.value:
         logging.error(f"Received API item response for unsupported {ItemCategory.RUNE.value} item category. "
