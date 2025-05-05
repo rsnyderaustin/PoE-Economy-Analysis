@@ -1,7 +1,8 @@
 
+from utils.enums import Rarity
+
 from data_synthesizing import ModTier
 from things.items import Modifiable
-from utils.enums import Rarity
 
 
 class CraftingOutcome:

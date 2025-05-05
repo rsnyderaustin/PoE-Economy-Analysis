@@ -1,10 +1,9 @@
 import logging
-import json
 
-from external_apis import ItemCategory
-from shared import ATypeClassifier
 import instances_and_definitions
+from external_apis import ItemCategory
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill
+from shared import ATypeClassifier
 from shared import shared_utils
 from . import utils
 
@@ -97,12 +96,8 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
     """
     mods = []
 
-    mod_class_enums = [e
-                       for e in [
-                           *instances_and_definitions.affixed_mod_classes,
-                           *instances_and_definitions.non_affixed_mod_classes
-                       ]
-                       ]
+    # Runes are created separately
+    mod_class_enums = [e for e in ModClass if e != ModClass.RUNE]
     for mod_class_enum in mod_class_enums:
         mod_class = mod_class_enum.value
         if mod_class not in item_data:
@@ -120,6 +115,7 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
         for mod_data in extended_mods_list:
             mod_name = mod_data['name']
             mod_tier = utils.determine_mod_tier(mod_data)
+            mod_ilvl = mod_data['level']
             affix_type = utils.determine_mod_affix_type(mod_data)
 
             sub_mods = _create_sub_mods(
@@ -130,8 +126,9 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
             item_mod = ItemMod(
                 atype=ATypeClassifier.classify(item_data=item_data),
                 mod_class=mod_class_enum,
+                mod_ilvl=mod_ilvl,
                 mod_name=mod_name,
-                mod_affix_type=affix_type,
+                affix_type=affix_type,
                 mod_tier=mod_tier,
                 sub_mods=sub_mods
             )

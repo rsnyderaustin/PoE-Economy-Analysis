@@ -1,8 +1,4 @@
-import re
-from abc import ABC
-
-from external_apis import ItemCategory
-from .utils import ModClass, generate_mod_id, ModAffixType
+from .utils import ModClass, generate_mod_id
 
 
 class ModTier:

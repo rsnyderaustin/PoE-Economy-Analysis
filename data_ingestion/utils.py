@@ -45,9 +45,8 @@ def determine_mod_affix_type(mod_dict: dict) -> ModAffixType:
         elif first_letter == 'P':
             mod_affix = ModAffixType.PREFIX
         else:
-            logging.error(f"Did not recognize first character as an affix type for "
-                          f"item tier {mod_dict['tier']}")
-            mod_affix = None
+            raise ValueError(f"Did not recognize first character as an affix type for "
+                             f"item tier {mod_dict['tier']}")
 
     return mod_affix
 

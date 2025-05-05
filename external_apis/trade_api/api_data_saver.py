@@ -3,6 +3,7 @@ import json
 import logging
 
 from utils import PathProcessor
+
 from .things import ItemListing, Rune
 
 
@@ -25,7 +26,7 @@ class ApiDataSaver:
         if listing.item_atype not in cls.category_mods_dict:
             cls.category_mods_dict[listing.item_atype] = dict()
 
-        for mod in listing.mods:
+        for mod in listing.mod_texts:
 
             if mod.is_hybrid:
                 if mod.mod_text not in cls.category_mods_dict[listing.item_atype]:

@@ -1,5 +1,4 @@
 import re
-from abc import ABC
 
 from external_apis import ItemCategory
 from .utils import ModClass, ModAffixType, generate_mod_id
@@ -20,13 +19,23 @@ class ItemMod:
                  mod_name: str,
                  affix_type: ModAffixType,
                  mod_tier: int,
+                 mod_ilvl: int,
                  sub_mods: list[SubMod]):
         self.atype = atype
         self.mod_class = mod_class
         self.mod_name = mod_name
         self.affix_type = affix_type
         self.mod_tier = mod_tier
+        self.mod_ilvl = mod_ilvl
         self.sub_mods = sub_mods
+
+        # This is filled in later via Poecd data
+        self.mod_types = None
+        self.weighting = None
+
+    @property
+    def is_hybrid(self):
+        return len(self.sub_mods) >= 2
 
     @property
     def mod_id(self):

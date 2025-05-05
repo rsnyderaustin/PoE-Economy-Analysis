@@ -1,9 +1,8 @@
 
 import logging
 
-from shared.enums import ModAffixType
-
 from data_synthesizing.things.mods.singleton_mod import Mod
+from shared.enums import ModAffixType
 
 
 class ATypeManager:

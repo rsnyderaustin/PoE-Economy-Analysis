@@ -4,6 +4,7 @@ import logging
 import data_ingestion
 import external_apis
 from data_exporting import ExportManager
+from data_synthesizing.mod_poecd_data_injecter import ModPoecdDataInjecter
 from shared import ATypeClassifier
 
 logging.basicConfig(level=logging.INFO,
@@ -14,6 +15,7 @@ class ProgramManager:
 
     def __init__(self):
         self.export_manager = ExportManager()
+        self.injector = ModPoecdDataInjecter()
 
     def execute(self):
         atype_classifier = ATypeClassifier()
@@ -44,12 +46,13 @@ class ProgramManager:
         for api_item_response in api_item_responses:
             mods = data_ingestion.create_item_mods(item_data=api_item_response['item'])
             for mod in mods:
+                self.injector.inject_poecd_data_into_mod(item_mod=mod)
                 self.export_manager.save_mod(item_mod=mod)
 
-            socketer = data_ingestion.create_socketer_for_internal_storage(item_data=api_item_response['item'])
+            """socketer = data_ingestion.create_socketer_for_internal_storage(item_data=api_item_response['item'])
             self.export_manager.save_rune(atype=ATypeClassifier.classify(item_data=api_item_response['item']),
                                           rune_name=socketer.name,
-                                          rune_effect=socketer.text)
+                                          rune_effect=socketer.text)"""
 
         self.export_manager.export_data()
 

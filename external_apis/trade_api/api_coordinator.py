@@ -3,6 +3,7 @@ from itertools import product
 
 from utils import classifications
 from utils.enums import Currency, TradeFilters, TypeFilters, Rarity, ModClass, EquipmentAttribute
+
 from . import helper_funcs
 from .api_data_saver import ApiDataSaver
 from .atype_clasifier import ATypeClassifier

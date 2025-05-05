@@ -1,6 +1,7 @@
+from utils.enums import ModAffixType
+
 from data_synthesizing import GlobalATypesManager, ModTier
 from things.items import Modifiable
-from utils.enums import ModAffixType
 from .crafting_outcome import CraftingOutcome
 
 
