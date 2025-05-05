@@ -1,11 +1,5 @@
+from program_manager import ProgramManager
 
-import logging
 
-from external_apis.craft_of_exile_api import CoEDataPuller, CoEEndpoint
-
-logging.basicConfig(level=logging.INFO,
-                    force=True)
-
-coe_data = CoEDataPuller.pull_data(endpoint=CoEEndpoint.BASE_TYPES)
-coe_mods = CoEDataPuller.pull_data(endpoint=CoEEndpoint.MODS_AND_WEIGHTS)
-x=0
+prog_manager = ProgramManager()
+prog_manager.execute()

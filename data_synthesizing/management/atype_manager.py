@@ -1,8 +1,9 @@
 
 import logging
 
-from data_synthesizing.mods.mod import Mod
-from utils.enums import ModAffixType
+from shared.enums import ModAffixType
+
+from data_synthesizing.things.mods.singleton_mod import Mod
 
 
 class ATypeManager:
@@ -37,7 +38,7 @@ class ATypeManager:
             if force_mod_type and force_mod_type not in mod.mod_types:
                 continue
 
-            if affix_types and mod.affix_type not in affix_types:
+            if affix_types and mod.affix_type_enum not in affix_types:
                 continue
 
             if exclude_mod_ids and mod.mod_id in exclude_mod_ids:

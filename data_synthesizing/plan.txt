@@ -1,4 +1,0 @@
-So each item atype is completely separate from one another. Their mods don't interact, the tiers don't interact, etc.
-So we need to treat each atype and its associated mods completely differently. They may contain some mods of the same ID,
-they may not, etc. At its core, when synthesizing data from PoECD data and the Official Trade API, all we really care about
-is filling in the mod weighting and affix type (suffix / prefix).
