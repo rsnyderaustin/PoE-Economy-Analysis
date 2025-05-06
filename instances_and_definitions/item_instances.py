@@ -11,7 +11,7 @@ class SubMod:
         self.values_ranges = values_ranges
 
 
-class  ItemMod:
+class ItemMod:
 
     def __init__(self,
                  atype: str,

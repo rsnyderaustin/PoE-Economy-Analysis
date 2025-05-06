@@ -1,69 +1,77 @@
 {
     "One Hand Mace": {
-        "explicit.stat_55876295": {
+        "explicit.stat_4080418644": {
             "mod_class": "explicitMods",
             "sub_mod_ids": [
-                "explicit.stat_55876295"
+                "explicit.stat_4080418644"
             ],
             "mod_types": [
-                "Life",
-                "Physical",
-                "Attack"
+                "Attribute"
             ],
             "mod_texts": [
-                "Leeches #.#% of Physical Damage as Life"
+                "+# to Strength"
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "38": {
-                    "ilvl": 38,
+                "55": {
+                    "ilvl": 55,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
-                            6.0,
-                            6.9
+                        "explicit.stat_4080418644": [
+                            25.0,
+                            27.0
                         ]
                     },
-                    "weighting": "1050"
+                    "weighting": "750"
                 },
-                "21": {
-                    "ilvl": 21,
+                "1": {
+                    "ilvl": 1,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
+                        "explicit.stat_4080418644": [
                             5.0,
-                            5.9
+                            8.0
                         ]
                     },
-                    "weighting": "1050"
+                    "weighting": "750"
                 },
-                "68": {
-                    "ilvl": 68,
+                "33": {
+                    "ilvl": 33,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
-                            8.0,
-                            8.9
+                        "explicit.stat_4080418644": [
+                            17.0,
+                            20.0
                         ]
                     },
-                    "weighting": "1050"
+                    "weighting": "750"
                 },
-                "54": {
-                    "ilvl": 54,
+                "11": {
+                    "ilvl": 11,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
-                            7.0,
-                            7.9
-                        ]
-                    },
-                    "weighting": "1050"
-                },
-                "81": {
-                    "ilvl": 81,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
+                        "explicit.stat_4080418644": [
                             9.0,
-                            9.9
+                            12.0
                         ]
                     },
-                    "weighting": "1050"
+                    "weighting": "750"
+                },
+                "44": {
+                    "ilvl": 44,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_4080418644": [
+                            21.0,
+                            24.0
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "74": {
+                    "ilvl": 74,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_4080418644": [
+                            31.0,
+                            33.0
+                        ]
+                    },
+                    "weighting": "750"
                 }
             }
         },
@@ -80,26 +88,6 @@
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "33": {
-                    "ilvl": 33,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            19.0,
-                            28.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "22": {
-                    "ilvl": 22,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            10.0,
-                            18.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
                 "44": {
                     "ilvl": 44,
                     "mod_id_to_values_ranges": {
@@ -120,12 +108,32 @@
                     },
                     "weighting": "850"
                 },
+                "22": {
+                    "ilvl": 22,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_3695891184": [
+                            10.0,
+                            18.0
+                        ]
+                    },
+                    "weighting": "850"
+                },
                 "1": {
                     "ilvl": 1,
                     "mod_id_to_values_ranges": {
                         "explicit.stat_3695891184": [
                             4.0,
                             6.0
+                        ]
+                    },
+                    "weighting": "850"
+                },
+                "33": {
+                    "ilvl": 33,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_3695891184": [
+                            19.0,
+                            28.0
                         ]
                     },
                     "weighting": "850"
@@ -149,253 +157,283 @@
                         ]
                     },
                     "weighting": "850"
-                },
-                "77": {
-                    "ilvl": 77,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            69.0,
-                            84.0
-                        ]
-                    },
-                    "weighting": "850"
                 }
             }
         },
-        "One Hand Mace_explicit.stat_691932474_explicit.stat_1263695895_+# to Accuracy Rating_#% increased Light Radius": {
+        "explicit.stat_1509134228": {
             "mod_class": "explicitMods",
             "sub_mod_ids": [
-                "explicit.stat_691932474",
-                "explicit.stat_1263695895"
-            ],
-            "mod_types": [
-                "Attack"
-            ],
-            "mod_texts": [
-                "+# to Accuracy Rating",
-                "#% increased Light Radius"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "15": {
-                    "ilvl": 15,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            21.0,
-                            40.0
-                        ],
-                        "explicit.stat_1263695895": [
-                            10.0,
-                            10.0
-                        ]
-                    },
-                    "weighting": "600"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            41.0,
-                            60.0
-                        ],
-                        "explicit.stat_1263695895": [
-                            15.0,
-                            15.0
-                        ]
-                    },
-                    "weighting": "600"
-                },
-                "8": {
-                    "ilvl": 8,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            10.0,
-                            20.0
-                        ],
-                        "explicit.stat_1263695895": [
-                            5.0,
-                            5.0
-                        ]
-                    },
-                    "weighting": "600"
-                }
-            }
-        },
-        "explicit.stat_709508406": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_709508406"
+                "explicit.stat_1509134228"
             ],
             "mod_types": [
                 "Damage",
-                "Elemental",
-                "Fire",
+                "Physical",
                 "Attack"
             ],
             "mod_texts": [
-                "Adds # to # Fire Damage"
+                "#% increased Physical Damage"
             ],
             "affix_type": "prefix",
             "mod_tiers": {
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                1.0,
-                                2.0
-                            ],
-                            [
-                                3.0,
-                                5.0
-                            ]
-                        ]
-                    },
-                    "weighting": "925"
-                },
                 "11": {
                     "ilvl": 11,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                4.0,
-                                6.0
-                            ],
-                            [
-                                7.0,
-                                10.0
-                            ]
+                        "explicit.stat_1509134228": [
+                            50.0,
+                            64.0
                         ]
                     },
-                    "weighting": "925"
+                    "weighting": "1175"
                 },
-                "42": {
-                    "ilvl": 42,
+                "23": {
+                    "ilvl": 23,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                20.0,
-                                30.0
-                            ],
-                            [
-                                31.0,
-                                46.0
-                            ]
+                        "explicit.stat_1509134228": [
+                            65.0,
+                            84.0
                         ]
                     },
-                    "weighting": "925"
+                    "weighting": "1175"
                 },
-                "33": {
-                    "ilvl": 33,
+                "1": {
+                    "ilvl": 1,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                14.0,
-                                21.0
-                            ],
-                            [
-                                22.0,
-                                33.0
-                            ]
+                        "explicit.stat_1509134228": [
+                            40.0,
+                            49.0
                         ]
                     },
-                    "weighting": "925"
+                    "weighting": "1175"
                 },
-                "81": {
-                    "ilvl": 81,
+                "46": {
+                    "ilvl": 46,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                52.0,
-                                78.0
-                            ],
-                            [
-                                79.0,
-                                119.0
-                            ]
+                        "explicit.stat_1509134228": [
+                            110.0,
+                            134.0
                         ]
                     },
-                    "weighting": "225"
+                    "weighting": "1050"
                 },
-                "51": {
-                    "ilvl": 51,
+                "60": {
+                    "ilvl": 60,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                26.0,
-                                39.0
-                            ],
-                            [
-                                40.0,
-                                59.0
-                            ]
+                        "explicit.stat_1509134228": [
+                            135.0,
+                            154.0
+                        ]
+                    },
+                    "weighting": "1000"
+                },
+                "35": {
+                    "ilvl": 35,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            85.0,
+                            109.0
+                        ]
+                    },
+                    "weighting": "1175"
+                },
+                "82": {
+                    "ilvl": 82,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            170.0,
+                            179.0
+                        ]
+                    },
+                    "weighting": "200"
+                }
+            }
+        },
+        "explicit.stat_748522257": {
+            "mod_class": "explicitMods",
+            "sub_mod_ids": [
+                "explicit.stat_748522257"
+            ],
+            "mod_types": [],
+            "mod_texts": [
+                "#% increased Stun Duration"
+            ],
+            "affix_type": "suffix",
+            "mod_tiers": {
+                "5": {
+                    "ilvl": 5,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_748522257": [
+                            11.0,
+                            13.0
                         ]
                     },
                     "weighting": "800"
                 },
-                "74": {
-                    "ilvl": 74,
+                "30": {
+                    "ilvl": 30,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                45.0,
-                                67.0
-                            ],
-                            [
-                                68.0,
-                                102.0
-                            ]
+                        "explicit.stat_748522257": [
+                            17.0,
+                            19.0
                         ]
                     },
-                    "weighting": "450"
+                    "weighting": "800"
                 },
-                "26": {
-                    "ilvl": 26,
+                "58": {
+                    "ilvl": 58,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                11.0,
-                                17.0
-                            ],
-                            [
-                                18.0,
-                                26.0
-                            ]
+                        "explicit.stat_748522257": [
+                            23.0,
+                            26.0
                         ]
                     },
-                    "weighting": "925"
+                    "weighting": "800"
+                },
+                "71": {
+                    "ilvl": 71,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_748522257": [
+                            27.0,
+                            30.0
+                        ]
+                    },
+                    "weighting": "800"
                 },
                 "18": {
                     "ilvl": 18,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                7.0,
-                                11.0
-                            ],
-                            [
-                                12.0,
-                                18.0
-                            ]
+                        "explicit.stat_748522257": [
+                            14.0,
+                            16.0
                         ]
                     },
-                    "weighting": "925"
+                    "weighting": "800"
                 },
-                "62": {
-                    "ilvl": 62,
+                "44": {
+                    "ilvl": 44,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                35.0,
-                                52.0
-                            ],
-                            [
-                                53.0,
-                                79.0
-                            ]
+                        "explicit.stat_748522257": [
+                            20.0,
+                            22.0
                         ]
                     },
-                    "weighting": "625"
+                    "weighting": "800"
+                }
+            }
+        },
+        "One Hand Mace_explicit.stat_1509134228_explicit.stat_691932474_#% increased Physical Damage_+# to Accuracy Rating": {
+            "mod_class": "explicitMods",
+            "sub_mod_ids": [
+                "explicit.stat_1509134228",
+                "explicit.stat_691932474"
+            ],
+            "mod_types": [
+                "Damage",
+                "Physical",
+                "Attack"
+            ],
+            "mod_texts": [
+                "#% increased Physical Damage",
+                "+# to Accuracy Rating"
+            ],
+            "affix_type": "prefix",
+            "mod_tiers": {
+                "65": {
+                    "ilvl": 65,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            55.0,
+                            64.0
+                        ],
+                        "explicit.stat_691932474": [
+                            124.0,
+                            149.0
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            20.0,
+                            24.0
+                        ],
+                        "explicit.stat_691932474": [
+                            21.0,
+                            46.0
+                        ]
+                    },
+                    "weighting": "1100"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            15.0,
+                            19.0
+                        ],
+                        "explicit.stat_691932474": [
+                            16.0,
+                            20.0
+                        ]
+                    },
+                    "weighting": "1100"
+                },
+                "23": {
+                    "ilvl": 23,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            25.0,
+                            34.0
+                        ],
+                        "explicit.stat_691932474": [
+                            47.0,
+                            72.0
+                        ]
+                    },
+                    "weighting": "1100"
+                },
+                "53": {
+                    "ilvl": 53,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            45.0,
+                            54.0
+                        ],
+                        "explicit.stat_691932474": [
+                            98.0,
+                            123.0
+                        ]
+                    },
+                    "weighting": "1050"
+                },
+                "38": {
+                    "ilvl": 38,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            35.0,
+                            44.0
+                        ],
+                        "explicit.stat_691932474": [
+                            73.0,
+                            97.0
+                        ]
+                    },
+                    "weighting": "1100"
+                },
+                "81": {
+                    "ilvl": 81,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            75.0,
+                            79.0
+                        ],
+                        "explicit.stat_691932474": [
+                            175.0,
+                            200.0
+                        ]
+                    },
+                    "weighting": "300"
                 }
             }
         },
@@ -422,332 +460,181 @@
                 }
             }
         },
-        "explicit.stat_210067635": {
+        "explicit.stat_518292764": {
             "mod_class": "explicitMods",
             "sub_mod_ids": [
-                "explicit.stat_210067635"
+                "explicit.stat_518292764"
             ],
             "mod_types": [
                 "Attack",
-                "Speed"
+                "Critical"
             ],
             "mod_texts": [
-                "#% increased Attack Speed"
+                "+#.#% to Critical Hit Chance"
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "30": {
-                    "ilvl": 30,
+                "20": {
+                    "ilvl": 20,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            14.0,
-                            16.0
+                        "explicit.stat_518292764": [
+                            1.51,
+                            2.1
                         ]
                     },
-                    "weighting": "850"
-                },
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            8.0,
-                            10.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "22": {
-                    "ilvl": 22,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            11.0,
-                            13.0
-                        ]
-                    },
-                    "weighting": "850"
+                    "weighting": "775"
                 },
                 "1": {
                     "ilvl": 1,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            5.0,
-                            7.0
+                        "explicit.stat_518292764": [
+                            1.01,
+                            1.5
                         ]
                     },
-                    "weighting": "850"
+                    "weighting": "775"
                 },
-                "60": {
-                    "ilvl": 60,
+                "73": {
+                    "ilvl": 73,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            23.0,
-                            25.0
+                        "explicit.stat_518292764": [
+                            4.41,
+                            5.0
                         ]
                     },
-                    "weighting": "275"
+                    "weighting": "200"
                 },
-                "45": {
-                    "ilvl": 45,
+                "59": {
+                    "ilvl": 59,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            20.0,
-                            22.0
+                        "explicit.stat_518292764": [
+                            3.81,
+                            4.4
                         ]
                     },
-                    "weighting": "525"
+                    "weighting": "425"
+                },
+                "44": {
+                    "ilvl": 44,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_518292764": [
+                            3.11,
+                            3.8
+                        ]
+                    },
+                    "weighting": "725"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_518292764": [
+                            2.11,
+                            2.7
+                        ]
+                    },
+                    "weighting": "775"
                 }
             }
         },
-        "explicit.stat_669069897": {
+        "explicit.stat_55876295": {
             "mod_class": "explicitMods",
             "sub_mod_ids": [
-                "explicit.stat_669069897"
+                "explicit.stat_55876295"
             ],
             "mod_types": [
-                "Mana",
+                "Life",
                 "Physical",
                 "Attack"
             ],
             "mod_texts": [
-                "Leeches #.#% of Physical Damage as Mana"
+                "Leeches #.#% of Physical Damage as Life"
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "21": {
-                    "ilvl": 21,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_669069897": [
-                            4.0,
-                            4.9
-                        ]
-                    },
-                    "weighting": "1050"
-                },
                 "38": {
                     "ilvl": 38,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_669069897": [
-                            5.0,
-                            5.9
+                        "explicit.stat_55876295": [
+                            6.0,
+                            6.9
                         ]
                     },
                     "weighting": "1050"
                 },
-                "68": {
-                    "ilvl": 68,
+                "54": {
+                    "ilvl": 54,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_669069897": [
+                        "explicit.stat_55876295": [
                             7.0,
                             7.9
                         ]
                     },
                     "weighting": "1050"
-                }
-            }
-        },
-        "explicit.stat_1940865751": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1940865751"
-            ],
-            "mod_types": [
-                "Damage",
-                "Physical",
-                "Attack"
-            ],
-            "mod_texts": [
-                "Adds # to # Physical Damage"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "36": {
-                    "ilvl": 36,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                10.0,
-                                15.0
-                            ],
-                            [
-                                18.0,
-                                26.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1175"
-                },
-                "13": {
-                    "ilvl": 13,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                4.0,
-                                6.0
-                            ],
-                            [
-                                7.0,
-                                11.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1175"
-                },
-                "65": {
-                    "ilvl": 65,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                21.0,
-                                31.0
-                            ],
-                            [
-                                36.0,
-                                53.0
-                            ]
-                        ]
-                    },
-                    "weighting": "525"
-                },
-                "29": {
-                    "ilvl": 29,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                8.0,
-                                12.0
-                            ],
-                            [
-                                14.0,
-                                21.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1175"
                 },
                 "21": {
                     "ilvl": 21,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                6.0,
-                                9.0
-                            ],
-                            [
-                                11.0,
-                                16.0
-                            ]
+                        "explicit.stat_55876295": [
+                            5.0,
+                            5.9
                         ]
                     },
-                    "weighting": "1175"
-                },
-                "46": {
-                    "ilvl": 46,
+                    "weighting": "1050"
+                }
+            }
+        },
+        "explicit.stat_9187492": {
+            "mod_class": "explicitMods",
+            "sub_mod_ids": [
+                "explicit.stat_9187492"
+            ],
+            "mod_types": [
+                "Attack"
+            ],
+            "mod_texts": [
+                "+# to Level of all Melee Skills"
+            ],
+            "affix_type": "suffix",
+            "mod_tiers": {
+                "18": {
+                    "ilvl": 18,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                13.0,
-                                20.0
-                            ],
-                            [
-                                23.0,
-                                35.0
-                            ]
+                        "explicit.stat_9187492": [
+                            2.0,
+                            2.0
                         ]
                     },
-                    "weighting": "1000"
+                    "weighting": "950"
+                },
+                "55": {
+                    "ilvl": 55,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_9187492": [
+                            4.0,
+                            4.0
+                        ]
+                    },
+                    "weighting": "950"
+                },
+                "36": {
+                    "ilvl": 36,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_9187492": [
+                            3.0,
+                            3.0
+                        ]
+                    },
+                    "weighting": "950"
                 },
                 "2": {
                     "ilvl": 2,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                1.0,
-                                2.0
-                            ],
-                            [
-                                4.0,
-                                5.0
-                            ]
+                        "explicit.stat_9187492": [
+                            1.0,
+                            1.0
                         ]
                     },
-                    "weighting": "1175"
-                }
-            }
-        },
-        "explicit.stat_1509134228": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1509134228"
-            ],
-            "mod_types": [
-                "Damage",
-                "Physical",
-                "Attack"
-            ],
-            "mod_texts": [
-                "#% increased Physical Damage"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "35": {
-                    "ilvl": 35,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            85.0,
-                            109.0
-                        ]
-                    },
-                    "weighting": "1175"
-                },
-                "23": {
-                    "ilvl": 23,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            65.0,
-                            84.0
-                        ]
-                    },
-                    "weighting": "1175"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            40.0,
-                            49.0
-                        ]
-                    },
-                    "weighting": "1175"
-                },
-                "73": {
-                    "ilvl": 73,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            155.0,
-                            169.0
-                        ]
-                    },
-                    "weighting": "325"
-                },
-                "46": {
-                    "ilvl": 46,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            110.0,
-                            134.0
-                        ]
-                    },
-                    "weighting": "1050"
-                },
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            50.0,
-                            64.0
-                        ]
-                    },
-                    "weighting": "1175"
+                    "weighting": "950"
                 }
             }
         },
@@ -767,21 +654,21 @@
             ],
             "affix_type": "prefix",
             "mod_tiers": {
-                "13": {
-                    "ilvl": 13,
+                "51": {
+                    "ilvl": 51,
                     "mod_id_to_values_ranges": {
                         "explicit.stat_3336890334": [
                             [
                                 1.0,
-                                1.0
+                                5.0
                             ],
                             [
-                                13.0,
-                                18.0
+                                62.0,
+                                89.0
                             ]
                         ]
                     },
-                    "weighting": "925"
+                    "weighting": "800"
                 },
                 "63": {
                     "ilvl": 63,
@@ -799,22 +686,6 @@
                     },
                     "weighting": "625"
                 },
-                "34": {
-                    "ilvl": 34,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                3.0
-                            ],
-                            [
-                                37.0,
-                                52.0
-                            ]
-                        ]
-                    },
-                    "weighting": "925"
-                },
                 "42": {
                     "ilvl": 42,
                     "mod_id_to_values_ranges": {
@@ -826,22 +697,6 @@
                             [
                                 49.0,
                                 70.0
-                            ]
-                        ]
-                    },
-                    "weighting": "925"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                1.0
-                            ],
-                            [
-                                4.0,
-                                6.0
                             ]
                         ]
                     },
@@ -863,22 +718,6 @@
                     },
                     "weighting": "925"
                 },
-                "51": {
-                    "ilvl": 51,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                5.0
-                            ],
-                            [
-                                62.0,
-                                89.0
-                            ]
-                        ]
-                    },
-                    "weighting": "800"
-                },
                 "19": {
                     "ilvl": 19,
                     "mod_id_to_values_ranges": {
@@ -895,479 +734,76 @@
                     },
                     "weighting": "925"
                 },
-                "81": {
-                    "ilvl": 81,
+                "1": {
+                    "ilvl": 1,
                     "mod_id_to_values_ranges": {
                         "explicit.stat_3336890334": [
                             [
                                 1.0,
-                                10.0
+                                1.0
                             ],
                             [
-                                125.0,
-                                180.0
+                                4.0,
+                                6.0
                             ]
                         ]
                     },
-                    "weighting": "225"
-                }
-            }
-        },
-        "explicit.stat_9187492": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_9187492"
-            ],
-            "mod_types": [
-                "Attack"
-            ],
-            "mod_texts": [
-                "+# to Level of all Melee Skills"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "36": {
-                    "ilvl": 36,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_9187492": [
-                            3.0,
-                            3.0
-                        ]
-                    },
-                    "weighting": "950"
+                    "weighting": "925"
                 },
-                "2": {
-                    "ilvl": 2,
+                "13": {
+                    "ilvl": 13,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_9187492": [
-                            1.0,
-                            1.0
+                        "explicit.stat_3336890334": [
+                            [
+                                1.0,
+                                1.0
+                            ],
+                            [
+                                13.0,
+                                18.0
+                            ]
                         ]
                     },
-                    "weighting": "950"
+                    "weighting": "925"
                 },
-                "18": {
-                    "ilvl": 18,
+                "74": {
+                    "ilvl": 74,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_9187492": [
-                            2.0,
-                            2.0
+                        "explicit.stat_3336890334": [
+                            [
+                                1.0,
+                                8.0
+                            ],
+                            [
+                                108.0,
+                                155.0
+                            ]
                         ]
                     },
-                    "weighting": "950"
-                },
-                "55": {
-                    "ilvl": 55,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_9187492": [
-                            4.0,
-                            4.0
-                        ]
-                    },
-                    "weighting": "950"
-                }
-            }
-        },
-        "explicit.stat_691932474": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_691932474"
-            ],
-            "mod_types": [
-                "Attack"
-            ],
-            "mod_texts": [
-                "+# to Accuracy Rating"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "50": {
-                    "ilvl": 50,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            237.0,
-                            346.0
-                        ]
-                    },
-                    "weighting": "875"
-                },
-                "33": {
-                    "ilvl": 33,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            124.0,
-                            167.0
-                        ]
-                    },
-                    "weighting": "875"
-                },
-                "20": {
-                    "ilvl": 20,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            61.0,
-                            84.0
-                        ]
-                    },
-                    "weighting": "875"
-                },
-                "41": {
-                    "ilvl": 41,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            168.0,
-                            236.0
-                        ]
-                    },
-                    "weighting": "875"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            11.0,
-                            32.0
-                        ]
-                    },
-                    "weighting": "875"
-                },
-                "12": {
-                    "ilvl": 12,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            33.0,
-                            60.0
-                        ]
-                    },
-                    "weighting": "875"
-                },
-                "63": {
-                    "ilvl": 63,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            347.0,
-                            450.0
-                        ]
-                    },
-                    "weighting": "425"
-                }
-            }
-        },
-        "explicit.stat_748522257": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_748522257"
-            ],
-            "mod_types": [],
-            "mod_texts": [
-                "#% increased Stun Duration"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "71": {
-                    "ilvl": 71,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            27.0,
-                            30.0
-                        ]
-                    },
-                    "weighting": "800"
-                },
-                "44": {
-                    "ilvl": 44,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            20.0,
-                            22.0
-                        ]
-                    },
-                    "weighting": "800"
-                },
-                "18": {
-                    "ilvl": 18,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            14.0,
-                            16.0
-                        ]
-                    },
-                    "weighting": "800"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            17.0,
-                            19.0
-                        ]
-                    },
-                    "weighting": "800"
-                },
-                "58": {
-                    "ilvl": 58,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            23.0,
-                            26.0
-                        ]
-                    },
-                    "weighting": "800"
-                },
-                "5": {
-                    "ilvl": 5,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            11.0,
-                            13.0
-                        ]
-                    },
-                    "weighting": "800"
-                }
-            }
-        },
-        "explicit.stat_4080418644": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_4080418644"
-            ],
-            "mod_types": [
-                "Attribute"
-            ],
-            "mod_texts": [
-                "+# to Strength"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "44": {
-                    "ilvl": 44,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            21.0,
-                            24.0
-                        ]
-                    },
-                    "weighting": "750"
-                },
-                "55": {
-                    "ilvl": 55,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            25.0,
-                            27.0
-                        ]
-                    },
-                    "weighting": "750"
-                },
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            9.0,
-                            12.0
-                        ]
-                    },
-                    "weighting": "750"
-                },
-                "22": {
-                    "ilvl": 22,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            13.0,
-                            16.0
-                        ]
-                    },
-                    "weighting": "750"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            5.0,
-                            8.0
-                        ]
-                    },
-                    "weighting": "750"
-                },
-                "66": {
-                    "ilvl": 66,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            28.0,
-                            30.0
-                        ]
-                    },
-                    "weighting": "750"
-                },
-                "33": {
-                    "ilvl": 33,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            17.0,
-                            20.0
-                        ]
-                    },
-                    "weighting": "750"
-                }
-            }
-        },
-        "explicit.stat_1368271171": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1368271171"
-            ],
-            "mod_types": [
-                "Mana"
-            ],
-            "mod_texts": [
-                "Gain # Mana per Enemy Killed"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "12": {
-                    "ilvl": 12,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            4.0,
-                            5.0
-                        ]
-                    },
-                    "weighting": "850"
+                    "weighting": "450"
                 },
                 "34": {
                     "ilvl": 34,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            10.0,
-                            14.0
+                        "explicit.stat_3336890334": [
+                            [
+                                1.0,
+                                3.0
+                            ],
+                            [
+                                37.0,
+                                52.0
+                            ]
                         ]
                     },
-                    "weighting": "850"
-                },
-                "56": {
-                    "ilvl": 56,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            21.0,
-                            27.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "45": {
-                    "ilvl": 45,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            15.0,
-                            20.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "23": {
-                    "ilvl": 23,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            6.0,
-                            9.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "67": {
-                    "ilvl": 67,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            28.0,
-                            35.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            2.0,
-                            3.0
-                        ]
-                    },
-                    "weighting": "850"
+                    "weighting": "925"
                 }
             }
         },
-        "explicit.stat_2694482655": {
+        "explicit.stat_1940865751": {
             "mod_class": "explicitMods",
             "sub_mod_ids": [
-                "explicit.stat_2694482655"
-            ],
-            "mod_types": [
-                "Damage",
-                "Attack",
-                "Critical"
-            ],
-            "mod_texts": [
-                "+#% to Critical Damage Bonus"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "21": {
-                    "ilvl": 21,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_2694482655": [
-                            15.0,
-                            19.0
-                        ]
-                    },
-                    "weighting": "775"
-                },
-                "59": {
-                    "ilvl": 59,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_2694482655": [
-                            30.0,
-                            34.0
-                        ]
-                    },
-                    "weighting": "425"
-                },
-                "8": {
-                    "ilvl": 8,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_2694482655": [
-                            10.0,
-                            14.0
-                        ]
-                    },
-                    "weighting": "775"
-                },
-                "44": {
-                    "ilvl": 44,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_2694482655": [
-                            25.0,
-                            29.0
-                        ]
-                    },
-                    "weighting": "650"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_2694482655": [
-                            20.0,
-                            24.0
-                        ]
-                    },
-                    "weighting": "775"
-                }
-            }
-        },
-        "One Hand Mace_explicit.stat_1509134228_explicit.stat_691932474_#% increased Physical Damage_+# to Accuracy Rating": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1509134228",
-                "explicit.stat_691932474"
+                "explicit.stat_1940865751"
             ],
             "mod_types": [
                 "Damage",
@@ -1375,344 +811,137 @@
                 "Attack"
             ],
             "mod_texts": [
-                "#% increased Physical Damage",
-                "+# to Accuracy Rating"
+                "Adds # to # Physical Damage"
             ],
             "affix_type": "prefix",
             "mod_tiers": {
-                "23": {
-                    "ilvl": 23,
+                "29": {
+                    "ilvl": 29,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            25.0,
-                            34.0
-                        ],
-                        "explicit.stat_691932474": [
-                            47.0,
-                            72.0
-                        ]
-                    },
-                    "weighting": "1100"
-                },
-                "38": {
-                    "ilvl": 38,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            35.0,
-                            44.0
-                        ],
-                        "explicit.stat_691932474": [
-                            73.0,
-                            97.0
-                        ]
-                    },
-                    "weighting": "1100"
-                },
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            20.0,
-                            24.0
-                        ],
-                        "explicit.stat_691932474": [
-                            21.0,
-                            46.0
-                        ]
-                    },
-                    "weighting": "1100"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            15.0,
-                            19.0
-                        ],
-                        "explicit.stat_691932474": [
-                            16.0,
-                            20.0
-                        ]
-                    },
-                    "weighting": "1100"
-                },
-                "65": {
-                    "ilvl": 65,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            55.0,
-                            64.0
-                        ],
-                        "explicit.stat_691932474": [
-                            124.0,
-                            149.0
-                        ]
-                    },
-                    "weighting": "750"
-                }
-            }
-        },
-        "explicit.stat_1037193709": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1037193709"
-            ],
-            "mod_types": [
-                "Damage",
-                "Elemental",
-                "Cold",
-                "Attack"
-            ],
-            "mod_texts": [
-                "Adds # to # Cold Damage"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "27": {
-                    "ilvl": 27,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
+                        "explicit.stat_1940865751": [
                             [
-                                9.0,
-                                14.0
+                                8.0,
+                                12.0
                             ],
                             [
-                                15.0,
-                                22.0
+                                14.0,
+                                21.0
                             ]
                         ]
                     },
-                    "weighting": "925"
+                    "weighting": "1175"
                 },
-                "1": {
-                    "ilvl": 1,
+                "36": {
+                    "ilvl": 36,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
+                        "explicit.stat_1940865751": [
+                            [
+                                10.0,
+                                15.0
+                            ],
+                            [
+                                18.0,
+                                26.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1175"
+                },
+                "2": {
+                    "ilvl": 2,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1940865751": [
                             [
                                 1.0,
                                 2.0
                             ],
                             [
-                                3.0,
-                                4.0
+                                4.0,
+                                5.0
                             ]
                         ]
                     },
-                    "weighting": "925"
+                    "weighting": "1175"
                 },
-                "52": {
-                    "ilvl": 52,
+                "46": {
+                    "ilvl": 46,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
+                        "explicit.stat_1940865751": [
                             [
-                                21.0,
-                                32.0
+                                13.0,
+                                20.0
                             ],
                             [
-                                33.0,
-                                49.0
+                                23.0,
+                                35.0
                             ]
                         ]
                     },
-                    "weighting": "800"
+                    "weighting": "1000"
                 },
-                "43": {
-                    "ilvl": 43,
+                "21": {
+                    "ilvl": 21,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
+                        "explicit.stat_1940865751": [
+                            [
+                                6.0,
+                                9.0
+                            ],
+                            [
+                                11.0,
+                                16.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1175"
+                },
+                "13": {
+                    "ilvl": 13,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1940865751": [
+                            [
+                                4.0,
+                                6.0
+                            ],
+                            [
+                                7.0,
+                                11.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1175"
+                },
+                "54": {
+                    "ilvl": 54,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1940865751": [
                             [
                                 16.0,
-                                25.0
+                                24.0
                             ],
-                            [
-                                26.0,
-                                38.0
-                            ]
-                        ]
-                    },
-                    "weighting": "925"
-                },
-                "19": {
-                    "ilvl": 19,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
-                            [
-                                6.0,
-                                9.0
-                            ],
-                            [
-                                10.0,
-                                15.0
-                            ]
-                        ]
-                    },
-                    "weighting": "925"
-                },
-                "34": {
-                    "ilvl": 34,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
-                            [
-                                12.0,
-                                18.0
-                            ],
-                            [
-                                19.0,
-                                28.0
-                            ]
-                        ]
-                    },
-                    "weighting": "925"
-                },
-                "12": {
-                    "ilvl": 12,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
-                            [
-                                3.0,
-                                5.0
-                            ],
-                            [
-                                6.0,
-                                9.0
-                            ]
-                        ]
-                    },
-                    "weighting": "925"
-                },
-                "63": {
-                    "ilvl": 63,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
                             [
                                 28.0,
-                                43.0
-                            ],
-                            [
-                                44.0,
-                                65.0
+                                42.0
                             ]
                         ]
                     },
-                    "weighting": "625"
+                    "weighting": "925"
                 },
-                "75": {
-                    "ilvl": 75,
+                "65": {
+                    "ilvl": 65,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
+                        "explicit.stat_1940865751": [
                             [
-                                37.0,
-                                55.0
+                                21.0,
+                                31.0
                             ],
                             [
-                                56.0,
-                                84.0
+                                36.0,
+                                53.0
                             ]
                         ]
                     },
-                    "weighting": "450"
-                }
-            }
-        },
-        "enchant.stat_709508406": {
-            "mod_class": "enchantMods",
-            "sub_mod_ids": [
-                "enchant.stat_709508406"
-            ],
-            "mod_types": null,
-            "mod_texts": [
-                "Adds # to # Fire Damage"
-            ],
-            "affix_type": null,
-            "mod_tiers": {
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "enchant.stat_709508406": [
-                            [
-                                9.0,
-                                14.0
-                            ],
-                            [
-                                15.0,
-                                22.0
-                            ]
-                        ]
-                    },
-                    "weighting": null
-                }
-            }
-        },
-        "explicit.stat_791928121": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_791928121"
-            ],
-            "mod_types": [],
-            "mod_texts": [
-                "Causes #% increased Stun Buildup"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "58": {
-                    "ilvl": 58,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            61.0,
-                            70.0
-                        ]
-                    },
-                    "weighting": "900"
-                },
-                "44": {
-                    "ilvl": 44,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            51.0,
-                            60.0
-                        ]
-                    },
-                    "weighting": "900"
-                },
-                "20": {
-                    "ilvl": 20,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            31.0,
-                            40.0
-                        ]
-                    },
-                    "weighting": "900"
-                },
-                "5": {
-                    "ilvl": 5,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            21.0,
-                            30.0
-                        ]
-                    },
-                    "weighting": "900"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            41.0,
-                            50.0
-                        ]
-                    },
-                    "weighting": "900"
-                },
-                "74": {
-                    "ilvl": 74,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            71.0,
-                            80.0
-                        ]
-                    },
-                    "weighting": "900"
+                    "weighting": "525"
                 }
             }
         },
@@ -1739,399 +968,108 @@
                 }
             }
         },
-        "explicit.stat_518292764": {
+        "explicit.stat_691932474": {
             "mod_class": "explicitMods",
             "sub_mod_ids": [
-                "explicit.stat_518292764"
+                "explicit.stat_691932474"
             ],
             "mod_types": [
-                "Attack",
-                "Critical"
+                "Attack"
             ],
             "mod_texts": [
-                "+#.#% to Critical Hit Chance"
+                "+# to Accuracy Rating"
             ],
-            "affix_type": "suffix",
+            "affix_type": "prefix",
             "mod_tiers": {
-                "44": {
-                    "ilvl": 44,
+                "33": {
+                    "ilvl": 33,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            3.11,
-                            3.8
+                        "explicit.stat_691932474": [
+                            124.0,
+                            167.0
                         ]
                     },
-                    "weighting": "725"
+                    "weighting": "875"
                 },
                 "20": {
                     "ilvl": 20,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            1.51,
-                            2.1
+                        "explicit.stat_691932474": [
+                            61.0,
+                            84.0
                         ]
                     },
-                    "weighting": "775"
+                    "weighting": "875"
                 },
-                "30": {
-                    "ilvl": 30,
+                "12": {
+                    "ilvl": 12,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            2.11,
-                            2.7
+                        "explicit.stat_691932474": [
+                            33.0,
+                            60.0
                         ]
                     },
-                    "weighting": "775"
+                    "weighting": "875"
                 },
                 "1": {
                     "ilvl": 1,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            1.01,
-                            1.5
+                        "explicit.stat_691932474": [
+                            11.0,
+                            32.0
                         ]
                     },
-                    "weighting": "775"
-                }
-            }
-        },
-        "explicit.stat_3639275092": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_3639275092"
-            ],
-            "mod_types": [],
-            "mod_texts": [
-                "#% reduced Attribute Requirements"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "52": {
-                    "ilvl": 52,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3639275092": [
-                            -30.0,
-                            -30.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "60": {
-                    "ilvl": 60,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3639275092": [
-                            -35.0,
-                            -35.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "32": {
-                    "ilvl": 32,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3639275092": [
-                            -20.0,
-                            -20.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "24": {
-                    "ilvl": 24,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3639275092": [
-                            -15.0,
-                            -15.0
-                        ]
-                    },
-                    "weighting": "850"
-                },
-                "40": {
-                    "ilvl": 40,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3639275092": [
-                            -25.0,
-                            -25.0
-                        ]
-                    },
-                    "weighting": "850"
-                }
-            }
-        },
-        "explicit.stat_821021828": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_821021828"
-            ],
-            "mod_types": [
-                "Life",
-                "Attack"
-            ],
-            "mod_texts": [
-                "Grants # Life per Enemy Hit"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_821021828": [
-                            4.0,
-                            4.0
-                        ]
-                    },
-                    "weighting": "800"
-                },
-                "20": {
-                    "ilvl": 20,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_821021828": [
-                            3.0,
-                            3.0
-                        ]
-                    },
-                    "weighting": "800"
-                },
-                "8": {
-                    "ilvl": 8,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_821021828": [
-                            2.0,
-                            2.0
-                        ]
-                    },
-                    "weighting": "800"
-                },
-                "40": {
-                    "ilvl": 40,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_821021828": [
-                            5.0,
-                            5.0
-                        ]
-                    },
-                    "weighting": "800"
-                }
-            }
-        },
-        "explicit.stat_387439868": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_387439868"
-            ],
-            "mod_types": [
-                "Damage",
-                "Elemental",
-                "Attack"
-            ],
-            "mod_texts": [
-                "#% increased Elemental Damage with Attacks"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "4": {
-                    "ilvl": 4,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            19.0,
-                            34.0
-                        ]
-                    },
-                    "weighting": "700"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            53.0,
-                            61.0
-                        ]
-                    },
-                    "weighting": "700"
-                },
-                "15": {
-                    "ilvl": 15,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            36.0,
-                            51.0
-                        ]
-                    },
-                    "weighting": "700"
-                },
-                "45": {
-                    "ilvl": 45,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            63.0,
-                            71.0
-                        ]
-                    },
-                    "weighting": "700"
-                }
-            }
-        }
-    },
-    "Spear": {
-        "explicit.stat_3336890334": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_3336890334"
-            ],
-            "mod_types": [
-                "Damage",
-                "Elemental",
-                "Lightning",
-                "Attack"
-            ],
-            "mod_texts": [
-                "Adds # to # Lightning Damage"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "51": {
-                    "ilvl": 51,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                5.0
-                            ],
-                            [
-                                62.0,
-                                89.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "34": {
-                    "ilvl": 34,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                3.0
-                            ],
-                            [
-                                37.0,
-                                52.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "875"
                 },
                 "63": {
                     "ilvl": 63,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                7.0
-                            ],
-                            [
-                                86.0,
-                                123.0
-                            ]
+                        "explicit.stat_691932474": [
+                            347.0,
+                            450.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "425"
                 },
-                "42": {
-                    "ilvl": 42,
+                "76": {
+                    "ilvl": 76,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                4.0
-                            ],
-                            [
-                                49.0,
-                                70.0
-                            ]
+                        "explicit.stat_691932474": [
+                            451.0,
+                            550.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "300"
                 },
-                "31": {
-                    "ilvl": 31,
+                "50": {
+                    "ilvl": 50,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                3.0
-                            ],
-                            [
-                                33.0,
-                                47.0
-                            ]
+                        "explicit.stat_691932474": [
+                            237.0,
+                            346.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "875"
                 },
-                "74": {
-                    "ilvl": 74,
+                "26": {
+                    "ilvl": 26,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                8.0
-                            ],
-                            [
-                                108.0,
-                                155.0
-                            ]
+                        "explicit.stat_691932474": [
+                            85.0,
+                            123.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "875"
                 },
-                "19": {
-                    "ilvl": 19,
+                "41": {
+                    "ilvl": 41,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                1.0
-                            ],
-                            [
-                                19.0,
-                                28.0
-                            ]
+                        "explicit.stat_691932474": [
+                            168.0,
+                            236.0
                         ]
                     },
-                    "weighting": "1"
-                },
-                "81": {
-                    "ilvl": 81,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                10.0
-                            ],
-                            [
-                                125.0,
-                                180.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "13": {
-                    "ilvl": 13,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3336890334": [
-                            [
-                                1.0,
-                                1.0
-                            ],
-                            [
-                                13.0,
-                                18.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "875"
                 }
             }
         },
@@ -2151,22 +1089,6 @@
             ],
             "affix_type": "prefix",
             "mod_tiers": {
-                "52": {
-                    "ilvl": 52,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
-                            [
-                                21.0,
-                                32.0
-                            ],
-                            [
-                                33.0,
-                                49.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
                 "43": {
                     "ilvl": 43,
                     "mod_id_to_values_ranges": {
@@ -2181,7 +1103,7 @@
                             ]
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
                 "19": {
                     "ilvl": 19,
@@ -2197,39 +1119,7 @@
                             ]
                         ]
                     },
-                    "weighting": "1"
-                },
-                "12": {
-                    "ilvl": 12,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
-                            [
-                                3.0,
-                                5.0
-                            ],
-                            [
-                                6.0,
-                                9.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "34": {
-                    "ilvl": 34,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
-                            [
-                                12.0,
-                                18.0
-                            ],
-                            [
-                                19.0,
-                                28.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
                 "27": {
                     "ilvl": 27,
@@ -2245,55 +1135,23 @@
                             ]
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
-                "63": {
-                    "ilvl": 63,
+                "34": {
+                    "ilvl": 34,
                     "mod_id_to_values_ranges": {
                         "explicit.stat_1037193709": [
                             [
-                                28.0,
-                                43.0
+                                12.0,
+                                18.0
                             ],
                             [
-                                44.0,
-                                65.0
+                                19.0,
+                                28.0
                             ]
                         ]
                     },
-                    "weighting": "1"
-                },
-                "81": {
-                    "ilvl": 81,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
-                            [
-                                42.0,
-                                63.0
-                            ],
-                            [
-                                64.0,
-                                95.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "75": {
-                    "ilvl": 75,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1037193709": [
-                            [
-                                37.0,
-                                55.0
-                            ],
-                            [
-                                56.0,
-                                84.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
                 "1": {
                     "ilvl": 1,
@@ -2309,431 +1167,39 @@
                             ]
                         ]
                     },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_387439868": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_387439868"
-            ],
-            "mod_types": [
-                "Damage",
-                "Elemental",
-                "Attack"
-            ],
-            "mod_texts": [
-                "#% increased Elemental Damage with Attacks"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "60": {
-                    "ilvl": 60,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            73.0,
-                            85.0
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
-                "45": {
-                    "ilvl": 45,
+                "12": {
+                    "ilvl": 12,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            63.0,
-                            71.0
+                        "explicit.stat_1037193709": [
+                            [
+                                3.0,
+                                5.0
+                            ],
+                            [
+                                6.0,
+                                9.0
+                            ]
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
-                "4": {
-                    "ilvl": 4,
+                "63": {
+                    "ilvl": 63,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            19.0,
-                            34.0
+                        "explicit.stat_1037193709": [
+                            [
+                                28.0,
+                                43.0
+                            ],
+                            [
+                                44.0,
+                                65.0
+                            ]
                         ]
                     },
-                    "weighting": "1"
-                },
-                "81": {
-                    "ilvl": 81,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            87.0,
-                            100.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            53.0,
-                            61.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "15": {
-                    "ilvl": 15,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_387439868": [
-                            36.0,
-                            51.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_791928121": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_791928121"
-            ],
-            "mod_types": [],
-            "mod_texts": [
-                "Causes #% increased Stun Buildup"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "58": {
-                    "ilvl": 58,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            61.0,
-                            70.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "44": {
-                    "ilvl": 44,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            51.0,
-                            60.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "5": {
-                    "ilvl": 5,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            21.0,
-                            30.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            41.0,
-                            50.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "20": {
-                    "ilvl": 20,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            31.0,
-                            40.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "74": {
-                    "ilvl": 74,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_791928121": [
-                            71.0,
-                            80.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_669069897": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_669069897"
-            ],
-            "mod_types": [
-                "Mana",
-                "Physical",
-                "Attack"
-            ],
-            "mod_texts": [
-                "Leeches #.#% of Physical Damage as Mana"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "81": {
-                    "ilvl": 81,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_669069897": [
-                            8.0,
-                            8.9
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "38": {
-                    "ilvl": 38,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_669069897": [
-                            5.0,
-                            5.9
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "54": {
-                    "ilvl": 54,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_669069897": [
-                            6.0,
-                            6.9
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "21": {
-                    "ilvl": 21,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_669069897": [
-                            4.0,
-                            4.9
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "68": {
-                    "ilvl": 68,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_669069897": [
-                            7.0,
-                            7.9
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "implicit.stat_2763429652": {
-            "mod_class": "implicitMods",
-            "sub_mod_ids": [
-                "implicit.stat_2763429652"
-            ],
-            "mod_types": null,
-            "mod_texts": [
-                "#% chance to Maim on Hit"
-            ],
-            "affix_type": null,
-            "mod_tiers": {
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "implicit.stat_2763429652": [
-                            15.0,
-                            25.0
-                        ]
-                    },
-                    "weighting": null
-                }
-            }
-        },
-        "Spear_explicit.stat_1509134228_explicit.stat_691932474_#% increased Physical Damage_+# to Accuracy Rating": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1509134228",
-                "explicit.stat_691932474"
-            ],
-            "mod_types": [
-                "Damage",
-                "Physical",
-                "Attack"
-            ],
-            "mod_texts": [
-                "#% increased Physical Damage",
-                "+# to Accuracy Rating"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "38": {
-                    "ilvl": 38,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            35.0,
-                            44.0
-                        ],
-                        "explicit.stat_691932474": [
-                            73.0,
-                            97.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            15.0,
-                            19.0
-                        ],
-                        "explicit.stat_691932474": [
-                            16.0,
-                            20.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "53": {
-                    "ilvl": 53,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            45.0,
-                            54.0
-                        ],
-                        "explicit.stat_691932474": [
-                            98.0,
-                            123.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "76": {
-                    "ilvl": 76,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            65.0,
-                            74.0
-                        ],
-                        "explicit.stat_691932474": [
-                            150.0,
-                            174.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            20.0,
-                            24.0
-                        ],
-                        "explicit.stat_691932474": [
-                            21.0,
-                            46.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "23": {
-                    "ilvl": 23,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            25.0,
-                            34.0
-                        ],
-                        "explicit.stat_691932474": [
-                            47.0,
-                            72.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "65": {
-                    "ilvl": 65,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            55.0,
-                            64.0
-                        ],
-                        "explicit.stat_691932474": [
-                            124.0,
-                            149.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "81": {
-                    "ilvl": 81,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            75.0,
-                            79.0
-                        ],
-                        "explicit.stat_691932474": [
-                            175.0,
-                            200.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_1202301673": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1202301673"
-            ],
-            "mod_types": [],
-            "mod_texts": [
-                "+# to Level of all Projectile Skills"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "18": {
-                    "ilvl": 18,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1202301673": [
-                            2.0,
-                            2.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "55": {
-                    "ilvl": 55,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1202301673": [
-                            4.0,
-                            4.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "36": {
-                    "ilvl": 36,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1202301673": [
-                            3.0,
-                            3.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "2": {
-                    "ilvl": 2,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1202301673": [
-                            1.0,
-                            1.0
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "625"
                 }
             }
         },
@@ -2751,6 +1217,16 @@
             ],
             "affix_type": "suffix",
             "mod_tiers": {
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_210067635": [
+                            8.0,
+                            10.0
+                        ]
+                    },
+                    "weighting": "850"
+                },
                 "45": {
                     "ilvl": 45,
                     "mod_id_to_values_ranges": {
@@ -2759,7 +1235,17 @@
                             22.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "525"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_210067635": [
+                            14.0,
+                            16.0
+                        ]
+                    },
+                    "weighting": "850"
                 },
                 "1": {
                     "ilvl": 1,
@@ -2769,7 +1255,7 @@
                             7.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "850"
                 },
                 "37": {
                     "ilvl": 37,
@@ -2779,7 +1265,7 @@
                             19.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "850"
                 },
                 "22": {
                     "ilvl": 22,
@@ -2789,653 +1275,7 @@
                             13.0
                         ]
                     },
-                    "weighting": "1"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            14.0,
-                            16.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            8.0,
-                            10.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "77": {
-                    "ilvl": 77,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_210067635": [
-                            26.0,
-                            28.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "Spear_explicit.stat_691932474_explicit.stat_1263695895_+# to Accuracy Rating_#% increased Light Radius": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_691932474",
-                "explicit.stat_1263695895"
-            ],
-            "mod_types": [
-                "Attack"
-            ],
-            "mod_texts": [
-                "+# to Accuracy Rating",
-                "#% increased Light Radius"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "15": {
-                    "ilvl": 15,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            21.0,
-                            40.0
-                        ],
-                        "explicit.stat_1263695895": [
-                            10.0,
-                            10.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            41.0,
-                            60.0
-                        ],
-                        "explicit.stat_1263695895": [
-                            15.0,
-                            15.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "8": {
-                    "ilvl": 8,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            10.0,
-                            20.0
-                        ],
-                        "explicit.stat_1263695895": [
-                            5.0,
-                            5.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_518292764": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_518292764"
-            ],
-            "mod_types": [
-                "Attack",
-                "Critical"
-            ],
-            "mod_texts": [
-                "+#.#% to Critical Hit Chance"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            2.11,
-                            2.7
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "44": {
-                    "ilvl": 44,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            3.11,
-                            3.8
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "20": {
-                    "ilvl": 20,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            1.51,
-                            2.1
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "73": {
-                    "ilvl": 73,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            4.41,
-                            5.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "59": {
-                    "ilvl": 59,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            3.81,
-                            4.4
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_518292764": [
-                            1.01,
-                            1.5
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_55876295": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_55876295"
-            ],
-            "mod_types": [
-                "Life",
-                "Physical",
-                "Attack"
-            ],
-            "mod_texts": [
-                "Leeches #.#% of Physical Damage as Life"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "54": {
-                    "ilvl": 54,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
-                            7.0,
-                            7.9
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "21": {
-                    "ilvl": 21,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
-                            5.0,
-                            5.9
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "68": {
-                    "ilvl": 68,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
-                            8.0,
-                            8.9
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "38": {
-                    "ilvl": 38,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
-                            6.0,
-                            6.9
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "81": {
-                    "ilvl": 81,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_55876295": [
-                            9.0,
-                            9.9
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_691932474": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_691932474"
-            ],
-            "mod_types": [
-                "Attack"
-            ],
-            "mod_texts": [
-                "+# to Accuracy Rating"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "50": {
-                    "ilvl": 50,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            237.0,
-                            346.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "33": {
-                    "ilvl": 33,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            124.0,
-                            167.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "20": {
-                    "ilvl": 20,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            61.0,
-                            84.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "63": {
-                    "ilvl": 63,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            347.0,
-                            450.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "41": {
-                    "ilvl": 41,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            168.0,
-                            236.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "76": {
-                    "ilvl": 76,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            451.0,
-                            550.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "12": {
-                    "ilvl": 12,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            33.0,
-                            60.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "26": {
-                    "ilvl": 26,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_691932474": [
-                            85.0,
-                            123.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_821021828": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_821021828"
-            ],
-            "mod_types": [
-                "Life",
-                "Attack"
-            ],
-            "mod_texts": [
-                "Grants # Life per Enemy Hit"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "8": {
-                    "ilvl": 8,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_821021828": [
-                            2.0,
-                            2.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_821021828": [
-                            4.0,
-                            4.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "40": {
-                    "ilvl": 40,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_821021828": [
-                            5.0,
-                            5.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "20": {
-                    "ilvl": 20,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_821021828": [
-                            3.0,
-                            3.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_1940865751": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1940865751"
-            ],
-            "mod_types": [
-                "Damage",
-                "Physical",
-                "Attack"
-            ],
-            "mod_texts": [
-                "Adds # to # Physical Damage"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "21": {
-                    "ilvl": 21,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                6.0,
-                                9.0
-                            ],
-                            [
-                                11.0,
-                                16.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "54": {
-                    "ilvl": 54,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                16.0,
-                                24.0
-                            ],
-                            [
-                                28.0,
-                                42.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "2": {
-                    "ilvl": 2,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                1.0,
-                                2.0
-                            ],
-                            [
-                                4.0,
-                                5.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "46": {
-                    "ilvl": 46,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                13.0,
-                                20.0
-                            ],
-                            [
-                                23.0,
-                                35.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "36": {
-                    "ilvl": 36,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                10.0,
-                                15.0
-                            ],
-                            [
-                                18.0,
-                                26.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "29": {
-                    "ilvl": 29,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1940865751": [
-                            [
-                                8.0,
-                                12.0
-                            ],
-                            [
-                                14.0,
-                                21.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_1509134228": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_1509134228"
-            ],
-            "mod_types": [
-                "Damage",
-                "Physical",
-                "Attack"
-            ],
-            "mod_texts": [
-                "#% increased Physical Damage"
-            ],
-            "affix_type": "prefix",
-            "mod_tiers": {
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            50.0,
-                            64.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "46": {
-                    "ilvl": 46,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            110.0,
-                            134.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "23": {
-                    "ilvl": 23,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            65.0,
-                            84.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            40.0,
-                            49.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "73": {
-                    "ilvl": 73,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            155.0,
-                            169.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "60": {
-                    "ilvl": 60,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            135.0,
-                            154.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "35": {
-                    "ilvl": 35,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1509134228": [
-                            85.0,
-                            109.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_748522257": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_748522257"
-            ],
-            "mod_types": [],
-            "mod_texts": [
-                "#% increased Stun Duration"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "18": {
-                    "ilvl": 18,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            14.0,
-                            16.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "71": {
-                    "ilvl": 71,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            27.0,
-                            30.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "5": {
-                    "ilvl": 5,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            11.0,
-                            13.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            17.0,
-                            19.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "44": {
-                    "ilvl": 44,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_748522257": [
-                            20.0,
-                            22.0
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "850"
                 }
             }
         },
@@ -3454,16 +1294,6 @@
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "30": {
-                    "ilvl": 30,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_2694482655": [
-                            20.0,
-                            24.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
                 "21": {
                     "ilvl": 21,
                     "mod_id_to_values_ranges": {
@@ -3472,17 +1302,17 @@
                             19.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "775"
                 },
-                "8": {
-                    "ilvl": 8,
+                "30": {
+                    "ilvl": 30,
                     "mod_id_to_values_ranges": {
                         "explicit.stat_2694482655": [
-                            10.0,
-                            14.0
+                            20.0,
+                            24.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "775"
                 },
                 "44": {
                     "ilvl": 44,
@@ -3492,7 +1322,27 @@
                             29.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "650"
+                },
+                "8": {
+                    "ilvl": 8,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_2694482655": [
+                            10.0,
+                            14.0
+                        ]
+                    },
+                    "weighting": "775"
+                },
+                "59": {
+                    "ilvl": 59,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_2694482655": [
+                            30.0,
+                            34.0
+                        ]
+                    },
+                    "weighting": "425"
                 }
             }
         },
@@ -3509,45 +1359,15 @@
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "1": {
-                    "ilvl": 1,
+                "23": {
+                    "ilvl": 23,
                     "mod_id_to_values_ranges": {
                         "explicit.stat_1368271171": [
-                            2.0,
-                            3.0
+                            6.0,
+                            9.0
                         ]
                     },
-                    "weighting": "1"
-                },
-                "67": {
-                    "ilvl": 67,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            28.0,
-                            35.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "56": {
-                    "ilvl": 56,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            21.0,
-                            27.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "78": {
-                    "ilvl": 78,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_1368271171": [
-                            36.0,
-                            45.0
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "850"
                 },
                 "12": {
                     "ilvl": 12,
@@ -3557,7 +1377,27 @@
                             5.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "850"
+                },
+                "45": {
+                    "ilvl": 45,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1368271171": [
+                            15.0,
+                            20.0
+                        ]
+                    },
+                    "weighting": "850"
+                },
+                "56": {
+                    "ilvl": 56,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1368271171": [
+                            21.0,
+                            27.0
+                        ]
+                    },
+                    "weighting": "850"
                 },
                 "34": {
                     "ilvl": 34,
@@ -3567,102 +1407,179 @@
                             14.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "850"
+                },
+                "67": {
+                    "ilvl": 67,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1368271171": [
+                            28.0,
+                            35.0
+                        ]
+                    },
+                    "weighting": "850"
                 }
             }
         },
-        "explicit.stat_3261801346": {
+        "explicit.stat_821021828": {
             "mod_class": "explicitMods",
             "sub_mod_ids": [
-                "explicit.stat_3261801346"
+                "explicit.stat_821021828"
             ],
             "mod_types": [
-                "Attribute"
+                "Life",
+                "Attack"
             ],
             "mod_texts": [
-                "+# to Dexterity"
+                "Grants # Life per Enemy Hit"
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "74": {
-                    "ilvl": 74,
+                "40": {
+                    "ilvl": 40,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3261801346": [
-                            31.0,
-                            33.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3261801346": [
-                            9.0,
-                            12.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "44": {
-                    "ilvl": 44,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3261801346": [
-                            21.0,
-                            24.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "66": {
-                    "ilvl": 66,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3261801346": [
-                            28.0,
-                            30.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3261801346": [
+                        "explicit.stat_821021828": [
                             5.0,
-                            8.0
+                            5.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "800"
                 },
-                "55": {
-                    "ilvl": 55,
+                "8": {
+                    "ilvl": 8,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3261801346": [
-                            25.0,
-                            27.0
+                        "explicit.stat_821021828": [
+                            2.0,
+                            2.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "800"
                 },
-                "33": {
-                    "ilvl": 33,
+                "30": {
+                    "ilvl": 30,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3261801346": [
-                            17.0,
+                        "explicit.stat_821021828": [
+                            4.0,
+                            4.0
+                        ]
+                    },
+                    "weighting": "800"
+                }
+            }
+        },
+        "One Hand Mace_explicit.stat_691932474_explicit.stat_1263695895_+# to Accuracy Rating_#% increased Light Radius": {
+            "mod_class": "explicitMods",
+            "sub_mod_ids": [
+                "explicit.stat_691932474",
+                "explicit.stat_1263695895"
+            ],
+            "mod_types": [
+                "Attack"
+            ],
+            "mod_texts": [
+                "+# to Accuracy Rating",
+                "#% increased Light Radius"
+            ],
+            "affix_type": "suffix",
+            "mod_tiers": {
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_691932474": [
+                            41.0,
+                            60.0
+                        ],
+                        "explicit.stat_1263695895": [
+                            15.0,
+                            15.0
+                        ]
+                    },
+                    "weighting": "600"
+                },
+                "8": {
+                    "ilvl": 8,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_691932474": [
+                            10.0,
                             20.0
+                        ],
+                        "explicit.stat_1263695895": [
+                            5.0,
+                            5.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "600"
                 },
-                "22": {
-                    "ilvl": 22,
+                "15": {
+                    "ilvl": 15,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3261801346": [
-                            13.0,
-                            16.0
+                        "explicit.stat_691932474": [
+                            21.0,
+                            40.0
+                        ],
+                        "explicit.stat_1263695895": [
+                            10.0,
+                            10.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "600"
+                }
+            }
+        },
+        "explicit.stat_669069897": {
+            "mod_class": "explicitMods",
+            "sub_mod_ids": [
+                "explicit.stat_669069897"
+            ],
+            "mod_types": [
+                "Mana",
+                "Physical",
+                "Attack"
+            ],
+            "mod_texts": [
+                "Leeches #.#% of Physical Damage as Mana"
+            ],
+            "affix_type": "suffix",
+            "mod_tiers": {
+                "38": {
+                    "ilvl": 38,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_669069897": [
+                            5.0,
+                            5.9
+                        ]
+                    },
+                    "weighting": "1050"
+                },
+                "21": {
+                    "ilvl": 21,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_669069897": [
+                            4.0,
+                            4.9
+                        ]
+                    },
+                    "weighting": "1050"
+                },
+                "54": {
+                    "ilvl": 54,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_669069897": [
+                            6.0,
+                            6.9
+                        ]
+                    },
+                    "weighting": "1050"
+                },
+                "81": {
+                    "ilvl": 81,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_669069897": [
+                            8.0,
+                            8.9
+                        ]
+                    },
+                    "weighting": "1050"
                 }
             }
         },
@@ -3682,70 +1599,6 @@
             ],
             "affix_type": "prefix",
             "mod_tiers": {
-                "18": {
-                    "ilvl": 18,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                7.0,
-                                11.0
-                            ],
-                            [
-                                12.0,
-                                18.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "33": {
-                    "ilvl": 33,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                14.0,
-                                21.0
-                            ],
-                            [
-                                22.0,
-                                33.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                1.0,
-                                2.0
-                            ],
-                            [
-                                3.0,
-                                5.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "74": {
-                    "ilvl": 74,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                45.0,
-                                67.0
-                            ],
-                            [
-                                68.0,
-                                102.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
                 "26": {
                     "ilvl": 26,
                     "mod_id_to_values_ranges": {
@@ -3760,39 +1613,7 @@
                             ]
                         ]
                     },
-                    "weighting": "1"
-                },
-                "11": {
-                    "ilvl": 11,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                4.0,
-                                6.0
-                            ],
-                            [
-                                7.0,
-                                10.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "62": {
-                    "ilvl": 62,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_709508406": [
-                            [
-                                35.0,
-                                52.0
-                            ],
-                            [
-                                53.0,
-                                79.0
-                            ]
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
                 "42": {
                     "ilvl": 42,
@@ -3808,7 +1629,7 @@
                             ]
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
                 "51": {
                     "ilvl": 51,
@@ -3824,160 +1645,87 @@
                             ]
                         ]
                     },
-                    "weighting": "1"
-                }
-            }
-        },
-        "explicit.stat_3695891184": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_3695891184"
-            ],
-            "mod_types": [
-                "Life"
-            ],
-            "mod_texts": [
-                "Gain # Life per Enemy Killed"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "33": {
-                    "ilvl": 33,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            19.0,
-                            28.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "1": {
-                    "ilvl": 1,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            4.0,
-                            6.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "77": {
-                    "ilvl": 77,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            69.0,
-                            84.0
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "800"
                 },
                 "11": {
                     "ilvl": 11,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            7.0,
-                            9.0
+                        "explicit.stat_709508406": [
+                            [
+                                4.0,
+                                6.0
+                            ],
+                            [
+                                7.0,
+                                10.0
+                            ]
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
-                "22": {
-                    "ilvl": 22,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            10.0,
-                            18.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "66": {
-                    "ilvl": 66,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            54.0,
-                            68.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
-                "55": {
-                    "ilvl": 55,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3695891184": [
-                            41.0,
-                            53.0
-                        ]
-                    },
-                    "weighting": "1"
-                }
-            }
-        },
-        "implicit.stat_535217483": {
-            "mod_class": "implicitMods",
-            "sub_mod_ids": [
-                "implicit.stat_535217483"
-            ],
-            "mod_types": null,
-            "mod_texts": [
-                "#% increased Projectile Speed with this Weapon"
-            ],
-            "affix_type": null,
-            "mod_tiers": {
                 "1": {
                     "ilvl": 1,
                     "mod_id_to_values_ranges": {
-                        "implicit.stat_535217483": [
-                            25.0,
-                            35.0
+                        "explicit.stat_709508406": [
+                            [
+                                1.0,
+                                2.0
+                            ],
+                            [
+                                3.0,
+                                5.0
+                            ]
                         ]
                     },
-                    "weighting": null
-                }
-            }
-        },
-        "explicit.stat_9187492": {
-            "mod_class": "explicitMods",
-            "sub_mod_ids": [
-                "explicit.stat_9187492"
-            ],
-            "mod_types": [
-                "Attack"
-            ],
-            "mod_texts": [
-                "+# to Level of all Melee Skills"
-            ],
-            "affix_type": "suffix",
-            "mod_tiers": {
-                "81": {
-                    "ilvl": 81,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_9187492": [
-                            5.0,
-                            5.0
-                        ]
-                    },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
-                "55": {
-                    "ilvl": 55,
+                "33": {
+                    "ilvl": 33,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_9187492": [
-                            4.0,
-                            4.0
+                        "explicit.stat_709508406": [
+                            [
+                                14.0,
+                                21.0
+                            ],
+                            [
+                                22.0,
+                                33.0
+                            ]
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "925"
                 },
-                "36": {
-                    "ilvl": 36,
+                "18": {
+                    "ilvl": 18,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_9187492": [
-                            3.0,
-                            3.0
+                        "explicit.stat_709508406": [
+                            [
+                                7.0,
+                                11.0
+                            ],
+                            [
+                                12.0,
+                                18.0
+                            ]
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "925"
+                },
+                "62": {
+                    "ilvl": 62,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_709508406": [
+                            [
+                                35.0,
+                                52.0
+                            ],
+                            [
+                                53.0,
+                                79.0
+                            ]
+                        ]
+                    },
+                    "weighting": "625"
                 }
             }
         },
@@ -3992,16 +1740,6 @@
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "52": {
-                    "ilvl": 52,
-                    "mod_id_to_values_ranges": {
-                        "explicit.stat_3639275092": [
-                            -30.0,
-                            -30.0
-                        ]
-                    },
-                    "weighting": "1"
-                },
                 "32": {
                     "ilvl": 32,
                     "mod_id_to_values_ranges": {
@@ -4010,17 +1748,17 @@
                             -20.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "850"
                 },
-                "24": {
-                    "ilvl": 24,
+                "52": {
+                    "ilvl": 52,
                     "mod_id_to_values_ranges": {
                         "explicit.stat_3639275092": [
-                            -15.0,
-                            -15.0
+                            -30.0,
+                            -30.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "850"
                 },
                 "60": {
                     "ilvl": 60,
@@ -4030,7 +1768,7 @@
                             -35.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "850"
                 },
                 "40": {
                     "ilvl": 40,
@@ -4040,42 +1778,166 @@
                             -25.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "850"
+                },
+                "24": {
+                    "ilvl": 24,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_3639275092": [
+                            -15.0,
+                            -15.0
+                        ]
+                    },
+                    "weighting": "850"
                 }
             }
         },
-        "explicit.stat_4080418644": {
+        "explicit.stat_387439868": {
             "mod_class": "explicitMods",
             "sub_mod_ids": [
-                "explicit.stat_4080418644"
+                "explicit.stat_387439868"
             ],
             "mod_types": [
-                "Attribute"
+                "Damage",
+                "Elemental",
+                "Attack"
             ],
             "mod_texts": [
-                "+# to Strength"
+                "#% increased Elemental Damage with Attacks"
+            ],
+            "affix_type": "prefix",
+            "mod_tiers": {
+                "4": {
+                    "ilvl": 4,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_387439868": [
+                            19.0,
+                            34.0
+                        ]
+                    },
+                    "weighting": "700"
+                },
+                "45": {
+                    "ilvl": 45,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_387439868": [
+                            63.0,
+                            71.0
+                        ]
+                    },
+                    "weighting": "700"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_387439868": [
+                            53.0,
+                            61.0
+                        ]
+                    },
+                    "weighting": "700"
+                }
+            }
+        },
+        "explicit.stat_791928121": {
+            "mod_class": "explicitMods",
+            "sub_mod_ids": [
+                "explicit.stat_791928121"
+            ],
+            "mod_types": [],
+            "mod_texts": [
+                "Causes #% increased Stun Buildup"
             ],
             "affix_type": "suffix",
             "mod_tiers": {
-                "55": {
-                    "ilvl": 55,
+                "20": {
+                    "ilvl": 20,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            25.0,
-                            27.0
+                        "explicit.stat_791928121": [
+                            31.0,
+                            40.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "900"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_791928121": [
+                            41.0,
+                            50.0
+                        ]
+                    },
+                    "weighting": "900"
+                },
+                "74": {
+                    "ilvl": 74,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_791928121": [
+                            71.0,
+                            80.0
+                        ]
+                    },
+                    "weighting": "900"
+                },
+                "58": {
+                    "ilvl": 58,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_791928121": [
+                            61.0,
+                            70.0
+                        ]
+                    },
+                    "weighting": "900"
                 },
                 "44": {
                     "ilvl": 44,
                     "mod_id_to_values_ranges": {
-                        "explicit.stat_4080418644": [
-                            21.0,
-                            24.0
+                        "explicit.stat_791928121": [
+                            51.0,
+                            60.0
                         ]
                     },
-                    "weighting": "1"
+                    "weighting": "900"
+                },
+                "5": {
+                    "ilvl": 5,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_791928121": [
+                            21.0,
+                            30.0
+                        ]
+                    },
+                    "weighting": "900"
+                }
+            }
+        },
+        "enchant.stat_3336890334": {
+            "mod_class": "enchantMods",
+            "sub_mod_ids": [
+                "enchant.stat_3336890334"
+            ],
+            "mod_types": null,
+            "mod_texts": [
+                "Adds # to # Lightning Damage"
+            ],
+            "affix_type": null,
+            "mod_tiers": {
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "enchant.stat_3336890334": [
+                            [
+                                1.0,
+                                2.0
+                            ],
+                            [
+                                29.0,
+                                43.0
+                            ]
+                        ]
+                    },
+                    "weighting": null
                 }
             }
         }

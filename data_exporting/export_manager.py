@@ -46,13 +46,13 @@ class ExportManager:
 
         mod_tiers_dict = atype_dict[item_mod.mod_id]['mod_tiers']
 
-        if item_mod.mod_ilvl not in mod_tiers_dict:
+        if str(item_mod.mod_ilvl) not in mod_tiers_dict:
             mod_id_to_values_ranges = {
                 sub_mod.mod_id: sub_mod.values_ranges
                 for sub_mod in item_mod.sub_mods
             }
             mod_tiers_dict[item_mod.mod_ilvl] = {
-                    'ilvl': item_mod.mod_ilvl,
+                    'ilvl': int(item_mod.mod_ilvl),
                     'mod_id_to_values_ranges': mod_id_to_values_ranges,
                     'weighting': item_mod.weighting
                 }

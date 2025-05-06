@@ -1,5 +1,6 @@
 
 import logging
+import itertools
 
 import data_ingestion
 import external_apis
@@ -38,7 +39,7 @@ class ProgramManager:
             external_apis.Currency.DIVINE_ORB
         ]
         currency_amounts = [(i, i + 2) for i in range(0, 50, 3)]
-        for item_category, currency, currency_amount in zip(item_categories, currencies, currency_amounts):
+        for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
             logging.info(f"\n\n!!! Querying category '{item_category}, currency '{currency}', amount '{currency_amount}!!!\n\n")
             category_filter = external_apis.MetaFilter(
                 filter_type_enum=external_apis.TypeFilters.ITEM_CATEGORY,
