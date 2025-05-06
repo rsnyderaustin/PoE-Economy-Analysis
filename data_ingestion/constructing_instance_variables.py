@@ -1,7 +1,7 @@
 import logging
 
 from external_apis import ItemCategory
-from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill
+from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
 from shared import ATypeClassifier
 from shared import shared_utils
 from . import utils
@@ -52,10 +52,10 @@ def _create_sub_mods(mod_id_to_sanitized_text: dict, mod_magnitudes: list) -> li
             if mod_magnitude['hash'] == mod_id
         ]
         values_ranges = [
-            [
+            (
                 float(magnitude['min']) if 'min' in magnitude else None,
                 float(magnitude['max']) if 'max' in magnitude else None
-            ]
+            )
             for magnitude in same_mod_magnitudes
         ]
         sub_mod = SubMod(
@@ -69,14 +69,14 @@ def _create_sub_mods(mod_id_to_sanitized_text: dict, mod_magnitudes: list) -> li
                             for magnitude in mod_magnitudes if magnitude['hash'] not in duplicate_mod_ids]
     for magnitude in singleton_magnitudes:
         mod_id = magnitude['hash']
-        value_range = [
+        value_range = (
             float(magnitude['min']) if 'min' in magnitude else None,
             float(magnitude['max']) if 'max' in magnitude else None
-        ]
+        )
         sub_mod = SubMod(
             mod_id=mod_id,
             mod_text=mod_id_to_sanitized_text[mod_id],
-            values_ranges=value_range
+            values_range=value_range
         )
         sub_mods.append(sub_mod)
 
@@ -174,9 +174,8 @@ def create_listing(api_item_response: dict):
 
     # _clean_item_data(item_data)
 
-    if item_data['baseType'] == ItemCategory.RUNE.value:
-        logging.error(f"Received API item response for unsupported {ItemCategory.RUNE.value} item category. "
-                      f"Skipping.")
+    if any([rune_string in item_data['baseType'] for rune_string in ['Rune', 'Talisman', 'Soul Core']]):
+        logging.error(f"Received API item response for socketer. Skipping.")
         return
 
     level_requirement = 0
@@ -196,14 +195,7 @@ def create_listing(api_item_response: dict):
                 dex_requirement = int(req_dict['values'][0][0])
 
     if 'properties' in item_data and 'name' in item_data['properties'][0]:
-        raw_atype = item_data['properties'][0]['name']
-        atype = ATypeClassifier.classify(
-            raw_atype=raw_atype,
-            base_type=item_data['baseType'],
-            str_requirement=str_requirement,
-            int_requirement=int_requirement,
-            dex_requirement=dex_requirement
-        )
+        atype = ATypeClassifier.classify(item_data=item_data)
     else:
         atype = item_data['baseType'] if 'baseType' in item_data else None
 
@@ -212,7 +204,7 @@ def create_listing(api_item_response: dict):
 
     item_skills = create_skills(item_data)
 
-    new_listing = ItemListing(
+    new_listing = ModifiableListing(
         listing_id=api_item_response['id'],
         date_fetched=listing_data['indexed'],
         price_currency=listing_data['price']['currency'],

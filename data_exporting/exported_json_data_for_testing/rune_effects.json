@@ -24,7 +24,11 @@
         "Greater Resolve Rune": "+10 to Intelligence",
         "Lesser Rebirth Rune": "Gain 10 Life per Enemy Killed",
         "Soul Core of Citaqualotl": "30% increased Elemental Damage with Attacks",
-        "Lesser Storm Rune": "Adds 1 to 10 Lightning Damage"
+        "Lesser Storm Rune": "Adds 1 to 10 Lightning Damage",
+        "Lesser Resolve Rune": "+6 to Intelligence",
+        "Soul Core of Quipolatl": "5% increased Attack Speed",
+        "Rebirth Rune": "Gain 20 Life per Enemy Killed",
+        "Greater Inspiration Rune": "Gain 24 Mana per Enemy Killed"
     },
     "Spear": {
         "Greater Vision Rune": "+110 to Accuracy Rating",
@@ -58,7 +62,8 @@
         "Inspiration Rune": "Gain 16 Mana per Enemy Killed",
         "Greater Mind Rune": "Leeches 2.5% of Physical Damage as Mana",
         "Soul Core of Ticaba": "+12% to Critical Damage Bonus",
-        "Greater Rune of Alacrity": "8% increased Skill Speed"
+        "Greater Rune of Alacrity": "8% increased Skill Speed",
+        "Greater Rebirth Rune": "Gain 30 Life per Enemy Killed"
     },
     "Two Hand Mace": {
         "Greater Iron Rune": "25% increased Physical Damage",

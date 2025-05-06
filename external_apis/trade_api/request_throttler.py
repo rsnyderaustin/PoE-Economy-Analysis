@@ -180,7 +180,6 @@ class RequestThrottler:
 
         self._wait_if_needed(func_name=func_name)
 
-        logging.info(f"Sending '{request_func}' request.")
         now = time.time()
         response = request_func(*args, **kwargs)
 

@@ -5,10 +5,20 @@ from .utils import ModClass, ModAffixType, generate_mod_id
 
 
 class SubMod:
-    def __init__(self, mod_id: str, mod_text: str, values_ranges: list):
+    def __init__(self,
+                 mod_id: str,
+                 mod_text: str,
+                 values_ranges: list[tuple[float | None, float | None]]):
         self.mod_id = mod_id
         self.mod_text = mod_text
-        self.values_ranges = values_ranges
+
+        min_roll_total = 0.0
+        max_roll_total = 0.0
+        for min_val, max_val in values_ranges:
+            min_roll_total += min_val or 0
+            max_roll_total += max_val or 0
+
+        self.values_range = (min_roll_total, max_roll_total)
 
 
 class ItemMod:
@@ -64,7 +74,7 @@ class ItemSocketer:
         self.text = text
 
 
-class ItemListing:
+class ModifiableListing:
 
     def __init__(self,
                  listing_id: str,

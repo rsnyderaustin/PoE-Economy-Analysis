@@ -36,8 +36,6 @@ class TradeItemsFetcher:
 
     @classmethod
     def _post_for_search_id(cls, query):
-
-        logging.info("Fetching item IDs.")
         response = cls.request_throttler.send_request(
             request_func=requests.post,
             url=cls.post_url,
@@ -46,13 +44,11 @@ class TradeItemsFetcher:
         )
         response.raise_for_status()
         json_data = response.json()
-        logging.info(f"Successfully fetched {len(json_data['result'])} item IDs")
+        logging.info(f"POST -> {len(json_data['result'])} item IDs")
         return json_data
 
     @classmethod
     def _get_with_item_ids(cls, search_id, item_ids):
-
-        logging.info(f"Getting items with item IDs..")
         chunked_list = chunk_list(items=item_ids, chunk_size=10)
 
         params = {
@@ -77,7 +73,7 @@ class TradeItemsFetcher:
                 cookies=cookies
             )
             response.raise_for_status()
-            logging.info("Successfully sent a GET for items with item IDs.")
+            logging.info("GET -> items.")
             json_data = response.json()
             result = json_data['result']
             response_items.extend(result)

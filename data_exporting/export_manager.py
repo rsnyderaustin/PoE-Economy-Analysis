@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-from instances_and_definitions import ItemMod, ItemSocketer
+from instances_and_definitions import ItemMod, ItemSocketer, ModifiableListing
 from shared import PathProcessor
 
 
@@ -63,6 +63,9 @@ class ExportManager:
 
         if socketer.name not in self.runes_data[atype]:
             self.runes_data[atype][socketer.name] = socketer.text
+
+    def save_listing(self, listing: ModifiableListing):
+
 
     def export_data(self):
         with open(self.runes_json_path, 'w') as rune_file:

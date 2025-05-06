@@ -6,6 +6,7 @@ import data_ingestion
 import external_apis
 from data_exporting import ExportManager
 from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
+from shared import ATypeClassifier
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
@@ -38,7 +39,7 @@ class ProgramManager:
             external_apis.Currency.CHAOS_ORB,
             external_apis.Currency.DIVINE_ORB
         ]
-        currency_amounts = [(i, i + 2) for i in range(0, 50, 3)]
+        currency_amounts = [(i, i + 2) for i in range(0, 15, 3)]
         for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
             logging.info(f"\n\n!!! Querying category '{item_category}, currency '{currency}', amount '{currency_amount}!!!\n\n")
             category_filter = external_apis.MetaFilter(
@@ -66,15 +67,15 @@ class ProgramManager:
 
             for api_item_response in api_item_responses:
                 _clean_item_data(api_item_response['item'])
-                mods = data_ingestion.create_item_mods(item_data=api_item_response['item'])
-                for mod in mods:
+                listing = data_ingestion.create_listing(api_item_response)
+                for mod in listing.mods:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
                     self.export_manager.save_mod(item_mod=mod)
 
-                """socketer = data_ingestion.create_socketer_for_internal_storage(item_data=api_item_response['item'])
-                self.export_manager.save_rune(atype=ATypeClassifier.classify(item_data=api_item_response['item']),
-                                              rune_name=socketer.name,
-                                              rune_effect=socketer.text)"""
+                socketer = data_ingestion.create_socketer_for_internal_storage(item_data=api_item_response['item'])
+                if socketer:
+                    self.export_manager.save_socketer(atype=ATypeClassifier.classify(item_data=api_item_response['item']),
+                                                      socketer=socketer)
 
             self.export_manager.export_data()
 
