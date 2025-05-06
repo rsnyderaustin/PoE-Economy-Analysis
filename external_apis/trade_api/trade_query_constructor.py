@@ -2,28 +2,6 @@ from .query_filters import MetaFilter, StatsFiltersGroup, StatFilter
 from .trade_api_utils import (StatSearchType)
 
 
-def _handle_min_max(relevant_dict: dict, query_filter):
-
-    if isinstance(query_filter, MetaFilter):
-        min_val = query_filter.mod_value[0]
-        max_val = query_filter.mod_value[1]
-
-        if query_filter.price_currency_enum:
-            relevant_dict['option'] = query_filter.price_currency_enum.value
-
-    elif isinstance(query_filter, StatFilter):
-        min_val = query_filter.values_range[0]
-        max_val = query_filter.values_range[1]
-    else:
-        raise TypeError(f"Variable with invalid type {type(query_filter)} passed into _handle_min_max.")
-
-    if min_val:
-        relevant_dict['min'] = min_val
-
-    if max_val:
-        relevant_dict['max'] = max_val
-
-
 class TradeQueryConstructor:
 
     def __init__(self):
@@ -64,11 +42,12 @@ class TradeQueryConstructor:
             filter_group_dict[meta_filter.filter_type] = dict()
             meta_mod_dict = filter_group_dict[meta_filter.filter_type]
 
-            if isinstance(meta_filter.filter_value, tuple):
-                _handle_min_max(relevant_dict=meta_mod_dict,
-                                query_filter=meta_filter)
-            else:
-                meta_mod_dict['option'] = meta_filter.filter_value
+            meta_mod_dict['option'] = meta_filter.filter_value
+            if meta_filter.currency_amount:
+                if meta_filter.currency_amount[0] is not None:
+                    meta_mod_dict['min'] = meta_filter.currency_amount[0]
+                if meta_filter.currency_amount[1]:
+                    meta_mod_dict['max'] = meta_filter.currency_amount[1]
 
     def _handle_stats_query(self, stats_filters_groups: list[StatsFiltersGroup]):
         self.query['stats'] = dict()

@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 
 from shared import PathProcessor
-from . import utils
+from data_synthesizing import utils
 from instances_and_definitions import ModAffixType
 
 
@@ -41,12 +41,12 @@ class ATypeDataManager:
         self.atype_name = atype_name
         self.mods = mods
 
-        self.prefix_mods_dict = { mod.mod_text: mod for mod in mods if mod.affix_type == 'prefix' }
-        self.suffix_mods_dict = { mod.mod_text: mod for mod in mods if mod.affix_type == 'suffix' }
+        self.prefix_mods_dict = {mod.mod_text: mod for mod in mods if mod.affix_type == 'prefix'}
+        self.suffix_mods_dict = {mod.mod_text: mod for mod in mods if mod.affix_type == 'suffix'}
 
-        self.mod_id_to_affix_type = { mod.mod_id: mod.affix_type for mod in mods }
-        self.mod_id_to_text = { mod.mod_id: mod.mod_text for mod in mods }
-        self.mod_text_to_id = { v: k for k, v in self.mod_id_to_text.items() }
+        self.mod_id_to_affix_type = {mod.mod_id: mod.affix_type for mod in mods}
+        self.mod_id_to_text = {mod.mod_id: mod.mod_text for mod in mods}
+        self.mod_text_to_id = {v: k for k, v in self.mod_id_to_text.items()}
 
         self.hybrid_part_to_parent_id = self.create_hybrid_to_parent_dict(mods=mods)
 
@@ -107,7 +107,6 @@ class PoecdDataManager:
                 mods=[mod for mod in mods if mod.atype_id == atype_id]
             )
 
-
     def _load_json_file(self, relative_path):
         path = PathProcessor(Path.cwd()).attach_file_path_endpoint(relative_path).path
         with open(path, 'r') as f:
@@ -125,8 +124,8 @@ class PoecdDataManager:
             mod['id_modifier'] for mod in self.stats_data['modifiers']['seq']
             if mod['affix'] == 'socket'
         }
-        atype_id_to_mod_ids = self.stats_data['basemods']
 
+        atype_to_mods = dict()
         # Create tiers lists for mod creation in next block
         tiers_lists = dict()
         for mod_id, atype_dict in self.stats_data['tiers'].items():
@@ -136,14 +135,17 @@ class PoecdDataManager:
                 if atype_id not in self.valid_atype_ids:
                     continue
 
+                if atype_id not in atype_to_mods:
+                    atype_to_mods[atype_id] = set()
+                atype_to_mods[atype_id].add(mod_id)
+
                 if atype_id not in tiers_lists:
                     tiers_lists[atype_id] = dict()
-
                 tiers_lists[atype_id][mod_id] = tiers_list
 
         # Create mods
         mods = list()
-        for atype_id, mod_ids in atype_id_to_mod_ids.items():
+        for atype_id, mod_ids in atype_to_mods.items():
             for mod_id in mod_ids:
                 mod_text = self.mod_id_to_text[mod_id]
                 mod_types = self.mod_id_to_mod_types[mod_id]

@@ -8,7 +8,7 @@ import requests
 from shared import PathProcessor
 
 
-class CoEApiManager:
+class PoecdApiManager:
 
     def __init__(self):
 

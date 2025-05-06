@@ -4,7 +4,7 @@ import rapidfuzz
 
 from instances_and_definitions import ItemMod, ModClass
 from . import utils
-from .poecd_data_management import PoecdDataManager
+from external_apis.poecd_data import PoecdDataManager
 
 
 class PoecdDataInjecter:
@@ -47,6 +47,7 @@ class PoecdDataInjecter:
         """
 
         atype_manager = self._poecd_manager.atype_data_managers[item_mod.atype]
+        mods = atype_manager.mods
 
         if item_mod.is_hybrid:
             logging.info(f"\nHybrid mod match:{[sub_mod.mod_text for sub_mod in item_mod.sub_mods]}\n")

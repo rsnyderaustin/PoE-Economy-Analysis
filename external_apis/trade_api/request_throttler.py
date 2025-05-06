@@ -65,18 +65,47 @@ class RequestThrottler:
         """
         self.request_deques = dict()
 
-    def set_limits(self, func_name: str, response_headers: dict):
-        account_limit = response_headers['X-Rate-Limit-Account']
-        account_state = response_headers['x-rate-limit-account-state']
+        self.current_account_limits = dict()
+        self.current_ip_limits = dict()
 
-        ip_limit = response_headers['X-Rate-Limit-Ip']
-        ip_state = response_headers['x-rate-limit-ip-state']
+        self.request_counter = 0
+
+    @staticmethod
+    def _fetch_limits_and_state(response_headers: dict):
+        if 'X-Rate-Limit-Account' in response_headers:
+            account_limit = response_headers['X-Rate-Limit-Account']
+        else:
+            account_limit = '100:5:60'
+
+        if 'x-rate-limit-account-state' in response_headers:
+            account_state = response_headers['x-rate-limit-account-state']
+        else:
+            account_state = '0:5:60'
+
+        if 'X-Rate-Limit-Ip' in response_headers:
+            ip_limit = response_headers['X-Rate-Limit-Ip']
+        else:
+            ip_limit = '8:10:60,15:60:120,60:300:1800'
+
+        if 'x-rate-limit-ip-state' in response_headers:
+            ip_state = response_headers['x-rate-limit-ip-state']
+        else:
+            ip_state = '5:10:0,30:60:0,100:300:0'
 
         account_limits = _parse_rate_string(account_limit)
         account_state = _parse_rate_string(account_state)
 
         ip_limits = _parse_rate_string(ip_limit)
         ip_state = _parse_rate_string(ip_state)
+
+        return account_limits, account_state, ip_limits, ip_state
+
+    def set_limits(self, func_name: str, response_headers: dict):
+        print(response_headers)
+        account_limits, account_state, ip_limits, ip_state = self._fetch_limits_and_state(response_headers)
+
+        self.current_account_limits[func_name] = account_limits
+        self.current_ip_limits[func_name] = ip_limits
 
         if func_name in self.request_deques:
             logging.error(f"set_limits called for func_name {func_name}, which already exists in the dict.")
@@ -87,8 +116,6 @@ class RequestThrottler:
             max_requests = limit[0]
             seconds_interval = limit[1]
             current_requests = state[0]
-            logging.info(f"For function '{func_name}' setting limit of maximum {max_requests} requests within {seconds_interval} seconds."
-                         f"\n\tCurrently at {current_requests} requests in the last {seconds_interval} seconds..")
             self.request_deques[func_name].append(
                 Deque(
                     maximum_requests=max_requests - 1, # We lower the max requests by 1 to stay conservative
@@ -96,6 +123,15 @@ class RequestThrottler:
                     current_requests=current_requests
                 )
             )
+
+    def _check_if_limits_have_changed(self, func_name: str, response_headers: dict):
+        account_limits, account_state, ip_limits, ip_state = self._fetch_limits_and_state(response_headers)
+
+        if account_limits != self.current_account_limits[func_name]:
+            return True
+
+        if ip_limits != self.current_ip_limits[func_name]:
+            return True
 
     def _wait_if_needed(self, func_name: str):
         now = time.time()
@@ -107,9 +143,11 @@ class RequestThrottler:
             ]
         )
 
+        if not can_request:
+            logging.info("Waiting to send next request...")
+
         while not can_request:
             sleep_time = 0.25
-            logging.info(f"Waiting {sleep_time} seconds to send another request for function '{func_name}'.")
             time.sleep(sleep_time)
             now = time.time()
 
@@ -120,6 +158,8 @@ class RequestThrottler:
                 ]
             )
 
+        logging.info("Next request sent.")
+
     def _register_requests(self, func_name: str, now):
         for request_deque in self.request_deques[func_name]:
             request_deque.register_request(now=now)
@@ -128,6 +168,7 @@ class RequestThrottler:
         func_name = request_func.__name__
         if func_name not in self.request_deques:
             response = request_func(*args, **kwargs)
+            response.raise_for_status()
 
             self.set_limits(response_headers=response.headers,
                             func_name=func_name)
@@ -143,15 +184,14 @@ class RequestThrottler:
         now = time.time()
         response = request_func(*args, **kwargs)
 
-        ip_state = _parse_rate_string(response.headers['x-rate-limit-ip-state'])
-        account_state = _parse_rate_string(response.headers['x-rate-limit-account-state'])
-        logging.info(f"After '{func_name}' request limit states:")
+        # ip_state = _parse_rate_string(response.headers['x-rate-limit-ip-state'])
+        # account_state = _parse_rate_string(response.headers['x-rate-limit-account-state'])
 
-        for state in ip_state:
-            logging.info(f"\n\tIP state: {state[0]} hits in the last {state[1]} seconds.")
-
-        for state in account_state:
-            logging.info(f"\n\tAccount state: {state[0]} hits in the last {state[1]} seconds.")
+        if self.request_counter % 5 == 0 and self._check_if_limits_have_changed(func_name=func_name,
+                                                                                response_headers=response.headers):
+            logging.info(f"Limits have changed for func '{func_name}'. Resetting limits.")
+            self.set_limits(func_name=func_name,
+                            response_headers=response.headers)
 
         self._register_requests(now=now,
                                 func_name=func_name)
