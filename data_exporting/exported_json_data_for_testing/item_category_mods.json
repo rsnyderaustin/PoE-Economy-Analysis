@@ -3094,6 +3094,63 @@
                     "weighting": "1050"
                 }
             }
+        },
+        "fractured.stat_821021828": {
+            "mod_class": "fracturedMods",
+            "sub_mod_ids": [
+                "fractured.stat_821021828"
+            ],
+            "mod_types": [
+                "Life",
+                "Attack"
+            ],
+            "mod_texts": [
+                "Grants # Life per Enemy Hit"
+            ],
+            "affix_type": "suffix",
+            "mod_tiers": {
+                "40": {
+                    "ilvl": 40,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_821021828": [
+                            [
+                                5.0,
+                                5.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
+                }
+            }
+        },
+        "fractured.stat_2694482655": {
+            "mod_class": "fracturedMods",
+            "sub_mod_ids": [
+                "fractured.stat_2694482655"
+            ],
+            "mod_types": [
+                "Damage",
+                "Attack",
+                "Critical"
+            ],
+            "mod_texts": [
+                "+#% to Critical Damage Bonus"
+            ],
+            "affix_type": "suffix",
+            "mod_tiers": {
+                "44": {
+                    "ilvl": 44,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_2694482655": [
+                            [
+                                25.0,
+                                29.0
+                            ]
+                        ]
+                    },
+                    "weighting": "650"
+                }
+            }
         }
     },
     "Spear": {

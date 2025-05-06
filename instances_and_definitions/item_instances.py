@@ -73,8 +73,9 @@ class ModifiableListing:
     def __init__(self,
                  listing_id: str,
                  date_fetched: str,
+                 days_since_listed: int,
                  price_currency: str,
-                 price_amount: int,
+                 currency_amount: int,
                  item_name: str,
                  item_btype: str,  # Hunting Shoes, Lunar Amulet, etc
                  item_atype: str,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
@@ -97,8 +98,9 @@ class ModifiableListing:
                  ):
         self.listing_id = listing_id
         self.date_fetched = date_fetched
+        self.days_since_listed = days_since_listed
         self.price_currency = price_currency
-        self.price_amount = price_amount
+        self.currency_amount = currency_amount
         self.item_name = item_name
         self.item_btype = item_btype
         self.item_atype = item_atype
@@ -129,6 +131,14 @@ class ModifiableListing:
                 self.explicit_mods
         )
         return all_mods
+
+    @property
+    def open_prefixes(self) -> int:
+        return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX])
+
+    @property
+    def open_suffixes(self) -> int:
+        return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
 
 
 class Modifiable:

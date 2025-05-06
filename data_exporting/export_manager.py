@@ -46,6 +46,15 @@ class ExportManager:
         with open(self.rarity_map_json_path, 'r') as rarity_map_file:
             self.rarity_map_data = json.load(rarity_map_file)
 
+        self.currency_map_json_path = (
+            PathProcessor(Path.cwd())
+            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/currency_map.json')
+            .path
+        )
+
+        with open(self.currency_map_json_path, 'r') as currency_map_file:
+            self.currency_map_data = json.load(currency_map_file)
+
     def save_mod(self, item_mod: ItemMod):
         if item_mod.atype not in self.atype_mods_data:
             self.atype_mods_data[item_mod.atype] = dict()
@@ -84,6 +93,9 @@ class ExportManager:
 
         if listing.rarity not in self.rarity_map_data:
             self.rarity_map_data[listing.rarity] = len(self.rarity_map_data)
+
+        if listing.price_currency not in self.currency_map_data:
+            self.currency_map_data[listing.price_currency] = len(self.currency_map_data)
 
     def export_data(self):
         with open(self.atype_mods_json_path, 'w') as atype_mods_file:

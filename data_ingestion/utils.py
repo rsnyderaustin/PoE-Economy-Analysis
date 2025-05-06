@@ -1,5 +1,7 @@
 import logging
 import re
+from datetime import datetime, timezone
+from dateutil.parser import isoparse
 
 from instances_and_definitions import ModClass, ModAffixType
 from shared import shared_utils
@@ -34,6 +36,14 @@ def determine_mod_id_to_mod_text(mod_class: ModClass, item_data: dict, sanitize_
         }
 
     return mod_id_to_text
+
+
+def determine_days_since_listed(when_listed: str):
+    past_time = isoparse(when_listed)
+    now = datetime.now(timezone.utc)
+
+    days_diff = (now - past_time).days
+    return days_diff
 
 
 def determine_mod_affix_type(mod_dict: dict) -> ModAffixType:

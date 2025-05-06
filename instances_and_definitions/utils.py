@@ -1,4 +1,6 @@
 from enum import Enum
+from datetime import datetime, timezone
+from dateutil.parser import isoparse
 
 
 def generate_mod_id(atype: str,
@@ -10,6 +12,14 @@ def generate_mod_id(atype: str,
         mod_ids = []
 
     return f"{atype}_{'_'.join(mod_ids)}"
+
+
+def determine_days_since_listed(when_listed: str):
+    past_time = isoparse(when_listed)
+    now = datetime.now(timezone.utc)
+
+    days_diff = (now - past_time).days
+    return days_diff
 
 
 class ModClass(Enum):

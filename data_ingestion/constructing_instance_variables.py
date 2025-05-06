@@ -167,22 +167,23 @@ def create_skills(item_data: dict) -> list[ItemSkill]:
 
     skills = []
 
-    raw_skill = item_data['grantedSkills']['values'][0]
+    for skill_data in item_data['grantedSkills']:
+        raw_skill = skill_data['values'][0]
 
-    if isinstance(raw_skill, str):
-        _, level_str, *skill_parts = raw_skill.split()
-        level = int(level_str)
-        skill_name = ' '.join(skill_parts)
-    else:
-        skill_name = raw_skill[0][0]
-        level = raw_skill[0][1]
+        if isinstance(raw_skill, str):
+            _, level_str, *skill_parts = raw_skill.split()
+            level = int(level_str)
+            skill_name = ' '.join(skill_parts)
+        else:
+            skill_name = raw_skill[0][0]
+            level = raw_skill[0][1]
 
-    new_skill = ItemSkill(
-        name=skill_name,
-        level=level
-    )
+        new_skill = ItemSkill(
+            name=skill_name,
+            level=level
+        )
 
-    skills.append(new_skill)
+        skills.append(new_skill)
 
     return skills
 
@@ -190,6 +191,9 @@ def create_skills(item_data: dict) -> list[ItemSkill]:
 def create_listing(api_item_response: dict):
     item_data = api_item_response['item']
     listing_data = api_item_response['listing']
+    days_since_listed = utils.determine_days_since_listed(
+        when_listed=api_item_response['listing']['indexed']
+    )
 
     # _clean_item_data(item_data)
 
@@ -244,8 +248,9 @@ def create_listing(api_item_response: dict):
     new_listing = ModifiableListing(
         listing_id=api_item_response['id'],
         date_fetched=listing_data['indexed'],
+        days_since_listed=days_since_listed,
         price_currency=listing_data['price']['currency'],
-        price_amount=listing_data['price']['amount'],
+        currency_amount=listing_data['price']['amount'],
         item_name=item_data['name'],
         item_btype=item_data['baseType'] if 'baseType' in item_data else None,
         item_atype=atype,
