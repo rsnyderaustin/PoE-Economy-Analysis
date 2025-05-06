@@ -74,7 +74,7 @@ def _create_sub_mods(mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]
         sub_mod = SubMod(
             mod_id=mod_id,
             sanitized_mod_text=sanitized_text,
-            actual_values=shared_utils.parse_values_from_mod_text(mod_text),
+            actual_values=shared_utils.parse_values_from_text(mod_text),
             values_ranges=values_ranges
         )
         sub_mods.append(sub_mod)
@@ -94,7 +94,7 @@ def _create_sub_mods(mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]
         sub_mod = SubMod(
             mod_id=mod_id,
             sanitized_mod_text=sanitized_text,
-            actual_values=shared_utils.parse_values_from_mod_text(mod_text),
+            actual_values=shared_utils.parse_values_from_text(mod_text),
             values_ranges=value_ranges
         )
         sub_mods.append(sub_mod)
@@ -214,10 +214,11 @@ def create_listing(api_item_response: dict):
         for property_data in properties_list:
             property_name = shared_utils.remove_piped_brackets(property_data['name'])
 
-            if len(property_data['values']) >= 2:
-                logging.error(f"{item_data}\nFound multiple values fields for item property from trade API. See data above.")
+            property_values = []
+            for property_value in property_data['values']:
+                val = shared_utils.parse_values_from_text(property_value[0])
+                property_values.append(val)
 
-            property_values = shared_utils.parse_values_from_mod_text(property_data['values'][0][0])
             properties[property_name] = property_values
 
     if 'requirements' in item_data:

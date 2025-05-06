@@ -1,5 +1,6 @@
-
+import json
 import logging
+import os
 import re
 from collections import Counter
 
@@ -18,7 +19,7 @@ def remove_piped_brackets(text: str):
     return result
 
 
-def parse_values_from_mod_text(mod_text: str) -> tuple:
+def parse_values_from_text(mod_text: str) -> tuple:
     numbers = tuple(map(float, re.findall(r'\d+(?:\.\d+)?', mod_text)))
     return numbers
 
@@ -62,3 +63,13 @@ def determine_mod_values_range(mod_magnitude_dict: dict) -> tuple:
         values_range = value, value
 
     return values_range
+
+
+def write_to_file(file_path, data):
+    tmp_path = file_path + ".tmp"
+    with open(tmp_path, 'w') as training_data_json_path:
+        json.dump(data, training_data_json_path, indent=4)
+        training_data_json_path.flush()
+        os.fsync(training_data_json_path.fileno())
+
+    os.replace(tmp_path, file_path)

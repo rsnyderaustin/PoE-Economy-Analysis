@@ -70,10 +70,13 @@ class ProgramManager:
             for api_item_response in api_item_responses:
                 _clean_item_data(api_item_response['item'])
                 listing = data_ingestion.create_listing(api_item_response)
-                self.export_manager.aggregate_save_to_maps(listing=listing)
+                maps_data_updated = self.export_manager.aggregate_save_to_maps(listing=listing)
                 for mod in listing.mods:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
                     self.export_manager.save_mod(item_mod=mod)
+
+                if maps_data_updated:
+                    self.ai_data_prep.update_data()
 
                 flattened_listing = self.ai_data_prep.flatten_listing(listing)
 

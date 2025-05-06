@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 from instances_and_definitions import ItemMod, ModifiableListing
-from shared import PathProcessor
+from shared import PathProcessor, shared_utils
 
 
 class ExportManager:
@@ -84,30 +84,38 @@ class ExportManager:
                     'weighting': item_mod.weighting
                 }
             
-    def aggregate_save_to_maps(self, listing: ModifiableListing):
+    def aggregate_save_to_maps(self, listing: ModifiableListing) -> bool:
+        """
+        :return: True if data was saved and files were exported
+        """
+        should_export = False
         if listing.item_atype not in self.atype_map_data:
             self.atype_map_data[listing.item_atype] = len(self.atype_map_data)
+            should_export = True
 
         if listing.item_btype not in self.btype_map_data:
             self.btype_map_data[listing.item_btype] = len(self.btype_map_data)
+            should_export = True
 
         if listing.rarity not in self.rarity_map_data:
             self.rarity_map_data[listing.rarity] = len(self.rarity_map_data)
+            should_export = True
 
         if listing.price_currency not in self.currency_map_data:
             self.currency_map_data[listing.price_currency] = len(self.currency_map_data)
+            should_export = True
+
+        if should_export:
+            self.export_data()
+            return True
+
+        return False
 
     def export_data(self):
-        with open(self.atype_mods_json_path, 'w') as atype_mods_file:
-            json.dump(self.atype_mods_data, atype_mods_file, indent=4)
-
-        with open(self.atype_map_json_path, 'w') as atype_map_file:
-            json.dump(self.atype_map_data, atype_map_file, indent=4)
-
-        with open(self.btype_map_json_path, 'w') as btype_map_file:
-            json.dump(self.btype_map_data, btype_map_file, indent=4)
-
-        with open(self.rarity_map_json_path, 'w') as rarity_map_file:
-            json.dump(self.rarity_map_data, rarity_map_file, indent=4)
+        shared_utils.write_to_file(file_path=self.atype_mods_json_path, data=self.atype_map_data)
+        shared_utils.write_to_file(file_path=self.atype_map_json_path, data=self.atype_map_data)
+        shared_utils.write_to_file(file_path=self.btype_map_json_path, data=self.btype_map_data)
+        shared_utils.write_to_file(file_path=self.rarity_map_json_path, data=self.rarity_map_data)
+        shared_utils.write_to_file(file_path=self.currency_map_json_path, data=self.currency_map_data)
 
 
