@@ -8,48 +8,42 @@ class ATypeClassifier:
 
     @classmethod
     def classify(cls,
-                 item_data: dict = None,
-                 raw_atype: str = None,
-                 str_requirement: int = None,
-                 int_requirement: int = None,
-                 dex_requirement: int = None):
-        """
+                 item_data: dict):
 
-        :param item_data: Either the item data alone or ALL other attributes should be supplied. Designed this way so that
-            item atype can be easily determined outside of listing_creator
-        :param raw_atype:
-        :param str_requirement:
-        :param int_requirement:
-        :param dex_requirement:
-        :return:
-        """
+        base_type = item_data['baseType']
 
-        if item_data['baseType'] in ['Volatile Wand']:
+        if base_type in ['Volatile Wand']:
             return 'Fire Wand'
-        elif item_data['baseType'] in ['Withered Wand']:
+        elif base_type in ['Withered Wand']:
             return 'Chaos Wand'
-        elif item_data['baseType'] in ['Bone Wand']:
+        elif base_type in ['Bone Wand']:
             return 'Physical Wand'
-        elif item_data['baseType'] in ['Frigid Wand']:
+        elif base_type in ['Frigid Wand']:
             return 'Cold Wand'
-        elif item_data['baseType'] in ['Galvanic Wand']:
+        elif base_type in ['Galvanic Wand']:
             return 'Lightning Wand'
 
-        if item_data and 'properties' in item_data and 'name' in item_data['properties'][0]:
-            raw_atype = item_data['properties'][0]['name']
+        raw_atype = item_data['properties'][0]['name']
 
-            # Sometimes the item's btype is surrounded by brackets, sometimes it's a string. I don't know why.
-            if raw_atype.startswith('[') and raw_atype.endswith(']'):
-                raw_atype = raw_atype[1:-1]
+        # Sometimes the item's btype is surrounded by brackets, sometimes it's a string. I don't know why.
+        if raw_atype.startswith('[') and raw_atype.endswith(']'):
+            raw_atype = raw_atype[1:-1]
 
-            # For weapon types that can be one- or two-handed, there is a pipe '|' that we need to handle
-            if '|' in raw_atype:
-                raw_atype = raw_atype.split('|', 1)[1]
+        # For weapon types that can be one- or two-handed, there is a pipe '|' that we need to handle
+        if '|' in raw_atype:
+            raw_atype = raw_atype.split('|', 1)[1]
+
+        # Bucklers are just classified as a DEX shield in Poecd
+        if raw_atype == 'Buckler':
+            raw_atype = 'Shield'
 
         if raw_atype not in cls._convertable_raw_atypes:
             return raw_atype
 
-        if item_data and 'requirements' in item_data:
+        str_requirement = 0
+        int_requirement = 0
+        dex_requirement = 0
+        if 'requirements' in item_data:
             for req_dict in item_data['requirements']:
                 if 'Str' in req_dict['name']:
                     str_requirement = int(req_dict['values'][0][0])
@@ -57,6 +51,17 @@ class ATypeClassifier:
                     int_requirement = int(req_dict['values'][0][0])
                 if 'Dex' in req_dict['name']:
                     dex_requirement = int(req_dict['values'][0][0])
+
+        # This condition where we have no stat requirements seems to only happen when you have a Unique item that
+        # has no stat requirements. In that case we just base the stat type off the requirements
+        if not any([str_requirement, int_requirement, dex_requirement]):
+            for property_ in item_data['properties']:
+                if 'Armour' in property_['name']:
+                    str_requirement = 1
+                elif 'Energy Shield' in property_['name']:
+                    int_requirement = 1
+                elif 'Evasion' in property_['name']:
+                    dex_requirement = 1
 
         if dex_requirement:
             if int_requirement:
@@ -76,4 +81,4 @@ class ATypeClassifier:
         if str_requirement:
             return f"{raw_atype} (STR)"
 
-        return raw_atype
+        raise ValueError(f"Could not determine Stat type for item {item_data['baseType']}")

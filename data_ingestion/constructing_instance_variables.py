@@ -199,6 +199,7 @@ def create_listing(api_item_response: dict):
         raw_atype = item_data['properties'][0]['name']
         atype = ATypeClassifier.classify(
             raw_atype=raw_atype,
+            base_type=item_data['baseType'],
             str_requirement=str_requirement,
             int_requirement=int_requirement,
             dex_requirement=dex_requirement

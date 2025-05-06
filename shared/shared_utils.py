@@ -15,8 +15,6 @@ def _process_bracketed_text(match):
 
 def remove_piped_brackets(text: str):
     result = re.sub(r'\[(.*?)\]', _process_bracketed_text, text)
-    if text != result:
-        logging.info(f"Converted {text} to {result}.")
     return result
 
 

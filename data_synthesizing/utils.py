@@ -1,3 +1,4 @@
+import re
 
 
 def parse_poecd_mtypes_string(mtypes_string: str) -> list:
@@ -10,46 +11,64 @@ def parse_poecd_mtypes_string(mtypes_string: str) -> list:
 class MatchScoreTracker:
 
     def __init__(self):
-        self.sub_mod_to_poecd_mods = dict()
+        self.sub_mod_matches = dict()
         self.poecd_mod_scores = dict()
 
-    def score(self, sub_mod_id, poecd_mod_ids, score):
+    def score_round(self, sub_mod_id, poecd_mod_ids, score):
         for poecd_mod_id in poecd_mod_ids:
-            if sub_mod_id not in self.sub_mod_to_poecd_mods:
-                self.sub_mod_to_poecd_mods[sub_mod_id] = set()
-            self.sub_mod_to_poecd_mods[sub_mod_id].add(poecd_mod_id)
+            if sub_mod_id not in self.sub_mod_matches:
+                self.sub_mod_matches[sub_mod_id] = set()
+            self.sub_mod_matches[sub_mod_id].add(poecd_mod_id)
 
             if poecd_mod_id not in self.poecd_mod_scores:
-                self.poecd_mod_scores[poecd_mod_id] = set()
-            self.poecd_mod_scores[poecd_mod_id].add(score)
+                self.poecd_mod_scores[poecd_mod_id] = 0
+            self.poecd_mod_scores[poecd_mod_id] += score
 
-    def determine_placements(self) -> list:
-        if not self.sub_mod_to_poecd_mods:
-            return []  # No data to process
+    def determine_winner(self) -> str | None:
+        if not self.sub_mod_matches:
+            return None  # No data to process
 
-        # Get mod IDs common to all sub mods
-        matching_poecd_mod_ids = set.intersection(*self.sub_mod_to_poecd_mods.values())
+        winners = set.intersection(*self.sub_mod_matches.values())
+        if len(winners) == 1:
+            return next(iter(winners))
 
-        # Compute total scores
-        score_totals = {
-            poecd_mod_id: sum(scores)
-            for poecd_mod_id, scores in self.poecd_mod_scores.items()
+        best_poecd_mod = None
+        highest_score = -1
+
+        winner_scores = {
+            mod_id: score_total
+            for mod_id, score_total in self.poecd_mod_scores.items()
+            if mod_id in winners
         }
+        for winner_id, score_total in winner_scores.items():
+            if score_total > highest_score:
+                best_poecd_mod = winner_id
+                highest_score = score_total
 
-        # Filter only those that are in the intersection set
-        filtered_scores = {
-            mod_id: total
-            for mod_id, total in score_totals.items()
-            if mod_id in matching_poecd_mod_ids
-        }
+        return best_poecd_mod
 
-        # Sort by score descending
-        sorted_mods = sorted(filtered_scores.items(), key=lambda item: item[1], reverse=True)
 
-        # Extract just the mod IDs in sorted order
-        placement_order = [mod_id for mod_id, _ in sorted_mods]
+def transform_text(text: str, transform_dict: dict) -> tuple:
+    """
+    :return: (Possibly transformed text , whether text was transformed)
+    """
+    transforms = {
+        start: end
+        for start, end in transform_dict.items()
+        if start in text
+    }
 
-        return placement_order
+    for start, end in transforms.items():
+        text = re.sub(re.escape(start), end, text)
+
+    if transforms:
+        transformed = True
+    else:
+        transformed = False
+
+    return text, transformed
+
+
 
 
 

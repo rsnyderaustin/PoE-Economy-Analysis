@@ -31,10 +31,7 @@ class ProgramManager:
         self.injector = PoecdDataInjecter()
 
     def execute(self):
-        item_categories = [
-            external_apis.ItemCategory.ANY_WEAPON,
-            external_apis.ItemCategory.ANY_ARMOUR
-        ]
+        item_categories = [*external_apis.socketable_items, *external_apis.martial_weapons]
         currencies = [
             external_apis.Currency.EXALTED_ORB,
             external_apis.Currency.CHAOS_ORB,
@@ -42,6 +39,7 @@ class ProgramManager:
         ]
         currency_amounts = [(i, i + 2) for i in range(0, 50, 3)]
         for item_category, currency, currency_amount in zip(item_categories, currencies, currency_amounts):
+            logging.info(f"\n\n!!! Querying category '{item_category}, currency '{currency}', amount '{currency_amount}!!!\n\n")
             category_filter = external_apis.MetaFilter(
                 filter_type_enum=external_apis.TypeFilters.ITEM_CATEGORY,
                 filter_value=item_category

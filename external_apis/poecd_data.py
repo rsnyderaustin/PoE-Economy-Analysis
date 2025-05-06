@@ -15,7 +15,7 @@ class PoecdMod:
                  mod_id: int,
                  mod_text: str,
                  mod_types: list[str],
-                 affix_type: str,
+                 affix_type: ModAffixType,
                  tiers_list: list):
         self.atype_id = atype_id
         self.atype_name = atype_name
@@ -30,6 +30,9 @@ class PoecdMod:
             for tier_data in tiers_list
         }
 
+    def fetch_weighting(self, ilvl: str):
+        return self.ilvl_to_mod_tier[ilvl]['weighting']
+
 
 class ATypeDataManager:
 
@@ -41,19 +44,35 @@ class ATypeDataManager:
         self.atype_name = atype_name
         self.mods = mods
 
-        self.prefix_mods_dict = {mod.mod_text: mod for mod in mods if mod.affix_type == 'prefix'}
-        self.suffix_mods_dict = {mod.mod_text: mod for mod in mods if mod.affix_type == 'suffix'}
+        self.mods_dict = {mod.mod_text: mod for mod in mods}
+        self.mod_ids_dict = {mod.mod_id: mod for mod in mods}
+
+        self.mods_affixed_dict = {
+            ModAffixType.PREFIX: {mod.mod_text: mod for mod in mods if mod.affix_type == ModAffixType.PREFIX},
+            ModAffixType.SUFFIX: {mod.mod_text: mod for mod in mods if mod.affix_type == ModAffixType.SUFFIX}
+        }
+
+        # This is useful for when we are matching mods to the Trade API data
+        self.hybrid_parts_to_parent_dict = self.create_hybrid_to_parent_dict(mods=mods)
+        self.hybrid_parts_to_parent_affixed_dict = {
+            ModAffixType.PREFIX: self.create_hybrid_to_parent_dict(mods=mods, affix_type=ModAffixType.PREFIX),
+            ModAffixType.SUFFIX: self.create_hybrid_to_parent_dict(mods=mods, affix_type=ModAffixType.SUFFIX)
+        }
+        self.num_hybrid_parts_dict = {
+            mod.mod_id: len(mod.mod_text.split(','))
+            for mod in mods
+        }
 
         self.mod_id_to_affix_type = {mod.mod_id: mod.affix_type for mod in mods}
         self.mod_id_to_text = {mod.mod_id: mod.mod_text for mod in mods}
         self.mod_text_to_id = {v: k for k, v in self.mod_id_to_text.items()}
 
-        self.hybrid_part_to_parent_id = self.create_hybrid_to_parent_dict(mods=mods)
-
     @staticmethod
-    def create_hybrid_to_parent_dict(mods) -> dict:
+    def create_hybrid_to_parent_dict(mods, affix_type: ModAffixType = None) -> dict:
         hybrid_part_to_parent_id = dict()
         for mod in mods:
+            if affix_type and mod.affix_type != affix_type:
+                continue
             if ',' in mod.mod_text:
                 hybrid_parts = [
                     part.strip()
@@ -150,6 +169,10 @@ class PoecdDataManager:
                 mod_text = self.mod_id_to_text[mod_id]
                 mod_types = self.mod_id_to_mod_types[mod_id]
                 affix_type = self.mod_id_to_affix_type[mod_id]
+                if affix_type and affix_type == 'prefix':
+                    affix_type = ModAffixType.PREFIX
+                elif affix_type and affix_type == 'suffix':
+                    affix_type = ModAffixType.SUFFIX
 
                 new_mod = PoecdMod(
                     atype_id=atype_id,
