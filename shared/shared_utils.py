@@ -19,7 +19,7 @@ def remove_piped_brackets(text: str):
 
 
 def parse_values_from_mod_text(mod_text: str) -> tuple:
-    numbers = tuple(map(int, re.findall(r'\b\d+\b', mod_text)))
+    numbers = tuple(map(float, re.findall(r'\b\d+\b', mod_text)))
     return numbers
 
 

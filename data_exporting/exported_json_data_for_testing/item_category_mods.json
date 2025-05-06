@@ -2809,6 +2809,289 @@
                         ]
                     },
                     "weighting": "325"
+                },
+                "46": {
+                    "ilvl": 46,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                110.0,
+                                134.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1050"
+                }
+            }
+        },
+        "One Hand Mace_explicit.stat_691932474_explicit.stat_1263695895": {
+            "mod_class": "explicitMods",
+            "sub_mod_ids": [
+                "explicit.stat_691932474",
+                "explicit.stat_1263695895"
+            ],
+            "mod_types": [
+                "Attack"
+            ],
+            "mod_texts": [
+                "+# to Accuracy Rating",
+                "#% increased Light Radius"
+            ],
+            "affix_type": "suffix",
+            "mod_tiers": {
+                "15": {
+                    "ilvl": 15,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_691932474": [
+                            [
+                                21.0,
+                                40.0
+                            ]
+                        ],
+                        "explicit.stat_1263695895": [
+                            [
+                                10.0,
+                                10.0
+                            ]
+                        ]
+                    },
+                    "weighting": "600"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_691932474": [
+                            [
+                                41.0,
+                                60.0
+                            ]
+                        ],
+                        "explicit.stat_1263695895": [
+                            [
+                                15.0,
+                                15.0
+                            ]
+                        ]
+                    },
+                    "weighting": "600"
+                },
+                "8": {
+                    "ilvl": 8,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_691932474": [
+                            [
+                                10.0,
+                                20.0
+                            ]
+                        ],
+                        "explicit.stat_1263695895": [
+                            [
+                                5.0,
+                                5.0
+                            ]
+                        ]
+                    },
+                    "weighting": "600"
+                }
+            }
+        },
+        "One Hand Mace_explicit.stat_1509134228_explicit.stat_691932474": {
+            "mod_class": "explicitMods",
+            "sub_mod_ids": [
+                "explicit.stat_1509134228",
+                "explicit.stat_691932474"
+            ],
+            "mod_types": [
+                "Damage",
+                "Physical",
+                "Attack"
+            ],
+            "mod_texts": [
+                "#% increased Physical Damage",
+                "+# to Accuracy Rating"
+            ],
+            "affix_type": "prefix",
+            "mod_tiers": {
+                "38": {
+                    "ilvl": 38,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            [
+                                35.0,
+                                44.0
+                            ]
+                        ],
+                        "explicit.stat_691932474": [
+                            [
+                                73.0,
+                                97.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1100"
+                },
+                "53": {
+                    "ilvl": 53,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            [
+                                45.0,
+                                54.0
+                            ]
+                        ],
+                        "explicit.stat_691932474": [
+                            [
+                                98.0,
+                                123.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1050"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            [
+                                20.0,
+                                24.0
+                            ]
+                        ],
+                        "explicit.stat_691932474": [
+                            [
+                                21.0,
+                                46.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1100"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            [
+                                15.0,
+                                19.0
+                            ]
+                        ],
+                        "explicit.stat_691932474": [
+                            [
+                                16.0,
+                                20.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1100"
+                },
+                "65": {
+                    "ilvl": 65,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            [
+                                55.0,
+                                64.0
+                            ]
+                        ],
+                        "explicit.stat_691932474": [
+                            [
+                                124.0,
+                                149.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "23": {
+                    "ilvl": 23,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            [
+                                25.0,
+                                34.0
+                            ]
+                        ],
+                        "explicit.stat_691932474": [
+                            [
+                                47.0,
+                                72.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1100"
+                },
+                "76": {
+                    "ilvl": 76,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            [
+                                65.0,
+                                74.0
+                            ]
+                        ],
+                        "explicit.stat_691932474": [
+                            [
+                                150.0,
+                                174.0
+                            ]
+                        ]
+                    },
+                    "weighting": "400"
+                },
+                "81": {
+                    "ilvl": 81,
+                    "mod_id_to_values_ranges": {
+                        "explicit.stat_1509134228": [
+                            [
+                                75.0,
+                                79.0
+                            ]
+                        ],
+                        "explicit.stat_691932474": [
+                            [
+                                175.0,
+                                200.0
+                            ]
+                        ]
+                    },
+                    "weighting": "300"
+                }
+            }
+        },
+        "One Hand Mace_fractured.stat_1509134228_fractured.stat_691932474": {
+            "mod_class": "fracturedMods",
+            "sub_mod_ids": [
+                "fractured.stat_1509134228",
+                "fractured.stat_691932474"
+            ],
+            "mod_types": [
+                "Damage",
+                "Physical",
+                "Attack"
+            ],
+            "mod_texts": [
+                "#% increased Physical Damage",
+                "+# to Accuracy Rating"
+            ],
+            "affix_type": "prefix",
+            "mod_tiers": {
+                "53": {
+                    "ilvl": 53,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                45.0,
+                                54.0
+                            ]
+                        ],
+                        "fractured.stat_691932474": [
+                            [
+                                98.0,
+                                123.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1050"
                 }
             }
         }

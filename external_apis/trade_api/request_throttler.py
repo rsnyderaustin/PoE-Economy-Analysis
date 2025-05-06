@@ -158,8 +158,6 @@ class RequestThrottler:
                 ]
             )
 
-        logging.info("Next request sent.")
-
     def _register_requests(self, func_name: str, now):
         for request_deque in self.request_deques[func_name]:
             request_deque.register_request(now=now)

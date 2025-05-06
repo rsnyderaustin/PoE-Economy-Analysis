@@ -60,10 +60,10 @@ class PoecdDataInjecter:
                 hybrid_mod_texts = list(mod_to_parent_dict.keys())
 
                 if attempt_to_transform:
-                    sub_mod_text = utils.transform_text(sub_mod.mod_text,
+                    sub_mod_text = utils.transform_text(sub_mod.sanitized_mod_text,
                                                         transform_dict=self.mod_transformations)[0]
                 else:
-                    sub_mod_text = sub_mod.mod_text
+                    sub_mod_text = sub_mod.sanitized_mod_text
                 matches = rapidfuzz.process.extract(sub_mod_text,
                                                     hybrid_mod_texts,
                                                     score_cutoff=min_score)
@@ -95,10 +95,10 @@ class PoecdDataInjecter:
                 poecd_mod_texts = list(atype_manager.mods_dict.keys())
 
             if attempt_to_transform:
-                mod_text = utils.transform_text(item_mod.sub_mods[0].mod_text,
+                mod_text = utils.transform_text(item_mod.sub_mods[0].sanitized_mod_text,
                                                 transform_dict=self.mod_transformations)[0]
             else:
-                mod_text = item_mod.sub_mods[0].mod_text
+                mod_text = item_mod.sub_mods[0].sanitized_mod_text
 
             result = rapidfuzz.process.extractOne(mod_text,
                                                   poecd_mod_texts,

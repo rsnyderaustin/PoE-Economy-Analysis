@@ -1,5 +1,6 @@
 from .query_filters import MetaFilter, StatsFiltersGroup, StatFilter
 from .trade_api_utils import (StatSearchType)
+import external_apis
 
 
 class TradeQueryConstructor:
@@ -12,8 +13,22 @@ class TradeQueryConstructor:
         }
 
     def create_trade_query(self,
+                           only_identified_items: bool = True,
                            meta_mod_filters: list[MetaFilter] = None,
                            stats_filter_groups: list[StatsFiltersGroup] = None):
+        """
+
+        :param only_identified_items: For the program, we currently are only assessing identified items.
+        :param meta_mod_filters:
+        :param stats_filter_groups:
+        :return:
+        """
+        # For the program, we currently are only assessing identified items. So we sort-of hard code this in for now
+        if only_identified_items:
+            meta_mod_filters.append(
+                MetaFilter(filter_type_enum=external_apis.MiscFilters.IDENTIFIED,
+                           filter_value=True)
+            )
         if meta_mod_filters:
             self._handle_meta_query(meta_mod_filters=meta_mod_filters)
 

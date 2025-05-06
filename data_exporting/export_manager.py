@@ -2,22 +2,13 @@
 import json
 from pathlib import Path
 
-from instances_and_definitions import ItemMod, ItemSocketer, ModifiableListing
+from instances_and_definitions import ItemMod, ModifiableListing
 from shared import PathProcessor
 
 
 class ExportManager:
 
     def __init__(self):
-
-        self.runes_json_path = (
-            PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/rune_effects.json')
-            .path
-        )
-
-        with open(self.runes_json_path, 'r') as runes_file:
-            self.runes_data = json.load(runes_file)
 
         self.atype_mods_json_path = (
             PathProcessor(Path.cwd())
@@ -27,6 +18,33 @@ class ExportManager:
 
         with open(self.atype_mods_json_path, 'r') as atype_mods_file:
             self.atype_mods_data = json.load(atype_mods_file)
+            
+        self.atype_map_json_path = (
+            PathProcessor(Path.cwd())
+            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/atype_map.json')
+            .path
+        )
+        
+        with open(self.atype_map_json_path, 'r') as atype_map_file:
+            self.atype_map_data = json.load(atype_map_file)
+
+        self.btype_map_json_path = (
+            PathProcessor(Path.cwd())
+            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/btype_map.json')
+            .path
+        )
+
+        with open(self.btype_map_json_path, 'r') as btype_map_file:
+            self.btype_map_data = json.load(btype_map_file)
+
+        self.rarity_map_json_path = (
+            PathProcessor(Path.cwd())
+            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/rarity_map.json')
+            .path
+        )
+
+        with open(self.rarity_map_json_path, 'r') as rarity_map_file:
+            self.rarity_map_data = json.load(rarity_map_file)
 
     def save_mod(self, item_mod: ItemMod):
         if item_mod.atype not in self.atype_mods_data:
@@ -39,7 +57,7 @@ class ExportManager:
                 'mod_class': item_mod.mod_class.value,
                 'sub_mod_ids': [sub_mod.mod_id for sub_mod in item_mod.sub_mods],
                 'mod_types': item_mod.mod_types,
-                'mod_texts': [sub_mod.mod_text for sub_mod in item_mod.sub_mods],
+                'mod_texts': [sub_mod.sanitized_mod_text for sub_mod in item_mod.sub_mods],
                 'affix_type': item_mod.affix_type.value if item_mod.affix_type else None, # Some mods don't have affix types
                 'mod_tiers': dict()
             }
@@ -56,22 +74,28 @@ class ExportManager:
                     'mod_id_to_values_ranges': mod_id_to_values_ranges,
                     'weighting': item_mod.weighting
                 }
+            
+    def aggregate_save_to_maps(self, listing: ModifiableListing):
+        if listing.item_atype not in self.atype_map_data:
+            self.atype_map_data[listing.item_atype] = len(self.atype_map_data)
 
-    def save_socketer(self, atype: str, socketer: ItemSocketer):
-        if atype not in self.runes_data:
-            self.runes_data[atype] = dict()
+        if listing.item_btype not in self.btype_map_data:
+            self.btype_map_data[listing.item_btype] = len(self.btype_map_data)
 
-        if socketer.name not in self.runes_data[atype]:
-            self.runes_data[atype][socketer.name] = socketer.text
-
-    def save_listing(self, listing: ModifiableListing):
-
+        if listing.rarity not in self.rarity_map_data:
+            self.rarity_map_data[listing.rarity] = len(self.rarity_map_data)
 
     def export_data(self):
-        with open(self.runes_json_path, 'w') as rune_file:
-            json.dump(self.runes_data, rune_file, indent=4)
+        with open(self.atype_mods_json_path, 'w') as atype_mods_file:
+            json.dump(self.atype_mods_data, atype_mods_file, indent=4)
 
-        with open(self.atype_mods_json_path, 'w') as atype_file:
-            json.dump(self.atype_mods_data, atype_file, indent=4)
+        with open(self.atype_map_json_path, 'w') as atype_map_file:
+            json.dump(self.atype_map_data, atype_map_file, indent=4)
+
+        with open(self.btype_map_json_path, 'w') as btype_map_file:
+            json.dump(self.btype_map_data, btype_map_file, indent=4)
+
+        with open(self.rarity_map_json_path, 'w') as rarity_map_file:
+            json.dump(self.rarity_map_data, rarity_map_file, indent=4)
 
 

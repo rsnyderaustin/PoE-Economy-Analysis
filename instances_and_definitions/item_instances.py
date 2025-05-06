@@ -7,18 +7,13 @@ from .utils import ModClass, ModAffixType, generate_mod_id
 class SubMod:
     def __init__(self,
                  mod_id: str,
-                 mod_text: str,
+                 actual_values: tuple[float],
+                 sanitized_mod_text: str,
                  values_ranges: list[tuple[float | None, float | None]]):
         self.mod_id = mod_id
-        self.mod_text = mod_text
-
-        min_roll_total = 0.0
-        max_roll_total = 0.0
-        for min_val, max_val in values_ranges:
-            min_roll_total += min_val or 0
-            max_roll_total += max_val or 0
-
-        self.values_range = (min_roll_total, max_roll_total)
+        self.actual_values = actual_values
+        self.sanitized_mod_text = sanitized_mod_text
+        self.values_ranges = values_ranges
 
 
 class ItemMod:
@@ -50,8 +45,7 @@ class ItemMod:
     @property
     def mod_id(self):
         return generate_mod_id(atype=self.atype,
-                               mod_ids=[sub_mod.mod_id for sub_mod in self.sub_mods],
-                               mod_texts=[sub_mod.mod_text for sub_mod in self.sub_mods]
+                               mod_ids=[sub_mod.mod_id for sub_mod in self.sub_mods]
                                )
 
 
@@ -66,12 +60,12 @@ class ItemSkill:
 
 class ItemSocketer:
 
-    def __init__(self, name: str, text: str):
+    def __init__(self, name: str, mods: list[str]):
         """
         Socketers have no rolls and thus do not differ from item to item. Their text is static.
         """
         self.name = name
-        self.text = text
+        self.mods = mods
 
 
 class ModifiableListing:
@@ -95,10 +89,11 @@ class ModifiableListing:
                  dex_requirement: int,
                  implicit_mods: list[ItemMod],
                  enchant_mods: list[ItemMod],
-                 rune_mods: list[ItemMod],
-                 item_skills: list[ItemSkill],
                  fractured_mods: list[ItemMod],
-                 explicit_mods: list[ItemMod]
+                 explicit_mods: list[ItemMod],
+                 socketers: list[str],
+                 item_skills: list[ItemSkill],
+                 item_properties: dict = None
                  ):
         self.listing_id = listing_id
         self.date_fetched = date_fetched
@@ -118,17 +113,18 @@ class ModifiableListing:
         self.dex_requirement = dex_requirement
         self.implicit_mods = implicit_mods
         self.enchant_mods = enchant_mods
-        self.rune_mods = rune_mods
+        self.socketers = socketers
         self.item_skills = item_skills
         self.fractured_mods = fractured_mods
         self.explicit_mods = explicit_mods
+
+        self.item_properties = item_properties or {}
 
     @property
     def mods(self) -> list[ItemMod]:
         all_mods = (
                 self.implicit_mods +
                 self.enchant_mods +
-                self.rune_mods +
                 self.fractured_mods +
                 self.explicit_mods
         )

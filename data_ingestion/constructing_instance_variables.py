@@ -7,11 +7,22 @@ from shared import shared_utils
 from . import utils
 
 
-def create_socketer_for_internal_storage(item_data: dict) -> ItemSocketer | None:
-    """
-    We can only determine socketer effects from items with only one socketer.
-    """
-    if ModClass.RUNE.value not in item_data:
+def create_socketers(item_data: dict) -> list[ItemSocketer]:
+    if 'socketedItems' not in item_data:
+        return []
+
+    socketers = []
+    for socketer_data in item_data['socketedItems']:
+        mods = [shared_utils.remove_piped_brackets(mod) for mod in socketer_data['explicitMods']]
+        new_socketer = ItemSocketer(
+            name=socketer_data['baseType'],
+            mods=mods
+        )
+        socketers.append(new_socketer)
+
+    return socketers
+
+    """if ModClass.RUNE.value not in item_data:
         return None
 
     # We can only deterministically get rune data when there is one rune socketed, because different types of the same
@@ -32,10 +43,10 @@ def create_socketer_for_internal_storage(item_data: dict) -> ItemSocketer | None
         name=rune_name,
         text=rune_mod_text
     )
-    return item_socketer
+    return item_socketer"""
 
 
-def _create_sub_mods(mod_id_to_sanitized_text: dict, mod_magnitudes: list) -> list[SubMod]:
+def _create_sub_mods(mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]:
     mod_ids = [
         magnitude['hash']
         for magnitude in mod_magnitudes
@@ -58,9 +69,12 @@ def _create_sub_mods(mod_id_to_sanitized_text: dict, mod_magnitudes: list) -> li
             )
             for magnitude in same_mod_magnitudes
         ]
+        mod_text = mod_id_to_text[mod_id]
+        sanitized_text = shared_utils.sanitize_mod_text(mod_text)
         sub_mod = SubMod(
             mod_id=mod_id,
-            mod_text=mod_id_to_sanitized_text[mod_id],
+            sanitized_mod_text=sanitized_text,
+            actual_values=shared_utils.parse_values_from_mod_text(mod_text),
             values_ranges=values_ranges
         )
         sub_mods.append(sub_mod)
@@ -69,14 +83,19 @@ def _create_sub_mods(mod_id_to_sanitized_text: dict, mod_magnitudes: list) -> li
                             for magnitude in mod_magnitudes if magnitude['hash'] not in duplicate_mod_ids]
     for magnitude in singleton_magnitudes:
         mod_id = magnitude['hash']
-        value_range = (
-            float(magnitude['min']) if 'min' in magnitude else None,
-            float(magnitude['max']) if 'max' in magnitude else None
-        )
+        value_ranges = [
+            (
+                float(magnitude['min']) if 'min' in magnitude else None,
+                float(magnitude['max']) if 'max' in magnitude else None
+            )
+        ]
+        mod_text = mod_id_to_text[mod_id]
+        sanitized_text = shared_utils.sanitize_mod_text(mod_text)
         sub_mod = SubMod(
             mod_id=mod_id,
-            mod_text=mod_id_to_sanitized_text[mod_id],
-            values_range=value_range
+            sanitized_mod_text=sanitized_text,
+            actual_values=shared_utils.parse_values_from_mod_text(mod_text),
+            values_ranges=value_ranges
         )
         sub_mods.append(sub_mod)
 
@@ -102,10 +121,10 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
         if mod_class not in item_data:
             continue
         abbrev_class = utils.mod_class_to_abbrev[mod_class]
-        mod_id_to_sanitized_text = utils.determine_mod_id_to_mod_text(
+        mod_id_to_text = utils.determine_mod_id_to_mod_text(
             mod_class=mod_class,
             item_data=item_data,
-            sanitize_text=True
+            sanitize_text=False
         )
 
         extended_mods_list = item_data['extended']['mods'][abbrev_class]
@@ -123,7 +142,7 @@ def create_item_mods(item_data: dict) -> list[ItemMod]:
                 continue
             else:
                 sub_mods = _create_sub_mods(
-                    mod_id_to_sanitized_text=mod_id_to_sanitized_text,
+                    mod_id_to_text=mod_id_to_text,
                     mod_magnitudes=magnitudes
                 )
 
@@ -183,6 +202,20 @@ def create_listing(api_item_response: dict):
     int_requirement = 0
     dex_requirement = 0
 
+    properties = dict()
+    if 'properties' in item_data:
+        # The first property for an item is just its type group (ex: Body Armour, Boots, etc) - don't need that
+        properties_list = item_data['properties'][1:]
+
+        for property_data in properties_list:
+            property_name = shared_utils.remove_piped_brackets(property_data['name'])
+
+            if len(property_data['values']) >= 2:
+                logging.error(f"{item_data}\nFound multiple values fields for item property from trade API. See data above.")
+
+            property_values = shared_utils.parse_values_from_mod_text(property_data['values'][0][0])
+            properties[property_name] = property_values
+
     if 'requirements' in item_data:
         for req_dict in item_data['requirements']:
             if req_dict['name'] == 'Level':
@@ -198,6 +231,10 @@ def create_listing(api_item_response: dict):
         atype = ATypeClassifier.classify(item_data=item_data)
     else:
         atype = item_data['baseType'] if 'baseType' in item_data else None
+
+    socketer_names = []
+    if 'socketedItems' in item_data:
+        socketer_names = [socketer_data['baseType'] for socketer_data in item_data['socketedItems']]
 
     # Gems don't have mods
     item_mods = create_item_mods(item_data) if item_data['baseType'] != ItemCategory.ANY_GEM.value else []
@@ -223,9 +260,10 @@ def create_listing(api_item_response: dict):
         dex_requirement=dex_requirement,
         implicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.IMPLICIT],
         enchant_mods=[mod for mod in item_mods if mod.mod_class == ModClass.ENCHANT],
-        rune_mods=[mod for mod in item_mods if mod.mod_class == ModClass.RUNE],
         fractured_mods=[mod for mod in item_mods if mod.mod_class == ModClass.FRACTURED],
         explicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.EXPLICIT],
-        item_skills=item_skills
+        item_skills=item_skills,
+        socketers=socketer_names,
+        item_properties=properties
     )
     return new_listing
