@@ -1,5 +1,6 @@
 import json
 import logging
+import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 
@@ -7,6 +8,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 import xgboost as xgb
 
+import seaborn as sns
 import pandas as pd
 
 from shared import PathProcessor
@@ -23,10 +25,14 @@ def build_xgboost():
         training_data = json.load(training_data_file)
 
     df = pd.DataFrame(training_data)
+    df = df.select_dtypes(include=['int64', 'float64'])
 
-    non_model_cols = ['listing_id', 'date_fetched']
+    plt.figure(figsize=(10, 8))
+    corr_matrix = df.corr()
+    sns.heatmap(corr_matrix[['exalts']].sort_values(by='exalts', ascending=False), annot=True, cmap='coolwarm')
+    plt.show()
 
-    features = df.drop(columns=['exalts', *non_model_cols])
+    features = df.drop(columns=['exalts'])
     target_col = df['exalts']
 
     features.fillna(0, inplace=True)
@@ -53,7 +59,7 @@ def build_xgboost():
     logging.info("Beginning model training.")
     model = xgb.train(params,
                       train_data,
-                      num_boost_round=100000,
+                      num_boost_round=10000,
                       early_stopping_rounds=50,
                       evals=evals,
                       verbose_eval=True)

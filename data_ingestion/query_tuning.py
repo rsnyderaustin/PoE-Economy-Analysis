@@ -1,4 +1,5 @@
 
+
 import logging
 import itertools
 
@@ -10,42 +11,43 @@ from external_apis import ItemCategory, ListedSince
 from shared import ATypeClassifier
 from xgboost_model import DataPrep
 
-logging.basicConfig(level=logging.INFO,
-                    force=True)
+
+import external_apis.trade_api
+
+def _apply_create_listing_id_history(row, listing_id_history: dict):
+    listing_id = row['listing_id']
+    listing_date = row['date_fetched']
+
+    if listing_date not in listing_id_history:
+        listing_id_history[listing_date] = set()
+
+    listing_id_history[listing_date].add(listing_id)
 
 
-def _clean_item_data(item_data: dict):
-    """
-    Right now this is just used to clear empty implicits from spears granting skill Spear Throw.
-    """
-    if 'extended' in item_data and item_data['extended'] and 'implicit' in item_data['extended']['mods']:
-        implicit_mod_dicts = item_data['extended']['mods']['implicit']
-
-        implicit_mod_dicts[:] = [
-            implicit_mod_dict
-            for implicit_mod_dict in implicit_mod_dicts
-            if (implicit_mod_dict['magnitudes'] or implicit_mod_dict['name'] or implicit_mod_dict['tier'])
-        ]
-
-
-class ProgramManager:
+class QueryTuner:
 
     def __init__(self):
-        self.export_manager = ExportManager()
-        self.injector = PoecdDataInjecter()
-        self.ai_data_prep = DataPrep()
+        training_data_json_path = (
+            PathProcessor(Path.cwd())
+            .attach_file_path_endpoint('xgboost_model/training_data/listings.json')
+            .path
+        )
+        with open(training_data_json_path, 'r') as training_data_file:
+            training_data = json.load(training_data_file)
 
-    def execute(self):
-        # item_categories = [*external_apis.socketable_items, *external_apis.martial_weapons]
+        df = pd.DataFrame(training_data)
+        self.loaded_dates =
+
+    def build_query(self):
         item_categories = external_apis.martial_weapons
         currencies = [
             external_apis.Currency.EXALTED_ORB,
             external_apis.Currency.DIVINE_ORB
         ]
 
-        currency_amounts = [(1,1)]
+        currency_amounts = [(1, 1)]
         for i in range(1, 8):
-            first_num = currency_amounts[i-1][1] + 1
+            first_num = currency_amounts[i - 1][1] + 1
             second_num = first_num + i * 2
             currency_amounts.append((first_num, second_num))
 
@@ -78,28 +80,4 @@ class ProgramManager:
             )
 
             api_item_responses = external_apis.TradeItemsFetcher().fetch_items(query=query)
-
-            listings = []
-            maps_need_updated = False
-            for api_item_response in api_item_responses:
-                _clean_item_data(api_item_response['item'])
-                logging.info("Creating listing.")
-                listing = data_ingestion.create_listing(api_item_response)
-                new_map_data = self.export_manager.aggregate_save_to_maps(listing=listing)
-                if new_map_data:
-                    maps_need_updated = True
-
-                for mod in listing.mods:
-                    self.injector.inject_poecd_data_into_mod(item_mod=mod)
-                    self.export_manager.save_mod(item_mod=mod)
-
-            if maps_need_updated:
-                logging.info("Updating AI map data.")
-                self.ai_data_prep.update_data()
-
-            for listing in listings:
-                logging.info("Prepping listing for AI model.")
-                self.ai_data_prep.save_data(listing)
-
-            self.export_manager.export_data()
 

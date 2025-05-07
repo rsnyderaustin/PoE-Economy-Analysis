@@ -107,6 +107,7 @@ class ExportManager:
             should_export = True
 
         if should_export:
+            logging.info("New data for map data - saving to files.")
             self.export_data()
             return True
 
