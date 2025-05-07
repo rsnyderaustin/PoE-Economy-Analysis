@@ -42,7 +42,8 @@ def build_xgboost():
     missing_cols = [col for col in filter_cols if col not in df.columns]
     df = df[filter_cols]
     df['atype'] = df['atype'].astype("category")
-    
+    df['days_since_listed'] = df['days_since_listed'].clip(upper=1)
+
     df = df.select_dtypes(include=['int64', 'float64'])
     df.fillna(0, inplace=True)
     # df = df.drop(columns=['currency_amount'])
