@@ -92,7 +92,6 @@ class DataPrep:
             'date_fetched': listing.date_fetched,
             'days_since_listed': listing.days_since_listed,
             'exalts': exalts_price,
-            'currency_amount': listing.currency_amount,
             'open_prefixes': listing.open_prefixes,
             'open_suffixes': listing.open_suffixes,
             'btype': self.btype_map_data[listing.item_btype],

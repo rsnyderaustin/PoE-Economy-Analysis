@@ -6,20 +6,25 @@ from instances_and_definitions import ModifiableListing
 from shared import PathProcessor
 
 
+def form_column_name(col_name: str) -> str:
+    return col_name.lower().replace(' ', '_')
+
+
 def sum_sub_mod_values(listing: ModifiableListing):
     summed_sub_mods = {}
     for mod in listing.mods:
         for sub_mod in mod.sub_mods:
+            col_name = form_column_name(sub_mod.sanitized_mod_text)
             if sub_mod.actual_values:
                 avg_value = sum(sub_mod.actual_values) / len(sub_mod.actual_values)
                 if sub_mod.mod_id not in summed_sub_mods:
-                    summed_sub_mods[sub_mod.mod_id] = avg_value
+                    summed_sub_mods[col_name] = avg_value
                 else:
-                    summed_sub_mods[sub_mod.mod_id] += avg_value
+                    summed_sub_mods[col_name] += avg_value
             else:
                 # If there is no value then it's just a static property (ex: "You cannot be poisoned"), and so
                 # we assign it a 1 to indicate to the model that it's an active mod
-                summed_sub_mods[sub_mod.mod_id] = 1
+                summed_sub_mods[col_name] = 1
     return summed_sub_mods
 
 

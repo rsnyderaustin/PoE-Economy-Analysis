@@ -51,6 +51,11 @@ class ProgramManager:
 
         for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
             logging.info(f"\n\n!!! Querying category '{item_category}, currency '{currency}', amount '{currency_amount}!!!\n\n")
+            ilvl_filter = external_apis.MetaFilter(
+                filter_type_enum=external_apis.TypeFilters.ITEM_LEVEL,
+                filter_value=(75,)
+            )
+
             category_filter = external_apis.MetaFilter(
                 filter_type_enum=external_apis.TypeFilters.ITEM_CATEGORY,
                 filter_value=item_category
@@ -83,8 +88,8 @@ class ProgramManager:
             maps_need_updated = False
             for api_item_response in api_item_responses:
                 _clean_item_data(api_item_response['item'])
-                logging.info("Creating listing.")
                 listing = data_ingestion.create_listing(api_item_response)
+                listings.append(listing)
                 new_map_data = self.export_manager.aggregate_save_to_maps(listing=listing)
                 if new_map_data:
                     maps_need_updated = True
@@ -93,13 +98,15 @@ class ProgramManager:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
                     self.export_manager.save_mod(item_mod=mod)
 
+            logging.info(f"Created {len(listings)} listings.")
+
             if maps_need_updated:
                 logging.info("Updating AI map data.")
                 self.ai_data_prep.update_data()
 
             for listing in listings:
-                logging.info("Prepping listing for AI model.")
                 self.ai_data_prep.save_data(listing)
+            logging.info(f"Saved {len(listings)} lists into AI model training data.")
 
             self.export_manager.export_data()
 
