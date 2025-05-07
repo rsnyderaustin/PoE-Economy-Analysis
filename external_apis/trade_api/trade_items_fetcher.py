@@ -1,5 +1,6 @@
 
 import logging
+from datetime import datetime
 
 import requests
 
@@ -34,6 +35,9 @@ class TradeItemsFetcher:
 
     request_throttler = RequestThrottler()
 
+    items_fetched = 0
+    class_start = datetime.now()
+
     @classmethod
     def _post_for_search_id(cls, query):
         response = cls.request_throttler.send_request(
@@ -45,6 +49,8 @@ class TradeItemsFetcher:
         response.raise_for_status()
         json_data = response.json()
         logging.info(f"POST -> {len(json_data['result'])} item IDs")
+        cls.items_fetched += len(json_data['result'])
+        logging.info(f"Have fetched {cls.items_fetched} items in {(datetime.now() - cls.class_start).total_seconds()} seconds.")
         return json_data
 
     @classmethod

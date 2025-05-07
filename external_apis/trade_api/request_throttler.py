@@ -76,21 +76,25 @@ class RequestThrottler:
             account_limit = response_headers['X-Rate-Limit-Account']
         else:
             account_limit = '100:5:60'
+            logging.info(f"No account limit. Defaulting to {account_limit}")
 
         if 'x-rate-limit-account-state' in response_headers:
             account_state = response_headers['x-rate-limit-account-state']
         else:
             account_state = '0:5:60'
+            logging.info(f"No account state. Defaulting to {account_state}")
 
         if 'X-Rate-Limit-Ip' in response_headers:
             ip_limit = response_headers['X-Rate-Limit-Ip']
         else:
             ip_limit = '8:10:60,15:60:120,60:300:1800'
+            logging.info(f"No IP limit. Defaulting to {ip_limit}")
 
         if 'x-rate-limit-ip-state' in response_headers:
             ip_state = response_headers['x-rate-limit-ip-state']
         else:
             ip_state = '5:10:0,30:60:0,100:300:0'
+            logging.info(f"No IP state. Defaulting to {ip_state}")
 
         account_limits = _parse_rate_string(account_limit)
         account_state = _parse_rate_string(account_state)
@@ -101,7 +105,6 @@ class RequestThrottler:
         return account_limits, account_state, ip_limits, ip_state
 
     def set_limits(self, func_name: str, response_headers: dict):
-        print(response_headers)
         account_limits, account_state, ip_limits, ip_state = self._fetch_limits_and_state(response_headers)
 
         self.current_account_limits[func_name] = account_limits
@@ -144,7 +147,7 @@ class RequestThrottler:
         )
 
         if not can_request:
-            logging.info("Waiting to send next request...")
+            logging.info(f"Waiting to send {func_name} request...")
 
         while not can_request:
             sleep_time = 0.25

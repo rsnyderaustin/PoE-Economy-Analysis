@@ -214,6 +214,17 @@ def create_listing(api_item_response: dict):
         for property_data in properties_list:
             property_name = shared_utils.remove_piped_brackets(property_data['name'])
 
+            if property_name == 'Elemental Damage':
+                # Elemental damage is a hybrid of the different elemental damage types
+                for property_value in property_data['values']:
+                    if property_value[1] == 4:
+                        properties['Fire Damage'] = shared_utils.parse_values_from_text(property_value[0])
+                    elif property_value[1] == 5:
+                        properties['Cold Damage'] = shared_utils.parse_values_from_text(property_value[0])
+                    elif property_value[1] == 6:
+                        properties['Lightning Damage'] = shared_utils.parse_values_from_text(property_value[1])
+                continue
+
             property_values = []
             for property_value in property_data['values']:
                 val = shared_utils.parse_values_from_text(property_value[0])

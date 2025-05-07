@@ -1,5 +1,14 @@
 {
     "One Hand Mace": 0,
     "Spear": 1,
-    "Two Hand Mace": 2
+    "Two Hand Mace": 2,
+    "Quarterstaff": 3,
+    "Bow": 4,
+    "Crossbow": 5,
+    "Wand": 6,
+    "Chaos Wand": 7,
+    "Physical Wand": 8,
+    "Fire Wand": 9,
+    "Sceptre": 10,
+    "Staff": 11
 }

@@ -1,4 +1,9 @@
+from pathlib import Path
+
+import pandas as pd
+
 from instances_and_definitions import ModifiableListing
+from shared import PathProcessor
 
 
 def sum_sub_mod_values(listing: ModifiableListing):
@@ -26,4 +31,19 @@ def count_socketers(listing: ModifiableListing) -> dict:
         socketer_counts[socketer_name] += 1
 
     return socketer_counts
+
+
+def fetch_currency_to_conversion() -> dict:
+    currency_conversion_json_path = (
+        PathProcessor(Path.cwd())
+        .attach_file_path_endpoint('xgboost_model/training_data/currency_prices.csv')
+        .path
+    )
+    currency_conversions = pd.read_csv(currency_conversion_json_path)
+    currency_conversions['Date'] = pd.to_datetime(currency_conversions['Date'])
+    most_recent_date = currency_conversions['Date'].max()
+    recent_data = currency_conversions[currency_conversions['Date'] == most_recent_date]
+    currency_to_exalts = pd.Series(recent_data['ExaltPerCurrency'].values,
+                                   index=recent_data['Currency']).to_dict()
+    return currency_to_exalts
 

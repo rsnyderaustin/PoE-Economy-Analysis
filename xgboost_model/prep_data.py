@@ -3,6 +3,7 @@ import csv
 import logging
 import os
 from pathlib import Path
+import pandas as pd
 
 from instances_and_definitions import ModifiableListing, ItemMod
 from shared import PathProcessor, shared_utils
@@ -50,36 +51,47 @@ class DataPrep:
 
         self.training_data_json_path = (
             PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('xgboost_model/test_training_data.json')
+            .attach_file_path_endpoint('xgboost_model/training_data/listings.json')
             .path
         )
 
         with open(self.training_data_json_path, 'r') as training_data_file:
             self.training_data = json.load(training_data_file)
 
-        self.num_rows = len(self.training_data)
+        self.currency_to_exalts = utils.fetch_currency_to_conversion()
+
+        self.num_rows = max(len(v_list) for v_list in self.training_data.values()) if self.training_data else 0
 
     def update_data(self):
         self.__init__()
 
-    def flatten_listing(self, listing: ModifiableListing):
+    def _flatten_listing(self, listing: ModifiableListing):
         # Make a dict that averages out the property values if they're a range, otherwise just give us the number
         flattened_properties = dict()
         for property_name, property_values in listing.item_properties.items():
-            # My understanding is that a property only ever has more than one value when its describing Elemental Damage
-            if property_name != 'Elemental Damage' and len(property_values) >= 2:
-                logging.error(f"Property name {property_name} has more than one value and is not 'Elemental Damage' as expected.")
-
             flattened_properties[property_name] = 0
             for v in property_values:
-                val = ((v[0] + v[1]) / 2) if len(v) >= 2 else v[0]
-                flattened_properties[property_name] += val
+                if isinstance(v, int) or isinstance(v, float):
+                    flattened_properties[property_name] += v
+                elif len(v) == 2:
+                    flattened_properties[property_name] += ((v[0] + v[1]) / 2)
+                elif len(v) == 1:
+                    flattened_properties[property_name] += v[0]
+                else:
+                    raise ValueError(f"Property value {property_values} has unexpected structure.")
+
+        if listing.price_currency in self.currency_to_exalts:
+            exalts_price = listing.currency_amount * self.currency_to_exalts[listing.price_currency]
+        elif listing.price_currency == 'exalted':
+            exalts_price = listing.currency_amount
+        else:
+            raise ValueError(f"Currency {listing.price_currency} not supported.")
 
         flattened_data = {
             'listing_id': listing.listing_id,
             'date_fetched': listing.date_fetched,
             'days_since_listed': listing.days_since_listed,
-            'currency': self.currency_map_data[listing.price_currency],
+            'exalts': exalts_price,
             'currency_amount': listing.currency_amount,
             'open_prefixes': listing.open_prefixes,
             'open_suffixes': listing.open_suffixes,
@@ -104,6 +116,11 @@ class DataPrep:
 
         for i, item_skill in enumerate(listing.item_skills):
             flattened_data[item_skill.name] = item_skill.level
+
+        return flattened_data
+
+    def save_data(self, listing: ModifiableListing):
+        flattened_data = self._flatten_listing(listing)
 
         for col_name, value in flattened_data.items():
             if col_name not in self.training_data:

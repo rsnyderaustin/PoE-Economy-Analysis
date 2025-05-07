@@ -1,4 +1,5 @@
 
+import logging
 import json
 from pathlib import Path
 
@@ -112,7 +113,8 @@ class ExportManager:
         return False
 
     def export_data(self):
-        shared_utils.write_to_file(file_path=self.atype_mods_json_path, data=self.atype_map_data)
+        logging.info("Exporting map data.")
+        shared_utils.write_to_file(file_path=self.atype_mods_json_path, data=self.atype_mods_data)
         shared_utils.write_to_file(file_path=self.atype_map_json_path, data=self.atype_map_data)
         shared_utils.write_to_file(file_path=self.btype_map_json_path, data=self.btype_map_data)
         shared_utils.write_to_file(file_path=self.rarity_map_json_path, data=self.rarity_map_data)
