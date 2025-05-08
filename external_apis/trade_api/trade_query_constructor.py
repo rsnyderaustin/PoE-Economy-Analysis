@@ -57,7 +57,16 @@ class TradeQueryConstructor:
             filter_group_dict[meta_filter.filter_type] = dict()
             meta_mod_dict = filter_group_dict[meta_filter.filter_type]
 
-            meta_mod_dict['option'] = meta_filter.filter_value
+            # Any filter value that is a range is represented as just a 'min' and a 'max'. Any singular filter value
+            # (ie: corruption, item category, etc) has just an 'option' key
+            if isinstance(meta_filter.filter_value, tuple):
+                if meta_filter.filter_value[0]:
+                    meta_mod_dict['min'] = meta_filter.filter_value[0]
+                if len(meta_filter.filter_value) >= 2 and meta_filter.filter_value[1]: # len((10,)) = 1 so this is necessary
+                    meta_mod_dict['max'] = meta_filter.filter_value
+            else:
+                meta_mod_dict['option'] = meta_filter.filter_value
+
             if meta_filter.currency_amount:
                 if meta_filter.currency_amount[0] is not None:
                     meta_mod_dict['min'] = meta_filter.currency_amount[0]

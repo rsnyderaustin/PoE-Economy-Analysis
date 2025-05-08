@@ -88,16 +88,13 @@ class DataPrep:
             raise ValueError(f"Currency {listing.price_currency} not supported.")
 
         flattened_data = {
-            'listing_id': listing.listing_id,
-            'date_fetched': listing.date_fetched,
-            'days_since_listed': listing.days_since_listed,
+            'minutes_since_listed': listing.minutes_since_listed,
+            'minutes_since_league_start': listing.minutes_since_league_start,
             'exalts': exalts_price,
             'open_prefixes': listing.open_prefixes,
             'open_suffixes': listing.open_suffixes,
-            'btype': self.btype_map_data[listing.item_btype],
             'atype': self.atype_map_data[listing.item_atype],
             'rarity': self.rarity_map_data[listing.rarity],
-            'ilvl': listing.ilvl,
             'corrupted': 1 if listing.corrupted else 0,
             **flattened_properties
         }
@@ -106,36 +103,33 @@ class DataPrep:
         # If you have a mod like "Adds 5 to 10 fire damage, 45% increased light radius", then we treat the
         # sub mod "Adds 5 to 10 fire damage" as its average (7.5). As of now I don't know of any sub mods with
         # multiple values where taking the average isn't applicable
-        for sub_mod_id, value in summed_sub_mods.items():
-            flattened_data[sub_mod_id] = value
-
-        socketer_counts = utils.count_socketers(listing)
-        for socketer_name, count in socketer_counts.items():
-            flattened_data[socketer_name] = count
+        for col_name, value in summed_sub_mods.items():
+            flattened_data[col_name] = value
 
         for i, item_skill in enumerate(listing.item_skills):
             flattened_data[item_skill.name] = item_skill.level
 
         return flattened_data
 
-    def save_data(self, listing: ModifiableListing):
-        flattened_data = self._flatten_listing(listing)
+    def save_data(self, listings: list[ModifiableListing]):
+        for listing in listings:
+            flattened_data = self._flatten_listing(listing)
 
-        for col_name, value in flattened_data.items():
-            if col_name not in self.training_data:
-                # We have to insert a value for each row since this column has been added
-                self.training_data[col_name] = [None for _ in list(range(self.num_rows))]
-            self.training_data[col_name].append(value)
+            for col_name, value in flattened_data.items():
+                if col_name not in self.training_data:
+                    # We have to insert a value for each row since this column has been added
+                    self.training_data[col_name] = [None for _ in list(range(self.num_rows))]
+                self.training_data[col_name].append(value)
 
-        non_included_data_cols = [col for col in set(self.training_data.keys()) if col not in set(flattened_data.keys())]
-        for col_name in non_included_data_cols:
-            self.training_data[col_name].append(None)
+            non_included_data_cols = [col for col in set(self.training_data.keys()) if col not in set(flattened_data.keys())]
+            for col_name in non_included_data_cols:
+                self.training_data[col_name].append(None)
 
-        self.num_rows += 1
+            self.num_rows += 1
+
+        logging.info(f"Writing {len(listings)} listings to training data.")
 
         shared_utils.write_to_file(file_path=self.training_data_json_path, data=self.training_data)
-
-        return flattened_data
 
 
 

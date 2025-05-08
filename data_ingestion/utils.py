@@ -2,6 +2,7 @@ import logging
 import re
 from datetime import datetime, timezone
 from dateutil.parser import isoparse
+import pytz
 
 from instances_and_definitions import ModClass, ModAffixType
 from shared import shared_utils
@@ -13,6 +14,12 @@ mod_class_to_abbrev = {
     'fracturedMods': 'fractured',
     'runeMods': 'rune'
 }
+
+
+_dt = datetime(2025, 4, 4, 12, 0, 0)
+_pacific = pytz.timezone('US/Pacific')
+
+league_start_date = _pacific.localize(_dt)
 
 
 def determine_mod_id_to_mod_text(mod_class: ModClass, item_data: dict, sanitize_text: bool = False) -> dict:
@@ -38,12 +45,17 @@ def determine_mod_id_to_mod_text(mod_class: ModClass, item_data: dict, sanitize_
     return mod_id_to_text
 
 
-def determine_days_since_listed(when_listed: str):
-    past_time = isoparse(when_listed)
-    now = datetime.now(timezone.utc)
+def determine_minutes_since(relevant_date: str | datetime, later_date: str | datetime = None) -> float:
+    if isinstance(relevant_date, str):
+        relevant_date = isoparse(relevant_date)
 
-    days_diff = (now - past_time).days
-    return days_diff
+    if isinstance(later_date, str):
+        later_date = isoparse(later_date)
+    else:
+        later_date = datetime.now(timezone.utc)
+
+    minutes_diff = (later_date - relevant_date).total_seconds() / 60
+    return round(minutes_diff, 2)
 
 
 def determine_mod_affix_type(mod_dict: dict) -> ModAffixType:

@@ -191,8 +191,13 @@ def create_skills(item_data: dict) -> list[ItemSkill]:
 def create_listing(api_item_response: dict):
     item_data = api_item_response['item']
     listing_data = api_item_response['listing']
-    days_since_listed = utils.determine_days_since_listed(
-        when_listed=api_item_response['listing']['indexed']
+    minutes_since_listed = utils.determine_minutes_since(
+        relevant_date=api_item_response['listing']['indexed']
+    )
+    # Gives minutes between league start and the item being listed
+    minutes_since_league_start = utils.determine_minutes_since(
+        relevant_date=utils.league_start_date,
+        later_date=api_item_response['listing']['indexed']
     )
 
     # _clean_item_data(item_data)
@@ -248,9 +253,18 @@ def create_listing(api_item_response: dict):
     else:
         atype = item_data['baseType'] if 'baseType' in item_data else None
 
-    socketer_names = []
-    if 'socketedItems' in item_data:
-        socketer_names = [socketer_data['baseType'] for socketer_data in item_data['socketedItems']]
+    socketers = []
+    if 'runeMods' in item_data:
+        for socketer_text in item_data['runeMods']:
+            values = shared_utils.parse_values_from_text(socketer_text)
+            sanitized_text = shared_utils.sanitize_mod_text(socketer_text)
+            sanitized_text = shared_utils.remove_piped_brackets(sanitized_text)
+            socketers.append(
+                ItemSocketer(
+                    sanitized_socketer_text=sanitized_text,
+                    actual_values=values
+                )
+            )
 
     # Gems don't have mods
     item_mods = create_item_mods(item_data) if item_data['baseType'] != ItemCategory.ANY_GEM.value else []
@@ -260,7 +274,8 @@ def create_listing(api_item_response: dict):
     new_listing = ModifiableListing(
         listing_id=api_item_response['id'],
         date_fetched=listing_data['indexed'],
-        days_since_listed=days_since_listed,
+        minutes_since_listed=minutes_since_listed,
+        minutes_since_league_start=minutes_since_league_start,
         price_currency=listing_data['price']['currency'],
         currency_amount=listing_data['price']['amount'],
         item_name=item_data['name'],
@@ -280,7 +295,7 @@ def create_listing(api_item_response: dict):
         fractured_mods=[mod for mod in item_mods if mod.mod_class == ModClass.FRACTURED],
         explicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.EXPLICIT],
         item_skills=item_skills,
-        socketers=socketer_names,
+        socketers=socketers,
         item_properties=properties
     )
     return new_listing

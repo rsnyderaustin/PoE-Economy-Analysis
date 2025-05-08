@@ -7,6 +7,7 @@ import pandas as pd
 from shared import PathProcessor
 from xgboost_model.build_model import build_xgboost
 
+
 build_xgboost()
 
 """training_data_json_path = (

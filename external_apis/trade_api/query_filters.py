@@ -8,12 +8,12 @@ class MetaFilter:
 
     def __init__(self,
                  filter_type_enum: Enum,
-                 filter_value: Enum | bool,
+                 filter_value: Enum | tuple | bool,
                  currency_amount: tuple = None):
         """
 
         :param filter_type_enum:
-        :param filter_value:
+        :param filter_value:If a tuple, the first element is min and second is max
         :param currency_amount: First tuple element is min and second tuple element is max
         """
         self.meta_search_type = trade_api_utils.filter_enum_to_meta_search_type[filter_type_enum]

@@ -1,6 +1,8 @@
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
+import pytz
 
 from instances_and_definitions import ModifiableListing
 from shared import PathProcessor
@@ -25,6 +27,20 @@ def sum_sub_mod_values(listing: ModifiableListing):
                 # If there is no value then it's just a static property (ex: "You cannot be poisoned"), and so
                 # we assign it a 1 to indicate to the model that it's an active mod
                 summed_sub_mods[col_name] = 1
+
+    # Sometimes there is overlap in regular mods with socketer mods, so including them is the easiest way to provide
+    # their effect to the AI training data
+    for socketer in listing.socketers:
+        col_name = socketer.sanitized_socketer_text
+        if socketer.actual_values:
+            avg_value = sum(socketer.actual_values) / len(socketer.actual_values)
+            if col_name not in summed_sub_mods:
+                summed_sub_mods[col_name] = avg_value
+            else:
+                summed_sub_mods[col_name] += avg_value
+        else:
+            summed_sub_mods[col_name] = 1
+
     return summed_sub_mods
 
 

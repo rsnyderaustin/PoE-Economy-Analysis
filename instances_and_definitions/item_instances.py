@@ -60,12 +60,12 @@ class ItemSkill:
 
 class ItemSocketer:
 
-    def __init__(self, name: str, mods: list[str]):
+    def __init__(self, sanitized_socketer_text: str, actual_values: tuple | None):
         """
         Socketers have no rolls and thus do not differ from item to item. Their text is static.
         """
-        self.name = name
-        self.mods = mods
+        self.sanitized_socketer_text = sanitized_socketer_text
+        self.actual_values = actual_values
 
 
 class ModifiableListing:
@@ -73,7 +73,8 @@ class ModifiableListing:
     def __init__(self,
                  listing_id: str,
                  date_fetched: str,
-                 days_since_listed: int,
+                 minutes_since_listed: float,
+                 minutes_since_league_start: float,
                  price_currency: str,
                  currency_amount: int,
                  item_name: str,
@@ -92,13 +93,14 @@ class ModifiableListing:
                  enchant_mods: list[ItemMod],
                  fractured_mods: list[ItemMod],
                  explicit_mods: list[ItemMod],
-                 socketers: list[str],
+                 socketers: list[ItemSocketer],
                  item_skills: list[ItemSkill],
                  item_properties: dict = None
                  ):
         self.listing_id = listing_id
         self.date_fetched = date_fetched
-        self.days_since_listed = days_since_listed
+        self.minutes_since_listed = minutes_since_listed
+        self.minutes_since_league_start = minutes_since_league_start
         self.price_currency = price_currency
         self.currency_amount = currency_amount
         self.item_name = item_name

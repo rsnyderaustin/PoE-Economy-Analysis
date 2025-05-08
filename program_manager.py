@@ -49,6 +49,8 @@ class ProgramManager:
             second_num = first_num + i * 2
             currency_amounts.append((first_num, second_num))
 
+        query_order = itertools.product(item_categories, currencies, currency_amounts)
+        query_order = random.shuffle(query_order)
         for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
             logging.info(f"\n\n!!! Querying category '{item_category}, currency '{currency}', amount '{currency_amount}!!!\n\n")
             ilvl_filter = external_apis.MetaFilter(
@@ -63,7 +65,7 @@ class ProgramManager:
 
             days_since_listed_filter = external_apis.MetaFilter(
                 filter_type_enum=external_apis.TradeFilters.LISTED,
-                filter_value=ListedSince.UP_TO_1_WEEK
+                filter_value=ListedSince.UP_TO_1_DAY
             )
 
             price_filter = external_apis.MetaFilter(
@@ -77,7 +79,7 @@ class ProgramManager:
                 filter_value=external_apis.Rarity.RARE
             )
 
-            meta_mod_filters = [category_filter, price_filter, rarity_filter, days_since_listed_filter]
+            meta_mod_filters = [ilvl_filter, category_filter, price_filter, rarity_filter, days_since_listed_filter]
             query = external_apis.TradeQueryConstructor().create_trade_query(
                 meta_mod_filters=meta_mod_filters
             )
@@ -104,9 +106,9 @@ class ProgramManager:
                 logging.info("Updating AI map data.")
                 self.ai_data_prep.update_data()
 
-            for listing in listings:
-                self.ai_data_prep.save_data(listing)
-            logging.info(f"Saved {len(listings)} lists into AI model training data.")
+            self.ai_data_prep.save_data(listings)
+
+            logging.info(f"Saved {len(listings)} listings into AI model training data.")
 
             self.export_manager.export_data()
 
