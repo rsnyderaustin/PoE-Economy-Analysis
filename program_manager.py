@@ -1,10 +1,9 @@
 
 import itertools
 import logging
-import random
 
 import data_ingestion
-from data_exporting import ExportManager
+from file_management import ExportManager
 from data_ingestion import trade_api
 from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
 from shared import trade_item_enums
@@ -98,7 +97,7 @@ class ProgramManager:
 
                 for mod in listing.mods:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
-                    self.export_manager.save_mod(item_mod=mod)
+                    self.export_manager.cache_mod(item_mod=mod)
 
             logging.info(f"Created {len(listings)} listings.")
 
@@ -110,5 +109,5 @@ class ProgramManager:
 
             logging.info(f"Saved {len(listings)} listings into AI model training data.")
 
-            self.export_manager.export_data()
+            self.export_manager.save_data()
 

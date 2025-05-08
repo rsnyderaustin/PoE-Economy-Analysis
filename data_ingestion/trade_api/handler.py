@@ -3,13 +3,15 @@ import logging
 import math
 from collections import deque
 from copy import deepcopy
+from datetime import datetime
 from pathlib import Path
 
-import pandas as pd
+import pytz
 
 from shared import PathProcessor
+from file_management import FilesManager, FileKeys
+from . import query_construction
 from .query import Query, MetaFilter
-from .query_construction import create_trade_query
 from .trade_items_fetcher import TradeItemsFetcher
 from .. import utils
 
@@ -25,7 +27,6 @@ def _apply_create_listing_id_history(row, listing_id_history: dict):
 
 
 class FilterSplitter:
-
 
     @staticmethod
     def _split_range_into_parts(value_range: tuple, num_parts: int):
@@ -82,16 +83,26 @@ class TradeApiHandler:
 
     def __init__(self):
         self.fetcher = TradeItemsFetcher()
-
-        fetch_dates_json_path = (
-            PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('xgboost_model/training_data/listing_fetch_dates.json')
-            .path
-        )
-        with open(fetch_dates_json_path, 'r') as fetch_dates_file:
-            self.listing_fetch_dates = json.load(fetch_dates_file)
+        self.files_manager = FilesManager()
+        self.listing_fetch_dates = self.files_manager.file_data[FileKeys.LISTING_FETCHES]
 
         self.split_threshold = 175
+
+    def _cache_listing_pulls(self, listing_ids: set[int], date: str):
+        dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+
+        utc_tz = pytz.timezone("UTC")
+        dt = utc_tz.localize(dt)
+
+        central_tz = pytz.timezone("America/Chicago")
+        central_dt = dt.astimezone(central_tz)
+
+        central_str = central_dt.strftime("%Y-%m-%d %H:%M:%S %Z")
+
+        if central_str not in self.listing_fetch_dates:
+            self.listing_fetch_dates[central_str] = set()
+
+        self.listing_fetch_dates[central_str].update(listing_ids)
 
     def _determine_valid_item_responses(self, item_responses):
         valid_responses = []
@@ -116,16 +127,26 @@ class TradeApiHandler:
         for query in queries:
             yield from self.process_query(query)
 
+    def _process_response(self, response):
+        valid_responses = self._determine_valid_item_responses(response['result'])
+        if not valid_responses:
+            return []
+
+        num_items = response['total']
+        date = valid_responses[0]['listing']['indexed']
+        self._cache_listing_pulls(listing_ids=set(r['id'] for r in valid_responses),
+                                  date=date)
+        logging.info(f"Returning {len(valid_responses)} valid of {num_items} total API item responses.")
+        return valid_responses
+
     def process_query(self, query: Query):
 
-        query_dict = create_trade_query(query=query)
+        query_dict = query_construction.create_trade_query(query=query)
         response = self.fetcher.fetch_items_response(query_dict)
-        valid_responses = self._determine_valid_item_responses(response['result'])
-        logging.info(f"Returning {len(valid_responses)} valid API item responses.")
+        valid_responses = self._process_response(response)
         yield valid_responses
 
         num_items = response['total']
-
         if num_items < self.split_threshold:
             return
 
@@ -139,10 +160,9 @@ class TradeApiHandler:
 
             for new_filter in filter_splits:
                 query_copy.meta_filters[i] = new_filter
-                query_dict = create_trade_query(query=query)
+                query_dict = query_construction.create_trade_query(query=query_copy)
                 response = self.fetcher.fetch_items_response(query_dict)
-                valid_responses = self._determine_valid_item_responses(response['result'])
-                logging.info(f"Returning {len(valid_responses)} valid API item responses.")
+                valid_responses = self._process_response(response=response)
                 yield valid_responses
 
                 valid_response_counts.append(len(valid_responses))

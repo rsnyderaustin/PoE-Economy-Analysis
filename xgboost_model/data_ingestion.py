@@ -12,7 +12,7 @@ class DataIngester:
     def __init__(self):
         atype_map_json_path = (
             PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/atype_map.json')
+            .attach_file_path_endpoint('file_management/files/atype_encode.json')
             .path
         )
 
@@ -21,7 +21,7 @@ class DataIngester:
 
         btype_map_json_path = (
             PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/btype_map.json')
+            .attach_file_path_endpoint('file_management/files/btype_encode.json')
             .path
         )
 
@@ -30,7 +30,7 @@ class DataIngester:
 
         rarity_map_json_path = (
             PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/rarity_map.json')
+            .attach_file_path_endpoint('file_management/files/rarity_encode.json')
             .path
         )
 
@@ -39,7 +39,7 @@ class DataIngester:
 
         currency_map_json_path = (
             PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('data_exporting/exported_json_data_for_testing/currency_map.json')
+            .attach_file_path_endpoint('file_management/files/currency_encode.json')
             .path
         )
 
@@ -77,12 +77,12 @@ class DataIngester:
                 else:
                     raise ValueError(f"Property value {property_values} has unexpected structure.")
 
-        if listing.price_currency in self.currency_to_exalts:
-            exalts_price = listing.currency_amount * self.currency_to_exalts[listing.price_currency]
-        elif listing.price_currency == 'exalted':
+        if listing.currency in self.currency_to_exalts:
+            exalts_price = listing.currency_amount * self.currency_to_exalts[listing.currency]
+        elif listing.currency == 'exalted':
             exalts_price = listing.currency_amount
         else:
-            raise ValueError(f"Currency {listing.price_currency} not supported.")
+            raise ValueError(f"Currency {listing.currency} not supported.")
 
         flattened_data = {
             'minutes_since_listed': listing.minutes_since_listed,

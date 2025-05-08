@@ -235,7 +235,7 @@ def create_listing(api_item_response: dict):
         date_fetched=listing_data['indexed'],
         minutes_since_listed=minutes_since_listed,
         minutes_since_league_start=minutes_since_league_start,
-        price_currency=listing_data['price']['currency'],
+        currency=listing_data['price']['currency'],
         currency_amount=listing_data['price']['amount'],
         item_name=item_data['name'],
         item_btype=item_data['baseType'] if 'baseType' in item_data else None,

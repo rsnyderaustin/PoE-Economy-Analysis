@@ -75,7 +75,7 @@ class ModifiableListing:
                  date_fetched: str,
                  minutes_since_listed: float,
                  minutes_since_league_start: float,
-                 price_currency: str,
+                 currency: str,
                  currency_amount: int,
                  item_name: str,
                  item_btype: str,  # Hunting Shoes, Lunar Amulet, etc
@@ -101,7 +101,7 @@ class ModifiableListing:
         self.date_fetched = date_fetched
         self.minutes_since_listed = minutes_since_listed
         self.minutes_since_league_start = minutes_since_league_start
-        self.price_currency = price_currency
+        self.currency = currency
         self.currency_amount = currency_amount
         self.item_name = item_name
         self.item_btype = item_btype
