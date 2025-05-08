@@ -2566,6 +2566,18 @@
                         ]
                     },
                     "weighting": "325"
+                },
+                "60": {
+                    "ilvl": 60,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                135.0,
+                                154.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1000"
                 }
             }
         },
@@ -6127,6 +6139,18 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "44": {
+                    "ilvl": 44,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                29.0,
+                                40.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -6164,6 +6188,18 @@
                             [
                                 7.0,
                                 7.9
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "81": {
+                    "ilvl": 81,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_669069897": [
+                            [
+                                8.0,
+                                8.9
                             ]
                         ]
                     },
@@ -7272,6 +7308,18 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "32": {
+                    "ilvl": 32,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3639275092": [
+                            [
+                                -20.0,
+                                -20.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -7690,6 +7738,22 @@
                             [
                                 53.0,
                                 79.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                4.0,
+                                6.0
+                            ],
+                            [
+                                7.0,
+                                10.0
                             ]
                         ]
                     },

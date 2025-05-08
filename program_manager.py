@@ -100,8 +100,6 @@ class ProgramManager:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
                     self.files_manager.cache_mod(item_mod=mod)
 
-            logging.info(f"Created {len(listings)} listings.")
-
             if maps_need_updated:
                 logging.info("Updating AI map data.")
                 self.ai_data_prep.update_data()

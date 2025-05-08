@@ -50,11 +50,13 @@ class FilterSplitter:
 
         if filter_range[0] == filter_range[1]:
             return
+        logging.info(f"Original {meta_filter.filter_type} value: {filter_range}")
 
         # Can only split as many whole numbers are within the range
         num_parts = min(math.floor(n_items / 100), (filter_range[1] + 1 - filter_range[0]))
 
         ranges = cls._split_range_into_parts(filter_range, num_parts=num_parts)
+        logging.info(f"\tSplit {meta_filter.filter_type} into {ranges}")
 
         filters = []
         for value_range in ranges:
@@ -127,15 +129,14 @@ class TradeApiHandler:
         for query in queries:
             yield from self.process_query(query)
 
-    def _process_response(self, response):
+    def _process_response(self, response, date_fetched: str):
         valid_responses = self._determine_valid_item_responses(response['result'])
         if not valid_responses:
             return []
 
         num_items = response['total']
-        date = valid_responses[0]['listing']['indexed']
         self._cache_listing_pulls(listing_ids=set(r['id'] for r in valid_responses),
-                                  date=date)
+                                  date=date_fetched)
         logging.info(f"Returning {len(valid_responses)} valid of {num_items} total API item responses.")
         return valid_responses
 
@@ -143,7 +144,8 @@ class TradeApiHandler:
 
         query_dict = query_construction.create_trade_query(query=query)
         response = self.fetcher.fetch_items_response(query_dict)
-        valid_responses = self._process_response(response)
+        valid_responses = self._process_response(response,
+                                                 date_fetched=utils.today_date())
         yield valid_responses
 
         num_items = response['total']
@@ -166,5 +168,6 @@ class TradeApiHandler:
                 yield valid_responses
 
                 valid_response_counts.append(len(valid_responses))
+                # If we're not getting many valid responses from the split then just continue to the next potential query split
                 if sum(valid_response_counts) / len(valid_response_counts) < valid_response_goal_per_query:
-                    return
+                    continue
