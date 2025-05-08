@@ -90,21 +90,11 @@ class TradeApiHandler:
 
         self.split_threshold = 175
 
-    def _cache_listing_pulls(self, listing_ids: set[int], date: str):
-        dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+    def _cache_listing_pulls(self, listing_ids: set[int], date_fetched: str):
+        if date_fetched not in self.listing_fetch_dates:
+            self.listing_fetch_dates[date_fetched] = set()
 
-        utc_tz = pytz.timezone("UTC")
-        dt = utc_tz.localize(dt)
-
-        central_tz = pytz.timezone("America/Chicago")
-        central_dt = dt.astimezone(central_tz)
-
-        central_str = central_dt.strftime("%Y-%m-%d %H:%M:%S %Z")
-
-        if central_str not in self.listing_fetch_dates:
-            self.listing_fetch_dates[central_str] = set()
-
-        self.listing_fetch_dates[central_str].update(listing_ids)
+        self.listing_fetch_dates[date_fetched].update(listing_ids)
 
     def _determine_valid_item_responses(self, item_responses):
         valid_responses = []
