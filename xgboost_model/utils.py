@@ -43,16 +43,10 @@ def sum_sub_mod_values(listing: ModifiableListing):
     return summed_sub_mods
 
 
-def fetch_currency_to_conversion() -> dict:
-    currency_conversion_json_path = (
-        PathProcessor(Path.cwd())
-        .attach_file_path_endpoint('xgboost_model/training_data/currency_prices.csv')
-        .path
-    )
-    currency_conversions = pd.read_csv(currency_conversion_json_path)
-    currency_conversions['Date'] = pd.to_datetime(currency_conversions['Date'])
-    most_recent_date = currency_conversions['Date'].max()
-    recent_data = currency_conversions[currency_conversions['Date'] == most_recent_date]
+def fetch_currency_to_conversion(conversions_data: dict) -> dict:
+    conversions_data['Date'] = pd.to_datetime(conversions_data['Date'])
+    most_recent_date = conversions_data['Date'].max()
+    recent_data = conversions_data[conversions_data['Date'] == most_recent_date]
     currency_to_exalts = pd.Series(recent_data['ExaltPerCurrency'].values,
                                    index=recent_data['Currency']).to_dict()
     return currency_to_exalts

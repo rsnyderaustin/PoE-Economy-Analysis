@@ -2,6 +2,7 @@ import json
 import logging
 from pathlib import Path
 
+from file_management import FilesManager, FileKeys
 from instances_and_definitions import ModifiableListing
 from shared import PathProcessor, shared_utils
 from . import utils
@@ -10,52 +11,16 @@ from . import utils
 class DataIngester:
 
     def __init__(self):
-        atype_map_json_path = (
-            PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('file_management/files/atype_encode.json')
-            .path
+        self.files_manager = FilesManager()
+        self.atype_encodes = self.files_manager.file_data[FileKeys.ATYPE_ENCODES]
+        self.btype_encodes = self.files_manager.file_data[FileKeys.BTYPE_ENCODES]
+        self.rarity_encodes = self.files_manager.file_data[FileKeys.RARITY_ENCODES]
+        self.currency_encodes = self.files_manager.file_data[FileKeys.CURRENCY_ENCODES]
+        self.training_data = self.files_manager.file_data[FileKeys.TRAINING_DATA]
+
+        self.currency_to_exalts = utils.fetch_currency_to_conversion(
+            conversions_data=self.files_manager.file_data[FileKeys.CURRENCY_CONVERSIONS]
         )
-
-        with open(atype_map_json_path, 'r') as atype_map_file:
-            self.atype_map_data = json.load(atype_map_file)
-
-        btype_map_json_path = (
-            PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('file_management/files/btype_encode.json')
-            .path
-        )
-
-        with open(btype_map_json_path, 'r') as btype_map_file:
-            self.btype_map_data = json.load(btype_map_file)
-
-        rarity_map_json_path = (
-            PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('file_management/files/rarity_encode.json')
-            .path
-        )
-
-        with open(rarity_map_json_path, 'r') as rarity_map_file:
-            self.rarity_map_data = json.load(rarity_map_file)
-
-        currency_map_json_path = (
-            PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('file_management/files/currency_encode.json')
-            .path
-        )
-
-        with open(currency_map_json_path, 'r') as currency_map_file:
-            self.currency_map_data = json.load(currency_map_file)
-
-        self.training_data_json_path = (
-            PathProcessor(Path.cwd())
-            .attach_file_path_endpoint('xgboost_model/training_data/listings.json')
-            .path
-        )
-
-        with open(self.training_data_json_path, 'r') as training_data_file:
-            self.training_data = json.load(training_data_file)
-
-        self.currency_to_exalts = utils.fetch_currency_to_conversion()
 
         self.num_rows = max(len(v_list) for v_list in self.training_data.values()) if self.training_data else 0
 
@@ -90,8 +55,8 @@ class DataIngester:
             'exalts': exalts_price,
             'open_prefixes': listing.open_prefixes,
             'open_suffixes': listing.open_suffixes,
-            'atype': self.atype_map_data[listing.item_atype],
-            'rarity': self.rarity_map_data[listing.rarity],
+            'atype': self.atype_encodes[listing.item_atype],
+            'rarity': self.rarity_encodes[listing.rarity],
             'corrupted': 1 if listing.corrupted else 0,
             **flattened_properties
         }
@@ -126,7 +91,7 @@ class DataIngester:
 
         logging.info(f"Writing {len(listings)} listings to training data.")
 
-        shared_utils.write_to_file(file_path=self.training_data_json_path, data=self.training_data)
+        self.files_manager.cache_training_data(self.training_data)
 
 
 

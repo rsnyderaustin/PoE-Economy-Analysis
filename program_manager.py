@@ -3,7 +3,7 @@ import itertools
 import logging
 
 import data_ingestion
-from file_management import ExportManager
+from file_management import FilesManager
 from data_ingestion import trade_api
 from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
 from shared import trade_item_enums
@@ -26,11 +26,12 @@ def _clean_item_data(item_data: dict):
             if (implicit_mod_dict['magnitudes'] or implicit_mod_dict['name'] or implicit_mod_dict['tier'])
         ]
 
+
 class ProgramManager:
 
     def __init__(self):
         self.trade_api_handler = trade_api.TradeApiHandler()
-        self.export_manager = ExportManager()
+        self.files_manager = FilesManager()
         self.injector = PoecdDataInjecter()
         self.ai_data_prep = DataIngester()
 
@@ -91,13 +92,13 @@ class ProgramManager:
                 _clean_item_data(api_item_response['item'])
                 listing = data_ingestion.create_listing(api_item_response)
                 listings.append(listing)
-                new_map_data = self.export_manager.aggregate_save_to_maps(listing=listing)
+                new_map_data = self.files_manager.cache_encodings(listing=listing)
                 if new_map_data:
                     maps_need_updated = True
 
                 for mod in listing.mods:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
-                    self.export_manager.cache_mod(item_mod=mod)
+                    self.files_manager.cache_mod(item_mod=mod)
 
             logging.info(f"Created {len(listings)} listings.")
 
@@ -109,5 +110,5 @@ class ProgramManager:
 
             logging.info(f"Saved {len(listings)} listings into AI model training data.")
 
-            self.export_manager.save_data()
+            self.files_manager.save_data()
 
