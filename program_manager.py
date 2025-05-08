@@ -1,14 +1,13 @@
 
-import logging
 import itertools
+import logging
 import random
 
 import data_ingestion
-import external_apis
 from data_exporting import ExportManager
+from data_ingestion import trade_api
 from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
-from external_apis import ItemCategory, ListedSince
-from shared import ATypeClassifier
+from shared import trade_item_enums
 from xgboost_model import DataIngester
 
 logging.basicConfig(level=logging.INFO,
@@ -28,20 +27,20 @@ def _clean_item_data(item_data: dict):
             if (implicit_mod_dict['magnitudes'] or implicit_mod_dict['name'] or implicit_mod_dict['tier'])
         ]
 
-
 class ProgramManager:
 
     def __init__(self):
+        self.trade_api_handler = trade_api.TradeApiHandler()
         self.export_manager = ExportManager()
         self.injector = PoecdDataInjecter()
         self.ai_data_prep = DataIngester()
 
     def execute(self):
-        # item_categories = [*external_apis.socketable_items, *external_apis.martial_weapons]
-        item_categories = external_apis.martial_weapons
+        # item_categories = [*trade_item_enums.socketable_items, *trade_item_enums.martial_weapons]
+        item_categories = trade_item_enums.martial_weapons
         currencies = [
-            external_apis.Currency.EXALTED_ORB,
-            external_apis.Currency.DIVINE_ORB
+            trade_item_enums.Currency.EXALTED_ORB,
+            trade_item_enums.Currency.DIVINE_ORB
         ]
 
         currency_amounts = [(1,1)]
@@ -50,42 +49,42 @@ class ProgramManager:
             second_num = first_num + i * 2
             currency_amounts.append((first_num, second_num))
 
-        query_order = itertools.product(item_categories, currencies, currency_amounts)
-        random.shuffle(query_order)
+        queries = []
         for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
             logging.info(f"\n\n!!! Querying category '{item_category}, currency '{currency}', amount '{currency_amount}!!!\n\n")
-            ilvl_filter = external_apis.MetaFilter(
-                filter_type_enum=external_apis.TypeFilters.ITEM_LEVEL,
-                filter_value=(75,)
+            ilvl_filter = trade_api.MetaFilter(
+                filter_type_enum=trade_item_enums.TypeFilters.ITEM_LEVEL,
+                filter_value=(71, 82)
             )
 
-            category_filter = external_apis.MetaFilter(
-                filter_type_enum=external_apis.TypeFilters.ITEM_CATEGORY,
+            category_filter = trade_api.MetaFilter(
+                filter_type_enum=trade_item_enums.TypeFilters.ITEM_CATEGORY,
                 filter_value=item_category
             )
 
-            days_since_listed_filter = external_apis.MetaFilter(
-                filter_type_enum=external_apis.TradeFilters.LISTED,
-                filter_value=ListedSince.UP_TO_1_DAY
+            days_since_listed_filter = trade_api.MetaFilter(
+                filter_type_enum=trade_item_enums.TradeFilters.LISTED,
+                filter_value=trade_item_enums.ListedSince.UP_TO_1_DAY
             )
 
-            price_filter = external_apis.MetaFilter(
-                filter_type_enum=external_apis.TradeFilters.PRICE,
+            price_filter = trade_api.MetaFilter(
+                filter_type_enum=trade_item_enums.TradeFilters.PRICE,
                 filter_value=currency,
                 currency_amount=currency_amount
             )
 
-            rarity_filter = external_apis.MetaFilter(
-                filter_type_enum=external_apis.TypeFilters.ITEM_RARITY,
-                filter_value=external_apis.Rarity.RARE
+            rarity_filter = trade_api.MetaFilter(
+                filter_type_enum=trade_item_enums.TypeFilters.ITEM_RARITY,
+                filter_value=trade_item_enums.Rarity.RARE
             )
 
             meta_mod_filters = [ilvl_filter, category_filter, price_filter, rarity_filter, days_since_listed_filter]
-            query = external_apis.TradeQueryConstructor().create_trade_query(
-                meta_mod_filters=meta_mod_filters
-            )
+            query = trade_api.Query(meta_filters=meta_mod_filters)
+            queries.append(query)
 
-            api_item_responses = external_apis.TradeItemsFetcher().fetch_items(query=query)
+        for api_item_responses in self.trade_api_handler.process_queries(queries):
+            if not api_item_responses:
+                continue
 
             listings = []
             maps_need_updated = False

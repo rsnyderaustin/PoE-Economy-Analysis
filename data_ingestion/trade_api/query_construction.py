@@ -1,6 +1,5 @@
-from .query import MetaFilter, StatsFiltersGroup, Query
 from shared.trade_item_enums import (StatSearchType)
-import external_apis
+from .query import MetaFilter, StatsFiltersGroup, Query
 
 
 def create_trade_query(query: Query):
@@ -44,7 +43,7 @@ def _handle_meta_query(meta_dict: dict, meta_filters: list[MetaFilter]):
             if meta_filter.filter_value[0]:
                 meta_mod_dict['min'] = meta_filter.filter_value[0]
             if len(meta_filter.filter_value) >= 2 and meta_filter.filter_value[1]: # len((10,)) = 1 so this is necessary
-                meta_mod_dict['max'] = meta_filter.filter_value
+                meta_mod_dict['max'] = meta_filter.filter_value[1]
         else:
             meta_mod_dict['option'] = meta_filter.filter_value
 

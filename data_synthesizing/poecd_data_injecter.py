@@ -1,10 +1,8 @@
-import logging
-
 import rapidfuzz
 
+from external_apis.poecd_data import PoecdDataManager
 from instances_and_definitions import ItemMod, ModClass
 from . import utils
-from external_apis.poecd_data import PoecdDataManager
 
 
 class PoecdDataInjecter:

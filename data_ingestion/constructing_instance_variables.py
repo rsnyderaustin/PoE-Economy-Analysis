@@ -1,49 +1,8 @@
 import logging
 
-from external_apis import ItemCategory
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
-from shared import ATypeClassifier
-from shared import shared_utils
+from shared import ATypeClassifier, shared_utils, trade_item_enums
 from . import utils
-
-
-def create_socketers(item_data: dict) -> list[ItemSocketer]:
-    if 'socketedItems' not in item_data:
-        return []
-
-    socketers = []
-    for socketer_data in item_data['socketedItems']:
-        mods = [shared_utils.remove_piped_brackets(mod) for mod in socketer_data['explicitMods']]
-        new_socketer = ItemSocketer(
-            name=socketer_data['baseType'],
-            mods=mods
-        )
-        socketers.append(new_socketer)
-
-    return socketers
-
-    """if ModClass.RUNE.value not in item_data:
-        return None
-
-    # We can only deterministically get rune data when there is one rune socketed, because different types of the same
-    # data_ingesting can produce one rune text
-    if len(item_data['socketedItems']) >= 2:
-        logging.info(f"Item has more than one socketer. Skipping.")
-        return None
-
-    logging.info("Item only has one socketer. Creating rune.")
-
-    rune_name = item_data['socketedItems'][0]['typeLine']
-    rune_mod_text = item_data[ModClass.RUNE.value][0]
-
-    # Rune mod text has this weird [text|text] format sometimes - the part after the pipe is all we need
-    rune_mod_text = shared_utils.remove_piped_brackets(text=rune_mod_text)
-
-    item_socketer = ItemSocketer(
-        name=rune_name,
-        text=rune_mod_text
-    )
-    return item_socketer"""
 
 
 def _create_sub_mods(mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]:
@@ -267,7 +226,7 @@ def create_listing(api_item_response: dict):
             )
 
     # Gems don't have mods
-    item_mods = create_item_mods(item_data) if item_data['baseType'] != ItemCategory.ANY_GEM.value else []
+    item_mods = create_item_mods(item_data) if item_data['baseType'] != trade_item_enums.ItemCategory.ANY_GEM.value else []
 
     item_skills = create_skills(item_data)
 

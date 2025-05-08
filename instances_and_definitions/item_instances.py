@@ -1,6 +1,6 @@
 import re
 
-from external_apis import ItemCategory
+from shared import trade_item_enums
 from .utils import ModClass, ModAffixType, generate_mod_id
 
 
@@ -148,7 +148,7 @@ class Modifiable:
     def __init__(self,
                  item_id: str,
                  name: str,
-                 category: ItemCategory,
+                 category: trade_item_enums.ItemCategory,
                  btype: str,
                  atype: str,
                  quality: int,

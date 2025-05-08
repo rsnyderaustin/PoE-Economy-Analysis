@@ -1,20 +1,15 @@
+import itertools
 import json
 import logging
 import random
-
-import numpy as np
 from pathlib import Path
+
 import matplotlib.pyplot as plt
-import itertools
-
-from sklearn.cluster import DBSCAN
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
-import xgboost as xgb
-
-import seaborn as sns
+import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+import seaborn as sns
+import xgboost as xgb
+from sklearn.model_selection import train_test_split
 
 from shared import PathProcessor
 from xgboost_model import utils

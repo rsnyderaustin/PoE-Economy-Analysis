@@ -1,8 +1,9 @@
 import logging
 import re
 from datetime import datetime, timezone
-from dateutil.parser import isoparse
+
 import pytz
+from dateutil.parser import isoparse
 
 from instances_and_definitions import ModClass, ModAffixType
 from shared import shared_utils
@@ -83,4 +84,20 @@ def determine_mod_tier(mod_dict: dict) -> int:
             logging.error(f"Did not find a tier number for item tier {mod_dict['tier']}")
             mod_tier = None
     return int(mod_tier) if mod_tier else None
+
+
+def extract_date(timestamp_str):
+    utc_time = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%SZ")
+    utc_time = utc_time.replace(tzinfo=pytz.utc)
+
+    # Define the Central Time zone
+    central_tz = pytz.timezone('US/Central')
+
+    # Convert the UTC time to Central Time
+    central_time = utc_time.astimezone(central_tz)
+
+    # Get only the date in Central Time
+    central_date = central_time.date()
+
+    return central_date
 

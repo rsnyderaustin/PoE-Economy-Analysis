@@ -1,10 +1,9 @@
 import json
-from enum import Enum
 from pathlib import Path
 
-from shared import PathProcessor
 from data_synthesizing import utils
 from instances_and_definitions import ModAffixType
+from shared import PathProcessor
 
 
 class PoecdMod:

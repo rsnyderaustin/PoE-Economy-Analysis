@@ -1,6 +1,6 @@
 
-import logging
 import json
+import logging
 from pathlib import Path
 
 from instances_and_definitions import ItemMod, ModifiableListing

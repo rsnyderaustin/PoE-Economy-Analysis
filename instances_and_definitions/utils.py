@@ -1,5 +1,6 @@
-from enum import Enum
 from datetime import datetime, timezone
+from enum import Enum
+
 from dateutil.parser import isoparse
 
 
