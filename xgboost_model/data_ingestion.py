@@ -10,7 +10,7 @@ from shared import PathProcessor, shared_utils
 from . import utils
 
 
-class DataPrep:
+class DataIngester:
 
     def __init__(self):
         atype_map_json_path = (

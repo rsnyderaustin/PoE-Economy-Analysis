@@ -4,7 +4,7 @@ from datetime import datetime
 
 import requests
 
-from external_apis.trade_api.request_throttler import RequestThrottler
+from data_ingestion.trade_api.request_throttler import RequestThrottler
 from shared import env
 
 
@@ -87,13 +87,16 @@ class TradeItemsFetcher:
         return response_items
 
     @classmethod
-    def fetch_items(cls, query):
+    def fetch_items_response(cls, query) -> dict:
         post_response = cls._post_for_search_id(query=query)
         search_id = post_response['id']
+        total_responses = post_response['total']
         item_ids = post_response['result']
 
         get_response = cls._get_with_item_ids(search_id=search_id,
                                               item_ids=item_ids)
-        return get_response
-
-
+        return {
+            'id': search_id,
+            'result': get_response,
+            'total': total_responses
+        }

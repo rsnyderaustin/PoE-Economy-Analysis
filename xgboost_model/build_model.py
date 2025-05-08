@@ -1,17 +1,71 @@
 import json
 import logging
+import random
+
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
+import itertools
 
+from sklearn.cluster import DBSCAN
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 import xgboost as xgb
 
 import seaborn as sns
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 from shared import PathProcessor
+from xgboost_model import utils
+
+
+def lowest_price_focused_error(y_true, y_pred):
+    """
+    Custom error metric that:
+    - Strongly penalizes overpredictions (predicted price > true price).
+    - Lightly penalizes underpredictions (predicted price < true price).
+    - Optionally ignores prices above a threshold (e.g., outlier listings).
+
+    Args:
+        y_true: Array of true (lowest observed) prices.
+        y_pred: Array of predicted prices.
+
+    Returns:
+        Gradient and Hessian for XGBoost/LightGBM.
+    """
+    # Penalty weights (tune these)
+    overprediction_penalty = 1.0  # Heavy penalty for overpredicting
+    underprediction_penalty = 0.1  # Light penalty for underpredicting
+
+    error = y_pred - y_true
+
+    # Gradient calculation
+    grad = np.where(
+        error > 0,
+        overprediction_penalty * error,  # Overprediction → large gradient
+        underprediction_penalty * error  # Underprediction → small gradient
+    )
+
+    # Hessian (constant for simplicity, but can be tuned)
+    hess = np.ones_like(y_true) * 0.1  # Adjust for stability
+
+    return grad, hess
+
+
+def custom_objective(preds: np.ndarray, dmatrix: xgb.DMatrix) -> tuple[np.ndarray, np.ndarray]:
+    """XGBoost-compatible objective focusing on lowest prices."""
+    y_true = dmatrix.get_label()  # Extract true labels from DMatrix
+
+    # Asymmetric penalties
+    overprediction_penalty = 1.0  # Heavy penalty for overpredicting
+    underprediction_penalty = 0.1  # Light penalty for underpredicting
+
+    error = preds - y_true
+    grad = np.where(error > 0, overprediction_penalty * error, underprediction_penalty * error)
+    hess = np.ones_like(y_true) * 0.1  # Constant hessian for stability
+
+    return grad, hess
 
 
 def build_xgboost():
@@ -57,7 +111,8 @@ def build_xgboost():
         'Adds # to # Fire Damage',
         'Adds # to # Lightning Damage',
         'Adds # to # Cold Damage',
-        '#% increased Attack Speed'
+        '#% increased Attack Speed',
+        'Quality'
     ]
     df['pdps'] = df['Attacks per Second'] * df['Physical Damage']
     df['edps'] = (df['Cold Damage'] + df['Fire Damage'] + df['Lightning Damage']) * df['Attacks per Second']
@@ -70,9 +125,8 @@ def build_xgboost():
     ])
     df = df.drop(columns=local_weapon_mods)
     df = df.select_dtypes(include=['int64', 'float64'])
-    df = df.drop(columns=['minutes_since_listed', 'minutes_since_league_start', 'open_prefixes', 'open_suffixes'])
+    df = df.drop(columns=['rarity', 'minutes_since_listed', 'minutes_since_league_start', 'open_prefixes', 'open_suffixes'])
     df.fillna(0, inplace=True)
-    # df = df.drop(columns=['currency_amount'])
 
     plt.figure(figsize=(10, 8))
     corr_matrix = df.corr()
@@ -80,6 +134,7 @@ def build_xgboost():
     plt.show()
 
     features = df.drop(columns=['exalts'])
+
     target_col = df['exalts']
 
     features.fillna(0, inplace=True)
@@ -94,63 +149,70 @@ def build_xgboost():
 
     logging.info("Prepped data.")
 
-    params = {
-        'objective': 'reg:squarederror',  # Use 'reg:squarederror' for regression
-        'max_depth': 8,  # Maximum depth of a tree
-        'eta': 0.01,  # Learning rate
-        'eval_metric': 'rmse'  # Root Mean Square Error
-    }
+    depths = [8, 12, 16]
+    etas = [0.01, 0.05, 0.1]
+    num_boost_rounds = [5000, 10000, 25000]
 
-    evals = [(train_data, 'train'), (test_data, 'test')]
+    train_combos = list(itertools.product(depths, etas, num_boost_rounds))
+    random.shuffle(train_combos)
+    for depth, eta, num_boost_round in train_combos:
+        logging.info(f"Depth: {depth}, ETA: {eta}, Boost rounds: {num_boost_round}")
+        params = {
+            'max_depth': depth,  # Maximum depth of a tree
+            'eta': eta,  # Learning rate
+            'eval_metric': 'rmse'  # Root Mean Square Error,
+        }
 
-    logging.info("Beginning model training.")
-    model = xgb.train(params,
-                      train_data,
-                      num_boost_round=10000,
-                      early_stopping_rounds=50,
-                      evals=evals,
-                      verbose_eval=True)
-    logging.info("Finished model training.")
+        evals = [(train_data, 'train'), (test_data, 'test')]
 
-    t_predict = model.predict(test_data)
-    mse = mean_squared_error(t_test, t_predict)
-    logging.info(f"Mean Squared Error: {mse}")
+        model = xgb.train(params,
+                          train_data,
+                          num_boost_round=num_boost_round,
+                          early_stopping_rounds=50,
+                          evals=evals,
+                          obj=custom_objective,
+                          verbose_eval=False)
 
-    training_df = pd.concat([t_test, f_test], axis=1)
-    training_df['Predicted Price'] = t_predict
+        t_predict = model.predict(test_data)
 
-    # Add a column for the absolute error
-    training_df['Absolute Error'] = (training_df['Predicted Price'] - training_df['exalts']).abs()
+        mse = utils.weighted_mse(t_test, t_predict)
+        logging.info(f"Weighted Mean Squared Error: {mse}")
 
-    # Sort the dataframe by the absolute error in descending order
-    outliers_df = training_df.sort_values(by='Absolute Error', ascending=False)
+        training_df = pd.concat([t_test, f_test], axis=1)
+        training_df['Predicted Price'] = t_predict
 
-    # Display the top 10 largest outliers
-    print(outliers_df.head(10))
+        # Add a column for the absolute error
+        training_df['Absolute Error'] = (training_df['Predicted Price'] - training_df['exalts']).abs()
 
-    # Get feature importances
-    importance = model.get_score(importance_type='weight')
+        # Sort the dataframe by the absolute error in descending order
+        outliers_df = training_df.sort_values(by='Absolute Error', ascending=False)
 
-    # Create a DataFrame for easier plotting
-    importance_df = pd.DataFrame(list(importance.items()), columns=['Feature', 'Importance'])
-    importance_df = importance_df.sort_values(by='Importance', ascending=False)
+        # Show only the rows where we the actual price (exalts) was less than the predicted price
+        outliers_df = outliers_df[outliers_df['exalts'] - outliers_df['Predicted Price'] < 0]
 
-    # Plot the feature importances
-    importance_df.plot(kind='barh', x='Feature', y='Importance', legend=False, figsize=(10, 6))
-    plt.title('Feature Importance')
-    plt.xlabel('Importance')
-    plt.ylabel('Feature')
-    plt.show()
+        # Get feature importances
+        importance = model.get_score(importance_type='weight')
 
-    plt.figure(figsize=(8, 5))
-    plt.scatter(t_predict, t_test, alpha=0.5)
-    plt.plot([0, 4000], [0, 4000], color='red', linestyle='--')
-    plt.xlabel("Predicted Price (Exalts)")
-    plt.ylabel("Actual Prices (Exalts)")
+        # Create a DataFrame for easier plotting
+        importance_df = pd.DataFrame(list(importance.items()), columns=['Feature', 'Importance'])
+        importance_df = importance_df.sort_values(by='Importance', ascending=False)
 
-    plt.title("Actual vs. Predicted Prices")
-    plt.grid(True)
-    plt.show()
+        # Plot the feature importances
+        importance_df.plot(kind='barh', x='Feature', y='Importance', legend=False, figsize=(10, 6))
+        plt.title('Feature Importance')
+        plt.xlabel('Importance')
+        plt.ylabel('Feature')
+        plt.show()
 
-    df['exalts'].hist()
-    plt.show()
+        plt.figure(figsize=(8, 5))
+        plt.scatter(t_predict, t_test, alpha=0.5)
+        plt.plot([0, 4000], [0, 4000], color='red', linestyle='--')
+        plt.xlabel("Predicted Price (Exalts)")
+        plt.ylabel("Actual Prices (Exalts)")
+
+        plt.title("Actual vs. Predicted Prices")
+        plt.grid(True)
+        plt.show()
+
+        df['exalts'].hist()
+        plt.show()

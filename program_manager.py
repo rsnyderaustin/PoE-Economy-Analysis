@@ -1,6 +1,7 @@
 
 import logging
 import itertools
+import random
 
 import data_ingestion
 import external_apis
@@ -8,7 +9,7 @@ from data_exporting import ExportManager
 from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
 from external_apis import ItemCategory, ListedSince
 from shared import ATypeClassifier
-from xgboost_model import DataPrep
+from xgboost_model import DataIngester
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
@@ -33,7 +34,7 @@ class ProgramManager:
     def __init__(self):
         self.export_manager = ExportManager()
         self.injector = PoecdDataInjecter()
-        self.ai_data_prep = DataPrep()
+        self.ai_data_prep = DataIngester()
 
     def execute(self):
         # item_categories = [*external_apis.socketable_items, *external_apis.martial_weapons]
@@ -50,7 +51,7 @@ class ProgramManager:
             currency_amounts.append((first_num, second_num))
 
         query_order = itertools.product(item_categories, currencies, currency_amounts)
-        query_order = random.shuffle(query_order)
+        random.shuffle(query_order)
         for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
             logging.info(f"\n\n!!! Querying category '{item_category}, currency '{currency}', amount '{currency_amount}!!!\n\n")
             ilvl_filter = external_apis.MetaFilter(

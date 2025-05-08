@@ -1,2 +1,2 @@
-from .prep_data import DataPrep
+from .data_ingestion import DataIngester
 
