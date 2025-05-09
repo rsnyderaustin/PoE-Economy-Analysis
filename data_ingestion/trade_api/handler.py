@@ -8,22 +8,12 @@ from pathlib import Path
 
 import pytz
 
-from shared import PathProcessor
-from file_management import FilesManager, FileKeys
+from shared import PathProcessor, shared_utils
+from file_management import FilesManager, FileKey
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
 from .. import utils
-
-
-def _apply_create_listing_id_history(row, listing_id_history: dict):
-    listing_id = row['listing_id']
-    listing_date = row['date_fetched']
-
-    if listing_date not in listing_id_history:
-        listing_id_history[listing_date] = set()
-
-    listing_id_history[listing_date].add(listing_id)
 
 
 class FilterSplitter:
@@ -85,8 +75,7 @@ class TradeApiHandler:
 
     def __init__(self):
         self.fetcher = TradeItemsFetcher()
-        self.files_manager = FilesManager()
-        self.listing_fetch_dates = self.files_manager.file_data[FileKeys.LISTING_FETCHES]
+        self.listing_fetch_dates = FilesManager().file_data[FileKey.LISTING_FETCHES]
 
         self.split_threshold = 175
 
@@ -97,11 +86,10 @@ class TradeApiHandler:
         self.listing_fetch_dates[date_fetched].update(listing_ids)
 
     def _determine_valid_item_responses(self, item_responses):
+        date_fetched = shared_utils.today_date()
         valid_responses = []
         for ir in item_responses:
             listing_id = ir['id']
-            datetime_fetched = ir['listing']['indexed']
-            date_fetched = utils.extract_date(datetime_fetched)
 
             if date_fetched not in self.listing_fetch_dates:
                 self.listing_fetch_dates[date_fetched] = set()
@@ -126,7 +114,7 @@ class TradeApiHandler:
 
         num_items = response['total']
         self._cache_listing_pulls(listing_ids=set(r['id'] for r in valid_responses),
-                                  date=date_fetched)
+                                  date_fetched=date_fetched)
         logging.info(f"Returning {len(valid_responses)} valid of {num_items} total API item responses.")
         return valid_responses
 
@@ -135,7 +123,7 @@ class TradeApiHandler:
         query_dict = query_construction.create_trade_query(query=query)
         response = self.fetcher.fetch_items_response(query_dict)
         valid_responses = self._process_response(response,
-                                                 date_fetched=utils.today_date())
+                                                 date_fetched=shared_utils.today_date())
         yield valid_responses
 
         num_items = response['total']
@@ -154,7 +142,8 @@ class TradeApiHandler:
                 query_copy.meta_filters[i] = new_filter
                 query_dict = query_construction.create_trade_query(query=query_copy)
                 response = self.fetcher.fetch_items_response(query_dict)
-                valid_responses = self._process_response(response=response)
+                valid_responses = self._process_response(response=response,
+                                                         date_fetched=shared_utils.today_date())
                 yield valid_responses
 
                 valid_response_counts.append(len(valid_responses))

@@ -8,7 +8,7 @@ from instances_and_definitions import ItemMod, ModifiableListing
 from . import utils
 
 
-class FileKeys(Enum):
+class FileKey(Enum):
     ATYPE_MODS = 'atype_mods'
     ATYPE_ENCODES = 'atype_encodes'
     BTYPE_ENCODES = 'btype_encodes'
@@ -20,23 +20,22 @@ class FileKeys(Enum):
 
 
 class FilesManager:
-    _instance = None
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
-            cls._instance = super(FilesManager, cls).__new__(cls)
-        return cls._instance
+            cls.instance = super(FilesManager, cls).__new__(cls)
+        return cls.instance
 
     def __init__(self):
         self.file_paths = {
-            FileKeys.ATYPE_MODS: Path.cwd() / 'file_management/files/atype_mods.json',
-            FileKeys.ATYPE_ENCODES: Path.cwd() / 'file_management/files/atype_encode.json',
-            FileKeys.BTYPE_ENCODES: Path.cwd() / 'file_management/files/btype_encode.json',
-            FileKeys.RARITY_ENCODES: Path.cwd() / 'file_management/files/rarity_encode.json',
-            FileKeys.CURRENCY_ENCODES: Path.cwd() / 'file_management/files/currency_encode.json',
-            FileKeys.CURRENCY_CONVERSIONS: Path.cwd() / 'file_management/files/currency_prices.csv',
-            FileKeys.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetch_dates.json',
-            FileKeys.TRAINING_DATA: Path.cwd() / 'file_management/files/listings.json'
+            FileKey.ATYPE_MODS: Path.cwd() / 'file_management/files/atype_mods.json',
+            FileKey.ATYPE_ENCODES: Path.cwd() / 'file_management/files/atype_encode.json',
+            FileKey.BTYPE_ENCODES: Path.cwd() / 'file_management/files/btype_encode.json',
+            FileKey.RARITY_ENCODES: Path.cwd() / 'file_management/files/rarity_encode.json',
+            FileKey.CURRENCY_ENCODES: Path.cwd() / 'file_management/files/currency_encode.json',
+            FileKey.CURRENCY_CONVERSIONS: Path.cwd() / 'file_management/files/currency_prices.csv',
+            FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetch_dates.json',
+            FileKey.TRAINING_DATA: Path.cwd() / 'file_management/files/listings.json'
         }
 
         self.file_data = dict()
@@ -52,8 +51,13 @@ class FilesManager:
                 elif path.suffix == '.csv':
                     self.file_data[key] = pd.read_csv(path)
 
+        self.file_data[FileKey.LISTING_FETCHES] = {
+            date: set(listing_ids)
+            for date, listing_ids in self.file_data[FileKey.LISTING_FETCHES].items()
+        }
+
     def cache_mod(self, item_mod: ItemMod):
-        mod_data = self.file_data[FileKeys.ATYPE_MODS]
+        mod_data = self.file_data[FileKey.ATYPE_MODS]
         if item_mod.atype not in mod_data:
             mod_data[item_mod.atype] = dict()
 
@@ -82,31 +86,37 @@ class FilesManager:
                 'weighting': item_mod.weighting
             }
             
-    def cache_encodings(self, listing: ModifiableListing) -> bool:
+    def cache_listings_data(self, listings: list[ModifiableListing]) -> bool:
         """
         :return: True if data was saved and files were exported
         """
+
         should_export = False
+        for listing in listings:
+            listing_dates = self.file_data[FileKey.LISTING_FETCHES]
+            if listing.date_fetched not in listing_dates:
+                listing_dates[listing.date_fetched] = set()
+            listing_dates[listing.date_fetched].add(listing.date_fetched)
 
-        atype_m = self.file_data[FileKeys.ATYPE_ENCODES]
-        if listing.item_atype not in atype_m:
-            atype_m[listing.item_atype] = len(atype_m)
-            should_export = True
+            atype_m = self.file_data[FileKey.ATYPE_ENCODES]
+            if listing.item_atype not in atype_m:
+                atype_m[listing.item_atype] = len(atype_m)
+                should_export = True
 
-        btype_e = self.file_data[FileKeys.BTYPE_ENCODES]
-        if listing.item_btype not in btype_e:
-            btype_e[listing.item_btype] = len(btype_e)
-            should_export = True
-        
-        rarity_e = self.file_data[FileKeys.RARITY_ENCODES]
-        if listing.rarity not in rarity_e:
-            rarity_e[listing.rarity] = len(rarity_e)
-            should_export = True
-        
-        currency_e = self.file_data[FileKeys.CURRENCY_ENCODES]
-        if listing.currency not in currency_e:
-            currency_e[listing.currency] = len(currency_e)
-            should_export = True
+            btype_e = self.file_data[FileKey.BTYPE_ENCODES]
+            if listing.item_btype not in btype_e:
+                btype_e[listing.item_btype] = len(btype_e)
+                should_export = True
+
+            rarity_e = self.file_data[FileKey.RARITY_ENCODES]
+            if listing.rarity not in rarity_e:
+                rarity_e[listing.rarity] = len(rarity_e)
+                should_export = True
+
+            currency_e = self.file_data[FileKey.CURRENCY_ENCODES]
+            if listing.currency not in currency_e:
+                currency_e[listing.currency] = len(currency_e)
+                should_export = True
 
         if should_export:
             logging.info("New encode data - saving.")
@@ -116,7 +126,7 @@ class FilesManager:
         return False
 
     def cache_training_data(self, training_data: dict):
-        self.file_data[FileKeys.TRAINING_DATA] = training_data
+        self.file_data[FileKey.TRAINING_DATA] = training_data
 
     def save_data(self):
         logging.info("Exporting data.")

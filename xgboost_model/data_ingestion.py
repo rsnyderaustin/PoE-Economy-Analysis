@@ -2,7 +2,7 @@ import json
 import logging
 from pathlib import Path
 
-from file_management import FilesManager, FileKeys
+from file_management import FilesManager, FileKey
 from instances_and_definitions import ModifiableListing
 from shared import PathProcessor, shared_utils
 from . import utils
@@ -12,14 +12,14 @@ class DataIngester:
 
     def __init__(self):
         self.files_manager = FilesManager()
-        self.atype_encodes = self.files_manager.file_data[FileKeys.ATYPE_ENCODES]
-        self.btype_encodes = self.files_manager.file_data[FileKeys.BTYPE_ENCODES]
-        self.rarity_encodes = self.files_manager.file_data[FileKeys.RARITY_ENCODES]
-        self.currency_encodes = self.files_manager.file_data[FileKeys.CURRENCY_ENCODES]
-        self.training_data = self.files_manager.file_data[FileKeys.TRAINING_DATA]
+        self.atype_encodes = self.files_manager.file_data[FileKey.ATYPE_ENCODES]
+        self.btype_encodes = self.files_manager.file_data[FileKey.BTYPE_ENCODES]
+        self.rarity_encodes = self.files_manager.file_data[FileKey.RARITY_ENCODES]
+        self.currency_encodes = self.files_manager.file_data[FileKey.CURRENCY_ENCODES]
+        self.training_data = self.files_manager.file_data[FileKey.TRAINING_DATA]
 
         self.currency_to_exalts = utils.fetch_currency_to_conversion(
-            conversions_data=self.files_manager.file_data[FileKeys.CURRENCY_CONVERSIONS]
+            conversions_data=self.files_manager.file_data[FileKey.CURRENCY_CONVERSIONS]
         )
 
         self.num_rows = max(len(v_list) for v_list in self.training_data.values()) if self.training_data else 0

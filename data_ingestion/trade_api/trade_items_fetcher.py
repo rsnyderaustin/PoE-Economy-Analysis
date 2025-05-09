@@ -48,7 +48,7 @@ class TradeItemsFetcher:
         )
         response.raise_for_status()
         json_data = response.json()
-        logging.info(f"POST -> {len(json_data['result'])} item IDs")
+        # logging.info(f"POST -> {len(json_data['result'])} item IDs")
         cls.items_fetched += len(json_data['result'])
         logging.info(f"Have fetched {cls.items_fetched} items in {(datetime.now() - cls.class_start).total_seconds()} seconds.")
         return json_data
@@ -79,7 +79,7 @@ class TradeItemsFetcher:
                 cookies=cookies
             )
             response.raise_for_status()
-            logging.info("GET -> items.")
+            # logging.info("GET -> items.")
             json_data = response.json()
             result = json_data['result']
             response_items.extend(result)

@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-
+import pytz
 import re
 from collections import Counter
 
@@ -67,3 +67,11 @@ def determine_mod_values_range(mod_magnitude_dict: dict) -> tuple:
 
     return values_range
 
+
+def today_date() -> str:
+    central_tz = pytz.timezone("America/Chicago")
+    central_now = datetime.now(central_tz)
+
+    # Format as MM/DD/YYYY
+    formatted_date = central_now.strftime("%m-%d-%Y")
+    return formatted_date

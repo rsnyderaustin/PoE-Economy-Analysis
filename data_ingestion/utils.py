@@ -23,14 +23,6 @@ _pacific = pytz.timezone('US/Pacific')
 league_start_date = _pacific.localize(_dt)
 
 
-def today_date() -> str:
-    central_tz = pytz.timezone("America/Chicago")
-    central_now = datetime.now(central_tz)
-
-    # Format as MM/DD/YYYY
-    formatted_date = central_now.strftime("%m/%d/%Y")
-    return formatted_date
-
 def determine_mod_id_to_mod_text(mod_class: ModClass, item_data: dict, sanitize_text: bool = False) -> dict:
     abbrev_class = mod_class_to_abbrev[mod_class]
 

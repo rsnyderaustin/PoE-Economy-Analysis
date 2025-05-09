@@ -1,4 +1,5 @@
 
+import configparser
 import itertools
 import logging
 
@@ -12,6 +13,8 @@ from xgboost_model.build_model import build_xgboost
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
+
+config = configparser.ConfigParser
 
 
 def _clean_item_data(item_data: dict):
@@ -88,19 +91,16 @@ class ProgramManager:
                 continue
 
             listings = []
-            maps_need_updated = False
             for api_item_response in api_item_responses:
                 _clean_item_data(api_item_response['item'])
                 listing = data_ingestion.create_listing(api_item_response)
                 listings.append(listing)
-                new_map_data = self.files_manager.cache_encodings(listing=listing)
-                if new_map_data:
-                    maps_need_updated = True
 
                 for mod in listing.mods:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
                     self.files_manager.cache_mod(item_mod=mod)
 
+            maps_need_updated = self.files_manager.cache_listings_data(listings=listings)
             if maps_need_updated:
                 logging.info("Updating AI map data.")
                 self.ai_data_prep.update_data()

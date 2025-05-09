@@ -3,6 +3,10 @@ import logging
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
 from shared import ATypeClassifier, shared_utils, trade_item_enums
 from . import utils
+from file_management import FilesManager
+
+
+files_manager = FilesManager()
 
 
 def _create_sub_mods(mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]:
@@ -232,7 +236,7 @@ def create_listing(api_item_response: dict):
 
     new_listing = ModifiableListing(
         listing_id=api_item_response['id'],
-        date_fetched=listing_data['indexed'],
+        date_fetched=shared_utils.today_date(),
         minutes_since_listed=minutes_since_listed,
         minutes_since_league_start=minutes_since_league_start,
         currency=listing_data['price']['currency'],

@@ -87,8 +87,8 @@ class ATypeDataManager:
 class PoecdDataManager:
 
     def __init__(self):
-        self.bases_data = self._load_json_file('testing_external_json_data/poecd_bases.json')
-        self.stats_data = self._load_json_file('testing_external_json_data/poecd_stats.json')
+        self.bases_data = self._load_json_file('file_management/files/poecd_bases.json')
+        self.stats_data = self._load_json_file('file_management/files/poecd_stats.json')
 
         self._normalize_data()
 

@@ -1,1 +1,1 @@
-from .files_manager import FilesManager, FileKeys
+from .files_manager import FilesManager, FileKey

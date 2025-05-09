@@ -11,6 +11,7 @@ import seaborn as sns
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 
+from file_management import FilesManager, FileKey
 from shared import PathProcessor
 from xgboost_model import utils
 
@@ -64,14 +65,7 @@ def custom_objective(preds: np.ndarray, dmatrix: xgb.DMatrix) -> tuple[np.ndarra
 
 
 def build_xgboost():
-    logging.info("Beginning building XGBoost model.")
-    training_data_json_path = (
-        PathProcessor(Path.cwd())
-        .attach_file_path_endpoint('xgboost_model/training_data/listings.json')
-        .path
-    )
-    with open(training_data_json_path, 'r') as training_data_file:
-        training_data = json.load(training_data_file)
+    training_data = FilesManager().file_data[FileKey.TRAINING_DATA]
     df = pd.DataFrame(training_data)
     """filter_cols = [
         'exalts',
