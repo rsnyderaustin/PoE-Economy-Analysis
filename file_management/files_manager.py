@@ -13,8 +13,9 @@ class FileKey(Enum):
     ATYPE_MODS = 'atype_mods'
     CURRENCY_CONVERSIONS = 'currency_conversions'
     LISTING_FETCHES = 'listing_fetches'
-    TRAINING_DATA = 'training_data'
+    CRITICAL_PRICE_PREDICT_TRAINING = 'price_predict_data'
     PRICE_PREDICT_MODEL = 'price_predict_model'
+    PRICE_PREDICT = 'temp_price_predict_data'
 
 
 class FilesManager:
@@ -27,9 +28,10 @@ class FilesManager:
     def __init__(self):
         self.file_paths = {
             FileKey.CURRENCY_CONVERSIONS: Path.cwd() / 'file_management/files/currency_prices.csv',
-            FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetch_dates.json',
-            FileKey.TRAINING_DATA: Path.cwd() / 'file_management/files/listings.json',
-            FileKey.PRICE_PREDICT_MODEL: Path.cwd() / 'file_management/files/price_predict_model.json'
+            FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetches.json',
+            FileKey.CRITICAL_PRICE_PREDICT_TRAINING: Path.cwd() / 'file_management/files/listings.json',
+            FileKey.PRICE_PREDICT_MODEL: Path.cwd() / 'file_management/files/price_predict_model.json',
+            FileKey.PRICE_PREDICT: Path.cwd() / 'file_management/files/temporary_price_predict.json'
         }
 
         self.file_data = dict()
@@ -49,6 +51,12 @@ class FilesManager:
             date: set(listing_ids)
             for date, listing_ids in self.file_data[FileKey.LISTING_FETCHES].items()
         }
+
+        if not self.file_data[FileKey.PRICE_PREDICT]:
+            self.file_data[FileKey.PRICE_PREDICT] = {
+                col: []
+                for col in self.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING].keys()
+            }
 
     def cache_mod(self, item_mod: ItemMod):
         mod_data = self.file_data[FileKey.ATYPE_MODS]
@@ -80,25 +88,6 @@ class FilesManager:
                 'weighting': item_mod.weighting
             }
 
-    def cache_listings_attributes(self, listings: list[ModifiableListing]) -> bool:
-        """
-        :return: True if data was saved and files were exported
-        """
-
-        should_export = False
-        listing_dates = self.file_data[FileKey.LISTING_FETCHES]
-        for listing in listings:
-            if listing.date_fetched not in listing_dates:
-                listing_dates[listing.date_fetched] = set()
-            listing_dates[listing.date_fetched].add(listing.date_fetched)
-
-        if should_export:
-            logging.info("New encode data - saving.")
-            self.save_data()
-            return True
-
-        return False
-
     def cache_api_fetch_date(self, listing_ids, fetch_date: str):
         dates_fetched = self.file_data[FileKey.LISTING_FETCHES]
         if fetch_date not in dates_fetched:
@@ -107,7 +96,7 @@ class FilesManager:
         dates_fetched[fetch_date].update(listing_ids)
 
     def cache_training_data(self, training_data: dict):
-        self.file_data[FileKey.TRAINING_DATA] = training_data
+        self.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING] = training_data
 
     def cache_price_prediction_model(self, price_predict_model):
         self.file_data[FileKey.PRICE_PREDICT_MODEL] = price_predict_model

@@ -1,3 +1,4 @@
+import logging
 
 import pandas as pd
 
@@ -46,19 +47,52 @@ def _flatten_listing_properties(listing: ModifiableListing) -> dict:
                 raise ValueError(f"Property value {property_values} has unexpected structure.")
             
 
-class DataPrep:
+class DataManager:
 
     def __init__(self):
         self.files_manager = FilesManager()
-        self.training_data = self.files_manager.file_data[FileKey.TRAINING_DATA]
 
         self.currency_to_exalts = utils.fetch_currency_to_conversion(
             conversions_data=self.files_manager.file_data[FileKey.CURRENCY_CONVERSIONS]
         )
 
-        self.num_rows = max(len(v_list) for v_list in self.training_data.values()) if self.training_data else 0
+        t_data = self.files_manager.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING]
+        pp_data = self.files_manager.file_data[FileKey.PRICE_PREDICT]
+        self.num_rows = {
+            FileKey.CRITICAL_PRICE_PREDICT_TRAINING: max(len(v_list) for v_list in t_data.values()) if t_data else 0,
+            FileKey.PRICE_PREDICT: max(len(v_list) for v_list in pp_data.values()) if pp_data else 0
+        }
 
-    def format_listing_for_price_prediction(self, listing: ModifiableListing) -> dict:
+    def _flatten_listing(self, listing: ModifiableListing):
+        # Make a dict that averages out the property values if they're a range, otherwise just give us the number
+        flattened_properties = _flatten_listing_properties(listing)
+
+        exalts_price = self.convert_currency_to_exalt(currency=listing.currency,
+                                                      amount=listing.currency_amount)
+
+        flattened_data = {
+            'minutes_since_listed': listing.minutes_since_listed,
+            'minutes_since_league_start': listing.minutes_since_league_start,
+            'exalts': exalts_price,
+            'open_prefixes': listing.open_prefixes,
+            'open_suffixes': listing.open_suffixes,
+            'atype': listing.item_atype,
+            'btype': listing.item_btype,
+            'rarity': listing.rarity,
+            'corrupted': str(listing.corrupted),
+            **flattened_properties
+        }
+
+        # Split up hybrid mods and average their value ranges. No known value ranges are not averageable
+        summed_sub_mods = utils.sum_sub_mod_values(listing)
+        flattened_data.update(summed_sub_mods)
+
+        skills_dict = {item_skill.name: item_skill.level for item_skill in listing.item_skills}
+        flattened_data.update(skills_dict)
+
+        return flattened_data
+
+    def _format_listing_for_price_prediction(self, listing: ModifiableListing) -> dict:
         flattened_listing = self._flatten_listing(listing)
         flattened_listing['max_quality_pdps'] = _calculate_max_quality_pdps(flattened_listing)
         flattened_listing['edps'] = _calculate_elemental_dps(flattened_listing)
@@ -104,7 +138,7 @@ class DataPrep:
 
         return flattened_listing
 
-    def _convert_currency_to_exalt(self, currency, amount):
+    def convert_currency_to_exalt(self, currency, amount):
         if currency in self.currency_to_exalts:
             exalts_price = amount * self.currency_to_exalts[currency]
         elif currency == 'exalted':
@@ -114,37 +148,9 @@ class DataPrep:
 
         return exalts_price
 
-    def _flatten_listing(self, listing: ModifiableListing):
-        # Make a dict that averages out the property values if they're a range, otherwise just give us the number
-        flattened_properties = _flatten_listing_properties(listing)
-
-        exalts_price = self._convert_currency_to_exalt(currency=listing.currency,
-                                                       amount=listing.currency_amount)
-
-        flattened_data = {
-            'minutes_since_listed': listing.minutes_since_listed,
-            'minutes_since_league_start': listing.minutes_since_league_start,
-            'exalts': exalts_price,
-            'open_prefixes': listing.open_prefixes,
-            'open_suffixes': listing.open_suffixes,
-            'atype': listing.item_atype,
-            'btype': listing.item_btype,
-            'rarity': listing.rarity,
-            'corrupted': str(listing.corrupted),
-            **flattened_properties
-        }
-
-        # Split up hybrid mods and average their value ranges. No known value ranges are not averageable
-        summed_sub_mods = utils.sum_sub_mod_values(listing)
-        flattened_data.update(summed_sub_mods)
-
-        skills_dict = {item_skill.name: item_skill.level for item_skill in listing.item_skills}
-        flattened_data.update(skills_dict)
-
-        return flattened_data
-
-    def prepare_price_prediction_data_for_model(self) -> pd.DataFrame:
-        df = pd.DataFrame(self.training_data)
+    def prepare_listing_data_for_model(self, which_file: FileKey) -> pd.DataFrame:
+        data = self.files_manager.file_data[which_file]
+        df = pd.DataFrame(data)
 
         df['atype'] = df['atype'].astype("category")
         df['rarity'] = df['rarity'].astype("category")
@@ -157,3 +163,21 @@ class DataPrep:
         df.fillna(0, inplace=True)
 
         return df
+
+    def save_price_predict_data(self, listings: list[ModifiableListing], which_file: FileKey):
+        data = self.files_manager.file_data[which_file]
+        for listing in listings:
+            flattened_listing = self._format_listing_for_price_prediction(listing)
+            for col_name, value in flattened_listing.items():
+                if col_name not in data:
+                    # We have to insert a value for each row since this column has been added
+                    data[col_name] = [None for _ in list(range(self.num_rows[which_file]))]
+                data[col_name].append(value)
+
+            # Append a new value for each column that wasn't a part of this listing data
+            non_included_data_cols = [col for col in set(data.keys()) if col not in set(flattened_listing.keys())]
+            for col_name in non_included_data_cols:
+                data[col_name].append(None)
+
+            self.num_rows[which_file] += 1
+

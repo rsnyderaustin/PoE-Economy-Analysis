@@ -7,8 +7,9 @@ import seaborn as sns
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 
-from ai_models import utils
+from models import utils
 from file_management import FilesManager, FileKey
+from . import data_management
 
 
 def lowest_price_focused_error(y_true, y_pred):
@@ -113,6 +114,7 @@ def _plot_actual_vs_predicted(test_predictions, test_targets):
     plt.grid(True)
     plt.show()
 
+
 def build_price_predict_model(overprediction_weight: float = 2.0,
                               underprediction_weight: float = 0.1,
                               training_depth: int = 12,
@@ -121,10 +123,8 @@ def build_price_predict_model(overprediction_weight: float = 2.0,
     """
     Builds an XGBoost price prediction model with custom loss weighting.
     """
-    # Load and preprocess training data
-    training_data = FilesManager().file_data[FileKey.TRAINING_DATA]
-    df = pd.DataFrame(training_data)
-    df = _prep_training_data(df)
+    ai_data_manager = data_management.DataManager()
+    df = ai_data_manager.prepare_listing_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
 
     # Split features and target variable
     features = df.drop(columns=['exalts'])
@@ -155,7 +155,7 @@ def build_price_predict_model(overprediction_weight: float = 2.0,
     # Train XGBoost model
     model = xgb.train(
         params, train_data,
-        num_boost_rounds=num_boost_rounds,
+        num_boost_round=num_boost_rounds,
         early_stopping_rounds=50,
         evals=evals,
         obj=lambda preds, dmatrix: custom_objective(
@@ -174,6 +174,8 @@ def build_price_predict_model(overprediction_weight: float = 2.0,
                              underprediction_weight=underprediction_weight)
 
     logging.info(f"Weighted Mean Squared Error: {mse}")
+
+    return model
 
     """
     training_df = pd.concat([test_target, test_feat], axis=1)

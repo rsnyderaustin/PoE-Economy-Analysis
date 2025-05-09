@@ -1,10 +1,11 @@
 
 import configparser
 import logging
+import xgboost as xgb
 
-import ai_models
+import models
 import data_ingestion
-from ai_models.build_model import build_price_predict_model
+from models.build_model import build_price_predict_model
 from data_ingestion import trade_api
 from data_ingestion.trade_api import query
 from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
@@ -22,7 +23,7 @@ class ProgramManager:
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
         self.injector = PoecdDataInjecter()
-        self.ai_data_prep = ai_models.DataPrep()
+        self.ai_data_manager = models.DataManager()
 
     def load_training_data(self):
         training_queries = query.QueryPresets().training_fills
@@ -38,10 +39,8 @@ class ProgramManager:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
                     self.files_manager.cache_mod(item_mod=mod)
 
-            logging.info(f"Caching and saving {len(listings)} listings.")
-            self.files_manager.cache_listings_attributes(listings=listings)
-
-            self.ai_data_prep.save_training_data(listings)
+            self.ai_data_manager.save_price_predict_data(listings,
+                                                         which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
 
             if i % 5 == 0:
                 self.files_manager.save_data()
@@ -56,8 +55,19 @@ class ProgramManager:
                 listing = data_ingestion.create_listing(api_item_response)
                 listings.append(listing)
 
+            self.ai_data_manager.save_price_predict_data(listings,
+                                                         which_file=FileKey.PRICE_PREDICT)
+            df = self.ai_data_manager.prepare_listing_data_for_model(which_file=FileKey.PRICE_PREDICT)
+            true_prices = list(df['exalts'])
+            df.drop('exalts', inplace=True)
+            dmatrix = xgb.DMatrix(df)
+            predicts = predict_model.predict(dmatrix)
 
-    @staticmethod
-    def build_price_predict_model():
-        build_price_predict_model()
+            df['true_exalts'] = true_prices
+            df['predicted_exalts'] = predicts
+
+    def build_price_predict_model(self):
+        model = build_price_predict_model()
+        self.files_manager.file_data[FileKey.PRICE_PREDICT_MODEL] = model
+        self.files_manager.save_data(keys=[FileKey.PRICE_PREDICT_MODEL])
 
