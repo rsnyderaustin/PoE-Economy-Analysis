@@ -1,9 +1,11 @@
 import json
 import logging
+import os
 from enum import Enum
 from pathlib import Path
 
 import pandas as pd
+import xgboost as xgb
 
 from instances_and_definitions import ItemMod, ModifiableListing
 from . import utils
@@ -39,7 +41,18 @@ class FilesManager:
         self._load_files()
 
     def _load_files(self):
-        for key, path in self.file_paths.items():
+
+        model = xgb.Booster()
+        model_path = self.file_paths[FileKey.PRICE_PREDICT_MODEL]
+        if os.path.getsize(model_path) > 2:
+            model.load_model(self.file_paths[FileKey.PRICE_PREDICT_MODEL])
+            self.file_data[FileKey.PRICE_PREDICT_MODEL] = model
+        else:
+            self.file_data[FileKey.PRICE_PREDICT_MODEL] = None
+
+        file_paths = {file_key: path for file_key, path in self.file_paths if file_key != FileKey.PRICE_PREDICT_MODEL}
+
+        for key, path in file_paths.items():
             if path.exists:
                 if path.suffix == '.json':
                     with open(path, 'r') as file:

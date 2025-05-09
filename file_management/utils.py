@@ -1,4 +1,5 @@
 
+from typing import Any
 import json
 import os
 
@@ -10,7 +11,6 @@ class SetEncoder(json.JSONEncoder):
         if isinstance(obj, set):
             return list(obj)
         return super().default(obj)
-
 
 def write_to_file(file_path, data, disable_temp: bool = False):
     disable_temp = True # This is literally just for work
