@@ -32,6 +32,7 @@ def _calculate_elemental_dps(listing_data: dict):
     edps = (cold_damage + fire_damage + lightning_damage) * attacks_per_second
     return edps
 
+
 def _flatten_listing_properties(listing: ModifiableListing) -> dict:
     flattened_properties = dict()
     for property_name, property_values in listing.item_properties.items():
@@ -45,6 +46,8 @@ def _flatten_listing_properties(listing: ModifiableListing) -> dict:
                 flattened_properties[property_name] += v[0]
             else:
                 raise ValueError(f"Property value {property_values} has unexpected structure.")
+
+    return flattened_properties
             
 
 class DataManager:
@@ -63,8 +66,7 @@ class DataManager:
             FileKey.PRICE_PREDICT: max(len(v_list) for v_list in pp_data.values()) if pp_data else 0
         }
 
-    def _flatten_listing(self, listing: ModifiableListing):
-        # Make a dict that averages out the property values if they're a range, otherwise just give us the number
+    def _format_listing_for_price_prediction(self, listing: ModifiableListing) -> dict:
         flattened_properties = _flatten_listing_properties(listing)
 
         exalts_price = self.convert_currency_to_exalt(currency=listing.currency,
@@ -89,13 +91,9 @@ class DataManager:
 
         skills_dict = {item_skill.name: item_skill.level for item_skill in listing.item_skills}
         flattened_data.update(skills_dict)
-
-        return flattened_data
-
-    def _format_listing_for_price_prediction(self, listing: ModifiableListing) -> dict:
-        flattened_listing = self._flatten_listing(listing)
-        flattened_listing['max_quality_pdps'] = _calculate_max_quality_pdps(flattened_listing)
-        flattened_listing['edps'] = _calculate_elemental_dps(flattened_listing)
+        
+        flattened_data['max_quality_pdps'] = _calculate_max_quality_pdps(flattened_data)
+        flattened_data['edps'] = _calculate_elemental_dps(flattened_data)
 
         replaced_attributes = [
             'Attacks per Second',
@@ -130,13 +128,13 @@ class DataManager:
         ]
 
         for col in [*replaced_attributes, *local_weapon_mods, *select_cols]:
-            flattened_listing.pop(col, None)
+            flattened_data.pop(col, None)
 
-        for col, values in flattened_listing.items():
+        for col, values in flattened_data.items():
             if len(col) == 1:
-                flattened_listing.pop(col)
+                flattened_data.pop(col)
 
-        return flattened_listing
+        return flattened_data
 
     def convert_currency_to_exalt(self, currency, amount):
         if currency in self.currency_to_exalts:
@@ -148,7 +146,7 @@ class DataManager:
 
         return exalts_price
 
-    def prepare_listing_data_for_model(self, which_file: FileKey) -> pd.DataFrame:
+    def prepare_price_predict_data_for_model(self, which_file: FileKey) -> pd.DataFrame:
         data = self.files_manager.file_data[which_file]
         df = pd.DataFrame(data)
 
@@ -180,4 +178,6 @@ class DataManager:
                 data[col_name].append(None)
 
             self.num_rows[which_file] += 1
+
+        self.files_manager.file_data[which_file] = data
 

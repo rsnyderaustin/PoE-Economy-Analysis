@@ -12,13 +12,14 @@ class SetEncoder(json.JSONEncoder):
             return list(obj)
         return super().default(obj)
 
+
 def write_to_file(file_path, data, disable_temp: bool = False):
     disable_temp = True # This is literally just for work
 
     if file_path.suffix == '.json':
         if isinstance(data, xgb.Booster):
             data.save_model(file_path)
-        if disable_temp:
+        elif disable_temp:
             with open(file_path, 'w') as training_data_json_path:
                 json.dump(data, training_data_json_path, indent=4, cls=SetEncoder)
                 training_data_json_path.flush()

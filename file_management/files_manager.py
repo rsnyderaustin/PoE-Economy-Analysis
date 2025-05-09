@@ -50,7 +50,7 @@ class FilesManager:
         else:
             self.file_data[FileKey.PRICE_PREDICT_MODEL] = None
 
-        file_paths = {file_key: path for file_key, path in self.file_paths if file_key != FileKey.PRICE_PREDICT_MODEL}
+        file_paths = {file_key: path for file_key, path in self.file_paths.items() if file_key != FileKey.PRICE_PREDICT_MODEL}
 
         for key, path in file_paths.items():
             if path.exists:
@@ -64,12 +64,6 @@ class FilesManager:
             date: set(listing_ids)
             for date, listing_ids in self.file_data[FileKey.LISTING_FETCHES].items()
         }
-
-        if not self.file_data[FileKey.PRICE_PREDICT]:
-            self.file_data[FileKey.PRICE_PREDICT] = {
-                col: []
-                for col in self.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING].keys()
-            }
 
     def cache_mod(self, item_mod: ItemMod):
         mod_data = self.file_data[FileKey.ATYPE_MODS]

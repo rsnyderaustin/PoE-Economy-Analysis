@@ -54,15 +54,9 @@ class Query:
 
 
 class QueryPresets:
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(QueryPresets, cls).__new__(cls)
-        return cls.instance
 
-    def __init__(self):
-        self.training_fills = self._training_fill()
-
-    def _training_fill(self):
+    @staticmethod
+    def training_fills() -> list[Query]:
         # item_categories = [*trade_item_enums.socketable_items, *trade_item_enums.martial_weapons]
         item_categories = trade_item_enums.martial_weapons
         currencies = [
@@ -78,7 +72,6 @@ class QueryPresets:
 
         queries = []
         for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
-            logging.info(f"\n\n!!! Querying category '{item_category}, currency '{currency}', amount '{currency_amount}!!!\n\n")
             ilvl_filter = trade_api.MetaFilter(
                 filter_type_enum=trade_item_enums.TypeFilters.ITEM_LEVEL,
                 filter_value=(71, 82)

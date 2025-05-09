@@ -115,7 +115,8 @@ def _plot_actual_vs_predicted(test_predictions, test_targets):
     plt.show()
 
 
-def build_price_predict_model(overprediction_weight: float = 2.0,
+def build_price_predict_model(df: pd.DataFrame,
+                              overprediction_weight: float = 2.0,
                               underprediction_weight: float = 0.1,
                               training_depth: int = 12,
                               eta: float = 0.00075,
@@ -123,8 +124,6 @@ def build_price_predict_model(overprediction_weight: float = 2.0,
     """
     Builds an XGBoost price prediction model with custom loss weighting.
     """
-    ai_data_manager = data_management.DataManager()
-    df = ai_data_manager.prepare_listing_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
 
     # Split features and target variable
     features = df.drop(columns=['exalts'])

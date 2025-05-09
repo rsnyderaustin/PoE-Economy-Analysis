@@ -46,10 +46,14 @@ class ProgramManager:
                 self.files_manager.save_data()
 
     def find_underpriced_items(self):
-        training_queries = query.QueryPresets().training_fills
+        training_queries = query.QueryPresets.training_fills()
         predict_model = self.files_manager.file_data[FileKey.PRICE_PREDICT_MODEL]
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
+            self.files_manager.file_data[FileKey.PRICE_PREDICT] = {
+                col: []
+                for col in self.files_manager.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING].keys()
+            }
             listings = []
             for api_item_response in api_item_responses:
                 listing = data_ingestion.create_listing(api_item_response)
@@ -57,9 +61,11 @@ class ProgramManager:
 
             self.ai_data_manager.save_price_predict_data(listings,
                                                          which_file=FileKey.PRICE_PREDICT)
-            df = self.ai_data_manager.prepare_listing_data_for_model(which_file=FileKey.PRICE_PREDICT)
+            df = self.ai_data_manager.prepare_price_predict_data_for_model(which_file=FileKey.PRICE_PREDICT)
             true_prices = list(df['exalts'])
-            df.drop('exalts', inplace=True)
+            df.drop(columns=['exalts'], inplace=True)
+
+            df = df[predict_model.feature_names]
             dmatrix = xgb.DMatrix(df)
             predicts = predict_model.predict(dmatrix)
 
@@ -67,7 +73,8 @@ class ProgramManager:
             df['predicted_exalts'] = predicts
 
     def build_price_predict_model(self):
-        model = build_price_predict_model()
+        model_data = self.ai_data_manager.prepare_price_predict_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
+        model = build_price_predict_model(df=model_data)
         self.files_manager.file_data[FileKey.PRICE_PREDICT_MODEL] = model
         self.files_manager.save_data(keys=[FileKey.PRICE_PREDICT_MODEL])
 
