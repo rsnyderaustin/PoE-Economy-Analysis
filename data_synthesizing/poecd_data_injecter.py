@@ -1,7 +1,7 @@
 import rapidfuzz
 
-from misc.poecd_data import PoecdDataManager
 from instances_and_definitions import ItemMod, ModClass
+from misc.poecd_data import PoecdDataManager
 from . import utils
 
 

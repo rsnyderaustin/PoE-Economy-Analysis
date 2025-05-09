@@ -1,9 +1,4 @@
-import itertools
-import json
 import logging
-import pprint
-import random
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,10 +7,8 @@ import seaborn as sns
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 
-from file_management import FilesManager, FileKey
-from shared import PathProcessor
 from ai_models import utils
-from . import data_prep
+from file_management import FilesManager, FileKey
 
 
 def lowest_price_focused_error(y_true, y_pred):
@@ -119,52 +112,6 @@ def _plot_actual_vs_predicted(test_predictions, test_targets):
     plt.title("Actual vs. Predicted Prices")
     plt.grid(True)
     plt.show()
-
-
-def _prep_training_data(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Prepares training data by cleaning features, categorizing variables, and removing unnecessary columns.
-    """
-    # Insert max quality PDPS column
-    df = _insert_max_quality_pdps_col(df)
-
-    # Convert categorical columns
-    df['atype'] = df['atype'].astype("category")
-    df['rarity'] = df['rarity'].astype("category")
-    df['corrupted'] = df['corrupted'].astype("category")
-
-    # Calculate elemental DPS (EDPS)
-    df['edps'] = (df['Cold Damage'] + df['Fire Damage'] + df['Lightning Damage']) * df['Attacks per Second']
-
-    # Drop damage-related columns after EDPS computation
-    df = df.drop(columns=[
-        'Attacks per Second', 'Physical Damage', 'Cold Damage', 'Fire Damage', 'Lightning Damage'
-    ])
-
-    # Remove local weapon modifier columns
-    local_weapon_mods = [
-        'adds_#_to_#_fire_damage', '#%_increased_attack_speed', '#%_increased_physical_damage',
-        'adds_#_to_#_cold_damage', 'adds_#_to_#_lightning_damage', 'adds_#_to_#_physical_damage',
-        '+#.#%_to_critical_hit_chance', '+#%_to_critical_hit_chance', '#% increased Physical Damage',
-        'Adds # to # Fire Damage', 'Adds # to # Lightning Damage', 'Adds # to # Cold Damage',
-        '#% increased Attack Speed', 'Quality'
-    ]
-    df = df.drop(columns=local_weapon_mods)
-
-    # Keep only numerical columns (int64 & float64)
-    df = df.select_dtypes(include=['int64', 'float64'])
-
-    # Remove additional unwanted columns
-    df = df.drop(columns=['open_prefixes', 'open_suffixes', 'minutes_since_listed', 'minutes_since_league_start'])
-
-    # Remove single-letter columns (possible data anomalies)
-    df = df.drop(columns=[col for col in df.columns if len(col) == 1])
-
-    # Fill NaN values with 0
-    df.fillna(0, inplace=True)
-
-    return df
-
 
 def build_price_predict_model(overprediction_weight: float = 2.0,
                               underprediction_weight: float = 0.1,

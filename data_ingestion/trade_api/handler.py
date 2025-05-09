@@ -1,19 +1,14 @@
-import json
+import logging
 import logging
 import math
 from collections import deque
 from copy import deepcopy
-from datetime import datetime
-from pathlib import Path
 
-import pytz
-
-from shared import PathProcessor, shared_utils
 from file_management import FilesManager, FileKey
+from shared import shared_utils
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
-from .. import utils
 
 
 class FilterSplitter:

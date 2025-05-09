@@ -1,11 +1,9 @@
-import json
+
 import logging
-from pathlib import Path
 
 from file_management import FilesManager, FileKey
 from instances_and_definitions import ModifiableListing
-from shared import PathProcessor, shared_utils
-from . import utils, data_prep
+from . import data_prep
 
 
 class DataIngester:
@@ -33,7 +31,6 @@ class DataIngester:
             non_included_data_cols = [col for col in set(self.training_data.keys()) if col not in set(flattened_listing.keys())]
             for col_name in non_included_data_cols:
                 self.training_data[col_name].append(None)
-
 
         logging.info(f"Writing {len(listings)} listings to training data.")
 

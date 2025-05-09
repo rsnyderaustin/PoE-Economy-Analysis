@@ -1,17 +1,14 @@
 
 import configparser
-import itertools
 import logging
 
+import ai_models
 import data_ingestion
-from file_management import FilesManager, FileKey
-from data_ingestion import trade_api
-from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
-from shared import trade_item_enums
-from data_ingestion.trade_api import query
-from ai_models import DataIngester
 from ai_models.build_model import build_price_predict_model
-from ai_models import data_prep
+from data_ingestion import trade_api
+from data_ingestion.trade_api import query
+from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
+from file_management import FilesManager, FileKey
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
@@ -25,7 +22,7 @@ class ProgramManager:
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
         self.injector = PoecdDataInjecter()
-        self.ai_data_prep = DataPrep()
+        self.ai_data_prep = ai_models.DataPrep()
 
     def load_training_data(self):
         training_queries = query.QueryPresets().training_fills

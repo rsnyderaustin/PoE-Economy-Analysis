@@ -1,8 +1,8 @@
-from datetime import datetime
-from enum import Enum
-import pytz
 import re
 from collections import Counter
+from datetime import datetime
+
+import pytz
 
 
 def _process_bracketed_text(match):

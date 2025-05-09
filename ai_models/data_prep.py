@@ -58,7 +58,7 @@ class DataPrep:
 
         self.num_rows = max(len(v_list) for v_list in self.training_data.values()) if self.training_data else 0
 
-    def format_listing_for_price_prediction(self, listing: ModifiableListing):
+    def format_listing_for_price_prediction(self, listing: ModifiableListing) -> dict:
         flattened_listing = self._flatten_listing(listing)
         flattened_listing['max_quality_pdps'] = _calculate_max_quality_pdps(flattened_listing)
         flattened_listing['edps'] = _calculate_elemental_dps(flattened_listing)
@@ -97,6 +97,12 @@ class DataPrep:
 
         for col in [*replaced_attributes, *local_weapon_mods, *select_cols]:
             flattened_listing.pop(col, None)
+
+        for col, values in flattened_listing.items():
+            if len(col) == 1:
+                flattened_listing.pop(col)
+
+        return flattened_listing
 
     def _convert_currency_to_exalt(self, currency, amount):
         if currency in self.currency_to_exalts:
@@ -137,61 +143,17 @@ class DataPrep:
 
         return flattened_data
 
+    def prepare_price_prediction_data_for_model(self) -> pd.DataFrame:
+        df = pd.DataFrame(self.training_data)
 
-def _prep_training_data(df: pd.DataFrame):
-    """filter_cols = [
-            'exalts',
-            'days_since_listed',
-            'open_prefixes',
-            'open_suffixes',
-            'atype',
-            'Physical Damage',
-            'Fire Damage',
-            'Cold Damage',
-            'Lightning Damage',
-            'Chaos Damage',
-            'Critical Hit Chance',
-            'Attacks per Second',
-            *[col for col in df.columns if 'Rune' in col or 'Soul Core' in col or 'Talisman' in col]
-        ]
-        missing_cols = [col for col in filter_cols if col not in df.columns]
-        df = df[filter_cols]"""
-    df = _insert_max_quality_pdps_col(df)
-    df['atype'] = df['atype'].astype("category")
-    df['rarity'] = df['rarity'].astype("category")
-    df['corrupted'] = df['corrupted'].astype("category")
-    df['edps'] = (df['Cold Damage'] + df['Fire Damage'] + df['Lightning Damage']) * df['Attacks per Second']
-    df = df.drop(columns=[
-        'Attacks per Second',
-        'Physical Damage',
-        'Cold Damage',
-        'Fire Damage',
-        'Lightning Damage'
-    ])
+        df['atype'] = df['atype'].astype("category")
+        df['rarity'] = df['rarity'].astype("category")
+        df['corrupted'] = df['corrupted'].astype("category")
 
-    local_weapon_mods = [
-        'adds_#_to_#_fire_damage',
-        '#%_increased_attack_speed',
-        '#%_increased_physical_damage',
-        'adds_#_to_#_cold_damage',
-        'adds_#_to_#_lightning_damage',
-        'adds_#_to_#_physical_damage',
-        '+#.#%_to_critical_hit_chance',
-        '+#%_to_critical_hit_chance',
-        '#% increased Physical Damage',
-        'Adds # to # Fire Damage',
-        'Adds # to # Lightning Damage',
-        'Adds # to # Cold Damage',
-        '#% increased Attack Speed',
-        'Quality'
-    ]
-    df = df.drop(columns=local_weapon_mods)
-    df = df.select_dtypes(include=['int64', 'float64'])
-    df = df.drop(columns=['open_prefixes', 'open_suffixes', 'minutes_since_listed', 'minutes_since_league_start'])
+        # Keep only numerical columns (int64 & float64)
+        df = df.select_dtypes(include=['int64', 'float64'])
 
-    # Sometimes there are columns in the training data that are just one letter. I don't know why yet.
-    single_letter_cols = [col for col in df.columns if len(col) == 1]
-    df = df.drop(columns=single_letter_cols)
+        # Fill NaN values with 0
+        df.fillna(0, inplace=True)
 
-    df.fillna(0, inplace=True)
-    return df
+        return df

@@ -1,9 +1,9 @@
 import logging
 
+from file_management import FilesManager
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
 from shared import ATypeClassifier, shared_utils, trade_item_enums
 from . import utils
-from file_management import FilesManager
 
 files_manager = FilesManager()
 
