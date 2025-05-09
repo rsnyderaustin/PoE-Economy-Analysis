@@ -8,6 +8,7 @@ from data_ingestion import trade_api
 from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
 from shared import trade_item_enums
 from xgboost_model import DataIngester
+from xgboost_model.build_model import build_xgboost
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
