@@ -51,8 +51,7 @@ class ProgramManager:
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             self.files_manager.file_data[FileKey.PRICE_PREDICT] = {
-                col: []
-                for col in self.files_manager.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING].keys()
+                col: [] for col in self.files_manager.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING].keys()
             }
             listings = []
             for api_item_response in api_item_responses:
