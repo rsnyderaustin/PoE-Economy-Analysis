@@ -23,9 +23,9 @@ class ProgramManager:
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
         self.injector = PoecdDataInjecter()
-        self.ai_data_manager = models.DataManager()
+        self.ai_data_manager = models.PricePredictManager()
 
-    def load_training_data(self):
+    def fetch_training_data(self):
         training_queries = query.QueryPresets().training_fills
 
         for i, api_item_responses in enumerate(self.trade_api_handler.process_queries(training_queries)):
@@ -39,8 +39,8 @@ class ProgramManager:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
                     self.files_manager.cache_mod(item_mod=mod)
 
-            self.ai_data_manager.save_price_predict_data(listings,
-                                                         which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
+            self.ai_data_manager.save_listings(listings,
+                                               which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
 
             if i % 5 == 0:
                 self.files_manager.save_data()
@@ -53,13 +53,11 @@ class ProgramManager:
             self.files_manager.file_data[FileKey.PRICE_PREDICT] = {
                 col: [] for col in self.files_manager.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING].keys()
             }
-            listings = []
-            for api_item_response in api_item_responses:
-                listing = data_ingestion.create_listing(api_item_response)
-                listings.append(listing)
 
-            self.ai_data_manager.save_price_predict_data(listings,
-                                                         which_file=FileKey.PRICE_PREDICT)
+            listings = [data_ingestion.create_listing(api_item_response) for api_item_response in api_item_responses]
+
+            self.ai_data_manager.save_listings(listings,
+                                               which_file=FileKey.PRICE_PREDICT)
             df = self.ai_data_manager.prepare_price_predict_data_for_model(which_file=FileKey.PRICE_PREDICT)
             true_prices = list(df['exalts'])
             df.drop(columns=['exalts'], inplace=True)

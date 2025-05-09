@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 
 from models import utils
 from file_management import FilesManager, FileKey
-from . import data_management
+from . import price_predict_management
 
 
 def lowest_price_focused_error(y_true, y_pred):
@@ -115,6 +115,22 @@ def _plot_actual_vs_predicted(test_predictions, test_targets):
     plt.show()
 
 
+def _print_outliers(test_target_df: pd.DataFrame,
+                    test_features_df: pd.DataFrame,
+                    test_predictions):
+    training_df = pd.concat([test_target_df, test_features_df], axis=1)
+    training_df['Predicted Price'] = test_predictions
+
+    # Add a column for the absolute error
+    training_df['Absolute Error'] = (training_df['Predicted Price'] - training_df['exalts']).abs()
+
+    under_priced_df = training_df[training_df['exalts'] - training_df['Predicted Price'] < 0]
+
+    # Sort the dataframe by the absolute error in descending order
+    outliers_df = under_priced_df.sort_values(by='Absolute Error', ascending=False).head(3)
+    log_outliers(outliers_df)
+
+
 def build_price_predict_model(df: pd.DataFrame,
                               overprediction_weight: float = 2.0,
                               underprediction_weight: float = 0.1,
@@ -174,24 +190,15 @@ def build_price_predict_model(df: pd.DataFrame,
 
     logging.info(f"Weighted Mean Squared Error: {mse}")
 
-    return model
-
-    """
-    training_df = pd.concat([test_target, test_feat], axis=1)
-    training_df['Predicted Price'] = test_predictions
-
-    # Add a column for the absolute error
-    training_df['Absolute Error'] = (training_df['Predicted Price'] - training_df['exalts']).abs()
-
-    under_priced_df = training_df[training_df['exalts'] - training_df['Predicted Price'] < 0]
-
-    # Sort the dataframe by the absolute error in descending order
-    outliers_df = under_priced_df.sort_values(by='Absolute Error', ascending=False).head(3)
-    log_outliers(outliers_df)
+    """_print_outliers(test_target_df=test_target,
+                    test_features_df=test_feat,
+                    test_predictions=test_predictions)
 
     # Get feature importance
     _plot_feature_importance(model=model)
 
     _plot_actual_vs_predicted(test_predictions=test_predictions,
                               test_targets=test_target)"""
+
+    return model
 

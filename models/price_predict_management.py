@@ -50,7 +50,7 @@ def _flatten_listing_properties(listing: ModifiableListing) -> dict:
     return flattened_properties
             
 
-class DataManager:
+class PricePredictManager:
 
     def __init__(self):
         self.files_manager = FilesManager()
@@ -162,7 +162,7 @@ class DataManager:
 
         return df
 
-    def save_price_predict_data(self, listings: list[ModifiableListing], which_file: FileKey):
+    def save_listings(self, listings: list[ModifiableListing], which_file: FileKey):
         data = self.files_manager.file_data[which_file]
         for listing in listings:
             flattened_listing = self._format_listing_for_price_prediction(listing)

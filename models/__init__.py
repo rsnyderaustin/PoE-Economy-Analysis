@@ -1,3 +1,3 @@
-from .data_management import DataManager
+from .price_predict_management import PricePredictManager
 from .build_model import build_price_predict_model
 
