@@ -58,10 +58,10 @@ def determine_minutes_since(relevant_date: str | datetime, later_date: str | dat
     if isinstance(relevant_date, str):
         relevant_date = isoparse(relevant_date)
 
-    if isinstance(later_date, str):
-        later_date = isoparse(later_date)
-    else:
+    if not later_date:
         later_date = datetime.now(timezone.utc)
+    elif isinstance(later_date, str):
+        later_date = isoparse(later_date)
 
     minutes_diff = (later_date - relevant_date).total_seconds() / 60
     return round(minutes_diff, 2)

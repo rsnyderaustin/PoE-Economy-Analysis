@@ -59,8 +59,8 @@ class PoecdApiManager:
         }
 
         # Output
-        bases_endpoint = '/external_apis/craft_of_exile_api/json_data/poecd_bases.json'
-        mods_endpoint='/external_apis/craft_of_exile_api/json_data/poecd_stats.json'
+        bases_endpoint = '/misc/craft_of_exile_api/json_data/poecd_bases.json'
+        mods_endpoint='/misc/craft_of_exile_api/json_data/poecd_stats.json'
 
         self.bases_json_path = (
             PathProcessor(

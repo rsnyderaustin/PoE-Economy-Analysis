@@ -77,8 +77,8 @@ class OfficialApiManager:
         }
 
         # Output
-        stats_endpoint = 'external_apis/official_api/json_data/official_stats.json'
-        static_endpoint = 'external_apis/official_api/json_data/official_static.json'
+        stats_endpoint = 'misc/official_api/json_data/official_stats.json'
+        static_endpoint = 'misc/official_api/json_data/official_static.json'
 
         self.stats_output_path = (
             PathProcessor(

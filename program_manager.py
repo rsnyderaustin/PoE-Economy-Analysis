@@ -35,7 +35,7 @@ class ProgramManager:
         self.injector = PoecdDataInjecter()
         self.ai_data_prep = DataIngester()
 
-    def execute(self):
+    def load_training_data(self):
         # item_categories = [*trade_item_enums.socketable_items, *trade_item_enums.martial_weapons]
         item_categories = trade_item_enums.martial_weapons
         currencies = [
@@ -109,4 +109,8 @@ class ProgramManager:
             logging.info(f"Saved {len(listings)} listings into AI model training data.")
 
             self.files_manager.save_data()
+
+    @staticmethod
+    def build_price_predict_model():
+        build_xgboost()
 

@@ -6,7 +6,7 @@ from shared.enums import Rarity
 from crafting import CraftingOutcome
 from crafting.crafting_engine import CraftingEngine
 from data_synthesizing import Modifiable
-from external_apis import ItemCategory
+from misc import ItemCategory
 
 
 class CurrencyEngine(ABC):

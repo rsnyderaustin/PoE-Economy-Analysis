@@ -7,7 +7,6 @@ from file_management import FilesManager, FileKeys
 from program_manager import ProgramManager
 from shared import PathProcessor
 
-# build_xgboost()
-
 prog_manager = ProgramManager()
-prog_manager.execute()
+# build_xgboost()
+prog_manager.build_price_predict_model()
