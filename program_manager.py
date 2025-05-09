@@ -25,7 +25,7 @@ class ProgramManager:
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
         self.injector = PoecdDataInjecter()
-        self.ai_data_prep = DataIngester()
+        self.ai_data_prep = DataPrep()
 
     def load_training_data(self):
         training_queries = query.QueryPresets().training_fills

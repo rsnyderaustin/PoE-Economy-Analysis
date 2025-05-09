@@ -6,26 +6,30 @@ from instances_and_definitions import ModifiableListing
 from . import utils
 
 
-def _apply_adjust_to_max_quality(row):
-    current_quality = row['Quality'] if row['Quality'] and not pd.isna(row['Quality']) else 0
-    current_damage = row['Physical Damage'] or 0
+def _calculate_max_quality_pdps(listing_data: dict):
+    quality = listing_data.get('Quality', 0)
+    damage = listing_data.get('Physical Damage', 0)
+    attacks_per_second = listing_data.get('Attacks per Second', 0)
 
-    # Current and max multipliers
-    current_multiplier = 1 + (current_quality / 100)
+    current_multiplier = 1 + (quality / 100)
     max_multiplier = 1.20
 
     # Calculate the base damage and then the 20% quality damage
-    base_damage = current_damage / current_multiplier
+    base_damage = damage / current_multiplier
     max_quality_damage = base_damage * max_multiplier
 
-    max_quality_pdps = max_quality_damage * row['Attacks per Second']
+    max_quality_pdps = max_quality_damage * attacks_per_second
     return max_quality_pdps
 
 
-def create_max_quality_pdps_column(df: pd.DataFrame):
-    df['maxq_pdps'] = df.apply(_apply_adjust_to_max_quality, axis=1)
-    return df
+def _calculate_elemental_dps(listing_data: dict):
+    cold_damage = listing_data.get('Cold Damage', 0)
+    fire_damage = listing_data.get('Fire Damage', 0)
+    lightning_damage = listing_data.get('Lightning Damage', 0)
+    attacks_per_second = listing_data.get('Attacks per Second', 0)
 
+    edps = (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+    return edps
 
 def _flatten_listing_properties(listing: ModifiableListing) -> dict:
     flattened_properties = dict()
@@ -54,22 +58,18 @@ class DataPrep:
 
         self.num_rows = max(len(v_list) for v_list in self.training_data.values()) if self.training_data else 0
 
-
     def format_listing_for_price_prediction(self, listing: ModifiableListing):
         flattened_listing = self._flatten_listing(listing)
+        flattened_listing['max_quality_pdps'] = _calculate_max_quality_pdps(flattened_listing)
+        flattened_listing['edps'] = _calculate_elemental_dps(flattened_listing)
 
-        df = _insert_max_quality_pdps_col(df)
-        df['atype'] = df['atype'].astype("category")
-        df['rarity'] = df['rarity'].astype("category")
-        df['corrupted'] = df['corrupted'].astype("category")
-        df['edps'] = (df['Cold Damage'] + df['Fire Damage'] + df['Lightning Damage']) * df['Attacks per Second']
-        df = df.drop(columns=[
+        replaced_attributes = [
             'Attacks per Second',
             'Physical Damage',
             'Cold Damage',
             'Fire Damage',
             'Lightning Damage'
-        ])
+        ]
 
         local_weapon_mods = [
             'adds_#_to_#_fire_damage',
@@ -87,9 +87,16 @@ class DataPrep:
             '#% increased Attack Speed',
             'Quality'
         ]
-        df = df.drop(columns=local_weapon_mods)
-        df = df.select_dtypes(include=['int64', 'float64'])
-        df = df.drop(columns=['open_prefixes', 'open_suffixes', 'minutes_since_listed', 'minutes_since_league_start'])
+
+        select_cols = [
+            'open_prefixes',
+            'open_suffixes',
+            'minutes_since_listed',
+            'minutes_since_league_start'
+        ]
+
+        for col in [*replaced_attributes, *local_weapon_mods, *select_cols]:
+            flattened_listing.pop(col, None)
 
     def _convert_currency_to_exalt(self, currency, amount):
         if currency in self.currency_to_exalts:
