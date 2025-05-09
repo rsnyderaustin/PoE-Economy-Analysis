@@ -55,8 +55,8 @@ class Query:
 
 class QueryPresets:
 
-    @staticmethod
-    def training_fills() -> list[Query]:
+    @property
+    def training_fills(self) -> list[Query]:
         # item_categories = [*trade_item_enums.socketable_items, *trade_item_enums.martial_weapons]
         item_categories = trade_item_enums.martial_weapons
         currencies = [
