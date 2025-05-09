@@ -47,6 +47,7 @@ def find_duplicate_values(items: list):
 def sanitize_mod_text(mod_text: str):
     mod_text = re.sub(r'\d+', '#', mod_text)
     mod_text = remove_piped_brackets(mod_text)
+    mod_text = mod_text.replace(' ', '_').lower()
     return mod_text
 
 
@@ -75,3 +76,19 @@ def today_date() -> str:
     # Format as MM/DD/YYYY
     formatted_date = central_now.strftime("%m-%d-%Y")
     return formatted_date
+
+
+def determine_central_date(timestamp_str):
+    utc_time = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%SZ")
+    utc_time = utc_time.replace(tzinfo=pytz.utc)
+
+    # Define the Central Time zone
+    central_tz = pytz.timezone('US/Central')
+
+    # Convert the UTC time to Central Time
+    central_time = utc_time.astimezone(central_tz)
+
+    # Get only the date in Central Time
+    central_date = central_time.date()
+
+    return central_date

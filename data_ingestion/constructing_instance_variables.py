@@ -5,7 +5,6 @@ from shared import ATypeClassifier, shared_utils, trade_item_enums
 from . import utils
 from file_management import FilesManager
 
-
 files_manager = FilesManager()
 
 
@@ -151,8 +150,24 @@ def create_skills(item_data: dict) -> list[ItemSkill]:
     return skills
 
 
+def _clean_item_data(item_data: dict):
+    """
+    Right now this is just used to clear empty implicits from spears granting skill Spear Throw.
+    """
+    if 'extended' in item_data and item_data['extended'] and 'implicit' in item_data['extended']['mods']:
+        implicit_mod_dicts = item_data['extended']['mods']['implicit']
+
+        implicit_mod_dicts[:] = [
+            implicit_mod_dict
+            for implicit_mod_dict in implicit_mod_dicts
+            if (implicit_mod_dict['magnitudes'] or implicit_mod_dict['name'] or implicit_mod_dict['tier'])
+        ]
+
+    return item_data
+
+
 def create_listing(api_item_response: dict):
-    item_data = api_item_response['item']
+    item_data = _clean_item_data(api_item_response['item'])
     listing_data = api_item_response['listing']
     minutes_since_listed = utils.determine_minutes_since(
         relevant_date=api_item_response['listing']['indexed']

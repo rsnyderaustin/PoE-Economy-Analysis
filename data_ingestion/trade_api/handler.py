@@ -46,7 +46,9 @@ class FilterSplitter:
         num_parts = min(math.floor(n_items / 100), (filter_range[1] + 1 - filter_range[0]))
 
         ranges = cls._split_range_into_parts(filter_range, num_parts=num_parts)
-        logging.info(f"\tSplit {meta_filter.filter_type} into {ranges}")
+        logging.info(f"\tFor query response with {n_items} responses:"
+                     f"\t\tOriginal {meta_filter.filter_type} value: {filter_range}"
+                     f"\t\tSplit {meta_filter.filter_type} into {ranges}")
 
         filters = []
         for value_range in ranges:
@@ -75,78 +77,70 @@ class TradeApiHandler:
 
     def __init__(self):
         self.fetcher = TradeItemsFetcher()
-        self.listing_fetch_dates = FilesManager().file_data[FileKey.LISTING_FETCHES]
+        self.fetch_data = FilesManager().file_data[FileKey.LISTING_FETCHES]
+        self.files_manager = FilesManager()
 
         self.split_threshold = 175
 
-    def _cache_listing_pulls(self, listing_ids: set[int], date_fetched: str):
-        if date_fetched not in self.listing_fetch_dates:
-            self.listing_fetch_dates[date_fetched] = set()
-
-        self.listing_fetch_dates[date_fetched].update(listing_ids)
-
-    def _determine_valid_item_responses(self, item_responses):
-        date_fetched = shared_utils.today_date()
-        valid_responses = []
-        for ir in item_responses:
-            listing_id = ir['id']
-
-            if date_fetched not in self.listing_fetch_dates:
-                self.listing_fetch_dates[date_fetched] = set()
-
-            if listing_id in self.listing_fetch_dates[date_fetched]:
-                continue
-
-            self.listing_fetch_dates[date_fetched].add(listing_id)
-            valid_responses.append(ir)
-
-        logging.info(f"Found {len(valid_responses)} valid item responses to return.")
-        return valid_responses
-
     def process_queries(self, queries: list[Query]):
-        for query in queries:
+        for i, query in enumerate(queries):
+            logging.info(f"Processing query {i} of {len(queries)} queries.")
             yield from self.process_query(query)
 
-    def _process_response(self, response, date_fetched: str):
-        valid_responses = self._determine_valid_item_responses(response['result'])
-        if not valid_responses:
-            return []
+    def _process_raw_response(self, response: dict):
+        fetch_date = shared_utils.today_date()
 
-        num_items = response['total']
-        self._cache_listing_pulls(listing_ids=set(r['id'] for r in valid_responses),
-                                  date_fetched=date_fetched)
-        logging.info(f"Returning {len(valid_responses)} valid of {num_items} total API item responses.")
+        valid_responses = [api_response for api_response in response['responses']
+                           if api_response['id'] not in self.fetch_data[fetch_date]]
+        logging.info(f"{len(valid_responses)} valid responses found out of {len(response['responses'])} total responses.")
+
+        # The valid responses are the only ones with un-cached listing IDs, so we just cache those
+        listing_ids = set(response['id'] for response in valid_responses)
+        self.files_manager.cache_api_fetch_date(listing_ids=listing_ids,
+                                                fetch_date=fetch_date)
         return valid_responses
 
     def process_query(self, query: Query):
+        fetch_date = shared_utils.today_date()
+        if fetch_date not in self.fetch_data:
+            self.fetch_data[fetch_date] = set()
 
         query_dict = query_construction.create_trade_query(query=query)
-        response = self.fetcher.fetch_items_response(query_dict)
-        valid_responses = self._process_response(response,
-                                                 date_fetched=shared_utils.today_date())
-        yield valid_responses
 
-        num_items = response['total']
-        if num_items < self.split_threshold:
+        raw_response = self.fetcher.fetch_items_response(query_dict)
+        total_raw_responses = raw_response['total']
+        valid_responses = self._process_raw_response(response=raw_response)
+        if not valid_responses:
             return
 
-        valid_response_goal_per_query = len(valid_responses) * 0.25
+        yield valid_responses
+
+        # If we didn't fetch a ton of raw responses then just end the query
+        if total_raw_responses < self.split_threshold:
+            logging.info(f"Only fetched {len(valid_responses)} from initial query. Will not split. Returning.")
+            return
+
+        valid_response_goal_per_query = len(valid_responses) * 0.3
         for i in list(range(len(query.meta_filters))):
             valid_response_counts = deque(maxlen=3)
             query_copy = deepcopy(query)
-            filter_splits = FilterSplitter.split_filter(n_items=num_items, meta_filter=query.meta_filters[i])
+            filter_splits = FilterSplitter.split_filter(n_items=total_raw_responses, meta_filter=query.meta_filters[i])
             if not filter_splits:
                 continue
 
             for new_filter in filter_splits:
                 query_copy.meta_filters[i] = new_filter
                 query_dict = query_construction.create_trade_query(query=query_copy)
-                response = self.fetcher.fetch_items_response(query_dict)
-                valid_responses = self._process_response(response=response,
-                                                         date_fetched=shared_utils.today_date())
+                raw_response = self.fetcher.fetch_items_response(query_dict)
+                valid_responses = self._process_raw_response(response=raw_response)
+                if not valid_responses:
+                    continue
+
                 yield valid_responses
 
-                valid_response_counts.append(len(valid_responses))
                 # If we're not getting many valid responses from the split then just continue to the next potential query split
+                valid_response_counts.append(len(valid_responses))
                 if sum(valid_response_counts) / len(valid_response_counts) < valid_response_goal_per_query:
+                    logging.info("Current split meta filter not returning enough results. "
+                                 "Continuing to split next possible meta filter.")
                     continue

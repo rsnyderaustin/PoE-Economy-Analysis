@@ -6014,6 +6014,18 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "54": {
+                    "ilvl": 54,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_55876295": [
+                            [
+                                7.0,
+                                7.9
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -6151,6 +6163,30 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "77": {
+                    "ilvl": 77,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                69.0,
+                                84.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                7.0,
+                                9.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -6200,6 +6236,30 @@
                             [
                                 8.0,
                                 8.9
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "21": {
+                    "ilvl": 21,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_669069897": [
+                            [
+                                4.0,
+                                4.9
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "38": {
+                    "ilvl": 38,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_669069897": [
+                            [
+                                5.0,
+                                5.9
                             ]
                         ]
                     },
@@ -6325,6 +6385,18 @@
                             [
                                 26.0,
                                 28.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_210067635": [
+                            [
+                                8.0,
+                                10.0
                             ]
                         ]
                     },
@@ -6504,6 +6576,54 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "20": {
+                    "ilvl": 20,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                61.0,
+                                84.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "33": {
+                    "ilvl": 33,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                124.0,
+                                167.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "12": {
+                    "ilvl": 12,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                33.0,
+                                60.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "26": {
+                    "ilvl": 26,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                85.0,
+                                123.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -6561,6 +6681,18 @@
                             [
                                 17.0,
                                 19.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "18": {
+                    "ilvl": 18,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_748522257": [
+                            [
+                                14.0,
+                                16.0
                             ]
                         ]
                     },
@@ -6995,6 +7127,30 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "81": {
+                    "ilvl": 81,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_387439868": [
+                            [
+                                87.0,
+                                100.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_387439868": [
+                            [
+                                53.0,
+                                61.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -7042,6 +7198,30 @@
                             [
                                 36.0,
                                 45.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "12": {
+                    "ilvl": 12,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1368271171": [
+                            [
+                                4.0,
+                                5.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "67": {
+                    "ilvl": 67,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1368271171": [
+                            [
+                                28.0,
+                                35.0
                             ]
                         ]
                     },
@@ -7259,6 +7439,18 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3261801346": [
+                            [
+                                5.0,
+                                8.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -7316,6 +7508,18 @@
                             [
                                 -20.0,
                                 -20.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "24": {
+                    "ilvl": 24,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3639275092": [
+                            [
+                                -15.0,
+                                -15.0
                             ]
                         ]
                     },
@@ -7402,6 +7606,70 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "52": {
+                    "ilvl": 52,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                21.0,
+                                32.0
+                            ],
+                            [
+                                33.0,
+                                49.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "75": {
+                    "ilvl": 75,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                37.0,
+                                55.0
+                            ],
+                            [
+                                56.0,
+                                84.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "34": {
+                    "ilvl": 34,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                12.0,
+                                18.0
+                            ],
+                            [
+                                19.0,
+                                28.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                1.0,
+                                2.0
+                            ],
+                            [
+                                3.0,
+                                4.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -7463,6 +7731,18 @@
                             [
                                 2.0,
                                 2.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_821021828": [
+                            [
+                                4.0,
+                                4.0
                             ]
                         ]
                     },
@@ -7758,6 +8038,22 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "42": {
+                    "ilvl": 42,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                20.0,
+                                30.0
+                            ],
+                            [
+                                31.0,
+                                46.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -7896,6 +8192,18 @@
                         ]
                     },
                     "weighting": "1"
+                },
+                "44": {
+                    "ilvl": 44,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_2694482655": [
+                            [
+                                25.0,
+                                29.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
                 }
             }
         },
@@ -7931,6 +8239,18 @@
                             [
                                 25.0,
                                 27.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "33": {
+                    "ilvl": 33,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_4080418644": [
+                            [
+                                17.0,
+                                20.0
                             ]
                         ]
                     },
@@ -8054,6 +8374,30 @@
                             [
                                 5.0,
                                 5.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "18": {
+                    "ilvl": 18,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_9187492": [
+                            [
+                                2.0,
+                                2.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1"
+                },
+                "2": {
+                    "ilvl": 2,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_9187492": [
+                            [
+                                1.0,
+                                1.0
                             ]
                         ]
                     },
@@ -10812,6 +11156,54 @@
                         ]
                     },
                     "weighting": "875"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                6.0,
+                                9.0
+                            ],
+                            [
+                                10.0,
+                                15.0
+                            ]
+                        ]
+                    },
+                    "weighting": "875"
+                },
+                "81": {
+                    "ilvl": 81,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                74.0,
+                                112.0
+                            ],
+                            [
+                                113.0,
+                                169.0
+                            ]
+                        ]
+                    },
+                    "weighting": "275"
+                },
+                "18": {
+                    "ilvl": 18,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                10.0,
+                                16.0
+                            ],
+                            [
+                                17.0,
+                                25.0
+                            ]
+                        ]
+                    },
+                    "weighting": "875"
                 }
             }
         },
@@ -10975,6 +11367,18 @@
                         ]
                     },
                     "weighting": "625"
+                },
+                "37": {
+                    "ilvl": 37,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_210067635": [
+                            [
+                                17.0,
+                                19.0
+                            ]
+                        ]
+                    },
+                    "weighting": "825"
                 }
             }
         },
@@ -11170,6 +11574,22 @@
                             [
                                 10.0,
                                 15.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1000"
+                },
+                "2": {
+                    "ilvl": 2,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1940865751": [
+                            [
+                                2.0,
+                                3.0
+                            ],
+                            [
+                                5.0,
+                                7.0
                             ]
                         ]
                     },
@@ -11381,6 +11801,22 @@
                         ]
                     },
                     "weighting": "275"
+                },
+                "63": {
+                    "ilvl": 63,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                40.0,
+                                61.0
+                            ],
+                            [
+                                62.0,
+                                92.0
+                            ]
+                        ]
+                    },
+                    "weighting": "650"
                 }
             }
         },
@@ -11641,6 +12077,42 @@
                         ]
                     },
                     "weighting": "1125"
+                },
+                "23": {
+                    "ilvl": 23,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                25.0,
+                                34.0
+                            ]
+                        ],
+                        "fractured.stat_691932474": [
+                            [
+                                47.0,
+                                72.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1175"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                15.0,
+                                19.0
+                            ]
+                        ],
+                        "fractured.stat_691932474": [
+                            [
+                                16.0,
+                                20.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1175"
                 }
             }
         },
@@ -11932,6 +12404,30 @@
                         ]
                     },
                     "weighting": "825"
+                },
+                "41": {
+                    "ilvl": 41,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                168.0,
+                                236.0
+                            ]
+                        ]
+                    },
+                    "weighting": "825"
+                },
+                "63": {
+                    "ilvl": 63,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                347.0,
+                                450.0
+                            ]
+                        ]
+                    },
+                    "weighting": "375"
                 }
             }
         },
@@ -11977,6 +12473,30 @@
                             [
                                 51.0,
                                 60.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_791928121": [
+                            [
+                                41.0,
+                                50.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
+                },
+                "58": {
+                    "ilvl": 58,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_791928121": [
+                            [
+                                61.0,
+                                70.0
                             ]
                         ]
                     },
@@ -12030,6 +12550,18 @@
                             [
                                 72.0,
                                 85.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "15": {
+                    "ilvl": 15,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_387439868": [
+                            [
+                                48.0,
+                                71.0
                             ]
                         ]
                     },
@@ -12211,6 +12743,30 @@
                         ]
                     },
                     "weighting": "800"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                7.0,
+                                9.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
+                },
+                "77": {
+                    "ilvl": 77,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                69.0,
+                                84.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
                 }
             }
         },
@@ -12325,6 +12881,22 @@
                         ]
                     },
                     "weighting": "875"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3336890334": [
+                            [
+                                1.0,
+                                1.0
+                            ],
+                            [
+                                7.0,
+                                10.0
+                            ]
+                        ]
+                    },
+                    "weighting": "875"
                 }
             }
         },
@@ -12384,6 +12956,18 @@
                             [
                                 31.0,
                                 33.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "33": {
+                    "ilvl": 33,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_4080418644": [
+                            [
+                                17.0,
+                                20.0
                             ]
                         ]
                     },
@@ -12449,6 +13033,18 @@
                         ]
                     },
                     "weighting": "850"
+                },
+                "58": {
+                    "ilvl": 58,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_748522257": [
+                            [
+                                23.0,
+                                26.0
+                            ]
+                        ]
+                    },
+                    "weighting": "850"
                 }
             }
         },
@@ -12502,6 +13098,30 @@
                         ]
                     },
                     "weighting": "750"
+                },
+                "8": {
+                    "ilvl": 8,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_2694482655": [
+                            [
+                                10.0,
+                                14.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "59": {
+                    "ilvl": 59,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_2694482655": [
+                            [
+                                30.0,
+                                34.0
+                            ]
+                        ]
+                    },
+                    "weighting": "425"
                 }
             }
         },
@@ -12541,6 +13161,30 @@
                         ]
                     },
                     "weighting": "800"
+                },
+                "67": {
+                    "ilvl": 67,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1368271171": [
+                            [
+                                28.0,
+                                35.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
+                },
+                "78": {
+                    "ilvl": 78,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1368271171": [
+                            [
+                                36.0,
+                                45.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
                 }
             }
         },
@@ -12572,6 +13216,24 @@
                             [
                                 5.0,
                                 5.0
+                            ]
+                        ]
+                    },
+                    "weighting": "600"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                41.0,
+                                60.0
+                            ]
+                        ],
+                        "fractured.stat_1263695895": [
+                            [
+                                15.0,
+                                15.0
                             ]
                         ]
                     },
@@ -15364,6 +16026,22 @@
                         ]
                     },
                     "weighting": "925"
+                },
+                "51": {
+                    "ilvl": 51,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3336890334": [
+                            [
+                                1.0,
+                                7.0
+                            ],
+                            [
+                                88.0,
+                                127.0
+                            ]
+                        ]
+                    },
+                    "weighting": "925"
                 }
             }
         },
@@ -15734,6 +16412,18 @@
                         ]
                     },
                     "weighting": "725"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_210067635": [
+                            [
+                                14.0,
+                                16.0
+                            ]
+                        ]
+                    },
+                    "weighting": "725"
                 }
             }
         },
@@ -15845,6 +16535,30 @@
                             [
                                 31.0,
                                 33.0
+                            ]
+                        ]
+                    },
+                    "weighting": "700"
+                },
+                "33": {
+                    "ilvl": 33,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3261801346": [
+                            [
+                                17.0,
+                                20.0
+                            ]
+                        ]
+                    },
+                    "weighting": "700"
+                },
+                "55": {
+                    "ilvl": 55,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3261801346": [
+                            [
+                                25.0,
+                                27.0
                             ]
                         ]
                     },
@@ -16218,6 +16932,18 @@
                         ]
                     },
                     "weighting": "800"
+                },
+                "45": {
+                    "ilvl": 45,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_387439868": [
+                            [
+                                86.0,
+                                99.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
                 }
             }
         },
@@ -16353,6 +17079,30 @@
                             [
                                 19.0,
                                 28.0
+                            ]
+                        ]
+                    },
+                    "weighting": "700"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                7.0,
+                                9.0
+                            ]
+                        ]
+                    },
+                    "weighting": "700"
+                },
+                "66": {
+                    "ilvl": 66,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                54.0,
+                                68.0
                             ]
                         ]
                     },
@@ -16550,6 +17300,24 @@
                         ]
                     },
                     "weighting": "250"
+                },
+                "23": {
+                    "ilvl": 23,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                25.0,
+                                34.0
+                            ]
+                        ],
+                        "fractured.stat_691932474": [
+                            [
+                                47.0,
+                                72.0
+                            ]
+                        ]
+                    },
+                    "weighting": "975"
                 }
             }
         },
@@ -16599,6 +17367,30 @@
                         ]
                     },
                     "weighting": "750"
+                },
+                "5": {
+                    "ilvl": 5,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_748522257": [
+                            [
+                                11.0,
+                                13.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "58": {
+                    "ilvl": 58,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_748522257": [
+                            [
+                                23.0,
+                                26.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
                 }
             }
         },
@@ -16644,6 +17436,18 @@
                             [
                                 41.0,
                                 50.0
+                            ]
+                        ]
+                    },
+                    "weighting": "700"
+                },
+                "74": {
+                    "ilvl": 74,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_791928121": [
+                            [
+                                71.0,
+                                80.0
                             ]
                         ]
                     },
@@ -16777,6 +17581,30 @@
                         ]
                     },
                     "weighting": "600"
+                },
+                "8": {
+                    "ilvl": 8,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_821021828": [
+                            [
+                                2.0,
+                                2.0
+                            ]
+                        ]
+                    },
+                    "weighting": "600"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_821021828": [
+                            [
+                                4.0,
+                                4.0
+                            ]
+                        ]
+                    },
+                    "weighting": "600"
                 }
             }
         },
@@ -16881,6 +17709,18 @@
                         ]
                     },
                     "weighting": "600"
+                },
+                "59": {
+                    "ilvl": 59,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_2694482655": [
+                            [
+                                30.0,
+                                34.0
+                            ]
+                        ]
+                    },
+                    "weighting": "325"
                 }
             }
         },
@@ -19469,6 +20309,54 @@
                         ]
                     },
                     "weighting": "950"
+                },
+                "29": {
+                    "ilvl": 29,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1940865751": [
+                            [
+                                8.0,
+                                12.0
+                            ],
+                            [
+                                14.0,
+                                21.0
+                            ]
+                        ]
+                    },
+                    "weighting": "950"
+                },
+                "13": {
+                    "ilvl": 13,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1940865751": [
+                            [
+                                4.0,
+                                6.0
+                            ],
+                            [
+                                7.0,
+                                11.0
+                            ]
+                        ]
+                    },
+                    "weighting": "950"
+                },
+                "46": {
+                    "ilvl": 46,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1940865751": [
+                            [
+                                13.0,
+                                20.0
+                            ],
+                            [
+                                23.0,
+                                35.0
+                            ]
+                        ]
+                    },
+                    "weighting": "875"
                 }
             }
         },
@@ -19722,6 +20610,24 @@
                         ]
                     },
                     "weighting": "1050"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                15.0,
+                                19.0
+                            ]
+                        ],
+                        "fractured.stat_691932474": [
+                            [
+                                16.0,
+                                20.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1050"
                 }
             }
         },
@@ -19801,6 +20707,30 @@
                         ]
                     },
                     "weighting": "750"
+                },
+                "20": {
+                    "ilvl": 20,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_821021828": [
+                            [
+                                3.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "8": {
+                    "ilvl": 8,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_821021828": [
+                            [
+                                2.0,
+                                2.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
                 }
             }
         },
@@ -19872,6 +20802,30 @@
                             [
                                 61.0,
                                 84.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "41": {
+                    "ilvl": 41,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                168.0,
+                                236.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "33": {
+                    "ilvl": 33,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                124.0,
+                                167.0
                             ]
                         ]
                     },
@@ -20112,6 +21066,22 @@
                         ]
                     },
                     "weighting": "900"
+                },
+                "31": {
+                    "ilvl": 31,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3336890334": [
+                            [
+                                1.0,
+                                3.0
+                            ],
+                            [
+                                33.0,
+                                47.0
+                            ]
+                        ]
+                    },
+                    "weighting": "900"
                 }
             }
         },
@@ -20194,6 +21164,102 @@
                         ]
                     },
                     "weighting": "350"
+                },
+                "19": {
+                    "ilvl": 19,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                6.0,
+                                9.0
+                            ],
+                            [
+                                10.0,
+                                15.0
+                            ]
+                        ]
+                    },
+                    "weighting": "900"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                1.0,
+                                2.0
+                            ],
+                            [
+                                3.0,
+                                4.0
+                            ]
+                        ]
+                    },
+                    "weighting": "900"
+                },
+                "81": {
+                    "ilvl": 81,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                42.0,
+                                63.0
+                            ],
+                            [
+                                64.0,
+                                95.0
+                            ]
+                        ]
+                    },
+                    "weighting": "175"
+                },
+                "63": {
+                    "ilvl": 63,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                28.0,
+                                43.0
+                            ],
+                            [
+                                44.0,
+                                65.0
+                            ]
+                        ]
+                    },
+                    "weighting": "550"
+                },
+                "43": {
+                    "ilvl": 43,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                16.0,
+                                25.0
+                            ],
+                            [
+                                26.0,
+                                38.0
+                            ]
+                        ]
+                    },
+                    "weighting": "900"
+                },
+                "27": {
+                    "ilvl": 27,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1037193709": [
+                            [
+                                9.0,
+                                14.0
+                            ],
+                            [
+                                15.0,
+                                22.0
+                            ]
+                        ]
+                    },
+                    "weighting": "900"
                 }
             }
         },
@@ -20342,6 +21408,30 @@
                             [
                                 21.0,
                                 27.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
+                },
+                "12": {
+                    "ilvl": 12,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1368271171": [
+                            [
+                                4.0,
+                                5.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
+                },
+                "45": {
+                    "ilvl": 45,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1368271171": [
+                            [
+                                15.0,
+                                20.0
                             ]
                         ]
                     },
@@ -20553,6 +21643,30 @@
                         ]
                     },
                     "weighting": "925"
+                },
+                "44": {
+                    "ilvl": 44,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_2694482655": [
+                            [
+                                25.0,
+                                29.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "59": {
+                    "ilvl": 59,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_2694482655": [
+                            [
+                                30.0,
+                                34.0
+                            ]
+                        ]
+                    },
+                    "weighting": "225"
                 }
             }
         },
@@ -20651,6 +21765,38 @@
                         ]
                     },
                     "weighting": "675"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                4.0,
+                                6.0
+                            ],
+                            [
+                                7.0,
+                                10.0
+                            ]
+                        ]
+                    },
+                    "weighting": "900"
+                },
+                "42": {
+                    "ilvl": 42,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                20.0,
+                                30.0
+                            ],
+                            [
+                                31.0,
+                                46.0
+                            ]
+                        ]
+                    },
+                    "weighting": "900"
                 }
             }
         },
@@ -20708,6 +21854,18 @@
                             [
                                 3.0,
                                 3.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1000"
+                },
+                "18": {
+                    "ilvl": 18,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1202301673": [
+                            [
+                                2.0,
+                                2.0
                             ]
                         ]
                     },
@@ -20787,6 +21945,30 @@
                         ]
                     },
                     "weighting": "800"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                7.0,
+                                9.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
+                },
+                "22": {
+                    "ilvl": 22,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3695891184": [
+                            [
+                                10.0,
+                                18.0
+                            ]
+                        ]
+                    },
+                    "weighting": "800"
                 }
             }
         },
@@ -20848,6 +22030,18 @@
                             [
                                 53.0,
                                 61.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "4": {
+                    "ilvl": 4,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_387439868": [
+                            [
+                                19.0,
+                                34.0
                             ]
                         ]
                     },
@@ -21043,6 +22237,42 @@
                         ]
                     },
                     "weighting": "650"
+                },
+                "8": {
+                    "ilvl": 8,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                10.0,
+                                20.0
+                            ]
+                        ],
+                        "fractured.stat_1263695895": [
+                            [
+                                5.0,
+                                5.0
+                            ]
+                        ]
+                    },
+                    "weighting": "650"
+                },
+                "15": {
+                    "ilvl": 15,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                21.0,
+                                40.0
+                            ]
+                        ],
+                        "fractured.stat_1263695895": [
+                            [
+                                10.0,
+                                10.0
+                            ]
+                        ]
+                    },
+                    "weighting": "650"
                 }
             }
         },
@@ -21067,6 +22297,18 @@
                             [
                                 11.0,
                                 13.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_210067635": [
+                            [
+                                8.0,
+                                10.0
                             ]
                         ]
                     },
@@ -23539,6 +24781,18 @@
                         ]
                     },
                     "weighting": "1000"
+                },
+                "36": {
+                    "ilvl": 36,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1202301673": [
+                            [
+                                4.0,
+                                4.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1000"
                 }
             }
         },
@@ -23745,6 +24999,86 @@
                         ]
                     },
                     "weighting": "200"
+                },
+                "1": {
+                    "ilvl": 1,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3336890334": [
+                            [
+                                1.0,
+                                1.0
+                            ],
+                            [
+                                7.0,
+                                10.0
+                            ]
+                        ]
+                    },
+                    "weighting": "775"
+                },
+                "13": {
+                    "ilvl": 13,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3336890334": [
+                            [
+                                1.0,
+                                1.0
+                            ],
+                            [
+                                18.0,
+                                25.0
+                            ]
+                        ]
+                    },
+                    "weighting": "775"
+                },
+                "31": {
+                    "ilvl": 31,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3336890334": [
+                            [
+                                1.0,
+                                4.0
+                            ],
+                            [
+                                46.0,
+                                66.0
+                            ]
+                        ]
+                    },
+                    "weighting": "775"
+                },
+                "63": {
+                    "ilvl": 63,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3336890334": [
+                            [
+                                1.0,
+                                10.0
+                            ],
+                            [
+                                122.0,
+                                175.0
+                            ]
+                        ]
+                    },
+                    "weighting": "575"
+                },
+                "34": {
+                    "ilvl": 34,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3336890334": [
+                            [
+                                1.0,
+                                4.0
+                            ],
+                            [
+                                52.0,
+                                74.0
+                            ]
+                        ]
+                    },
+                    "weighting": "775"
                 }
             }
         },
@@ -23900,6 +25234,18 @@
                         ]
                     },
                     "weighting": "550"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_210067635": [
+                            [
+                                8.0,
+                                10.0
+                            ]
+                        ]
+                    },
+                    "weighting": "550"
                 }
             }
         },
@@ -24038,6 +25384,42 @@
                         ]
                     },
                     "weighting": "400"
+                },
+                "23": {
+                    "ilvl": 23,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                25.0,
+                                34.0
+                            ]
+                        ],
+                        "fractured.stat_691932474": [
+                            [
+                                47.0,
+                                72.0
+                            ]
+                        ]
+                    },
+                    "weighting": "950"
+                },
+                "11": {
+                    "ilvl": 11,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                20.0,
+                                24.0
+                            ]
+                        ],
+                        "fractured.stat_691932474": [
+                            [
+                                21.0,
+                                46.0
+                            ]
+                        ]
+                    },
+                    "weighting": "950"
                 }
             }
         },
@@ -24144,6 +25526,22 @@
                         ]
                     },
                     "weighting": "450"
+                },
+                "29": {
+                    "ilvl": 29,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1940865751": [
+                            [
+                                11.0,
+                                17.0
+                            ],
+                            [
+                                20.0,
+                                30.0
+                            ]
+                        ]
+                    },
+                    "weighting": "850"
                 }
             }
         },
@@ -24248,6 +25646,70 @@
                         ]
                     },
                     "weighting": "775"
+                },
+                "74": {
+                    "ilvl": 74,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                64.0,
+                                96.0
+                            ],
+                            [
+                                97.0,
+                                146.0
+                            ]
+                        ]
+                    },
+                    "weighting": "475"
+                },
+                "51": {
+                    "ilvl": 51,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                37.0,
+                                55.0
+                            ],
+                            [
+                                56.0,
+                                84.0
+                            ]
+                        ]
+                    },
+                    "weighting": "775"
+                },
+                "62": {
+                    "ilvl": 62,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                49.0,
+                                74.0
+                            ],
+                            [
+                                75.0,
+                                113.0
+                            ]
+                        ]
+                    },
+                    "weighting": "575"
+                },
+                "33": {
+                    "ilvl": 33,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_709508406": [
+                            [
+                                20.0,
+                                31.0
+                            ],
+                            [
+                                32.0,
+                                47.0
+                            ]
+                        ]
+                    },
+                    "weighting": "775"
                 }
             }
         },
@@ -24325,6 +25787,18 @@
                         ]
                     },
                     "weighting": "1050"
+                },
+                "23": {
+                    "ilvl": 23,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_1509134228": [
+                            [
+                                65.0,
+                                84.0
+                            ]
+                        ]
+                    },
+                    "weighting": "1100"
                 }
             }
         },
@@ -24374,6 +25848,30 @@
                             [
                                 86.0,
                                 99.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "4": {
+                    "ilvl": 4,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_387439868": [
+                            [
+                                34.0,
+                                47.0
+                            ]
+                        ]
+                    },
+                    "weighting": "750"
+                },
+                "30": {
+                    "ilvl": 30,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_387439868": [
+                            [
+                                72.0,
+                                85.0
                             ]
                         ]
                     },
@@ -24453,6 +25951,18 @@
                         ]
                     },
                     "weighting": "375"
+                },
+                "82": {
+                    "ilvl": 82,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_691932474": [
+                            [
+                                551.0,
+                                650.0
+                            ]
+                        ]
+                    },
+                    "weighting": "125"
                 }
             }
         },
@@ -24871,6 +26381,18 @@
                         ]
                     },
                     "weighting": "550"
+                },
+                "8": {
+                    "ilvl": 8,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_821021828": [
+                            [
+                                2.0,
+                                2.0
+                            ]
+                        ]
+                    },
+                    "weighting": "550"
                 }
             }
         },
@@ -24947,6 +26469,18 @@
                             [
                                 8.0,
                                 8.9
+                            ]
+                        ]
+                    },
+                    "weighting": "850"
+                },
+                "38": {
+                    "ilvl": 38,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_55876295": [
+                            [
+                                6.0,
+                                6.9
                             ]
                         ]
                     },
@@ -25103,6 +26637,33 @@
                             [
                                 25.0,
                                 27.0
+                            ]
+                        ]
+                    },
+                    "weighting": "700"
+                }
+            }
+        },
+        "fractured.stat_3261801346": {
+            "mod_class": "fracturedMods",
+            "sub_mod_ids": [
+                "fractured.stat_3261801346"
+            ],
+            "mod_types": [
+                "Attribute"
+            ],
+            "mod_texts": [
+                "+# to Dexterity"
+            ],
+            "affix_type": "suffix",
+            "mod_tiers": {
+                "74": {
+                    "ilvl": 74,
+                    "mod_id_to_values_ranges": {
+                        "fractured.stat_3261801346": [
+                            [
+                                31.0,
+                                33.0
                             ]
                         ]
                     },

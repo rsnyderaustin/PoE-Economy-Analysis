@@ -54,11 +54,11 @@ class TradeItemsFetcher:
         return json_data
 
     @classmethod
-    def _get_with_item_ids(cls, search_id, item_ids):
+    def _get_with_item_ids(cls, post_response, item_ids):
         chunked_list = chunk_list(items=item_ids, chunk_size=10)
 
         params = {
-            'query': search_id,
+            'query': post_response['id'],
             'realm': 'poe2'
         }
 
@@ -89,14 +89,13 @@ class TradeItemsFetcher:
     @classmethod
     def fetch_items_response(cls, query) -> dict:
         post_response = cls._post_for_search_id(query=query)
-        search_id = post_response['id']
+
         total_responses = post_response['total']
         item_ids = post_response['result']
 
-        get_response = cls._get_with_item_ids(search_id=search_id,
+        get_response = cls._get_with_item_ids(post_response=post_response,
                                               item_ids=item_ids)
         return {
-            'id': search_id,
-            'result': get_response,
+            'responses': get_response,
             'total': total_responses
         }
