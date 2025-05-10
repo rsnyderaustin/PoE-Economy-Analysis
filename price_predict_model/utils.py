@@ -40,15 +40,6 @@ def sum_sub_mod_values(listing: ModifiableListing):
     return summed_sub_mods
 
 
-def fetch_currency_to_conversion(conversions_data: dict) -> dict:
-    conversions_data['Date'] = pd.to_datetime(conversions_data['Date'])
-    most_recent_date = conversions_data['Date'].max()
-    recent_data = conversions_data[conversions_data['Date'] == most_recent_date]
-    currency_to_exalts = pd.Series(recent_data['ExaltPerCurrency'].values,
-                                   index=recent_data['Currency']).to_dict()
-    return currency_to_exalts
-
-
 def weighted_mse(y_true, y_pred, overprediction_weight, underprediction_weight):
     """
     Custom MSE function that weights overpredictions and underpredictions differently.
@@ -81,4 +72,30 @@ def weighted_mse(y_true, y_pred, overprediction_weight, underprediction_weight):
     weighted_mse_value = np.mean(weighted_squared_error)
 
     return weighted_mse_value
+
+
+def calculate_max_quality_pdps(listing_data: dict):
+    quality = listing_data.get('Quality', 0)
+    damage = listing_data.get('Physical Damage', 0)
+    attacks_per_second = listing_data.get('Attacks per Second', 0)
+
+    current_multiplier = 1 + (quality / 100)
+    max_multiplier = 1.20
+
+    # Calculate the base damage and then the 20% quality damage
+    base_damage = damage / current_multiplier
+    max_quality_damage = base_damage * max_multiplier
+
+    max_quality_pdps = max_quality_damage * attacks_per_second
+    return max_quality_pdps
+
+
+def calculate_elemental_dps(listing_data: dict):
+    cold_damage = listing_data.get('Cold Damage', 0)
+    fire_damage = listing_data.get('Fire Damage', 0)
+    lightning_damage = listing_data.get('Lightning Damage', 0)
+    attacks_per_second = listing_data.get('Attacks per Second', 0)
+
+    edps = (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+    return edps
 

@@ -23,7 +23,7 @@ class ProgramManager:
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
         self.injector = PoecdDataInjecter()
-        self.ai_data_manager = price_predict_model.PricePredictManager()
+        self.price_predict_data_manager = price_predict_model.PricePredictDataManager()
 
     def fetch_training_data(self):
         training_queries = query.QueryPresets().training_fills
@@ -39,26 +39,24 @@ class ProgramManager:
                     self.injector.inject_poecd_data_into_mod(item_mod=mod)
                     self.files_manager.cache_mod(item_mod=mod)
 
-            self.ai_data_manager.save_listings(listings,
-                                               which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
+            self.price_predict_data_manager.cache_training_data(listings)
 
             if i % 5 == 0:
                 self.files_manager.save_data()
 
     def find_underpriced_items(self):
-        training_queries = query.QueryPresets.training_fills()
+        training_queries = query.QueryPresets().training_fills
         predict_model = self.files_manager.file_data[FileKey.PRICE_PREDICT_MODEL]
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
-            self.files_manager.file_data[FileKey.PRICE_PREDICT] = {
+            self.files_manager.file_data[FileKey.MARKET_SCAN] = {
                 col: [] for col in self.files_manager.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING].keys()
             }
 
             listings = [data_ingestion.create_listing(api_item_response) for api_item_response in api_item_responses]
 
-            self.ai_data_manager.save_listings(listings,
-                                               which_file=FileKey.PRICE_PREDICT)
-            df = self.ai_data_manager.prepare_price_predict_data_for_model(which_file=FileKey.PRICE_PREDICT)
+            self.price_predict_data_manager.cache_market_data(listings)
+            df = self.price_predict_data_manager.export_data_for_model(which_file=FileKey.MARKET_SCAN)
             true_prices = list(df['exalts'])
             df.drop(columns=['exalts'], inplace=True)
 
@@ -70,7 +68,7 @@ class ProgramManager:
             df['predicted_exalts'] = predicts
 
     def build_price_predict_model(self):
-        model_data = self.ai_data_manager.prepare_price_predict_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
+        model_data = self.price_predict_data_manager.export_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
         model = build_price_predict_model(df=model_data)
         self.files_manager.file_data[FileKey.PRICE_PREDICT_MODEL] = model
         self.files_manager.save_data(keys=[FileKey.PRICE_PREDICT_MODEL])

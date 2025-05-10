@@ -1,8 +1,12 @@
 import re
 from collections import Counter
 from datetime import datetime
+from turtle import pd
 
 import pytz
+
+import file_management
+from file_management import FileKey
 
 
 def _process_bracketed_text(match):
@@ -92,3 +96,36 @@ def determine_central_date(timestamp_str):
     central_date = central_time.date()
 
     return central_date
+
+
+def _apply_create_conversions_dict(row, conversions_dict: dict):
+    date = row['Date']
+    currency = row['Currency']
+    conversion_rate = row['ExaltPerCurrency']
+
+    if date not in conversions_dict:
+        conversions_dict[date] = dict()
+
+    conversions_dict[date][currency] = conversion_rate
+
+
+class CurrencyConverter:
+
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(CurrencyConverter, cls).__new__(cls)
+        return cls.instance
+
+    def __init__(self):
+        files_manager = file_management.FilesManager()
+
+        conversions_df = files_manager.file_data[FileKey.CURRENCY_CONVERSIONS]
+        self.conversions_dict = dict()
+        self.conversions_dict = conversions_df.apply(_apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
+
+    def convert_to_exalts(self, currency: str, currency_amount: int | float, relevant_date: datetime):
+        most_recent_date = min(self.conversions_dict.keys(), key=lambda d: abs(d - relevant_date))
+        exchange_rate = self.conversions_dict[most_recent_date][currency]
+
+        return currency_amount * exchange_rate
+

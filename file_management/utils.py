@@ -14,7 +14,7 @@ class SetEncoder(json.JSONEncoder):
 
 
 def write_to_file(file_path, data, disable_temp: bool = False):
-    disable_temp = True # This is literally just for work
+    disable_temp = False  # This is literally just for work
 
     if file_path.suffix == '.json':
         if isinstance(data, xgb.Booster):

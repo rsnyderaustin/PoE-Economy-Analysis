@@ -9,7 +9,6 @@ from sklearn.model_selection import train_test_split
 
 from price_predict_model import utils
 from file_management import FilesManager, FileKey
-from . import price_predict_management
 
 
 def lowest_price_focused_error(y_true, y_pred):

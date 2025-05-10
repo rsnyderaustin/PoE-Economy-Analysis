@@ -17,7 +17,7 @@ class FileKey(Enum):
     LISTING_FETCHES = 'listing_fetches'
     CRITICAL_PRICE_PREDICT_TRAINING = 'price_predict_data'
     PRICE_PREDICT_MODEL = 'price_predict_model'
-    PRICE_PREDICT = 'temp_price_predict_data'
+    MARKET_SCAN = 'temp_price_predict_data'
 
 
 class FilesManager:
@@ -33,7 +33,7 @@ class FilesManager:
             FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetches.json',
             FileKey.CRITICAL_PRICE_PREDICT_TRAINING: Path.cwd() / 'file_management/files/listings.json',
             FileKey.PRICE_PREDICT_MODEL: Path.cwd() / 'file_management/files/price_predict_model.json',
-            FileKey.PRICE_PREDICT: Path.cwd() / 'file_management/files/temporary_price_predict.json'
+            FileKey.MARKET_SCAN: Path.cwd() / 'file_management/files/market_scan.json'
         }
 
         self.file_data = dict()
