@@ -7,7 +7,7 @@ import seaborn as sns
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 
-from models import utils
+from price_predict_model import utils
 from file_management import FilesManager, FileKey
 from . import price_predict_management
 

@@ -3,9 +3,9 @@ import configparser
 import logging
 import xgboost as xgb
 
-import models
+import price_predict_model
 import data_ingestion
-from models.build_model import build_price_predict_model
+from price_predict_model.build_model import build_price_predict_model
 from data_ingestion import trade_api
 from data_ingestion.trade_api import query
 from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
@@ -23,7 +23,7 @@ class ProgramManager:
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
         self.injector = PoecdDataInjecter()
-        self.ai_data_manager = models.PricePredictManager()
+        self.ai_data_manager = price_predict_model.PricePredictManager()
 
     def fetch_training_data(self):
         training_queries = query.QueryPresets().training_fills

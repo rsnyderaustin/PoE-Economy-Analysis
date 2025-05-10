@@ -5,6 +5,7 @@ import pandas as pd
 from file_management import FilesManager, FileKey
 from instances_and_definitions import ModifiableListing
 from . import utils
+from .data_management import PricePredictDataManager
 
 
 def _calculate_max_quality_pdps(listing_data: dict):
@@ -54,6 +55,8 @@ class PricePredictManager:
 
     def __init__(self):
         self.files_manager = FilesManager()
+
+        self.data_manager = PricePredictDataManager()
 
         self.currency_to_exalts = utils.fetch_currency_to_conversion(
             conversions_data=self.files_manager.file_data[FileKey.CURRENCY_CONVERSIONS]
@@ -130,6 +133,7 @@ class PricePredictManager:
         for col in [*replaced_attributes, *local_weapon_mods, *select_cols]:
             flattened_data.pop(col, None)
 
+        # Some columns have just one letter - not sure why
         for col, values in flattened_data.items():
             if len(col) == 1:
                 flattened_data.pop(col)
@@ -166,6 +170,8 @@ class PricePredictManager:
         data = self.files_manager.file_data[which_file]
         for listing in listings:
             flattened_listing = self._format_listing_for_price_prediction(listing)
+
+            if which_file == FileKey.CRITICAL_PRICE_PREDICT_TRAINING:
             for col_name, value in flattened_listing.items():
                 if col_name not in data:
                     # We have to insert a value for each row since this column has been added
