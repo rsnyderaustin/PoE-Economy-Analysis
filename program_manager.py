@@ -28,21 +28,22 @@ class ProgramManager:
     def fetch_training_data(self):
         training_queries = query.QueryPresets().training_fills
 
-        for i, api_item_responses in enumerate(self.trade_api_handler.process_queries(training_queries)):
+        while True:
+            for i, api_item_responses in enumerate(self.trade_api_handler.process_queries(training_queries)):
 
-            listings = []
-            for api_item_response in api_item_responses:
-                listing = data_ingestion.create_listing(api_item_response)
-                listings.append(listing)
+                listings = []
+                for api_item_response in api_item_responses:
+                    listing = data_ingestion.create_listing(api_item_response)
+                    listings.append(listing)
 
-                for mod in listing.mods:
-                    self.injector.inject_poecd_data_into_mod(item_mod=mod)
-                    self.files_manager.cache_mod(item_mod=mod)
+                    for mod in listing.mods:
+                        self.injector.inject_poecd_data_into_mod(item_mod=mod)
+                        self.files_manager.cache_mod(item_mod=mod)
 
-            self.price_predict_data_manager.cache_training_data(listings)
+                self.price_predict_data_manager.cache_training_data(listings)
 
-            if i % 5 == 0:
-                self.files_manager.save_data()
+                if i % 5 == 0:
+                    self.files_manager.save_data()
 
     def find_underpriced_items(self):
         training_queries = query.QueryPresets().training_fills

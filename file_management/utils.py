@@ -1,4 +1,5 @@
-
+import pickle
+from pathlib import Path
 from typing import Any
 import json
 import os
@@ -13,7 +14,7 @@ class SetEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-def write_to_file(file_path, data, disable_temp: bool = False):
+def write_to_file(file_path: Path, data, disable_temp: bool = False):
     disable_temp = False  # This is literally just for work
 
     if file_path.suffix == '.json':
@@ -26,7 +27,7 @@ def write_to_file(file_path, data, disable_temp: bool = False):
                 os.fsync(training_data_json_path.fileno())
 
         else:
-            tmp_path = file_path + ".tmp"
+            tmp_path = file_path.with_suffix(file_path.suffix + ".tmp")
             with open(tmp_path, 'w') as training_data_json_path:
                 json.dump(data, training_data_json_path, indent=4, cls=SetEncoder)
                 training_data_json_path.flush()
@@ -35,5 +36,10 @@ def write_to_file(file_path, data, disable_temp: bool = False):
             os.replace(tmp_path, file_path)
     elif file_path.suffix == '.csv':
         data.to_csv(file_path)
+    elif file_path.suffix == '.pkl':
+        with open(file_path, 'wb') as file:
+            pickle.dump(data, file)
+    else:
+        raise ValueError(f"Unsupported file type {file_path.suffix}")
 
 

@@ -82,7 +82,7 @@ class PricePredictDataManager:
 
         files_manager = file_management.FilesManager()
         self.training_data = files_manager.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING]
-        self.training_data_length = _determine_dict_length(self.training_data)
+        self.training_data_length = _determine_dict_length(self.training_data) if self.training_data else 0
 
         self.market_data = {col: [] for col in self.training_data.keys()} if self.training_data else dict()
         files_manager.file_data[FileKey.MARKET_SCAN] = self.market_data
@@ -91,7 +91,7 @@ class PricePredictDataManager:
 
     def _flatten_listing_import(self, listing: ModifiableListing) -> dict:
         flattened_properties = _flatten_listing_properties(listing)
-        dt_date_fetched = datetime.strptime(listing.date_fetched, "%Y-%m-%dT%H:%M:%SZ")
+        dt_date_fetched = datetime.strptime(listing.date_fetched, "%m-%d-%Y")
         exalts_price = self.currency_convert.convert_to_exalts(currency=listing.currency,
                                                                currency_amount=listing.currency_amount,
                                                                relevant_date=dt_date_fetched)
@@ -123,10 +123,10 @@ class PricePredictDataManager:
             flattened_data.pop(col, None)
 
         # Some columns have just one letter - not sure why but need to find out
-        for col, values in flattened_data.items():
-            if len(col) == 1:
-                logging.error(f"Found 1 length attribute name for listing {listing.__dict__}")
-                flattened_data.pop(col)
+        cols_to_remove = [col for col in flattened_data if len(col) == 1]
+        for col in cols_to_remove:
+            logging.error(f"Found 1-length attribute name for listing {listing.__dict__}")
+            flattened_data.pop(col)
 
         return flattened_data
 

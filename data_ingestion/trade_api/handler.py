@@ -1,4 +1,4 @@
-import logging
+from datetime import datetime
 import logging
 import math
 from collections import deque
@@ -77,6 +77,9 @@ class TradeApiHandler:
 
         self.split_threshold = 175
 
+        self.valid_responses_found = 0
+        self.program_start = datetime.now()
+
     def process_queries(self, queries: list[Query]):
         for i, query in enumerate(queries):
             logging.info(f"Processing query {i} of {len(queries)} queries.")
@@ -87,7 +90,10 @@ class TradeApiHandler:
 
         valid_responses = [api_response for api_response in response['responses']
                            if api_response['id'] not in self.fetch_data[fetch_date]]
-        logging.info(f"{len(valid_responses)} valid responses found out of {len(response['responses'])} total responses.")
+        self.valid_responses_found += len(valid_responses)
+        minutes_since_start = (datetime.now() - self.program_start).seconds * 60
+        logging.info(f"{len(valid_responses)} valid responses found out of {len(response['responses'])} total responses."
+                     f"\n\tHave found {self.valid_responses_found} valid responses in {minutes_since_start} minutes.")
 
         # The valid responses are the only ones with un-cached listing IDs, so we just cache those
         listing_ids = set(response['id'] for response in valid_responses)

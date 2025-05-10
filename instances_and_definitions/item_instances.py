@@ -45,7 +45,8 @@ class ItemMod:
     @property
     def mod_id(self):
         return generate_mod_id(atype=self.atype,
-                               mod_ids=[sub_mod.mod_id for sub_mod in self.sub_mods]
+                               mod_ids=[sub_mod.mod_id for sub_mod in self.sub_mods],
+                               affix_type=self.affix_type
                                )
 
 

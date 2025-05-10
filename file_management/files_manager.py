@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import pickle
 from enum import Enum
 from pathlib import Path
 
@@ -18,6 +19,10 @@ class FileKey(Enum):
     CRITICAL_PRICE_PREDICT_TRAINING = 'price_predict_data'
     PRICE_PREDICT_MODEL = 'price_predict_model'
     MARKET_SCAN = 'temp_price_predict_data'
+    POECD_BASES = 'poecd_bases'
+    POECD_STATS = 'poecd_stats'
+    POECD_MODS = 'poecd_mods'
+    MOD_MATCHES = 'mod_matches'
 
 
 class FilesManager:
@@ -28,17 +33,31 @@ class FilesManager:
         return cls.instance
 
     def __init__(self):
+        if hasattr(self, '_initialized') and self._initialized:
+            return
+
         self.file_paths = {
+            FileKey.ATYPE_MODS: Path.cwd() / 'file_management/files/trade_atype_mods.json',
             FileKey.CURRENCY_CONVERSIONS: Path.cwd() / 'file_management/files/currency_prices.csv',
             FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetches.json',
             FileKey.CRITICAL_PRICE_PREDICT_TRAINING: Path.cwd() / 'file_management/files/listings.json',
             FileKey.PRICE_PREDICT_MODEL: Path.cwd() / 'file_management/files/price_predict_model.json',
-            FileKey.MARKET_SCAN: Path.cwd() / 'file_management/files/market_scan.json'
+            FileKey.MARKET_SCAN: Path.cwd() / 'file_management/files/market_scan.json',
+            FileKey.POECD_BASES: Path.cwd() / 'file_management/files/poecd_bases.json',
+            FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json',
+            FileKey.POECD_MODS: Path.cwd() / 'file_management/files/poecd_mods.pkl',
+            FileKey.MOD_MATCHES: Path.cwd() / 'file_management/files/mod_matches.json'
         }
 
         self.file_data = dict()
 
         self._load_files()
+        self._initialized = True
+
+    def _ensure_brackets_in_json(self, file_path: Path):
+        if file_path.read_text().strip() == "":
+            with open(file_path, 'w') as f:
+                json.dump({}, f, indent=4)
 
     def _load_files(self):
 
@@ -55,10 +74,21 @@ class FilesManager:
         for key, path in file_paths.items():
             if path.exists:
                 if path.suffix == '.json':
+                    self._ensure_brackets_in_json(file_path=path)
                     with open(path, 'r') as file:
                         self.file_data[key] = json.load(file)
                 elif path.suffix == '.csv':
                     self.file_data[key] = pd.read_csv(path)
+                elif path.suffix == '.pkl':
+                    try:
+                        with open(path, 'rb') as file:
+                            self.file_data[key] = pickle.load(file)
+                    except EOFError:
+                        self.file_data[key] = None
+                        logging.info(f"No data found at path {path}. Continuing.")
+                        continue
+                else:
+                    raise ValueError(f"Unsupported file type {path.suffix}")
 
         self.file_data[FileKey.LISTING_FETCHES] = {
             date: set(listing_ids)
@@ -105,8 +135,14 @@ class FilesManager:
     def cache_training_data(self, training_data: dict):
         self.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING] = training_data
 
-    def cache_price_prediction_model(self, price_predict_model):
-        self.file_data[FileKey.PRICE_PREDICT_MODEL] = price_predict_model
+    def has_data(self, key: FileKey):
+        file_path = self.file_paths[key]
+        file_size = os.path.getsize(file_path)
+
+        if file_path.suffix == '.json':
+            return file_size >= 2
+        else:
+            return file_size > 0
 
     def save_data(self, keys: list[FileKey] = None):
         if keys:

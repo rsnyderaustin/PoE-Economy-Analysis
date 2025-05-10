@@ -1,6 +1,6 @@
 import pandas as pd
 
-from file_management import FileKey
+from file_management import FileKey, FilesManager
 from program_manager import ProgramManager
 
 prog_manager = ProgramManager()

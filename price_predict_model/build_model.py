@@ -179,7 +179,7 @@ def build_price_predict_model(df: pd.DataFrame,
     )
 
     # Cache trained model
-    FilesManager().cache_price_prediction_model(model)
+    FilesManager().file_data[FileKey.PRICE_PREDICT_MODEL] = model
 
     # Evaluate performance
     test_predictions = model.predict(test_data)

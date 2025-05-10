@@ -1,13 +1,20 @@
+import logging
+
 import rapidfuzz
 
+import file_management
+from file_management import FileKey
 from instances_and_definitions import ItemMod, ModClass
-from misc.poecd_data import PoecdDataManager
+from poecd_api.poecd_data import PoecdDataManager
+from shared import shared_utils
 from . import utils
 
 
 class PoecdDataInjecter:
 
     def __init__(self):
+        self.files_manager = file_management.FilesManager()
+        self.mod_matches_file = self.files_manager.file_data[FileKey.MOD_MATCHES]
 
         self.mod_transformations = {
             '# additional': 'an additional',
@@ -21,7 +28,7 @@ class PoecdDataInjecter:
             '#% reduced Waystones found in Area'
         }
 
-        self._poecd_manager = PoecdDataManager()
+        self._poecd_data = PoecdDataManager()
 
     def inject_poecd_data_into_mod(self, item_mod: ItemMod):
         # Implicit mods don't have weights, and we don't have weights for corruption enchantments yet
@@ -30,12 +37,18 @@ class PoecdDataInjecter:
             return
 
         poecd_mod_id = self._match_mod(item_mod)
-        poecd_mod = self._poecd_manager.atype_data_managers[item_mod.atype].mod_ids_dict[poecd_mod_id]
-        """logging.info(f"Matched Trade API mod {','.join([sub_mod.mod_text for sub_mod in item_mod.sub_mods])} to"
-                     f"\n{self._poecd_manager.atype_data_managers[item_mod.atype].mod_id_to_text[poecd_mod_id]}")"""
+        if not poecd_mod_id:
+            logging.info(f"Parent mod:")
+            shared_utils.log_dict(item_mod.__dict__)
+            logging.info(f"Sub Mods:")
+            for sub_mod in item_mod.sub_mods:
+                shared_utils.log_dict(sub_mod.__dict__)
+            raise RuntimeError(f"Could not find matching Poecd mod for Trade API mod. See above")
+
+        atype_manager = self._poecd_data.fetch_atype_manager(item_mod.atype)
+        poecd_mod = atype_manager.fetch_mod(mod_id=poecd_mod_id)
 
         item_mod.weighting = poecd_mod.fetch_weighting(ilvl=str(item_mod.mod_ilvl))
-
         item_mod.mod_types = poecd_mod.mod_types
 
     def _attempt_match(self,
@@ -109,19 +122,23 @@ class PoecdDataInjecter:
             else:
                 return None
 
-    def _match_mod(self, item_mod: ItemMod) -> str:
+    def _match_mod(self, item_mod: ItemMod, force_match: bool = False) -> str | None:
         """
 
         :param item_mod:
         :return: The matching Poecd Mod ID.
         """
 
-        atype_manager = self._poecd_manager.atype_data_managers[item_mod.atype]
+        atype_manager = self._poecd_data.atype_data_managers[item_mod.atype]
+
+        if item_mod.mod_id in self.mod_matches_file and not force_match:
+            return self.mod_matches_file[item_mod.mod_id]
 
         coe_mod_id_match = self._attempt_match(item_mod=item_mod,
                                                atype_manager=atype_manager,
                                                min_score=95.0)
         if coe_mod_id_match:
+            self.mod_matches_file[item_mod.mod_id] = coe_mod_id_match
             return coe_mod_id_match
 
         coe_mod_id_match = self._attempt_match(item_mod=item_mod,
@@ -129,12 +146,14 @@ class PoecdDataInjecter:
                                                min_score=95.0,
                                                attempt_to_transform=True)
         if coe_mod_id_match:
+            self.mod_matches_file[item_mod.mod_id] = coe_mod_id_match
             return coe_mod_id_match
 
         coe_mod_id_match = self._attempt_match(item_mod=item_mod,
                                                atype_manager=atype_manager,
                                                min_score=90.0)
         if coe_mod_id_match:
+            self.mod_matches_file[item_mod.mod_id] = coe_mod_id_match
             return coe_mod_id_match
 
         coe_mod_id_match = self._attempt_match(item_mod=item_mod,
@@ -142,5 +161,6 @@ class PoecdDataInjecter:
                                                min_score=90.0,
                                                attempt_to_transform=True)
         if coe_mod_id_match:
+            self.mod_matches_file[item_mod.mod_id] = coe_mod_id_match
             return coe_mod_id_match
 
