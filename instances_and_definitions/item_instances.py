@@ -25,7 +25,9 @@ class ItemMod:
                  affix_type: ModAffixType,
                  mod_tier: int,
                  mod_ilvl: int,
-                 sub_mods: list[SubMod]):
+                 sub_mods: list[SubMod],
+                 mod_types: list,
+                 weighting: float):
         self.atype = atype
         self.mod_class = mod_class
         self.mod_name = mod_name
@@ -33,10 +35,8 @@ class ItemMod:
         self.mod_tier = mod_tier
         self.mod_ilvl = mod_ilvl
         self.sub_mods = sub_mods
-
-        # This is filled in later via Poecd data
-        self.mod_types = None
-        self.weighting = None
+        self.mod_types = mod_types
+        self.weighting = weighting
 
     @property
     def is_hybrid(self):
