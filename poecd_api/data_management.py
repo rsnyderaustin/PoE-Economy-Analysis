@@ -145,5 +145,14 @@ class PoecdSourceStore:
 class GlobalAtypesManager:
 
     def __init__(self, atype_managers: list[PoecdAtypeManager]):
-        self.atypes_managers = {am.atype_id for am in atype_managers}
+        self._atypes_managers_by_id = {am.atype_id: am for am in atype_managers}
+        self._atypes_managers_by_name = {am.atype_name: am for am in atype_managers}
+
+    def fetch_atype_manager(self, atype_id: str = None, atype_name: str = None):
+        if atype_id:
+            return self._atypes_managers_by_id[atype_id]
+        elif atype_name:
+            return self._atypes_managers_by_name[atype_name]
+        else:
+            raise ValueError(f"Did receive an argument for function {__name__}")
 

@@ -1,1 +1,3 @@
 from .constructing_instance_variables import InstanceVariableConstructor
+from .resource_resolver import ResourceResolver
+

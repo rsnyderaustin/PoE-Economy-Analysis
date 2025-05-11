@@ -1,17 +1,16 @@
 import logging
 import re
 
-from data_synthesizing.poecd_data_injector import PoecdDataInjector
+from data_synthesizing.poecd_data_injector import PoecdInjector
 from file_management import FilesManager
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
 from shared import ATypeClassifier, shared_utils, trade_item_enums
-from data_ingestion import utils
+from . import utils
 
 
 class InstanceVariableConstructor:
 
-    def __init__(self, files_manager: FilesManager, poecd_injector: PoecdDataInjector):
-        self.files_manager = files_manager
+    def __init__(self, poecd_injector: PoecdInjector):
         self.poecd_injector = poecd_injector
 
     def _create_duplicated_sub_mods(self, mod_id_to_text: dict, duplicate_mod_ids, mod_magnitudes):
@@ -42,7 +41,7 @@ class InstanceVariableConstructor:
         return sub_mods
 
     def _create_singleton_sub_mods(self, mod_id_to_text: dict, singleton_mod_ids, mod_magnitudes):
-        singleton_magnitudes = [magnitude for magnitude in mod_magnitudes if magnitude['hash'] not in duplicate_mod_ids]
+        singleton_magnitudes = [magnitude for magnitude in mod_magnitudes if magnitude['hash'] not in singleton_mod_ids]
 
         sub_mods = []
         for magnitude in singleton_magnitudes:
@@ -111,66 +110,6 @@ class InstanceVariableConstructor:
         )
 
         return item_mod
-
-    def create_item_mods(self, item_data: dict) -> list[ItemMod]:
-        """
-        'mods': {
-            '#mod_class':
-                #ItemMod1 (name, tier, magnitudes),
-                #ItemMod2 (name, tier, magnitudes)
-            '#mod_class:
-                ...
-        }
-        """
-        mods = []
-
-        # Runes are created separately
-        mod_class_enums = [e for e in ModClass if e != ModClass.RUNE]
-        for mod_class_enum in mod_class_enums:
-            mod_class = mod_class_enum.value
-            if mod_class not in item_data:
-                continue
-            abbrev_class = utils.mod_class_to_abbrev[mod_class]
-            mod_id_to_text = utils.determine_mod_id_to_mod_text_order(
-                mod_class=mod_class,
-                item_data=item_data,
-                sanitize_text=False
-            )
-
-            extended_mods_list = item_data['extended']['mods'][abbrev_class]
-
-            # Each 'mod_data' represents data for an individual SubMod
-            for mod_data in extended_mods_list:
-                mod_name = mod_data['name']
-                mod_tier = utils.determine_mod_tier(mod_data)
-                mod_ilvl = mod_data['level']
-                affix_type = utils.determine_mod_affix_type(mod_data)
-                magnitudes = mod_data['magnitudes']
-
-                # As of right now this condition only applies to spears, which for some reason have a blank
-                if not mod_name and not mod_tier and not affix_type and not magnitudes:
-                    continue
-                else:
-                    sub_mods = self._create_sub_mods(
-                        mod_id_to_text=mod_id_to_text,
-                        mod_magnitudes=magnitudes
-                    )
-
-                mod_types = self.poecd_injector.
-
-                item_mod = ItemMod(
-                    atype=ATypeClassifier.classify(item_data=item_data),
-                    mod_class=mod_class_enum,
-                    mod_ilvl=mod_ilvl,
-                    mod_name=mod_name,
-                    affix_type=affix_type,
-                    mod_tier=mod_tier,
-                    sub_mods=sub_mods
-                )
-
-                mods.append(item_mod)
-
-        return mods
 
     def create_skills(self, item_data: dict) -> list[ItemSkill]:
         if 'grantedSkills' not in item_data:
