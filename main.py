@@ -1,7 +1,5 @@
-import pandas as pd
-
 from file_management import FileKey, FilesManager
-from program_manager import ProgramManager
+from program_management.program_manager import ProgramManager
 from poecd_api import PoecdDataPuller, PoecdEndpoint
 
 poecd_m = PoecdDataPuller()

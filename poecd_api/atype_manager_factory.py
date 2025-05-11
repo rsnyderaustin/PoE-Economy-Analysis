@@ -4,7 +4,7 @@ from shared import shared_utils
 from .data_management import PoecdMod, PoecdAtypeManager, PoecdSourceStore
 
 
-class AtypesManagersFactory:
+class AtypeManagerFactory:
 
     def __init__(self, source_store):
         self.source_store = source_store
@@ -30,35 +30,31 @@ class AtypesManagersFactory:
             for atype_id in atype_dict.keys()
         ]
         for mod_id, atype_id in inputs:
+            affix_type_str = self.source_store.fetch_affix_type(mod_id)
+            affix_type = ModAffixType.PREFIX if affix_type_str == 'prefix' else ModAffixType.SUFFIX
             new_mod = PoecdMod(atype_id=atype_id,
                                atype_name=self.source_store.fetch_atype_name(atype_id),
-                               mod_id=mod_id)
+                               mod_id=mod_id,
+                               mod_text=self.source_store.fetch_mod_text(mod_id),
+                               mod_types=self.source_store.mod_id_to_mod_types[mod_id],
+                               affix_type=affix_type)
             mods.append(new_mod)
 
         return mods
 
-    def _create_atypes_managers(self, tiers_data):
-        atype_ids = set(
-            atype_id
-            for mod_id, atype_dict in tiers_data.items()
-            for atype_id in atype_dict.keys()
-        )
-        # Updating this with these valid Atype IDs just for good measure
-        atype_ids.update(self.source_store.valid_atype_ids)
+    def _create_atypes_managers(self, tiers_data, mods):
+        atype_ids = set(mod.atype_id for mod in mods)
+        atype_id_to_mods = {atype_id: set() for atype_id in atype_ids}
+        for mod in mods:
+            atype_id_to_mods[mod.atype_id].add(mod)
 
         atypes_managers = [
             PoecdAtypeManager(atype_id=atype_id,
-                              atype_name=self.source_store.fetch_atype_name(atype_id=atype_id))
+                              atype_name=self.source_store.fetch_atype_name(atype_id=atype_id),
+                              mods=atype_id_to_mods[atype_id])
             for atype_id in atype_ids
         ]
         return atypes_managers
-
-    def _fill_atype_managers_with_mods(self, mods, atype_managers):
-        managers_dict = {manager.atype_id: manager for manager in atype_managers}
-
-        for mod in mods:
-            atype_manager = managers_dict[mod.atype_id]
-            atype_manager.add_mod(mod)
 
     def _fill_mods_with_tiers(self, mods, tiers_data):
         mods_dict = {(mod.atype_id, mod.mod_id): mod for mod in mods}
@@ -79,32 +75,7 @@ class AtypesManagersFactory:
         tiers_data = self._create_tiers_data()
 
         mods = self._create_mods(tiers_data=tiers_data)
-        atype_managers = self._create_atypes_managers(tiers_data=tiers_data)
-        self._fill_atype_managers_with_mods(mods=mods, atype_managers=atype_managers)
+        atype_managers = self._create_atypes_managers(tiers_data=tiers_data, mods=mods)
         self._fill_mods_with_tiers(mods=mods, tiers_data=tiers_data)
-        
-        # Create mods
-        mods = list()
-        for atype_id, mod_ids in atype_to_mods.items():
-            for mod_id in mod_ids:
-                mod_text = source_store.mod_id_to_text[mod_id]
-                mod_text = shared_utils.sanitize_mod_text(mod_text)
-                mod_types = source_store.mod_id_to_mod_types[mod_id]
-                affix_type = source_store.mod_id_to_affix_type[mod_id]
-                if affix_type and affix_type == 'prefix':
-                    affix_type = ModAffixType.PREFIX
-                elif affix_type and affix_type == 'suffix':
-                    affix_type = ModAffixType.SUFFIX
 
-                new_mod = PoecdMod(
-                    atype_id=atype_id,
-                    atype_name=self.atype_id_to_atype_name[atype_id],
-                    mod_id=mod_id,
-                    mod_text=mod_text,
-                    mod_types=mod_types,
-                    affix_type=affix_type,
-                    tiers_list=tiers_lists[atype_id][mod_id]
-                )
-                mods.append(new_mod)
-
-        return mods
+        return atype_managers

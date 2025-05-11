@@ -10,7 +10,7 @@ from shared import shared_utils
 from . import utils
 
 
-class PoecdDataInjecter:
+class PoecdDataInjector:
 
     def __init__(self, global_poecd_manager: GlobalAtypesManager):
         self.files_manager = file_management.FilesManager()

@@ -8,9 +8,9 @@ import xgboost as xgb
 import price_predict_model
 import data_ingestion
 from price_predict_model.build_model import build_price_predict_model
-from data_ingestion import trade_api
-from data_ingestion.trade_api import query
-from data_synthesizing.poecd_data_injecter import PoecdDataInjecter
+import trade_api
+from trade_api import query
+from data_synthesizing.poecd_data_injector import PoecdDataInjector
 from file_management import FilesManager, FileKey
 
 logging.basicConfig(level=logging.INFO,
@@ -25,7 +25,7 @@ class ProgramManager:
         logging.info("Initializing ProgramManager.")
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
-        self.injector = PoecdDataInjecter()
+        self.injector = PoecdDataInjector()
         self.price_predict_data_manager = price_predict_model.PricePredictDataManager()
         logging.info("Finished initializing ProgramManager.")
 
@@ -42,6 +42,7 @@ class ProgramManager:
                     listings.append(listing)
 
                     for mod in listing.mods:
+
                         self.injector.inject_poecd_data_into_mod(item_mod=mod)
                         self.files_manager.cache_mod(item_mod=mod)
 

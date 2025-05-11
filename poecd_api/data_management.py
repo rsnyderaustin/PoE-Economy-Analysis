@@ -1,9 +1,6 @@
-import file_management
+
 from data_synthesizing import utils
-from file_management import FileKey
 from instances_and_definitions import ModAffixType
-from poecd_api.data_pull import PoecdEndpoint, PoecdDataPuller
-from shared import shared_utils
 
 
 class PoecdMod:
@@ -40,7 +37,8 @@ class PoecdAtypeManager:
 
     def __init__(self,
                  atype_id: str,
-                 atype_name: str):
+                 atype_name: str,
+                 mods: set[PoecdMod]):
         self.atype_id = atype_id
         self.atype_name = atype_name
 
@@ -73,8 +71,6 @@ class PoecdAtypeManager:
             raise ValueError(f"Mod '{mod.mod_text}' already exists in Atype {self.atype_name} manager.")
 
         self.mods.add(mod)
-
-    def add_tiers_list(self, mod_id: str, tiers_list: list):
 
     def fetch_mod(self, mod_id: int = None, mod_text: str = None):
         if mod_id:
@@ -144,4 +140,10 @@ class PoecdSourceStore:
 
     def fetch_mod_types(self, mod_id):
         return self._mod_id_to_mod_types[mod_id]
+
+
+class GlobalAtypesManager:
+
+    def __init__(self, atype_managers: list[PoecdAtypeManager]):
+        self.atypes_managers = {am.atype_id for am in atype_managers}
 

@@ -1,9 +1,8 @@
 import itertools
-import logging
 from dataclasses import dataclass
 from enum import Enum
 
-from data_ingestion import trade_api
+import trade_api
 from shared import trade_item_enums
 
 

@@ -1,7 +1,6 @@
 from datetime import datetime
 import logging
 import math
-from collections import deque
 from copy import deepcopy
 
 from file_management import FilesManager, FileKey
