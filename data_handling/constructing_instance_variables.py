@@ -176,24 +176,28 @@ class InstanceVariableConstructor:
 
         return properties
 
-    def _parse_requirements(self, item_data: dict):
-        level_requirement = 0
-        str_requirement = 0
-        int_requirement = 0
-        dex_requirement = 0
-
-        properties = self._parse_properties(item_data)
+    def _parse_requirements(self, item_data: dict) -> dict:
+        requirements = {
+            'level_requirement': 0,
+            'str_requirement': 0,
+            'int_requirement': 0,
+            'dex_requirement': 0
+        }
 
         if 'requirements' in item_data:
             for req_dict in item_data['requirements']:
                 if req_dict['name'] == 'Level':
-                    level_requirement = int(req_dict['values'][0][0])
+                    requirements['level_requirement'] = int(req_dict['values'][0][0])
                 if 'Str' in req_dict['name']:
-                    str_requirement = int(req_dict['values'][0][0])
+                    requirements['str_requirement'] = int(req_dict['values'][0][0])
                 if 'Int' in req_dict['name']:
-                    int_requirement = int(req_dict['values'][0][0])
+                    requirements['int_requirement'] = int(req_dict['values'][0][0])
                 if 'Dex' in req_dict['name']:
-                    dex_requirement = int(req_dict['values'][0][0])
+                    requirements['dex_requirement'] = int(req_dict['values'][0][0])
+
+        return requirements
+
+
 
     def _parse_socketers(self, item_data: dict) -> list[ItemSocketer]:
         socketers = []
@@ -212,6 +216,14 @@ class InstanceVariableConstructor:
                 )
             )
         return socketers
+
+    def _determine_atype(self, item_data: dict) -> str:
+        if 'properties' in item_data and 'name' in item_data['properties'][0]:
+            atype = ATypeClassifier.classify(item_data=item_data)
+        else:
+            atype = item_data['baseType'] if 'baseType' in item_data else None
+
+        return atype
 
     def create_listing(self,
                        api_item_response: dict,
@@ -238,23 +250,8 @@ class InstanceVariableConstructor:
         dex_requirement = 0
 
         properties = self._parse_properties(item_data)
-
-        if 'requirements' in item_data:
-            for req_dict in item_data['requirements']:
-                if req_dict['name'] == 'Level':
-                    level_requirement = int(req_dict['values'][0][0])
-                if 'Str' in req_dict['name']:
-                    str_requirement = int(req_dict['values'][0][0])
-                if 'Int' in req_dict['name']:
-                    int_requirement = int(req_dict['values'][0][0])
-                if 'Dex' in req_dict['name']:
-                    dex_requirement = int(req_dict['values'][0][0])
-
-        if 'properties' in item_data and 'name' in item_data['properties'][0]:
-            atype = ATypeClassifier.classify(item_data=item_data)
-        else:
-            atype = item_data['baseType'] if 'baseType' in item_data else None
-
+        requirements = self._parse_requirements(item_data)
+        atype = self._determine_atype(item_data)
         socketers = self._parse_socketers(item_data=item_data)
 
         item_skills = self._create_skills(item_data)
