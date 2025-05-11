@@ -22,7 +22,8 @@ class FileKey(Enum):
     POECD_BASES = 'poecd_bases'
     POECD_STATS = 'poecd_stats'
     POECD_GLOBAL_ATYPES_MANAGER = 'poecd_global_atypes_manager'
-    PROGRAM_MODS = 'program_mods'
+    ITEM_MODS = 'item_mods'
+
 
 
 class FilesManager:
@@ -46,7 +47,7 @@ class FilesManager:
             FileKey.POECD_BASES: Path.cwd() / 'file_management/files/poecd_bases.json',
             FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json',
             FileKey.POECD_GLOBAL_ATYPES_MANAGER: Path.cwd() / 'file_management/files/poecd_global_atypes_manager.pkl',
-            FileKey.PROGRAM_MODS: Path.cwd() / 'file_management/files/mods.pkl'
+            FileKey.ITEM_MODS: Path.cwd() / 'file_management/files/item_mods.json'
         }
 
         self.file_data = dict()

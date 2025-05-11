@@ -12,7 +12,7 @@ from . import utils
 
 class PoecdDataInjector:
 
-    def __init__(self, global_poecd_manager: GlobalAtypesManager):
+    def __init__(self, global_atypes_manager: GlobalAtypesManager):
         self.files_manager = file_management.FilesManager()
         self.mod_matches_file = self.files_manager.file_data[FileKey.MOD_MATCHES]
 
@@ -28,7 +28,7 @@ class PoecdDataInjector:
             '#% reduced Waystones found in Area'
         }
 
-        self._poecd_data = GlobalAtypesManager()
+        self._global_atypes_manager = GlobalAtypesManager()
 
     def inject_poecd_data_into_mod(self, item_mod: ItemMod):
         # Implicit mods don't have weights, and we don't have weights for corruption enchantments yet
