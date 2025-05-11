@@ -1,6 +1,8 @@
 
 import configparser
 import logging
+import random
+
 import xgboost as xgb
 
 import price_predict_model
@@ -20,13 +22,16 @@ config = configparser.ConfigParser
 class ProgramManager:
 
     def __init__(self):
+        logging.info("Initializing ProgramManager.")
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
         self.injector = PoecdDataInjecter()
         self.price_predict_data_manager = price_predict_model.PricePredictDataManager()
+        logging.info("Finished initializing ProgramManager.")
 
     def fetch_training_data(self):
         training_queries = query.QueryPresets().training_fills
+        random.shuffle(training_queries)
 
         while True:
             for i, api_item_responses in enumerate(self.trade_api_handler.process_queries(training_queries)):

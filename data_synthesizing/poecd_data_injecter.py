@@ -5,14 +5,14 @@ import rapidfuzz
 import file_management
 from file_management import FileKey
 from instances_and_definitions import ItemMod, ModClass
-from poecd_api.poecd_data import PoecdDataManager
+from poecd_api.data_management import GlobalAtypesManager
 from shared import shared_utils
 from . import utils
 
 
 class PoecdDataInjecter:
 
-    def __init__(self):
+    def __init__(self, global_poecd_manager: GlobalAtypesManager):
         self.files_manager = file_management.FilesManager()
         self.mod_matches_file = self.files_manager.file_data[FileKey.MOD_MATCHES]
 
@@ -28,7 +28,7 @@ class PoecdDataInjecter:
             '#% reduced Waystones found in Area'
         }
 
-        self._poecd_data = PoecdDataManager()
+        self._poecd_data = GlobalAtypesManager()
 
     def inject_poecd_data_into_mod(self, item_mod: ItemMod):
         # Implicit mods don't have weights, and we don't have weights for corruption enchantments yet
@@ -48,7 +48,18 @@ class PoecdDataInjecter:
         atype_manager = self._poecd_data.fetch_atype_manager(item_mod.atype)
         poecd_mod = atype_manager.fetch_mod(mod_id=poecd_mod_id)
 
-        item_mod.weighting = poecd_mod.fetch_weighting(ilvl=str(item_mod.mod_ilvl))
+        try:
+            item_mod.weighting = poecd_mod.fetch_weighting(ilvl=str(item_mod.mod_ilvl))
+        except KeyError:
+            logging.info("\n\n--------------- Item Mod ----------------")
+            api_trade_skills = [sub_mod.sanitized_mod_text for sub_mod in item_mod.sub_mods]
+            logging.info(f"Item mod: {api_trade_skills}")
+            shared_utils.log_dict(item_mod.__dict__)
+
+            logging.info("\n\n")
+            logging.info("------------ Poecd Matched Mod ---------------")
+            shared_utils.log_dict(f"Poecd mod: {poecd_mod.mod_text}")
+            raise KeyError
         item_mod.mod_types = poecd_mod.mod_types
 
     def _attempt_match(self,

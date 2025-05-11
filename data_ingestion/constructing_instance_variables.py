@@ -1,4 +1,5 @@
 import logging
+import re
 
 from file_management import FilesManager
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
@@ -131,6 +132,14 @@ def create_skills(item_data: dict) -> list[ItemSkill]:
 
     for skill_data in item_data['grantedSkills']:
         raw_skill = skill_data['values'][0]
+
+        # Spear Throw is the only skill that is granted by an item without a level. May have to update in the future
+        if raw_skill[0] == 'Spear Throw':
+            new_skill = ItemSkill(
+                name='Spear Throw'
+            )
+            skills.append(new_skill)
+            continue
 
         if isinstance(raw_skill, str):
             _, level_str, *skill_parts = raw_skill.split()

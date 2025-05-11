@@ -50,5 +50,11 @@
     "+#%_to_block_chance": [],
     "bow_attacks_fire_an_additional_arrow": [],
     "#%_chance_to_chain_an_additional_time": [],
-    "#%_chance_to_blind_enemies_on_hit": []
+    "#%_chance_to_blind_enemies_on_hit": [],
+    "Reload Time": [],
+    "grenade_skills_fire_an_additional_projectile": [],
+    "#%_increased_bolt_speed": [],
+    "loads_an_additional_bolt": [],
+    "loads_#_additional_bolts": [],
+    "Spear Throw": []
 }

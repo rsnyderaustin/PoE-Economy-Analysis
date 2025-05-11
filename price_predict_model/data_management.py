@@ -125,7 +125,7 @@ class PricePredictDataManager:
         # Some columns have just one letter - not sure why but need to find out
         cols_to_remove = [col for col in flattened_data if len(col) == 1]
         for col in cols_to_remove:
-            logging.error(f"Found 1-length attribute name for listing {listing.__dict__}")
+            logging.error(f"Found 1-length attribute name {cols_to_remove} for listing {listing.__dict__}")
             flattened_data.pop(col)
 
         return flattened_data

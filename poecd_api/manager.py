@@ -1,79 +1,77 @@
 
-import json
-import re
-from enum import Enum
-from pathlib import Path
-
-import requests
-
-from shared import PathProcessor
+from file_management import FilesManager, FileKey
+from .data_management import PoecdSourceStore, GlobalAtypesManager, PoecdAtypeManager, PoecdMod
+from .data_pull import PoecdDataPuller, PoecdEndpoint
 
 
-class PoecdEndpoint(Enum):
-    BASES = '/lang/poec_lang.us.json?v=1744834998'
-    MODS = '/main/poec_data.json?v=1744834989'
+class PoecdManager:
 
+    def __init__(self, refresh_data: bool):
+        self.files_manager = FilesManager()
+        self.source_store = self._create_poecd_source_store(refresh_data=refresh_data)
 
-class PoecdApiManager:
+        self.global_atypes_manager = self._create_global_atypes_manager()
 
-    def __init__(self):
+    def _create_poecd_source_store(self, refresh_data: bool):
+        if refresh_data:
+            self._refresh_data()
 
-        # Input
+        poecd_source_store = PoecdSourceStore(bases_data=self.files_manager.file_data[FileKey.POECD_BASES],
+                                              stats_data=self.files_manager.file_data[FileKey.POECD_STATS])
 
-        self.source_url = 'https://www.craftofexile.com/json/poe2/'
+        return poecd_source_store
 
-        self.bases_input_url = (
-            PathProcessor(
-                path=self.source_url
-            )
-            .attach_url_endpoint(endpoint=PoecdEndpoint.BASES.value)
-            .path
-        )
+    def _refresh_data(self):
+        data_puller = PoecdDataPuller()
+        bases_data = data_puller.pull_data(PoecdEndpoint.BASES)
+        self.files_manager.file_data[FileKey.POECD_BASES] = bases_data
 
-        self.mods_input_url = (
-            PathProcessor(
-                path=self.source_url
-            )
-            .attach_url_endpoint(endpoint=PoecdEndpoint.MODS.value)
-            .path
-        )
+        stats_data = data_puller.pull_data(PoecdEndpoint.STATS)
+        self.files_manager.file_data[FileKey.POECD_STATS] = stats_data
 
-        self.cookies = {
-            'PHPSESSID': '7p4qt447dai0mudpdmqhg763n9',
-            'hbmd': '0',
-            'league': '17',
-            'vmode': 'd',
-            'amode': 'x',
-            'blkprc': 'y',
-            'tagrps': 'true',
-            'tafilts': 'true',
-            'asmt': '1',
-            'clng': 'us',
+    def _create_tiers_data(self):
+        socketer_mod_ids = {
+            mod['id_modifier'] for mod in self.source_store.stats_data['modifiers']['seq']
+            if mod['affix'] == 'socket'
         }
 
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:136.0) Gecko/20100101 Firefox/136.0',
-            'Accept': '*/*',
-            'Accept-Language': 'en-US,en;q=0.5',
-            # 'Accept-Encoding': 'gzip, deflate, br, zstd',
-            'Connection': 'keep-alive',
-            'Referer': 'https://www.craftofexile.com/?b=2&ob=both&v=d&a=x&l=a&lg=17&bp=y&as=1&hb=0&bld={}&im={}&ggt=|&ccp={}&gvc={%22limit%22:88}',
-            # 'Cookie': 'PHPSESSID=7p4qt447dai0mudpdmqhg763n9; hbmd=0; league=17; vmode=d; amode=x; blkprc=y; tagrps=true; tafilts=true; asmt=1; clng=us',
-            'Sec-Fetch-Dest': 'script',
-            'Sec-Fetch-Mode': 'no-cors',
-            'Sec-Fetch-Site': 'same-origin',
+        tiers_data = {
+            mod_id: atype_data for mod_id, atype_data in self.source_store.stats_data['tiers'].items()
+            if mod_id not in socketer_mod_ids
         }
 
-    def pull_data(self, endpoint: PoecdEndpoint):
+        return tiers_data
 
-        import_url = self.mods_input_url if endpoint == PoecdEndpoint.MODS else self.bases_input_url
-        response = requests.get(url=import_url,
-                                headers=self.headers,
-                                cookies=self.cookies)
-        response.raise_for_status()
+    def _create_global_atypes_manager(self) -> GlobalAtypesManager:
+        tiers_data = self._create_tiers_data()
 
-        content = response.content.decode('utf-8')
-        content = re.sub(r'^[^{]*', '', content)
-        json_data = json.loads(content)
-        return json_data
+        # Create each individual AtypeManager
+
+        global_atypes_manager = GlobalAtypesManager(atypes_managers=atypes_managers)
+
+        # Create each mod, and pass it to the GlobalAtypesManager
+        inputs = [
+            (mod_id, atype_id)
+            for mod_id, atype_dict in tiers_data.items()
+            for atype_id in atype_dict.keys()
+        ]
+        for mod_id, atype_id in inputs:
+            new_mod = PoecdMod(atype_id=atype_id,
+                               atype_name=self.source_store.fetch_atype_name(atype_id),
+                               mod_id=mod_id)
+            global_atypes_manager.add_mod(mod=new_mod)
+
+        # Iterate through each mod tier, passing it into GlobalAtypesManager
+        inputs = [
+            (mod_id, atype_id, tiers_list)
+            for mod_id, atype_dict in tiers_data.items()
+            for atype_id, tiers_list in atype_dict.items()
+            if atype_id in self.source_store.valid_atype_ids
+        ]
+        for mod_id, atype_id, tiers_list in inputs:
+            global_atypes_manager.add_mod_tier(atype_id=atype_id,
+                                               mod_id=mod_id,
+                                               tiers_list=tiers_list)
+
+
 

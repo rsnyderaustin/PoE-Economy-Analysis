@@ -21,8 +21,7 @@ class FileKey(Enum):
     MARKET_SCAN = 'temp_price_predict_data'
     POECD_BASES = 'poecd_bases'
     POECD_STATS = 'poecd_stats'
-    POECD_MODS = 'poecd_mods'
-    MOD_MATCHES = 'mod_matches'
+    CRITICAL_POECD_MODS = 'critical_poecd_mods'
 
 
 class FilesManager:
@@ -44,9 +43,7 @@ class FilesManager:
             FileKey.PRICE_PREDICT_MODEL: Path.cwd() / 'file_management/files/price_predict_model.json',
             FileKey.MARKET_SCAN: Path.cwd() / 'file_management/files/market_scan.json',
             FileKey.POECD_BASES: Path.cwd() / 'file_management/files/poecd_bases.json',
-            FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json',
-            FileKey.POECD_MODS: Path.cwd() / 'file_management/files/poecd_mods.pkl',
-            FileKey.MOD_MATCHES: Path.cwd() / 'file_management/files/mod_matches.json'
+            FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json'
         }
 
         self.file_data = dict()

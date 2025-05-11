@@ -91,9 +91,10 @@ class TradeApiHandler:
         valid_responses = [api_response for api_response in response['responses']
                            if api_response['id'] not in self.fetch_data[fetch_date]]
         self.valid_responses_found += len(valid_responses)
-        minutes_since_start = (datetime.now() - self.program_start).seconds * 60
+        minutes_since_start = (datetime.now() - self.program_start).seconds / 60
         logging.info(f"{len(valid_responses)} valid responses found out of {len(response['responses'])} total responses."
-                     f"\n\tHave found {self.valid_responses_found} valid responses in {minutes_since_start} minutes.")
+                     f"\n\tHave found {self.valid_responses_found} valid responses in {round(minutes_since_start, 1)} "
+                     f"minutes.")
 
         # The valid responses are the only ones with un-cached listing IDs, so we just cache those
         listing_ids = set(response['id'] for response in valid_responses)
@@ -121,9 +122,7 @@ class TradeApiHandler:
             logging.info(f"Only fetched {len(valid_responses)} from initial query. Will not split. Returning.")
             return
 
-        valid_response_goal_per_query = len(valid_responses) * 0.3
         for i in list(range(len(query.meta_filters))):
-            valid_response_counts = deque(maxlen=3)
             query_copy = deepcopy(query)
             filter_splits = FilterSplitter.split_filter(n_items=total_raw_responses, meta_filter=query.meta_filters[i])
             if not filter_splits:
@@ -139,9 +138,3 @@ class TradeApiHandler:
 
                 yield valid_responses
 
-                # If we're not getting many valid responses from the split then just continue to the next potential query split
-                valid_response_counts.append(len(valid_responses))
-                if sum(valid_response_counts) / len(valid_response_counts) < valid_response_goal_per_query:
-                    logging.info("Current split meta filter not returning enough results. "
-                                 "Continuing to split next possible meta filter.")
-                    continue
