@@ -147,46 +147,7 @@ class InstanceVariableConstructor:
 
         return skills
 
-
-    def _clean_item_data(self, item_data: dict):
-        """
-        Right now this is just used to clear empty implicits from spears granting skill Spear Throw.
-        """
-        if 'extended' in item_data and item_data['extended'] and 'implicit' in item_data['extended']['mods']:
-            implicit_mod_dicts = item_data['extended']['mods']['implicit']
-
-            implicit_mod_dicts[:] = [
-                implicit_mod_dict
-                for implicit_mod_dict in implicit_mod_dicts
-                if (implicit_mod_dict['magnitudes'] or implicit_mod_dict['name'] or implicit_mod_dict['tier'])
-            ]
-
-        return item_data
-
-
-    def create_listing(self, api_item_response: dict):
-        item_data = self._clean_item_data(api_item_response['item'])
-        listing_data = api_item_response['listing']
-        minutes_since_listed = utils.determine_minutes_since(
-            relevant_date=api_item_response['listing']['indexed']
-        )
-        # Gives minutes between league start and the item being listed
-        minutes_since_league_start = utils.determine_minutes_since(
-            relevant_date=utils.league_start_date,
-            later_date=api_item_response['listing']['indexed']
-        )
-
-        # _clean_item_data(item_data)
-
-        if any([rune_string in item_data['baseType'] for rune_string in ['Rune', 'Talisman', 'Soul Core']]):
-            logging.error(f"Received API item response for socketer. Skipping.")
-            return
-
-        level_requirement = 0
-        str_requirement = 0
-        int_requirement = 0
-        dex_requirement = 0
-
+    def _parse_properties(self, item_data: dict) -> dict:
         properties = dict()
         if 'properties' in item_data:
             # The first property for an item is just its type group (ex: Body Armour, Boots, etc) - don't need that
@@ -212,6 +173,52 @@ class InstanceVariableConstructor:
                     property_values.append(val)
 
                 properties[property_name] = property_values
+
+        return properties
+
+    def _parse_requirements(self, item_data: dict):
+        level_requirement = 0
+        str_requirement = 0
+        int_requirement = 0
+        dex_requirement = 0
+
+        properties = self._parse_properties(item_data)
+
+        if 'requirements' in item_data:
+            for req_dict in item_data['requirements']:
+                if req_dict['name'] == 'Level':
+                    level_requirement = int(req_dict['values'][0][0])
+                if 'Str' in req_dict['name']:
+                    str_requirement = int(req_dict['values'][0][0])
+                if 'Int' in req_dict['name']:
+                    int_requirement = int(req_dict['values'][0][0])
+                if 'Dex' in req_dict['name']:
+                    dex_requirement = int(req_dict['values'][0][0])
+
+    def create_listing(self,
+                       api_item_response: dict,
+                       item_mods: list[ItemMod]):
+        item_data = api_item_response['item']
+        listing_data = api_item_response['listing']
+        minutes_since_listed = utils.determine_minutes_since(
+            relevant_date=api_item_response['listing']['indexed']
+        )
+        # Gives minutes between league start and the item being listed
+        minutes_since_league_start = utils.determine_minutes_since(
+            relevant_date=utils.league_start_date,
+            later_date=api_item_response['listing']['indexed']
+        )
+
+        if any([socketer_string in item_data['baseType'] for socketer_string in ['Rune', 'Talisman', 'Soul Core']]):
+            logging.error(f"Received API item response for socketer. Skipping.")
+            return
+
+        level_requirement = 0
+        str_requirement = 0
+        int_requirement = 0
+        dex_requirement = 0
+
+        properties = self._parse_properties(item_data)
 
         if 'requirements' in item_data:
             for req_dict in item_data['requirements']:
@@ -241,9 +248,6 @@ class InstanceVariableConstructor:
                         actual_values=values
                     )
                 )
-
-        # Gems don't have mods
-        item_mods = create_item_mods(item_data) if item_data['baseType'] != trade_item_enums.ItemCategory.ANY_GEM.value else []
 
         item_skills = create_skills(item_data)
 
