@@ -1,5 +1,4 @@
-
-from data_synthesizing import utils
+from data_handling.mod_matching import utils
 from instances_and_definitions import ModAffixType
 
 
@@ -66,17 +65,11 @@ class PoecdAtypeManager:
         self.mod_id_to_text = {mod.mod_id: mod.mod_text for mod in mods}
         self.mod_text_to_id = {v: k for k, v in self.mod_id_to_text.items()}
 
-    def add_mod(self, mod: PoecdMod):
-        if mod in self.mods:
-            raise ValueError(f"Mod '{mod.mod_text}' already exists in Atype {self.atype_name} manager.")
-
-        self.mods.add(mod)
-
     def fetch_mod(self, mod_id: int = None, mod_text: str = None):
         if mod_id:
-            return self.mod_ids_dict[mod_id]
+            return self.mod_id_to_mod[mod_id]
 
-        return self.mods_dict[mod_text]
+        return self.mod_text_to_mod[mod_text]
 
     def _create_hybrid_to_parent_dict(self, affix_type: ModAffixType = None) -> dict:
         hybrid_part_to_parent_id = dict()

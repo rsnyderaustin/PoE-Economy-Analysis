@@ -1,7 +1,7 @@
 from things.items import Modifiable
 from utils.enums import ModAffixType
 
-from data_synthesizing import GlobalATypesManager, ModTier
+from data_handling.mod_matching import GlobalATypesManager, ModTier
 from .crafting_outcome import CraftingOutcome
 
 

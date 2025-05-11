@@ -2,7 +2,7 @@
 from things.items import Modifiable
 from utils.enums import Rarity
 
-from data_synthesizing import ModTier
+from data_handling.mod_matching import ModTier
 
 
 class CraftingOutcome:

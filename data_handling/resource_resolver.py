@@ -4,17 +4,19 @@ from data_handling import utils
 from file_management import FileKey
 from instances_and_definitions import ModClass, utils as instance_utils, ItemMod
 from shared import ATypeClassifier
+from .constructing_instance_variables import InstanceVariableConstructor
+import poecd_api
+import mod_matching
 
 
 class ResourceResolver:
 
-    def __init__(self,
-                 files_manager: file_management.FilesManager,
-                 instance_var_constructor: data_handling.InstanceVariableConstructor):
-        files_manager = files_manager
-        self.instance_var_constructor = instance_var_constructor
-
+    def __init__(self, global_atypes_manager: poecd_api.GlobalAtypesManager):
+        files_manager = file_management.FilesManager()
         self.file_item_mods = files_manager.file_data[FileKey.ITEM_MODS]
+
+        poecd_attribute_finder = mod_matching.PoecdAttributeFinder(global_atypes_manager=global_atypes_manager)
+        self.instance_var_constructor = InstanceVariableConstructor(poecd_attribute_finder=poecd_attribute_finder)
 
     def _should_skip_mod(self, mod_data: dict):
         """

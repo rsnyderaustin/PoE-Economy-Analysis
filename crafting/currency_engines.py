@@ -5,7 +5,7 @@ from shared.enums import Rarity
 
 from crafting import CraftingOutcome
 from crafting.crafting_engine import CraftingEngine
-from data_synthesizing import Modifiable
+from data_handling.mod_matching import Modifiable
 from misc import ItemCategory
 
 

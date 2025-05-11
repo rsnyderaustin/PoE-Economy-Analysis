@@ -25,9 +25,7 @@ class ItemMod:
                  affix_type: ModAffixType,
                  mod_tier: int,
                  mod_ilvl: int,
-                 sub_mods: list[SubMod],
-                 mod_types: list,
-                 weighting: float):
+                 sub_mods: list[SubMod]):
         self.atype = atype
         self.mod_class = mod_class
         self.mod_name = mod_name
@@ -35,8 +33,10 @@ class ItemMod:
         self.mod_tier = mod_tier
         self.mod_ilvl = mod_ilvl
         self.sub_mods = sub_mods
-        self.mod_types = mod_types
-        self.weighting = weighting
+
+        # These variables should be very quickly filled in after creation
+        self.mod_types = None
+        self.weighting = None
 
     @property
     def is_hybrid(self):

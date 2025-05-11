@@ -1,8 +1,6 @@
 import logging
-import re
 
-from data_synthesizing.poecd_data_injector import PoecdInjector
-from file_management import FilesManager
+from data_handling.mod_matching.poecd_attribute_finder import PoecdAttributeFinder, PoecdModAttributes
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
 from shared import ATypeClassifier, shared_utils, trade_item_enums
 from . import utils
@@ -10,8 +8,8 @@ from . import utils
 
 class InstanceVariableConstructor:
 
-    def __init__(self, poecd_injector: PoecdInjector):
-        self.poecd_injector = poecd_injector
+    def __init__(self, poecd_attribute_finder: PoecdAttributeFinder):
+        self.poecd_attribute_finder = poecd_attribute_finder
 
     def _create_duplicated_sub_mods(self, mod_id_to_text: dict, duplicate_mod_ids, mod_magnitudes):
         sub_mods = []
@@ -108,6 +106,10 @@ class InstanceVariableConstructor:
             mod_tier=mod_tier,
             sub_mods=sub_mods
         )
+
+        poecd_attributes = self.poecd_attribute_finder.get_mod_attributes(item_mod=item_mod)
+        item_mod.weighting = poecd_attributes.weighting
+        item_mod.mod_types = poecd_attributes.mod_types
 
         return item_mod
 

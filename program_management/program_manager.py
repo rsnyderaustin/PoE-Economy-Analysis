@@ -9,9 +9,10 @@ import data_handling
 import price_predict_model
 import data_ingestion
 from price_predict_model.build_model import build_price_predict_model
+import poecd_api
 import trade_api
 from trade_api import query
-from data_synthesizing.poecd_data_injector import PoecdInjector
+from data_handling.mod_matching.poecd_attribute_finder import PoecdInjector
 from file_management import FilesManager, FileKey
 
 logging.basicConfig(level=logging.INFO,
@@ -28,7 +29,10 @@ class ProgramManager:
         self.files_manager = FilesManager()
         self.resource_resolver = data_handling.ResourceResolver(files_manager=self.files_manager,
                                                                 instance_var_constructor=data_handling.InstanceVariableConstructor())
-        self.injector = PoecdInjector()
+
+        poecd_manager = poecd_api.PoecdManager(refresh_data=True)
+        global_atypes_manager = poecd_manager.create_global_atypes_manager()
+        self.injector = PoecdInjector(global_atypes_manager=global_atypes_manager)
         self.price_predict_data_manager = price_predict_model.PricePredictDataManager()
         logging.info("Finished initializing ProgramManager.")
 
