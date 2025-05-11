@@ -6,14 +6,25 @@ from instances_and_definitions import ItemMod, ModClass, ModAffixType
 
 class ItemModsManager:
 
-    def __init__(self, mods: list[ItemMod]):
+    def __init__(self, mods: list[ItemMod] = None):
         self.mods = {}
-        for mod in mods:
-            if mod.affix_type not in self.mods:
-                self.mods[mod.affix_type] = dict()
-            self.mods[mod.affix_type][mod.mod_id] = mod
 
-    def fetch_mod(self, affix_type: ModAffixType, mod_id):
+        if mods:
+            self.add_mods(mods)
+
+    def add_mods(self, mods: list[ItemMod]):
+        for mod in mods:
+            if mod.atype not in self.mods:
+                self.mods[mod.atype] = dict()
+
+            if mod.mod_id not in self.mods[mod.mod_id]:
+                self.mods[mod.atype][mod.mod_id] = dict()
+
+            self.mods[mod.atype][mod.mod_id] = mod
+
+    def fetch_mod(self, atype: str, mod_id: str):
+        return self.mods[atype][mod_id]
+
 
 class ModsHandler:
 

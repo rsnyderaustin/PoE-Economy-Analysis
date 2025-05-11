@@ -14,16 +14,8 @@ class InstanceVariableConstructor:
         self.files_manager = files_manager
         self.poecd_injector = poecd_injector
 
-    def _create_sub_mods(self, mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]:
-        mod_ids = [
-            magnitude['hash']
-            for magnitude in mod_magnitudes
-        ]
-
+    def _create_duplicated_sub_mods(self, mod_id_to_text: dict, duplicate_mod_ids, mod_magnitudes):
         sub_mods = []
-        # Duplicate mod ID's in the 'extended' data only happen when an item mod has multiple ranges in the same mod.
-        # Any duplicates are the same submod and so need to be combined
-        duplicate_mod_ids = shared_utils.find_duplicate_values(mod_ids)
         for mod_id in duplicate_mod_ids:
             same_mod_magnitudes = [
                 mod_magnitude
@@ -47,8 +39,12 @@ class InstanceVariableConstructor:
             )
             sub_mods.append(sub_mod)
 
-        singleton_magnitudes = [magnitude
-                                for magnitude in mod_magnitudes if magnitude['hash'] not in duplicate_mod_ids]
+        return sub_mods
+
+    def _create_singleton_sub_mods(self, mod_id_to_text: dict, singleton_mod_ids, mod_magnitudes):
+        singleton_magnitudes = [magnitude for magnitude in mod_magnitudes if magnitude['hash'] not in duplicate_mod_ids]
+
+        sub_mods = []
         for magnitude in singleton_magnitudes:
             mod_id = magnitude['hash']
             value_ranges = [
@@ -69,6 +65,53 @@ class InstanceVariableConstructor:
 
         return sub_mods
 
+    def _create_sub_mods(self, mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]:
+        mod_ids = [
+            magnitude['hash']
+            for magnitude in mod_magnitudes
+        ]
+
+        sub_mods = []
+        # Duplicate mod ID's in the 'extended' data only happen when an item mod has multiple ranges in the same mod.
+        # Any duplicates are the same submod and so need to be combined
+        duplicate_mod_ids = shared_utils.find_duplicate_values(mod_ids)
+        duplicated_sub_mods = self._create_duplicated_sub_mods(mod_id_to_text=mod_id_to_text,
+                                                               duplicate_mod_ids=duplicate_mod_ids,
+                                                               mod_magnitudes=mod_magnitudes)
+        sub_mods.extend(duplicated_sub_mods)
+
+        singleton_mod_ids = [mod_id for mod_id in mod_ids if mod_id not in duplicate_mod_ids]
+        singleton_sub_mods = self._create_singleton_sub_mods(mod_id_to_text=mod_id_to_text,
+                                                             singleton_mod_ids=singleton_mod_ids,
+                                                             mod_magnitudes=mod_magnitudes)
+        sub_mods.extend(singleton_sub_mods)
+
+        return sub_mods
+
+    def create_item_mod(self, mod_data: dict, mod_id_to_text: dict, mod_class: ModClass, atype: str):
+        mod_name = mod_data['name']
+        mod_tier = utils.determine_mod_tier(mod_data)
+        mod_ilvl = mod_data['level']
+        affix_type = utils.determine_mod_affix_type(mod_data)
+        magnitudes = mod_data['magnitudes']
+
+        sub_mods = self._create_sub_mods(
+            mod_id_to_text=mod_id_to_text,
+            mod_magnitudes=magnitudes
+        )
+
+        item_mod = ItemMod(
+            atype=atype,
+            mod_class=mod_class,
+            mod_ilvl=mod_ilvl,
+            mod_name=mod_name,
+            affix_type=affix_type,
+            mod_tier=mod_tier,
+            sub_mods=sub_mods
+        )
+
+        return item_mod
+
     def create_item_mods(self, item_data: dict) -> list[ItemMod]:
         """
         'mods': {
@@ -88,7 +131,7 @@ class InstanceVariableConstructor:
             if mod_class not in item_data:
                 continue
             abbrev_class = utils.mod_class_to_abbrev[mod_class]
-            mod_id_to_text = utils.determine_mod_id_to_mod_text(
+            mod_id_to_text = utils.determine_mod_id_to_mod_text_order(
                 mod_class=mod_class,
                 item_data=item_data,
                 sanitize_text=False

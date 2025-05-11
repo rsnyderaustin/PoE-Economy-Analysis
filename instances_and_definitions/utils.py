@@ -1,3 +1,5 @@
+
+from typing import Iterable
 from datetime import datetime, timezone
 from enum import Enum
 
@@ -18,7 +20,7 @@ class ModAffixType(Enum):
 
 
 def generate_mod_id(atype: str,
-                    mod_ids: list[str] = None,
+                    mod_ids: Iterable[str] = None,
                     affix_type: ModAffixType = None):
     mod_ids = sorted(mod_ids) if mod_ids else []
     if mod_ids and len(mod_ids) == 1:

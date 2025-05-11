@@ -25,6 +25,7 @@ class ProgramManager:
         logging.info("Initializing ProgramManager.")
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
+        self.mods_handler = data_handling.ModsHandler()
         self.injector = PoecdDataInjector()
         self.price_predict_data_manager = price_predict_model.PricePredictDataManager()
         logging.info("Finished initializing ProgramManager.")
