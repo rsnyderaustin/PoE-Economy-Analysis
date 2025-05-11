@@ -113,7 +113,7 @@ class InstanceVariableConstructor:
 
         return item_mod
 
-    def create_skills(self, item_data: dict) -> list[ItemSkill]:
+    def _create_skills(self, item_data: dict) -> list[ItemSkill]:
         if 'grantedSkills' not in item_data:
             return []
 
@@ -195,18 +195,37 @@ class InstanceVariableConstructor:
                 if 'Dex' in req_dict['name']:
                     dex_requirement = int(req_dict['values'][0][0])
 
+    def _parse_socketers(self, item_data: dict) -> list[ItemSocketer]:
+        socketers = []
+
+        if 'runeMods' not in item_data:
+            return []
+
+        for socketer_text in item_data['runeMods']:
+            values = shared_utils.parse_values_from_text(socketer_text)
+            sanitized_text = shared_utils.sanitize_mod_text(socketer_text)
+            sanitized_text = shared_utils.remove_piped_brackets(sanitized_text)
+            socketers.append(
+                ItemSocketer(
+                    sanitized_socketer_text=sanitized_text,
+                    actual_values=values
+                )
+            )
+        return socketers
+
     def create_listing(self,
                        api_item_response: dict,
                        item_mods: list[ItemMod]):
         item_data = api_item_response['item']
         listing_data = api_item_response['listing']
+
+        listing_date = api_item_response['listing']['indexed']
         minutes_since_listed = utils.determine_minutes_since(
-            relevant_date=api_item_response['listing']['indexed']
+            relevant_date=listing_date
         )
-        # Gives minutes between league start and the item being listed
         minutes_since_league_start = utils.determine_minutes_since(
             relevant_date=utils.league_start_date,
-            later_date=api_item_response['listing']['indexed']
+            later_date=listing_date
         )
 
         if any([socketer_string in item_data['baseType'] for socketer_string in ['Rune', 'Talisman', 'Soul Core']]):
@@ -236,20 +255,9 @@ class InstanceVariableConstructor:
         else:
             atype = item_data['baseType'] if 'baseType' in item_data else None
 
-        socketers = []
-        if 'runeMods' in item_data:
-            for socketer_text in item_data['runeMods']:
-                values = shared_utils.parse_values_from_text(socketer_text)
-                sanitized_text = shared_utils.sanitize_mod_text(socketer_text)
-                sanitized_text = shared_utils.remove_piped_brackets(sanitized_text)
-                socketers.append(
-                    ItemSocketer(
-                        sanitized_socketer_text=sanitized_text,
-                        actual_values=values
-                    )
-                )
+        socketers = self._parse_socketers(item_data=item_data)
 
-        item_skills = create_skills(item_data)
+        item_skills = self._create_skills(item_data)
 
         new_listing = ModifiableListing(
             listing_id=api_item_response['id'],
