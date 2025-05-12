@@ -22,23 +22,26 @@ class FilterSplitter:
         num_values = end + 1 - start
 
         # We need to have at least one for a step value
-        iterative_value = max(round(num_values / num_parts), 1)
+        iterative_value = max(round(num_values / num_parts), 1) - 1
 
-        current_val = start
+        current_min = start
         ranges = []
         for step in range(num_values):
-            min_ = current_val + 1
-            max_ = current_val + 1 + iterative_value
+            min_ = current_min
+            max_ = current_min + iterative_value
 
             if max_ > end:
+                if min_ > end:
+                    break
+
                 new_range = min_, end
                 ranges.append(new_range)
                 break
 
-            new_range = current_val + 1, current_val + 1 + step
+            new_range = min_, max_
             ranges.append(new_range)
 
-            current_val = max_
+            current_min = max_ + 1
 
         """
         Below just ensures that the very last range covers until the end of the 
