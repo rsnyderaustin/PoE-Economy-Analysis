@@ -1,5 +1,6 @@
-from data_handling.mod_matching import utils
+
 from instances_and_definitions import ModAffixType
+from shared import shared_utils
 
 
 class PoecdMod:
@@ -40,12 +41,12 @@ class PoecdAtypeManager:
                  mods: set[PoecdMod]):
         self.atype_id = atype_id
         self.atype_name = atype_name
+        self.mods = mods
 
-        self.mods = set()
-        self.mod_id_to_mod = dict()
-        self.mod_text_to_mod = dict()
+        self._mod_id_to_mod = {mod.mod_id: mod for mod in mods}
+        self._mod_text_to_mod = {mod.mod_text: mod for mod in mods}
 
-        self.mods_affixed_dict = {
+        self._mods_affixed_dict = {
             ModAffixType.PREFIX: {mod.mod_text: mod for mod in mods if mod.affix_type == ModAffixType.PREFIX},
             ModAffixType.SUFFIX: {mod.mod_text: mod for mod in mods if mod.affix_type == ModAffixType.SUFFIX}
         }
@@ -65,11 +66,11 @@ class PoecdAtypeManager:
         self.mod_id_to_text = {mod.mod_id: mod.mod_text for mod in mods}
         self.mod_text_to_id = {v: k for k, v in self.mod_id_to_text.items()}
 
-    def fetch_mod(self, mod_id: int = None, mod_text: str = None):
-        if mod_id:
-            return self.mod_id_to_mod[mod_id]
+    def fetch_mod(self, mod_text: str, affix_type: ModAffixType):
+        return self._mods_affixed_dict[affix_type][mod_text]
 
-        return self.mod_text_to_mod[mod_text]
+    def fetch_mod_by_id(self, mod_id: str):
+        return self._mod_id_to_mod[mod_id]
 
     def _create_hybrid_to_parent_dict(self, affix_type: ModAffixType = None) -> dict:
         hybrid_part_to_parent_id = dict()
@@ -113,7 +114,7 @@ class PoecdSourceStore:
         }
 
         mod_id_to_mod_type_ids = {
-            mod_data['id_modifier']: utils.parse_poecd_mtypes_string(mod_data['mtypes'])
+            mod_data['id_modifier']: shared_utils.parse_poecd_mtypes_string(mod_data['mtypes'])
             for mod_data in self.stats_data['modifiers']['seq']
         }
 
@@ -122,17 +123,17 @@ class PoecdSourceStore:
             for mod_id, mod_type_ids in mod_id_to_mod_type_ids.items()
         }
 
-    def fetch_mod_text(self, mod_id):
-        return self._mod_id_to_text[mod_id]
+    def fetch_mod_text(self, mod_id) -> str | None:
+        return self._mod_id_to_text.get(mod_id, None)
 
-    def fetch_affix_type(self, mod_id):
-        return self._mod_id_to_affix_type[mod_id]
+    def fetch_affix_type(self, mod_id) -> str | None:
+        return self._mod_id_to_affix_type.get(mod_id, None)
 
-    def fetch_atype_name(self, atype_id):
-        return self._atype_id_to_atype_name[atype_id]
+    def fetch_atype_name(self, atype_id) -> str | None:
+        return self._atype_id_to_atype_name.get(atype_id, None)
 
-    def fetch_mod_types(self, mod_id):
-        return self._mod_id_to_mod_types[mod_id]
+    def fetch_mod_types(self, mod_id) -> str | None:
+        return self._mod_id_to_mod_types.get(mod_id, None)
 
 
 class GlobalAtypesManager:

@@ -69,7 +69,7 @@ def transform_text(text: str, transform_dict: dict) -> str:
     return text
 
 
-def log_no_match(item_mod: ItemMod):
+def throw_no_match_error(item_mod: ItemMod):
     logging.info(f"Parent mod:")
     shared_utils.log_dict(item_mod.__dict__)
     logging.info(f"Sub Mods:")
@@ -78,7 +78,7 @@ def log_no_match(item_mod: ItemMod):
     raise RuntimeError(f"Could not find matching Poecd mod for Trade API mod. See above")
 
 
-def log_unavailable_mod_data(item_mod: ItemMod, poecd_mod: PoecdMod):
+def throw_unavailable_mod_error(item_mod: ItemMod, poecd_mod: PoecdMod):
     logging.info("\n\n--------------- Item Mod ----------------")
     api_trade_skills = [sub_mod.sanitized_mod_text for sub_mod in item_mod.sub_mods]
     logging.info(f"Item mod: {api_trade_skills}")

@@ -133,19 +133,24 @@ class PricePredictDataManager:
     def cache_training_data(self, training_listings: list[ModifiableListing]):
         for training_listing in training_listings:
             training_data = self._flatten_listing_import(training_listing)
+
+            # Add values for existing columns or initialize with None if new
             for col, value in training_data.items():
                 if col not in self.training_data:
-                    self.training_data[col] = [None for _ in list(range(self.training_data_length))]
+                    self.training_data[col] = [None] * self.training_data_length
                 self.training_data[col].append(value)
 
-            leftover_cols = [col for col in self.training_data.keys() if col not in training_data.keys()]
-
-            for col in leftover_cols:
+            # Fill in missing columns with None
+            for col in self.training_data.keys() - training_data.keys():
                 self.training_data[col].append(None)
 
-    def cache_market_data(self, market_listings: list[ModifiableListing]):
-        for market_listing in market_listings:
-            market_data = self._flatten_listing_import(market_listing)
+            self.training_data_length += 1
+
+        logging.info(f"Cached training data. Listings count: {shared_utils.determine_dict_length(self.training_data)}")
+
+    def cache_market_data(self, listings: list[ModifiableListing]):
+        for listing in listings:
+            market_data = self._flatten_listing_import(listing)
             if not self.market_data:
                 # If search data is empty then our only hope is filling column structure from training data
                 if self.training_data:

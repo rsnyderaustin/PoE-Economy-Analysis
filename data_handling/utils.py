@@ -1,11 +1,14 @@
-from datetime import datetime
+import logging
+import re
+from datetime import datetime, timezone
+from dateutil.parser import isoparse
 
 import pytz
 
 from instances_and_definitions import ModClass, ModAffixType
 from shared import shared_utils
 
-mod_class_to_abbrev = {
+_mod_class_to_abbrev = {
     'implicitMods': 'implicit',
     'enchantMods': 'enchant',
     'explicitMods': 'explicit',
@@ -13,14 +16,19 @@ mod_class_to_abbrev = {
     'runeMods': 'rune'
 }
 
+
+def abbreviate_mod_class(mod_class_enum: ModClass):
+    return _mod_class_to_abbrev[mod_class_enum.value]
+
 _dt = datetime(2025, 4, 4, 12, 0, 0)
 _pacific = pytz.timezone('US/Pacific')
 
 league_start_date = _pacific.localize(_dt)
 
 
-def determine_mod_id_to_mod_text(mod_class: ModClass, item_data: dict, sanitize_text: bool = False) -> dict:
-    abbrev_class = mod_class_to_abbrev[mod_class]
+def determine_mod_id_to_mod_text(mod_class_enum: ModClass, item_data: dict, sanitize_text: bool = False) -> dict:
+    mod_class = mod_class_enum.value
+    abbrev_class = abbreviate_mod_class(mod_class_enum)
 
     if abbrev_class not in item_data['extended']['hashes']:
         return dict()
@@ -70,7 +78,7 @@ def determine_mod_affix_type(mod_dict: dict) -> ModAffixType:
     return mod_affix
 
 
-def determine_mod_tier(mod_dict: dict) -> int:
+def determine_mod_tier(mod_dict: dict) -> int | None:
     mod_tier = None
     if mod_dict['tier']:
         mod_tier_match = re.search(r'\d+', mod_dict['tier'])
@@ -79,4 +87,4 @@ def determine_mod_tier(mod_dict: dict) -> int:
         else:
             logging.error(f"Did not find a tier number for item tier {mod_dict['tier']}")
             mod_tier = None
-    return int(mod_tier) if mod_tier else N
+    return int(mod_tier) if mod_tier else None

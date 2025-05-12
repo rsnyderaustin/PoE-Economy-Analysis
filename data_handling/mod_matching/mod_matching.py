@@ -4,6 +4,7 @@ import rapidfuzz
 
 from instances_and_definitions import ItemMod
 from poecd_api.data_management import GlobalAtypesManager
+from shared import shared_utils
 from . import utils
 
 
@@ -24,9 +25,7 @@ class ModMatcher:
 
         self._global_atypes_manager = global_atypes_manager
 
-    def _attempt_hybrid_match(self,
-                              item_mod: ItemMod,
-                              min_score: float) -> str | None:
+    def _attempt_hybrid_match(self, item_mod: ItemMod, min_score: float) -> str | None:
         atype_manager = self._global_atypes_manager.fetch_atype_manager(atype_name=item_mod.atype)
         hybrid_scores_tracker = utils.MatchScoreTracker()
 
@@ -69,7 +68,7 @@ class ModMatcher:
     def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float):
         atype_manager = self._global_atypes_manager.fetch_atype_manager(atype_name=item_mod.atype)
         if item_mod.affix_type:
-            poecd_mod_texts = list(atype_manager.mods_affixed_dict[item_mod.affix_type].keys())
+            poecd_mod_texts = list(atype_manager._mods_affixed_dict[item_mod.affix_type].keys())
         else:
             poecd_mod_texts = list(atype_manager.mods_dict.keys())
 
@@ -78,13 +77,15 @@ class ModMatcher:
         result = rapidfuzz.process.extractOne(mod_text,
                                               poecd_mod_texts,
                                               score_cutoff=min_score)
-        if result:
-            match, score, idx = result
-
-            mod = atype_manager.mods_affixed_dict[item_mod.affix_type][match]
-            return mod.mod_id
-        else:
+        if not result:
             return None
+
+        match, score, idx = result
+
+        mod = atype_manager.fetch_mod(mod_text=match,
+                                      affix_type=item_mod.affix_type)
+
+        return mod.mod_id
 
     def _attempt_match(self, item_mod: ItemMod, min_score: float, attempt_to_transform: bool = False) -> str | None:
         if attempt_to_transform:

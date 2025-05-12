@@ -21,9 +21,7 @@ class FileKey(Enum):
     MARKET_SCAN = 'temp_price_predict_data'
     POECD_BASES = 'poecd_bases'
     POECD_STATS = 'poecd_stats'
-    POECD_GLOBAL_ATYPES_MANAGER = 'poecd_global_atypes_manager'
     ITEM_MODS = 'item_mods'
-
 
 
 class FilesManager:
@@ -46,13 +44,11 @@ class FilesManager:
             FileKey.MARKET_SCAN: Path.cwd() / 'file_management/files/market_scan.json',
             FileKey.POECD_BASES: Path.cwd() / 'file_management/files/poecd_bases.json',
             FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json',
-            FileKey.POECD_GLOBAL_ATYPES_MANAGER: Path.cwd() / 'file_management/files/poecd_global_atypes_manager.pkl',
-            FileKey.ITEM_MODS: Path.cwd() / 'file_management/files/item_mods.json'
+            FileKey.ITEM_MODS: Path.cwd() / 'file_management/files/item_mods.pkl'
         }
 
-        self.file_data = dict()
+        self.file_data = self._load_files()
 
-        self._load_files()
         self._initialized = True
 
     def _ensure_brackets_in_json(self, file_path: Path):
@@ -60,15 +56,16 @@ class FilesManager:
             with open(file_path, 'w') as f:
                 json.dump({}, f, indent=4)
 
-    def _load_files(self):
-
+    def _load_files(self) -> dict:
+        file_data = dict()
+        
         model = xgb.Booster()
         model_path = self.file_paths[FileKey.PRICE_PREDICT_MODEL]
         if os.path.getsize(model_path) > 2:
             model.load_model(self.file_paths[FileKey.PRICE_PREDICT_MODEL])
-            self.file_data[FileKey.PRICE_PREDICT_MODEL] = model
+            file_data[FileKey.PRICE_PREDICT_MODEL] = model
         else:
-            self.file_data[FileKey.PRICE_PREDICT_MODEL] = None
+            file_data[FileKey.PRICE_PREDICT_MODEL] = None
 
         file_paths = {file_key: path for file_key, path in self.file_paths.items() if file_key != FileKey.PRICE_PREDICT_MODEL}
 
@@ -77,24 +74,25 @@ class FilesManager:
                 if path.suffix == '.json':
                     self._ensure_brackets_in_json(file_path=path)
                     with open(path, 'r') as file:
-                        self.file_data[key] = json.load(file)
+                        file_data[key] = json.load(file)
                 elif path.suffix == '.csv':
-                    self.file_data[key] = pd.read_csv(path)
+                    file_data[key] = pd.read_csv(path)
                 elif path.suffix == '.pkl':
                     try:
                         with open(path, 'rb') as file:
-                            self.file_data[key] = pickle.load(file)
+                            file_data[key] = pickle.load(file)
                     except EOFError:
-                        self.file_data[key] = None
+                        file_data[key] = None
                         logging.info(f"No data found at path {path}. Continuing.")
                         continue
                 else:
                     raise ValueError(f"Unsupported file type {path.suffix}")
 
-        self.file_data[FileKey.LISTING_FETCHES] = {
+        file_data[FileKey.LISTING_FETCHES] = {
             date: set(listing_ids)
-            for date, listing_ids in self.file_data[FileKey.LISTING_FETCHES].items()
+            for date, listing_ids in file_data[FileKey.LISTING_FETCHES].items()
         }
+        return file_data
 
     def cache_mod(self, item_mod: ItemMod):
         mod_data = self.file_data[FileKey.ATYPE_MODS]

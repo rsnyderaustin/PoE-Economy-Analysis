@@ -13,14 +13,40 @@ from .trade_items_fetcher import TradeItemsFetcher
 class FilterSplitter:
 
     @staticmethod
-    def _split_range_into_parts(value_range: tuple, num_parts: int):
+    def _split_range_into_parts(value_range: tuple, num_parts: int) -> list[tuple]:
         start, end = value_range
-        step = (end - start + 1) // num_parts
-        ranges = [(start + i * step, min(start + (i + 1) * step - 1, end)) for i in range(num_parts)]
 
-        # Handle any remaining range that was not perfectly divisible
-        if ranges[-1][1] < end:
-            ranges[-1] = (ranges[-1][0], end)
+        if start == end:
+            return [(start, end)]
+
+        num_values = end + 1 - start
+
+        # We need to have at least one for a step value
+        iterative_value = max(round(num_values / num_parts), 1)
+
+        current_val = start
+        ranges = []
+        for step in range(num_values):
+            min_ = current_val + 1
+            max_ = current_val + 1 + iterative_value
+
+            if max_ > end:
+                new_range = min_, end
+                ranges.append(new_range)
+                break
+
+            new_range = current_val + 1, current_val + 1 + step
+            ranges.append(new_range)
+
+            current_val = max_
+
+        """
+        Below just ensures that the very last range covers until the end of the 
+        values range parameter
+        """
+        last_range = ranges[len(ranges) - 1]
+        last_range = last_range[0], end
+        ranges[len(ranges) - 1] = last_range
 
         return ranges
 

@@ -32,17 +32,18 @@ class AtypeManagerFactory:
         for mod_id, atype_id in inputs:
             affix_type_str = self.source_store.fetch_affix_type(mod_id)
             affix_type = ModAffixType.PREFIX if affix_type_str == 'prefix' else ModAffixType.SUFFIX
+            mod_text = shared_utils.sanitize_mod_text(self.source_store.fetch_mod_text(mod_id))
             new_mod = PoecdMod(atype_id=atype_id,
                                atype_name=self.source_store.fetch_atype_name(atype_id),
                                mod_id=mod_id,
-                               mod_text=self.source_store.fetch_mod_text(mod_id),
-                               mod_types=self.source_store.mod_id_to_mod_types[mod_id],
+                               mod_text=mod_text,
+                               mod_types=self.source_store.fetch_mod_types(mod_id=mod_id),
                                affix_type=affix_type)
             mods.append(new_mod)
 
         return mods
 
-    def _create_atypes_managers(self, tiers_data, mods):
+    def _create_atypes_managers(self, mods):
         atype_ids = set(mod.atype_id for mod in mods)
         atype_id_to_mods = {atype_id: set() for atype_id in atype_ids}
         for mod in mods:
@@ -62,7 +63,8 @@ class AtypeManagerFactory:
         inputs = [
             (mod_id, atype_id, tiers_data)
             for mod_id, atype_dict in tiers_data.items()
-            for atype_id, tier_data in atype_dict.items()
+            for atype_id, tier_data_list in atype_dict.items()
+            for tiers_data in tier_data_list
             if atype_id in self.source_store.valid_atype_ids
         ]
 
@@ -75,7 +77,7 @@ class AtypeManagerFactory:
         tiers_data = self._create_tiers_data()
 
         mods = self._create_mods(tiers_data=tiers_data)
-        atype_managers = self._create_atypes_managers(tiers_data=tiers_data, mods=mods)
+        atype_managers = self._create_atypes_managers(mods=mods)
         self._fill_mods_with_tiers(mods=mods, tiers_data=tiers_data)
 
         return atype_managers
