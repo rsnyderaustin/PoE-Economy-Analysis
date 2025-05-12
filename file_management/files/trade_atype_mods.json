@@ -34619,7 +34619,7 @@
                 "Attack"
             ],
             "mod_texts": [
-                "Bow Attacks fire an additional Arrow"
+                "Bow Attacks fire # additional Arrows"
             ],
             "affix_type": "suffix",
             "mod_tiers": {

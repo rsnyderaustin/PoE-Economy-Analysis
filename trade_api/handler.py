@@ -100,7 +100,6 @@ class TradeApiHandler:
 
     def __init__(self):
         self.fetcher = TradeItemsFetcher()
-        self.fetch_data = FilesManager().file_data[FileKey.LISTING_FETCHES]
         self.files_manager = FilesManager()
 
         self.split_threshold = 175
@@ -115,26 +114,27 @@ class TradeApiHandler:
 
     def _process_raw_response(self, response: dict):
         fetch_date = shared_utils.today_date()
+        fetch_date_record = self.files_manager.file_data[FileKey.LISTING_FETCHES]
+
+        if fetch_date not in fetch_date_record:
+            fetch_date_record[fetch_date] = set()
 
         valid_responses = [api_response for api_response in response['responses']
-                           if api_response['id'] not in self.fetch_data[fetch_date]]
-        self.valid_responses_found += len(valid_responses)
-        minutes_since_start = (datetime.now() - self.program_start).seconds / 60
-        logging.info(f"{len(valid_responses)} valid responses found out of {len(response['responses'])} total responses."
-                     f"\n\tHave found {self.valid_responses_found} valid responses in {round(minutes_since_start, 1)} "
-                     f"minutes.")
+                           if api_response['id'] not in fetch_date_record[fetch_date]]
 
-        # The valid responses are the only ones with un-cached listing IDs, so we just cache those
         listing_ids = set(response['id'] for response in valid_responses)
-        self.files_manager.cache_api_fetch_date(listing_ids=listing_ids,
-                                                fetch_date=fetch_date)
+        fetch_date_record[fetch_date].update(listing_ids)
+
+        # Below is just logging logic
+        self.valid_responses_found += len(valid_responses)
+        minutes_since_start = round((datetime.now() - self.program_start).seconds / 60, 1)
+        logging.info(f"\n\tTrade API total responses: {len(response['responses'])}"
+                     f"\n\tTrade API valid responses: {len(valid_responses)}"
+                     f"\n\tTotal valid responses in {minutes_since_start} minutes: {self.valid_responses_found}")
+
         return valid_responses
 
     def process_query(self, query: Query):
-        fetch_date = shared_utils.today_date()
-        if fetch_date not in self.fetch_data:
-            self.fetch_data[fetch_date] = set()
-
         query_dict = query_construction.create_trade_query(query=query)
 
         raw_response = self.fetcher.fetch_items_response(query_dict)

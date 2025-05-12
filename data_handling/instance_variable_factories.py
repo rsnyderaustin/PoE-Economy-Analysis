@@ -245,12 +245,13 @@ class ListingFactory:
     @classmethod
     def create_listing(cls,
                        api_item_response: dict,
-                       item_mods: list[ItemMod]):
+                       item_mods: list[ItemMod]) -> ModifiableListing | None:
         item_data = api_item_response['item']
         listing_data = api_item_response['listing']
 
         if cls._item_is_socketer(item_data):
-            logging.error(f"Received API item response for socketer. Skipping.")
+            logging.error(f"Received create_listing request for socketer. Skipping.")
+            return
 
         listing_date = api_item_response['listing']['indexed']
         minutes_since_listed = utils.determine_minutes_since(
@@ -269,6 +270,7 @@ class ListingFactory:
         item_skills = SkillsFactory.create_skills(item_data)
 
         new_listing = ModifiableListing(
+            account_name=listing_data['account']['name'],
             listing_id=api_item_response['id'],
             date_fetched=shared_utils.today_date(),
             minutes_since_listed=minutes_since_listed,

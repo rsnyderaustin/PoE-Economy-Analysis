@@ -76,8 +76,9 @@ def log_outliers(outliers_df):
 
 
 def _plot_correlation_matrix(df: pd.DataFrame):
+    corr_df = df.select_dtypes(include=['int64', 'float64'])
     plt.figure(figsize=(18, 8))
-    corr_matrix = df.corr()
+    corr_matrix = corr_df.corr()
     sns.heatmap(corr_matrix[['exalts']].sort_values(by='exalts', ascending=False), annot=True, cmap='coolwarm')
     plt.show()
 
@@ -140,10 +141,11 @@ def build_price_predict_model(df: pd.DataFrame,
     Builds an XGBoost price prediction model with custom loss weighting.
     """
 
+    _plot_correlation_matrix(df)
+
     # Split features and target variable
     features = df.drop(columns=['exalts'])
     target_col = df['exalts']
-    features.fillna(0, inplace=True)
 
     # Train/test split
     training_feat, test_feat, training_target, test_target = train_test_split(
@@ -151,8 +153,8 @@ def build_price_predict_model(df: pd.DataFrame,
     )
 
     # Convert to DMatrix format for XGBoost
-    train_data = xgb.DMatrix(training_feat, label=training_target)
-    test_data = xgb.DMatrix(test_feat, label=test_target)
+    train_data = xgb.DMatrix(training_feat, label=training_target, enable_categorical=True)
+    test_data = xgb.DMatrix(test_feat, label=test_target, enable_categorical=True)
 
     # Log model parameters
     logging.info(f"Depth: {training_depth}, ETA: {eta}, Boost rounds: {num_boost_rounds}")
@@ -191,13 +193,13 @@ def build_price_predict_model(df: pd.DataFrame,
 
     """_print_outliers(test_target_df=test_target,
                     test_features_df=test_feat,
-                    test_predictions=test_predictions)
+                    test_predictions=test_predictions)"""
 
     # Get feature importance
     _plot_feature_importance(model=model)
 
     _plot_actual_vs_predicted(test_predictions=test_predictions,
-                              test_targets=test_target)"""
+                              test_targets=test_target)
 
     return model
 

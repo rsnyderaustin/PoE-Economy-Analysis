@@ -1,51 +1,52 @@
-from things.items import Modifiable
-from utils.enums import ModAffixType
-
-from data_handling.mod_matching import GlobalATypesManager, ModTier
+from instances_and_definitions import ModifiableListing, ModAffixType, ItemMod
 from .crafting_outcome import CraftingOutcome
+from .mods import ModsManager
 
 
 class CraftingEngine:
 
-    def __init__(self, global_atypes_manager: GlobalATypesManager):
-        self.global_atypes_manager = global_atypes_manager
-
-    def fetch_atype_mod_tiers(self,
-                              item: Modifiable,
-                              mod_ids: list[int]) -> list[ModTier]:
-        return self.global_atypes_manager.fetch_specific_mod_tiers(
-            atype=item.atype,
-            ilvl=item.ilvl,
-            mod_ids=mod_ids
-        )
+    def __init__(self):
+        # Need to validate that we have all or nearly all of the mods represented in Poecd
+        self.mods_manager = ModsManager()
 
     def roll_new_modifier(self,
-                          item: Modifiable,
+                          listing: ModifiableListing,
                           affix_types: list[ModAffixType],
                           force_type: str = None,
-                          exclude_mod_ids: set = None) -> list[ModTier]:
+                          exclude_mod_ids: set = None) -> list[CraftingOutcome]:
         """
 
-        :param item:
+        :param listing:
         :param affix_types:
         :param force_type:
         :param exclude_mod_ids: If not supplied, the function assumes that all current mods on the item are not eligible to roll.
-        :return:
+        :return: All the possible crafting outcomes given the function's parameters
         """
 
-        atype_mod_tiers = self.global_atypes_manager.fetch_mod_tiers(
-            atype=item.atype,
-            ilvl=item.ivl,
+        atype_item_mods = self.mods_manager.fetch_mod_tiers(
+            atype=listing.item_atype,
+            max_ilvl=listing.ilvl,
             force_mod_type=force_type,
-            exclude_mod_ids=set(mod.mod_id for mod in item.explicit_mods) if not exclude_mod_ids else exclude_mod_ids,
+            exclude_mod_ids=set(mod.mod_id for mod in listing.mods) if not exclude_mod_ids else exclude_mod_ids,
             affix_types=affix_types
         )
 
-        return atype_mod_tiers
+        total_weight = sum(item_mod.weighting for item_mod in atype_item_mods)
+
+        outcomes = [
+            CraftingOutcome(
+                original_listing=listing,
+                outcome_probability=item_mod.weighting / total_weight,
+                new_item_mod=item_mod
+            )
+            for item_mod in atype_item_mods
+        ]
+
+        return outcomes
 
 
     def create_crafting_outcomes(self,
-                                 item: Modifiable,
+                                 listing: ModifiableListing,
                                  mod_tiers: list[ModTier],
                                  exclude_mod_ids: list[int] = None) -> list[CraftingOutcome]:
         mod_tiers = [mod_tier for mod_tier in mod_tiers
@@ -58,9 +59,9 @@ class CraftingEngine:
         crafting_outcomes = []
         for mod_tier in mod_tiers:
             crafting_outcome = CraftingOutcome(
-                original_item=item,
+                original_listing=item,
                 outcome_probability=mod_tier.weighting / total_mod_weight,
-                new_mod_tier=mod_tier
+                new_item_mod=mod_tier
             )
             crafting_outcomes.append(crafting_outcome)
 

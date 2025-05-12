@@ -137,7 +137,13 @@ class CurrencyConverter:
         return currency_amount * exchange_rate
 
 
-def log_dict(dict_):
+def log_dict(dict_, only_real_values: bool = True):
+    print("\n\n")
+    if only_real_values:
+        dict_ = {
+            col: val
+            for col, val in dict_.items() if val
+        }
     pprint.pprint(dict_)
 
 

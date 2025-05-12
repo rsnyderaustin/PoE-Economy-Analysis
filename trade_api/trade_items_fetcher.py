@@ -50,7 +50,9 @@ class TradeItemsFetcher:
         json_data = response.json()
         # logging.info(f"POST -> {len(json_data['result'])} item IDs")
         cls.items_fetched += len(json_data['result'])
-        logging.info(f"Have fetched {cls.items_fetched} items in {(datetime.now() - cls.class_start).total_seconds()} seconds.")
+
+        minutes_passed = round((datetime.now() - cls.class_start).total_seconds() / 60, 1)
+        logging.info(f"Raw listings fetched: {cls.items_fetched} in {minutes_passed} minutes.")
         return json_data
 
     @classmethod

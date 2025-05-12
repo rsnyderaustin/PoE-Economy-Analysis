@@ -1,6 +1,7 @@
 import re
 
 from shared import trade_item_enums
+from shared.trade_item_enums import ItemCategory
 from .utils import ModClass, ModAffixType, generate_mod_id
 
 
@@ -72,6 +73,8 @@ class ItemSocketer:
 class ModifiableListing:
 
     def __init__(self,
+                 item_category: ItemCategory,
+                 account_name: str,
                  listing_id: str,
                  date_fetched: str,
                  minutes_since_listed: float,
@@ -98,6 +101,7 @@ class ModifiableListing:
                  item_skills: list[ItemSkill],
                  item_properties: dict = None
                  ):
+        self.account_name = account_name
         self.listing_id = listing_id
         self.date_fetched = date_fetched
         self.minutes_since_listed = minutes_since_listed
@@ -106,6 +110,7 @@ class ModifiableListing:
         self.currency_amount = currency_amount
         self.item_name = item_name
         self.item_btype = item_btype
+        self.item_category = ItemCategory(item_btype)
         self.item_atype = item_atype
         self.item_bgroup = item_bgroup
         self.rarity = rarity
@@ -125,6 +130,17 @@ class ModifiableListing:
 
         self.item_properties = item_properties or {}
 
+        self.maximum_quality = self._determine_max_quality()
+
+    def _determine_max_quality(self) -> int:
+        implicit_sub_mods = [sub_mod for mod in self.implicit_mods for sub_mod in mod.sub_mods]
+        max_quality = 20
+        for sub_mod in implicit_sub_mods:
+            if bool(re.fullmatch(r"maximum_quality_is", sub_mod.sanitized_mod_text)):
+                max_quality = sub_mod.actual_values[0]
+
+        return max_quality
+
     @property
     def mods(self) -> list[ItemMod]:
         all_mods = (
@@ -136,89 +152,33 @@ class ModifiableListing:
         return all_mods
 
     @property
+    def affixed_mods(self) -> list[ItemMod]:
+        return self.explicit_mods + self.fractured_mods
+
+    @property
+    def quality(self):
+        return self.item_properties['Quality']
+
+    @property
+    def permanent_mods(self) -> list[ItemMod]:
+        return self.fractured_mods
+
+    @property
+    def removable_mods(self) -> list[ItemMod]:
+        return self.explicit_mods
+
+    @property
+    def prefixes(self):
+        return [mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX]
+
+    @property
     def open_prefixes(self) -> int:
         return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX])
 
     @property
+    def suffixes(self):
+        return [mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX]
+
+    @property
     def open_suffixes(self) -> int:
         return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
-
-
-class Modifiable:
-
-    def __init__(self,
-                 item_id: str,
-                 name: str,
-                 category: trade_item_enums.ItemCategory,
-                 btype: str,
-                 atype: str,
-                 quality: int,
-                 corrupted: bool,
-                 ilvl: int,
-                 rarity: str = None,
-                 num_sockets: int = None,
-                 socketed_items: list[ItemSocketer] = None,
-                 implicit_mods: list[ItemMod] = None,
-                 explicit_mods: list[ItemMod] = None,
-                 enchant_mods: list[ItemMod] = None,
-                 rune_mods: list[ItemMod] = None,
-                 fractured_mods: list[ItemMod] = None
-                 ):
-        self.item_id = item_id
-        self.name = name
-        self.btype = btype
-        self.corrupted = corrupted
-        self.quality = quality
-        self.category = category
-        self.ilvl = ilvl
-        self.atype = atype
-
-        self.rarity = rarity
-        self.num_sockets = num_sockets
-        self.socketed_items = socketed_items
-
-        self.implicit_mods = implicit_mods or []
-        self.explicit_mods = explicit_mods or []
-        self.enchant_mods = enchant_mods or []
-        self.rune_mods = rune_mods or []
-        self.fractured_mods = fractured_mods or []
-
-    @property
-    def maximum_quality(self):
-        for mod in self.implicit_mods:
-            if bool(re.fullmatch(r"Maximum Quality is \d+%", mod.mod_text)):
-                return re.search(r'\d+', mod.mod_text).group()
-
-    @property
-    def mods(self):
-        return self.explicit_mods + self.fractured_mods
-
-    @property
-    def prefixes(self):
-        return [mod for mod in self.mods
-                if mod.affix_type == ModAffixType.PREFIX]
-
-    @property
-    def suffixes(self):
-        return [mod for mod in self.mods
-                if mod.affix_type == ModAffixType.SUFFIX.value]
-
-    @property
-    def permanent_mods(self) -> list:
-        return self.fractured_mods
-
-    @property
-    def removable_mods(self) -> list:
-        return self.removable_prefixes + self.removable_suffixes
-
-    @property
-    def removable_prefixes(self) -> list:
-        changeable_prefixes = [mod for mod in self.explicit_mods
-                               if mod.affix_type == ModAffixType.PREFIX]
-        return changeable_prefixes
-
-    @property
-    def removable_suffixes(self) -> list:
-        changeable_suffixes = [mod for mod in self.explicit_mods
-                               if mod.affix_type == ModAffixType.SUFFIX]
-        return changeable_suffixes

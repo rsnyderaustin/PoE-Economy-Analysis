@@ -55,5 +55,7 @@
     "causes_daze_buildup_equal_to_#%_of_damage_dealt": [],
     "loads_#_additional_bolts": [],
     "minions_gain_#%_of_their_physical_damage_as_extra_lightning_damage": [],
-    "recover_#%_of_maximum_mana_on_kill": []
+    "recover_#%_of_maximum_mana_on_kill": [],
+    "#%_increased_chance_to_shock": [],
+    "leeches_#%_of_physical_damage_as_mana": []
 }

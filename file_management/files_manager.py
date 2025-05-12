@@ -40,14 +40,18 @@ class FilesManager:
             FileKey.CURRENCY_CONVERSIONS: Path.cwd() / 'file_management/files/currency_prices.csv',
             FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetches.json',
             FileKey.CRITICAL_PRICE_PREDICT_TRAINING: Path.cwd() / 'file_management/files/listings.json',
-            FileKey.PRICE_PREDICT_MODEL: Path.cwd() / 'file_management/files/price_predict_model.json',
             FileKey.MARKET_SCAN: Path.cwd() / 'file_management/files/market_scan.json',
             FileKey.POECD_BASES: Path.cwd() / 'file_management/files/poecd_bases.json',
             FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json',
             FileKey.ITEM_MODS: Path.cwd() / 'file_management/files/item_mods.pkl'
         }
 
+        self.model_paths = {
+            FileKey.PRICE_PREDICT_MODEL: Path.cwd() / 'file_management/files/price_predict_model.json'
+        }
+
         self.file_data = self._load_files()
+        self.model_data = self._load_models()
 
         self._initialized = True
 
@@ -58,15 +62,8 @@ class FilesManager:
 
     def _load_files(self) -> dict:
         file_data = dict()
-        
-        model = xgb.Booster()
-        model_path = self.file_paths[FileKey.PRICE_PREDICT_MODEL]
-        if os.path.getsize(model_path) > 2:
-            model.load_model(self.file_paths[FileKey.PRICE_PREDICT_MODEL])
-            file_data[FileKey.PRICE_PREDICT_MODEL] = model
-        else:
-            file_data[FileKey.PRICE_PREDICT_MODEL] = None
 
+        # Handle everything except the price predict model load now
         file_paths = {file_key: path for file_key, path in self.file_paths.items() if file_key != FileKey.PRICE_PREDICT_MODEL}
 
         for key, path in file_paths.items():
@@ -88,11 +85,26 @@ class FilesManager:
                 else:
                     raise ValueError(f"Unsupported file type {path.suffix}")
 
+        # LISTING_FETCHES is a special case because its dict values are sets
         file_data[FileKey.LISTING_FETCHES] = {
-            date: set(listing_ids)
-            for date, listing_ids in file_data[FileKey.LISTING_FETCHES].items()
+            fetch_date: set(listing_ids)
+            for fetch_date, listing_ids in file_data[FileKey.LISTING_FETCHES].items()
         }
+
         return file_data
+
+    def _load_models(self) -> dict:
+        model_data = dict()
+        # Handle the price predict model load
+        model = xgb.Booster()
+        model_path = self.model_paths[FileKey.PRICE_PREDICT_MODEL]
+        if os.path.getsize(model_path) > 2:
+            model.load_model(self.model_paths[FileKey.PRICE_PREDICT_MODEL])
+            model_data[FileKey.PRICE_PREDICT_MODEL] = model
+        else:
+            model_data[FileKey.PRICE_PREDICT_MODEL] = None
+
+        return model_data
 
     def cache_mod(self, item_mod: ItemMod):
         mod_data = self.file_data[FileKey.ATYPE_MODS]
@@ -124,16 +136,6 @@ class FilesManager:
                 'weighting': item_mod.weighting
             }
 
-    def cache_api_fetch_date(self, listing_ids, fetch_date: str):
-        dates_fetched = self.file_data[FileKey.LISTING_FETCHES]
-        if fetch_date not in dates_fetched:
-            dates_fetched[fetch_date] = set()
-
-        dates_fetched[fetch_date].update(listing_ids)
-
-    def cache_training_data(self, training_data: dict):
-        self.file_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING] = training_data
-
     def has_data(self, key: FileKey):
         file_path = self.file_paths[key]
         file_size = os.path.getsize(file_path)
@@ -149,9 +151,12 @@ class FilesManager:
         else:
             file_paths = self.file_paths
 
-        logging.info("Exporting data.")
         for key, file_path in file_paths.items():
             utils.write_to_file(data=self.file_data[key], file_path=file_path)
+
+    def save_model(self, model_key: FileKey):
+        logging.info(f"Exporting model {model_key}")
+        utils.write_to_file(data=self.model_data[model_key], file_path=self.model_paths[model_key])
 
 
 

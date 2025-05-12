@@ -159,15 +159,19 @@ class PricePredictDataManager:
                     raise ValueError(f"Cannot add PricePredict market scan data. No training data to determine column structure.")
 
             for col, value in market_data.items():
-                if col not in self.market_data:
-                    raise KeyError(f"Column {col} not in PricePredict market scan data. All columns from training data must be "
-                                   f"present when adding data.")
-                self.market_data[col].append(value)
+                if col in self.market_data:
+                    self.market_data[col].append(value)
+                else:
+                    logging.error(f"Column {col} not in PricePredict market scan data. Inserting a 0 for this item.")
+                    self.market_data[col].append(None)
 
             leftover_cols = [col for col in self.market_data.keys() if col not in market_data.keys()]
 
             for col in leftover_cols:
                 self.market_data[col].append(None)
+
+    def clear_market_cache(self):
+        self.market_data = dict()
 
     def export_data_for_model(self, which_file: FileKey) -> pd.DataFrame:
         if which_file == FileKey.CRITICAL_PRICE_PREDICT_TRAINING:
@@ -179,15 +183,14 @@ class PricePredictDataManager:
 
         df = pd.DataFrame(data)
 
+        df.infer_objects(copy=False)
+        df.fillna(0, inplace=True)
+
         for category_col in self.__class__._model_category_cols:
             if category_col in df.columns:
                 df[category_col] = df[category_col].astype("category")
 
-        # Keep only numerical columns (int64 & float64)
-        df = df.select_dtypes(include=['int64', 'float64'])
-
-        # Fill NaN values with 0
-        df.fillna(0, inplace=True)
+        df = df.select_dtypes(include=['int64', 'float64', 'bool', 'category'])
 
         return df
 
