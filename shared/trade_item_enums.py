@@ -228,7 +228,6 @@ socketable_items = [
     ItemCategory.BODY_ARMOUR,
     ItemCategory.GLOVES,
     ItemCategory.BOOTS,
-    ItemCategory.QUIVER,
     ItemCategory.SHIELD,
     ItemCategory.FOCUS,
     ItemCategory.BUCKLER

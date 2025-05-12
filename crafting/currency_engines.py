@@ -1,7 +1,8 @@
 import logging
 from abc import abstractmethod, ABC
 
-from crafting import CraftingOutcome
+import shared
+from crafting import CraftingOutcome, utils
 from crafting.crafting_engine import CraftingEngine
 from instances_and_definitions import ModifiableListing, ModAffixType
 from shared.trade_item_enums import Rarity, ItemCategory
@@ -30,7 +31,7 @@ class ArcanistsEtcher(CurrencyEngine):
         if listing.corrupted:
             return [cls.no_outcome_change(listing=listing)]
 
-        if listing.item_category not in classifications.non_martial_weapons:
+        if listing.item_category not in shared.non_martial_weapons:
             return [cls.no_outcome_change(listing=listing)]
 
         item_quality = listing.quality if listing.quality else 0
@@ -65,7 +66,7 @@ class ArmourersScrap(CurrencyEngine):
         if listing.corrupted:
             return [cls.no_outcome_change(listing=listing)]
 
-        if listing.item_category not in classifications.armour:
+        if listing.item_category not in shared.armour:
             return [cls.no_outcome_change(listing=listing)]
 
         item_quality = listing.quality if listing.quality else 0
@@ -93,28 +94,28 @@ class ArmourersScrap(CurrencyEngine):
 
 
 class ArtificersOrb(CurrencyEngine):
-    item_id = 'artificers'
+
+    item_id ='artificers'
 
     @classmethod
     def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
-        max_atype_sockets = helper_funcs.determine_max_sockets(atype=listing.atype)
+        max_sockets = utils.determine_max_sockets(item_category=listing.item_category)
+
+        total_listing_sockets = len(listing.socketers) + listing.open_sockets
 
         if listing.corrupted:
             return [cls.no_outcome_change(listing=listing)]
 
-        if max_atype_sockets == 0:
+        if total_listing_sockets == max_sockets:
             return [cls.no_outcome_change(listing=listing)]
 
-        item_sockets = 0 if not listing.num_sockets else listing.num_sockets
-
-        if item_sockets < max_atype_sockets:
-            return [
-                CraftingOutcome(
-                    original_listing=listing,
-                    outcome_probability=1.0,
-                    new_sockets=1
-                )
-            ]
+        return [
+            CraftingOutcome(
+                original_listing=listing,
+                outcome_probability=1.0,
+                new_sockets=total_listing_sockets + 1
+            )
+        ]
 
 
 class BlacksmithsWhetstone(CurrencyEngine):
@@ -125,7 +126,7 @@ class BlacksmithsWhetstone(CurrencyEngine):
         if listing.corrupted:
             return [cls.no_outcome_change(listing=listing)]
 
-        if listing.item_category not in classifications.martial_weapons:
+        if listing.item_category not in shared.martial_weapons:
             return [cls.no_outcome_change(listing=listing)]
 
         item_quality = listing.quality if listing.quality else 0
@@ -179,26 +180,27 @@ class ChaosOrb(CurrencyEngine):
         # If there are open prefixes, then we can roll any prefix no matter what is removed. The same is true for suffixes.
         # Note that when rolling for a new modifier, chaos orbs can replace the same mod they just removed with the same mod.
         # So we pass only the modifiers that cannot be removed (fractured mods) to exclude_mod_ids parameter
-        possible_crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                                       affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX],
-                                                                       exclude_mod_ids=irremovable_mod_ids)
+        crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
+                                                              affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX],
+                                                              exclude_mod_ids=irremovable_mod_ids)
+        possible_item_mods = [outcome.new_item_mod for outcome in crafting_outcomes]
         for modifier in listing.explicit_mods:
             if open_prefixes and open_suffixes:
-                viable_mod_tiers = possible_crafting_outcomes
+                viable_item_mods = possible_item_mods
             # If we rolled a prefix and there are no open suffixes then we CANNOT roll a suffix
             elif modifier.affix_type == ModAffixType.PREFIX and not open_suffixes:
-                viable_mod_tiers = [mod for mod in possible_crafting_outcomes if mod.affix_type == ModAffixType.PREFIX]
+                viable_item_mods = [mod for mod in possible_item_mods if mod.affix_type == ModAffixType.PREFIX]
             # If we rolled a suffix and there are no open prefixes then we CANNOT roll a prefix
             elif modifier.affix_type == ModAffixType.SUFFIX and not open_prefixes:
-                viable_mod_tiers = [mod for mod in possible_crafting_outcomes if mod.affix_type == ModAffixType.SUFFIX]
+                viable_item_mods = [mod for mod in possible_item_mods if mod.affix_type == ModAffixType.SUFFIX]
             # In all other cases, we can roll any mod
             else:
-                viable_mod_tiers = possible_crafting_outcomes
+                viable_item_mods = possible_item_mods
 
             other_mod_ids = [listing_mod.mod_id for listing_mod in listing.affixed_mods if listing_mod != modifier]
-            crafting_outcomes = crafting_engine.roll_new_modifier(
+            crafting_outcomes = crafting_engine.create_crafting_outcomes(
                 listing=listing,
-                mod_tiers=viable_mod_tiers,
+                item_mods=viable_item_mods,
                 exclude_mod_ids=other_mod_ids,
             )
 
@@ -241,14 +243,13 @@ class ExaltedOrb(CurrencyEngine):
         if open_suffixes:
             affix_types.append(ModAffixType.SUFFIX)
 
-        possible_mod_tiers = crafting_engine.roll_new_modifier(listing=listing,
-                                                               affix_types=affix_types)
         crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                              mod_tiers=possible_mod_tiers)
+                                                              affix_types=affix_types)
         return crafting_outcomes
 
 
 class FracturingOrb(CurrencyEngine):
+
     item_id = 'fracturing-orb'
 
     @classmethod
@@ -296,6 +297,7 @@ class GemcuttersPrism(CurrencyEngine):
 
 
 class GlassblowersBauble(CurrencyEngine):
+
     item_id = 'bauble'
 
     @classmethod
@@ -328,10 +330,8 @@ class OrbOfAlchemy(CurrencyEngine):
         if listing.corrupted:
             return [cls.no_outcome_change(listing=listing)]
 
-        possible_mod_tiers = crafting_engine.roll_new_modifier(listing=listing,
-                                                               affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
         crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                              mod_tiers=possible_mod_tiers)
+                                                              affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
         for outcome in crafting_outcomes:
             outcome.new_rarity = Rarity.RARE
 
@@ -386,6 +386,11 @@ class OrbOfAugmentation(CurrencyEngine):
         if open_suffixes:
             affix_types.append(ModAffixType.SUFFIX)
 
+        crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
+                                                              affix_types=affix_types,
+                                                              exclude_mod_ids=set(mod.mod_id for mod in listing.affixed_mods))
+        return crafting_outcomes
+
 
 class OrbOfTransmutation(CurrencyEngine):
     item_id = 'transmute'
@@ -417,10 +422,8 @@ class RegalOrb(CurrencyEngine):
         if listing.corrupted:
             return [cls.no_outcome_change(listing=listing)]
 
-        possible_mod_tiers = crafting_engine.roll_new_modifier(listing=listing,
-                                                               affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
         crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                              mod_tiers=possible_mod_tiers)
+                                                              affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
         for outcome in crafting_outcomes:
             outcome.new_rarity = Rarity.RARE
 

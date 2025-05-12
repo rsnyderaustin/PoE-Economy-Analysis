@@ -44,24 +44,20 @@ class CraftingEngine:
 
         return outcomes
 
-
-    def create_crafting_outcomes(self,
-                                 listing: ModifiableListing,
-                                 mod_tiers: list[ModTier],
+    @staticmethod
+    def create_crafting_outcomes(listing: ModifiableListing,
+                                 item_mods: list[ItemMod],
                                  exclude_mod_ids: list[int] = None) -> list[CraftingOutcome]:
-        mod_tiers = [mod_tier for mod_tier in mod_tiers
-                     if mod_tier.parent_mod_id not in exclude_mod_ids]
-        total_mod_weight = sum(
-            mod_tier.weighting
-            for mod_tier in mod_tiers
-        )
+        valid_item_mods = [item_mod for item_mod in item_mods if item_mod.mod_id not in exclude_mod_ids]
+
+        total_mod_weight = sum(item_mod.weighting for item_mod in item_mods)
 
         crafting_outcomes = []
-        for mod_tier in mod_tiers:
+        for item_mod in valid_item_mods:
             crafting_outcome = CraftingOutcome(
-                original_listing=item,
-                outcome_probability=mod_tier.weighting / total_mod_weight,
-                new_item_mod=mod_tier
+                original_listing=listing,
+                outcome_probability=item_mod.weighting / total_mod_weight,
+                new_item_mod=item_mod
             )
             crafting_outcomes.append(crafting_outcome)
 

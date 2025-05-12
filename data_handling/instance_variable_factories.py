@@ -295,6 +295,7 @@ class ListingFactory:
             explicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.EXPLICIT],
             item_skills=item_skills,
             socketers=socketers,
+            open_sockets=len(item_data['sockets']) if 'sockets' in item_data else 0,
             item_properties=properties
         )
         return new_listing

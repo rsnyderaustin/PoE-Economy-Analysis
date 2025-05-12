@@ -73,7 +73,6 @@ class ItemSocketer:
 class ModifiableListing:
 
     def __init__(self,
-                 item_category: ItemCategory,
                  account_name: str,
                  listing_id: str,
                  date_fetched: str,
@@ -98,6 +97,7 @@ class ModifiableListing:
                  fractured_mods: list[ItemMod],
                  explicit_mods: list[ItemMod],
                  socketers: list[ItemSocketer],
+                 open_sockets: int,
                  item_skills: list[ItemSkill],
                  item_properties: dict = None
                  ):
@@ -123,6 +123,7 @@ class ModifiableListing:
         self.dex_requirement = dex_requirement
         self.implicit_mods = implicit_mods
         self.enchant_mods = enchant_mods
+        self.open_sockets = open_sockets
         self.socketers = socketers
         self.item_skills = item_skills
         self.fractured_mods = fractured_mods
