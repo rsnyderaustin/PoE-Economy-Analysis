@@ -11,20 +11,26 @@ import pandas as pd
 from itertools import combinations
 
 
+def _normalize_col(col: tuple | str):
+    if isinstance(col, tuple):
+        return f"{col[0]}_{col[1]}"
+
+    return col
+
 class StatsPrep:
 
     def __init__(self, atype: str, df: pd.DataFrame):
         self.atype = atype
         self.df = df.select_dtypes(include=['int64', 'float64'])
 
-    def _find_correlating_single_columns(self, min_correlation: float) -> set[str]:
+    def _find_correlating_single_columns(self, min_correlation: float) -> dict:
         df = self.df.drop(columns=['exalts'])
 
         dfs = {
             mod: self.df[self.df[mod] > 0]
             for mod in df.columns
         }
-        mods = set()
+        mods = dict()
         for mod, df in dfs.items():
             filtered_df = df[[mod, 'exalts']]
             prices = filtered_df['exalts']
@@ -32,11 +38,12 @@ class StatsPrep:
             corr = filtered_df.corrwith(prices)
             corr_val = corr[mod]
             if corr_val >= min_correlation:
-                mods.add(mod)
+                logging.info(f"{mod} correlation: {corr_val}")
+                mods[mod] = corr_val
 
         return mods
 
-    def _find_correlating_pair_columns(self, min_correlation: float) -> set[tuple]:
+    def _find_correlating_pair_columns(self, min_correlation: float) -> dict:
         non_price_cols = [col for col in self.df.columns if col != 'exalts']
         mod_combinations = list(combinations(non_price_cols, 2))
 
@@ -44,10 +51,11 @@ class StatsPrep:
             (mod1, mod2): self.df[(self.df[mod1] > 0) & (self.df[mod2] > 0)]
             for mod1, mod2 in mod_combinations
         }
+        # Sample size for the pair has to be at least 30
         pair_dfs = {
-            mod_pair: df for mod_pair, df in pair_dfs.items() if len(df) >= 100
+            mod_pair: df for mod_pair, df in pair_dfs.items() if len(df) >= 30
         }
-        valid_pairs = set()
+        valid_pairs = dict()
         for (mod1, mod2), filtered_df in pair_dfs.items():
             combo_df = pd.DataFrame({
                 (mod1, mod2): filtered_df[mod1] * filtered_df[mod2],
@@ -57,9 +65,9 @@ class StatsPrep:
             combo_df.drop(columns=['exalts'])
             pair_corr = combo_df.corrwith(prices)
             corr_val = pair_corr[(mod1, mod2)]
-            logging.info(f"{(mod1, mod2)} correlation: {corr_val}")
             if corr_val >= min_correlation:
-                valid_pairs.add((mod1, mod2))
+                logging.info(f"{(mod1, mod2)} correlation: {corr_val}")
+                valid_pairs[(mod1, mod2)] = corr_val
 
         return valid_pairs
 
@@ -95,9 +103,28 @@ class StatsPrep:
         plt.legend(title='Cluster')
         plt.show()
 
-    def _find_outliers(self, scaler, df: pd.DataFrame):
-        df.columns = [str(col) for col in df.columns]
-        mod_data = scaler.fit_transform(df.drop(columns=['exalts']))
+    def _find_outliers(self, pair_weights: dict, standalone_weights: dict):
+        scaler = StandardScaler()
+        standalone_cols = list(standalone_weights.keys())
+        pair_cols = list(pair_weights.keys())
+
+        interaction_df = pd.DataFrame({
+            (mod1, mod2): self.df[mod1] * self.df[mod2] for mod1, mod2 in pair_cols
+        })
+        interaction_df = pd.concat([self.df[standalone_cols], interaction_df], axis=1)
+
+        interaction_df.columns = [_normalize_col(col) for col in interaction_df.columns]
+        cols = interaction_df.columns
+
+        fit_data = scaler.fit_transform(interaction_df)
+        fit_df = pd.DataFrame(fit_data)
+        fit_df.columns = cols
+        for col, weighting in {**pair_weights, **standalone_weights}.items():
+            col = _normalize_col(col)
+            fit_df[col] = fit_df[col] * (1 - weighting)
+
+        fit_df = fit_df.fillna(0)
+
 
         """inputs = [
             (eps, min_samples)
@@ -108,19 +135,20 @@ class StatsPrep:
         ]
         for eps, min_samples in inputs:
         logging.info(f"Eps: {eps}, Min Samples: {min_samples}")"""
-        dbscan = DBSCAN(eps=0.1, min_samples=3)  # These values are adjustable
-        labels = dbscan.fit_predict(mod_data)
+        dbscan = DBSCAN(eps=0.05, min_samples=3)  # These values are adjustable
+        labels = dbscan.fit_predict(fit_df)
 
-        df['cluster'] = labels
+        fit_df['cluster'] = labels
+        fit_df['exalts'] = self.df['exalts']
         # self._plot_pca(original_df=df, mod_data_df=mod_data)
 
-        logging.info(f"\tNum clusters: {len(df['cluster'].unique())}")
+        logging.info(f"\tNum clusters: {len(fit_df['cluster'].unique())}")
         outlier_indices = []
-        for cluster_id in df['cluster'].unique():
+        for cluster_id in fit_df['cluster'].unique():
             if cluster_id == -1:
                 continue  # Skip noise points
 
-            cluster_df = df[df['cluster'] == cluster_id]
+            cluster_df = fit_df[fit_df['cluster'] == cluster_id]
 
             """plt.figure(figsize=(10, 5))
             sns.boxplot(x=cluster_df['exalts'])
@@ -140,22 +168,14 @@ class StatsPrep:
             outlier_indices.extend(outliers.index)
 
         # Step 4: Drop outliers from the original DataFrame
-        df_clean = df.drop(index=outlier_indices)
+        df_clean = fit_df.drop(index=outlier_indices)
         return df_clean
 
     def prep_data(self):
-        pairs = self._find_correlating_pair_columns(min_correlation=0.2)
-        standalones = self._find_correlating_single_columns(min_correlation=0.2)
+        pair_corrs = self._find_correlating_pair_columns(min_correlation=0.25)
+        standalone_corrs = self._find_correlating_single_columns(min_correlation=0.25)
 
-        valid_pairs = set(pair for pair in pairs if pair[0] not in standalones and pair[1] not in standalones)
-        interaction_df = pd.DataFrame({
-            (mod1, mod2): self.df[mod1] * self.df[mod2] for mod1, mod2 in valid_pairs
-        })
-        result_df = pd.concat([self.df[list(standalones)], self.df['exalts'], interaction_df], axis=1)
-        result_df = result_df.fillna(0)
-
-        scaler = StandardScaler()
-        cleaned_df = self._find_outliers(scaler=scaler, df=result_df)
+        cleaned_df = self._find_outliers(pair_weights=pair_corrs, standalone_weights=standalone_corrs)
         logging.info(f"Atype {self.atype} data prep\n\tStart listings: {len(self.df)}\n\tEnd listings: {len(cleaned_df)}")
         return cleaned_df
 

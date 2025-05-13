@@ -96,7 +96,7 @@ class OperationsCoordinator:
 
         atype_dfs = {
             atype: atype_df
-            for atype, atype_df in model_df.groupby('atype', observed=)
+            for atype, atype_df in model_df.groupby('atype')
         }
         atype_dfs = {
             atype: StatsPrep(df=atype_df, atype=str(atype)).prep_data()
