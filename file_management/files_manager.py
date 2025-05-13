@@ -13,7 +13,7 @@ from . import utils
 
 
 class FileKey(Enum):
-    ATYPE_MODS = 'atype_mods'
+    MODS = 'mods'
     CURRENCY_CONVERSIONS = 'currency_conversions'
     LISTING_FETCHES = 'listing_fetches'
     CRITICAL_PRICE_PREDICT_TRAINING = 'price_predict_data'
@@ -21,7 +21,6 @@ class FileKey(Enum):
     MARKET_SCAN = 'temp_price_predict_data'
     POECD_BASES = 'poecd_bases'
     POECD_STATS = 'poecd_stats'
-    ITEM_MODS = 'item_mods'
 
 
 class FilesManager:
@@ -36,14 +35,13 @@ class FilesManager:
             return
 
         self.file_paths = {
-            FileKey.ATYPE_MODS: Path.cwd() / 'file_management/files/trade_atype_mods.json',
+            FileKey.MODS: Path.cwd() / 'file_management/files/item_mods.json',
             FileKey.CURRENCY_CONVERSIONS: Path.cwd() / 'file_management/files/currency_prices.csv',
-            FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetches.json',
+            FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetch_dates.json',
             FileKey.CRITICAL_PRICE_PREDICT_TRAINING: Path.cwd() / 'file_management/files/listings.json',
             FileKey.MARKET_SCAN: Path.cwd() / 'file_management/files/market_scan.json',
             FileKey.POECD_BASES: Path.cwd() / 'file_management/files/poecd_bases.json',
-            FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json',
-            FileKey.ITEM_MODS: Path.cwd() / 'file_management/files/item_mods.pkl'
+            FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json'
         }
 
         self.model_paths = {

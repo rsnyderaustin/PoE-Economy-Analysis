@@ -91,8 +91,16 @@ class OperationsCoordinator:
             self.price_predict_data_manager.clear_market_cache()
 
     def build_price_predict_model(self):
-        model_data = self.price_predict_data_manager.export_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
-        model = build_price_predict_model(df=model_data)
-        self.files_manager.model_data[FileKey.PRICE_PREDICT_MODEL] = model
-        self.files_manager.save_model(model_key=FileKey.PRICE_PREDICT_MODEL)
+        model_df = self.price_predict_data_manager.export_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
+
+        atype_dfs = {
+            atype: atype_df
+            for atype, atype_df in model_df.groupby('atype')
+        }
+
+        for atype, atype_df in atype_dfs.items():
+            logging.info(f"Building model for Atype {atype}")
+            model = build_price_predict_model(df=atype_df, atype=str(atype))
+            self.files_manager.model_data[FileKey.PRICE_PREDICT_MODEL] = model
+            self.files_manager.save_model(model_key=FileKey.PRICE_PREDICT_MODEL)
 

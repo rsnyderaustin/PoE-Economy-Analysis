@@ -88,7 +88,7 @@ def _plot_exalts_histogram(df: pd.DataFrame):
     plt.show()
 
 
-def _plot_feature_importance(model):
+def _plot_feature_importance(model, atype: str):
     importance = model.get_score(importance_type='weight')
 
     # Create a DataFrame for easier plotting
@@ -97,20 +97,20 @@ def _plot_feature_importance(model):
 
     # Plot the feature importances
     importance_df.plot(kind='barh', x='Feature', y='Importance', legend=False, figsize=(10, 6))
-    plt.title('Feature Importance')
+    plt.title(f'Feature Importance for {atype}')
     plt.xlabel('Importance')
     plt.ylabel('Feature')
     plt.show()
 
 
-def _plot_actual_vs_predicted(test_predictions, test_targets):
+def _plot_actual_vs_predicted(atype, test_predictions, test_targets):
     plt.figure(figsize=(8, 5))
     plt.scatter(test_predictions, test_targets, alpha=0.5)
     plt.plot([0, 4000], [0, 4000], color='red', linestyle='--')
     plt.xlabel("Predicted Price (Exalts)")
     plt.ylabel("Actual Prices (Exalts)")
 
-    plt.title("Actual vs. Predicted Prices")
+    plt.title(f"Actual vs. Predicted Prices for {atype}")
     plt.grid(True)
     plt.show()
 
@@ -132,6 +132,7 @@ def _print_outliers(test_target_df: pd.DataFrame,
 
 
 def build_price_predict_model(df: pd.DataFrame,
+                              atype: str,
                               overprediction_weight: float = 2.0,
                               underprediction_weight: float = 0.1,
                               training_depth: int = 12,
@@ -141,7 +142,7 @@ def build_price_predict_model(df: pd.DataFrame,
     Builds an XGBoost price prediction model with custom loss weighting.
     """
 
-    _plot_correlation_matrix(df)
+    # _plot_correlation_matrix(df)
 
     # Split features and target variable
     features = df.drop(columns=['exalts'])
@@ -196,9 +197,10 @@ def build_price_predict_model(df: pd.DataFrame,
                     test_predictions=test_predictions)"""
 
     # Get feature importance
-    _plot_feature_importance(model=model)
+    _plot_feature_importance(atype=atype, model=model)
 
-    _plot_actual_vs_predicted(test_predictions=test_predictions,
+    _plot_actual_vs_predicted(atype=atype,
+                              test_predictions=test_predictions,
                               test_targets=test_target)
 
     return model
