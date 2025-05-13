@@ -47,8 +47,7 @@ class ItemMod:
     def mod_id(self):
         return generate_mod_id(atype=self.atype,
                                mod_ids=[sub_mod.mod_id for sub_mod in self.sub_mods],
-                               affix_type=self.affix_type
-                               )
+                               affix_type=self.affix_type)
 
 
 class ItemSkill:
@@ -83,7 +82,7 @@ class ModifiableListing:
                  item_name: str,
                  item_btype: str,  # Hunting Shoes, Lunar Amulet, etc
                  item_atype: str,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
-                 item_bgroup: str,  # Armour, Weapon, etc
+                 item_category: ItemCategory,
                  rarity: str,
                  ilvl: int,
                  identified: bool,
@@ -110,9 +109,8 @@ class ModifiableListing:
         self.currency_amount = currency_amount
         self.item_name = item_name
         self.item_btype = item_btype
-        self.item_category = ItemCategory(item_btype)
+        self.item_category = item_category
         self.item_atype = item_atype
-        self.item_bgroup = item_bgroup
         self.rarity = rarity
         self.ilvl = ilvl
         self.identified = identified

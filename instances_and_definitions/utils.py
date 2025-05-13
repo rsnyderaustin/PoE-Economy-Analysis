@@ -24,7 +24,7 @@ def generate_mod_id(atype: str,
                     affix_type: ModAffixType = None):
     mod_ids = sorted(mod_ids) if mod_ids else []
     if mod_ids and len(mod_ids) == 1:
-        mod_id = f"{mod_ids[0]}_{affix_type.value}" if affix_type else mod_ids[0]
+        mod_id = f"{atype}_{mod_ids[0]}_{affix_type.value}" if affix_type else mod_ids[0]
         return mod_id
 
     mod_id = f"{atype}_{affix_type.value}" if affix_type else atype

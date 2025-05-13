@@ -269,6 +269,9 @@ class ListingFactory:
 
         item_skills = SkillsFactory.create_skills(item_data)
 
+        cleaned_bgroup = shared_utils.remove_piped_brackets(item_data['properties'][0]['name'])
+        category = shared_utils.bgroup_to_category[cleaned_bgroup]
+
         new_listing = ModifiableListing(
             account_name=listing_data['account']['name'],
             listing_id=api_item_response['id'],
@@ -280,7 +283,7 @@ class ListingFactory:
             item_name=item_data['name'],
             item_btype=item_data['baseType'] if 'baseType' in item_data else None,
             item_atype=atype,
-            item_bgroup=item_data['properties'][0]['name'],
+            item_category=category,
             rarity=item_data['rarity'] if 'rarity' in item_data else None,
             ilvl=item_data['ilvl'] if 'ilvl' in item_data else None,
             identified=item_data['identified'] if 'identified' in item_data else None,

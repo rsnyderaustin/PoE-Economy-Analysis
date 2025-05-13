@@ -2,11 +2,37 @@ import re
 from collections import Counter
 from datetime import datetime
 import pprint
+import pandas as pd
 
 import pytz
 
+from .trade_item_enums import ItemCategory
 import file_management
 from file_management import FileKey
+
+
+bgroup_to_category = {
+    'Spear': ItemCategory.SPEAR,
+    'One Hand Mace': ItemCategory.ONE_HANDED_MACE,
+    'Two Hand Mace': ItemCategory.TWO_HANDED_MACE,
+    'Quarterstaff': ItemCategory.QUARTERSTAFF,
+    'Bow': ItemCategory.BOW,
+    'Crossbow': ItemCategory.CROSSBOW,
+    'Wand': ItemCategory.WAND,
+    'Sceptre': ItemCategory.SCEPTRE,
+    'Staff': ItemCategory.STAFF,
+    'Helmet': ItemCategory.HELMET,
+    'Body Armour': ItemCategory.BODY_ARMOUR,
+    'Gloves': ItemCategory.GLOVES,
+    'Boots': ItemCategory.BOOTS,
+    'Quiver': ItemCategory.QUIVER,
+    'Shield': ItemCategory.SHIELD,
+    'Focus': ItemCategory.FOCUS,
+    'Buckler': ItemCategory.BUCKLER,
+    'Amulet': ItemCategory.AMULET,
+    'Belt': ItemCategory.BELT,
+    'Ring': ItemCategory.RING
+}
 
 
 def _process_bracketed_text(match):
@@ -142,7 +168,7 @@ def log_dict(dict_, only_real_values: bool = True):
     if only_real_values:
         dict_ = {
             col: val
-            for col, val in dict_.items() if val
+            for col, val in dict_.items() if val and not pd.isna(val)
         }
     pprint.pprint(dict_)
 

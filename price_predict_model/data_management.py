@@ -56,26 +56,18 @@ class PricePredictDataManager:
         'Quality'
     ]
 
-    _select_remove_cols = [
-        'open_prefixes',
-        'open_suffixes',
-        'minutes_since_listed',
-        'minutes_since_league_start'
-    ]
-
     _aggregate_remove_cols = [
         *_replaced_attribute_cols,
-        *_local_weapon_mod_cols,
-        *_select_remove_cols
+        *_local_weapon_mod_cols
     ]
 
-    _model_category_cols = [
-        'atype',
-        'btype',
-        'rarity',
-        'corrupted',
-        'identified'
-    ]
+    _select_col_types = {
+        'atype': 'category',
+        'btype': 'category',
+        'rarity': 'category',
+        'identified': bool,
+        'corrupted': bool
+    }
 
     def __init__(self):
         self.currency_convert = shared_utils.CurrencyConverter()
@@ -102,10 +94,8 @@ class PricePredictDataManager:
             'exalts': exalts_price,
             'open_prefixes': listing.open_prefixes,
             'open_suffixes': listing.open_suffixes,
-            'atype': listing.item_atype,
-            'btype': listing.item_btype,
             'rarity': listing.rarity,
-            'corrupted': str(listing.corrupted),
+            'corrupted': listing.corrupted,
             **flattened_properties
         }
 
@@ -183,12 +173,14 @@ class PricePredictDataManager:
 
         df = pd.DataFrame(data)
 
-        df.infer_objects(copy=False)
-        df.fillna(0, inplace=True)
+        for col, dtype in self.__class__._select_col_types.items():
+            if col in df.columns:
+                df[col] = df[col].astype(dtype)
 
-        for category_col in self.__class__._model_category_cols:
-            if category_col in df.columns:
-                df[category_col] = df[category_col].astype("category")
+        non_select_cols = [col for col in df.columns if col not in self.__class__._select_col_types]
+        for col in non_select_cols:
+            if df[col].dtype not in ['int64', 'float64', 'bool', 'category']:
+                df[col] = df[col].astype('float64')
 
         df = df.select_dtypes(include=['int64', 'float64', 'bool', 'category'])
 

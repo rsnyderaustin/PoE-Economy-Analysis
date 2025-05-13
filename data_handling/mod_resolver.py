@@ -14,8 +14,8 @@ from . import mod_matching
 class ModResolver:
 
     def __init__(self, global_atypes_manager: poecd_api.GlobalAtypesManager):
-        files_manager = file_management.FilesManager()
-        self.file_item_mods = files_manager.file_data[FileKey.ITEM_MODS] or dict()
+        self.files_manager = file_management.FilesManager()
+        self.file_item_mods = self.files_manager.file_data[FileKey.MODS] or dict()
 
         poecd_attribute_finder = mod_matching.PoecdAttributeFinder(global_atypes_manager=global_atypes_manager)
         self.mod_factory = ModFactory(poecd_attribute_finder)
@@ -57,6 +57,7 @@ class ModResolver:
                     mods.append(self.file_item_mods[mod_id])
                     continue
 
+                logging.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
                 new_mod = self.mod_factory.create_item_mod(mod_data=mod_data,
                                                            mod_id_to_text=mod_id_to_text,
                                                            mod_class=mod_class_enum,
