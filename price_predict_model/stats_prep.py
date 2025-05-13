@@ -1,3 +1,4 @@
+import itertools
 import logging
 
 from matplotlib import pyplot as plt
@@ -18,11 +19,22 @@ class StatsPrep:
 
     def _find_correlating_single_columns(self, min_correlation: float) -> set[str]:
         df = self.df.drop(columns=['exalts'])
-        corrs = df.corrwith(self.df['exalts'])
-        viable_corrs = corrs[corrs >= min_correlation]
 
-        cols = set(viable_corrs.keys())
-        return cols
+        dfs = {
+            mod: self.df[self.df[mod] > 0]
+            for mod in df.columns
+        }
+        mods = set()
+        for mod, df in dfs.items():
+            filtered_df = df[[mod, 'exalts']]
+            prices = filtered_df['exalts']
+            filtered_df.drop(columns=['exalts'], inplace=True)
+            corr = filtered_df.corrwith(prices)
+            corr_val = corr[mod]
+            if corr_val >= min_correlation:
+                mods.add(mod)
+
+        return mods
 
     def _find_correlating_pair_columns(self, min_correlation: float) -> set[tuple]:
         non_price_cols = [col for col in self.df.columns if col != 'exalts']
@@ -32,44 +44,111 @@ class StatsPrep:
             (mod1, mod2): self.df[(self.df[mod1] > 0) & (self.df[mod2] > 0)]
             for mod1, mod2 in mod_combinations
         }
+        pair_dfs = {
+            mod_pair: df for mod_pair, df in pair_dfs.items() if len(df) >= 100
+        }
         valid_pairs = set()
-        for (mod1, mod2), filteered_df in pair_dfs.items():
+        for (mod1, mod2), filtered_df in pair_dfs.items():
             combo_df = pd.DataFrame({
-                mod_pair: filter_df[mod1] * filter_df[mod2],
-                'exalts': filter_df['exalts']
+                (mod1, mod2): filtered_df[mod1] * filtered_df[mod2],
+                'exalts': filtered_df['exalts']
             })
             prices = combo_df['exalts']
             combo_df.drop(columns=['exalts'])
-            pair_coor = combo_df.corrwith(prices)
-            corr_val = pair_coor[mod_pair]
-            logging.info(f"{mod_pair} correlation: {corr_val}")
+            pair_corr = combo_df.corrwith(prices)
+            corr_val = pair_corr[(mod1, mod2)]
+            logging.info(f"{(mod1, mod2)} correlation: {corr_val}")
             if corr_val >= min_correlation:
-                valid_pairs.add(mod_pair)
+                valid_pairs.add((mod1, mod2))
 
         return valid_pairs
 
     def _plot_correlations(self, df: pd.DataFrame):
         df = df.drop(columns=['exalts'], errors='ignore')
-        corr = df.corrwith(self.df['exalts'])
+        corr = df.corr()
         plt.figure(figsize=(8, 6))
         plt.title(f'{self.atype}')
         sns.heatmap(corr, annot=True, cmap='coolwarm')
         plt.show()
 
+    def _plot_pca(self, original_df: pd.DataFrame, mod_data_df: pd.DataFrame):
+        pca = PCA(n_components=2)
+        reduced_data = pca.fit_transform(mod_data_df)
+
+        # Add the cluster labels to the reduced data (so we can color the points by cluster)
+        original_df['pca1'] = reduced_data[:, 0]
+        original_df['pca2'] = reduced_data[:, 1]
+
+        # Plot the clusters
+        plt.figure(figsize=(10, 7))
+        sns.scatterplot(data=original_df, x='pca1', y='pca2', hue='cluster', palette='viridis', s=50, edgecolor='black')
+
+        # Customize the plot
+        plt.title("Clusters of Mod Combinations (Excluding Price) Based on PCA Components")
+        plt.xlabel("PCA Component 1")
+        plt.ylabel("PCA Component 2")
+        plt.legend(title='Cluster')
+        plt.show()
+
+    def _find_outliers(self, scaler, df: pd.DataFrame):
+        df.columns = [str(col) for col in df.columns]
+        mod_data = scaler.fit_transform(df.drop(columns=['exalts']))
+
+        inputs = [
+            (eps, min_samples)
+            for eps, min_samples in list(itertools.product(
+                [0.05, 0.1, 0.25, 0.5],
+                [2, 5, 10, 15, 20]
+            ))
+        ]
+        for eps, min_samples in inputs:
+            logging.info(f"Eps: {eps}, Min Samples: {min_samples}")
+            dbscan = DBSCAN(eps=eps, min_samples=20)  # These values are adjustable
+            labels = dbscan.fit_predict(mod_data)
+
+            df['cluster'] = labels
+            self._plot_pca(original_df=df, mod_data_df=mod_data)
+
+            """logging.info(f"\tNum clusters: {len(df['cluster'].unique())}")
+            outlier_indices = []
+            for cluster_id in df['cluster'].unique():
+                if cluster_id == -1:
+                    continue  # Skip noise points
+
+                cluster_df = df[df['cluster'] == cluster_id]
+
+                plt.figure(figsize=(10, 5))
+                sns.boxplot(x=cluster_df['exalts'])
+                plt.title("Exalts Distribution with IQR Detection")
+                plt.show()
+
+                # IQR Method to detect outliers
+                q1 = cluster_df['exalts'].quantile(0.25)
+                q3 = cluster_df['exalts'].quantile(0.75)
+                iqr = q3 - q1
+                lower_bound = q1 - 1.5 * iqr
+                upper_bound = q3 + 1.5 * iqr
+
+                # Collect outlier indices
+                outliers = cluster_df[(cluster_df['exalts'] < lower_bound) | (cluster_df['exalts'] > upper_bound)]
+                logging.info(f"\tCluster: filtered out {len(outliers)} listings out of {len(cluster_df)}")
+                outlier_indices.extend(outliers.index)
+
+            # Step 4: Drop outliers from the original DataFrame
+            df_clean = df.drop(index=outlier_indices)"""
+
     def prep_data(self):
-        pairs = self._find_correlating_pair_columns(min_correlation=0.2)
+        pairs = self._find_correlating_pair_columns(min_correlation=0.3)
         standalones = self._find_correlating_single_columns(min_correlation=0.3)
 
         valid_pairs = set(pair for pair in pairs if pair[0] not in standalones and pair[1] not in standalones)
+        interaction_df = pd.DataFrame({
+            (mod1, mod2): self.df[mod1] * self.df[mod2] for mod1, mod2 in valid_pairs
+        })
+        result_df = pd.concat([self.df[list(standalones)], self.df['exalts'], interaction_df], axis=1)
+        result_df = result_df.fillna(0)
 
-        corrs = dict()
-        for mod1, mod2 in valid_pairs:
-            corrs[(mod1, mod2)] = self.df[mod1] * self.df[mod2]
-
-        for col in standalones:
-            corrs[col] = self.df[col]
-
-        df = pd.DataFrame(corrs)
-        self._plot_correlations(df)
+        scaler = StandardScaler()
+        self._find_outliers(scaler=scaler, df=result_df)
 
 
