@@ -11,6 +11,7 @@ import price_predict_model
 from price_predict_model.build_model import build_price_predict_model
 import poecd_api
 import trade_api
+from price_predict_model.stats_prep import StatsPrep
 from shared import shared_utils
 from trade_api import query
 from file_management import FilesManager, FileKey
@@ -95,7 +96,11 @@ class OperationsCoordinator:
 
         atype_dfs = {
             atype: atype_df
-            for atype, atype_df in model_df.groupby('atype')
+            for atype, atype_df in model_df.groupby('atype', observed=)
+        }
+        atype_dfs = {
+            atype: StatsPrep(df=atype_df, atype=str(atype)).prep_data()
+            for atype, atype_df in atype_dfs.items()
         }
 
         for atype, atype_df in atype_dfs.items():

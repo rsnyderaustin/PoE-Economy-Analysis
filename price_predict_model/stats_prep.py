@@ -1,6 +1,6 @@
 import itertools
 import logging
-
+from scipy.spatial.distance import pdist, squareform
 from matplotlib import pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import DBSCAN
@@ -28,7 +28,7 @@ class StatsPrep:
         for mod, df in dfs.items():
             filtered_df = df[[mod, 'exalts']]
             prices = filtered_df['exalts']
-            filtered_df.drop(columns=['exalts'], inplace=True)
+            filtered_df = filtered_df.drop(columns=['exalts'])
             corr = filtered_df.corrwith(prices)
             corr_val = corr[mod]
             if corr_val >= min_correlation:
@@ -79,9 +79,14 @@ class StatsPrep:
         original_df['pca1'] = reduced_data[:, 0]
         original_df['pca2'] = reduced_data[:, 1]
 
+        num_colors = len(original_df['cluster'].unique())
         # Plot the clusters
         plt.figure(figsize=(10, 7))
-        sns.scatterplot(data=original_df, x='pca1', y='pca2', hue='cluster', palette='viridis', s=50, edgecolor='black')
+        c_palette = sns.color_palette("pastel", num_colors)
+        plot_df = original_df.copy()
+        plot_df.drop(columns=['exalts'], inplace=True)
+        # plot_df.loc[plot_df['cluster'] == -1, 'cluster'] = 999
+        sns.scatterplot(data=plot_df, x='pca1', y='pca2', hue='cluster', palette=c_palette, edgecolor='black')
 
         # Customize the plot
         plt.title("Clusters of Mod Combinations (Excluding Price) Based on PCA Components")
@@ -94,52 +99,53 @@ class StatsPrep:
         df.columns = [str(col) for col in df.columns]
         mod_data = scaler.fit_transform(df.drop(columns=['exalts']))
 
-        inputs = [
+        """inputs = [
             (eps, min_samples)
             for eps, min_samples in list(itertools.product(
-                [0.05, 0.1, 0.25, 0.5],
-                [2, 5, 10, 15, 20]
+                [0.05, 0.1, 0.15, 0.2, 0.25],
+                [3, 4, 5, 7, 10]
             ))
         ]
         for eps, min_samples in inputs:
-            logging.info(f"Eps: {eps}, Min Samples: {min_samples}")
-            dbscan = DBSCAN(eps=eps, min_samples=20)  # These values are adjustable
-            labels = dbscan.fit_predict(mod_data)
+        logging.info(f"Eps: {eps}, Min Samples: {min_samples}")"""
+        dbscan = DBSCAN(eps=0.1, min_samples=3)  # These values are adjustable
+        labels = dbscan.fit_predict(mod_data)
 
-            df['cluster'] = labels
-            self._plot_pca(original_df=df, mod_data_df=mod_data)
+        df['cluster'] = labels
+        # self._plot_pca(original_df=df, mod_data_df=mod_data)
 
-            """logging.info(f"\tNum clusters: {len(df['cluster'].unique())}")
-            outlier_indices = []
-            for cluster_id in df['cluster'].unique():
-                if cluster_id == -1:
-                    continue  # Skip noise points
+        logging.info(f"\tNum clusters: {len(df['cluster'].unique())}")
+        outlier_indices = []
+        for cluster_id in df['cluster'].unique():
+            if cluster_id == -1:
+                continue  # Skip noise points
 
-                cluster_df = df[df['cluster'] == cluster_id]
+            cluster_df = df[df['cluster'] == cluster_id]
 
-                plt.figure(figsize=(10, 5))
-                sns.boxplot(x=cluster_df['exalts'])
-                plt.title("Exalts Distribution with IQR Detection")
-                plt.show()
+            """plt.figure(figsize=(10, 5))
+            sns.boxplot(x=cluster_df['exalts'])
+            plt.title("Exalts Distribution with IQR Detection")
+            plt.show()"""
 
-                # IQR Method to detect outliers
-                q1 = cluster_df['exalts'].quantile(0.25)
-                q3 = cluster_df['exalts'].quantile(0.75)
-                iqr = q3 - q1
-                lower_bound = q1 - 1.5 * iqr
-                upper_bound = q3 + 1.5 * iqr
+            # IQR Method to detect outliers
+            q1 = cluster_df['exalts'].quantile(0.25)
+            q3 = cluster_df['exalts'].quantile(0.75)
+            iqr = q3 - q1
+            lower_bound = q1 - 1.5 * iqr
+            upper_bound = q3 + 1.5 * iqr
 
-                # Collect outlier indices
-                outliers = cluster_df[(cluster_df['exalts'] < lower_bound) | (cluster_df['exalts'] > upper_bound)]
-                logging.info(f"\tCluster: filtered out {len(outliers)} listings out of {len(cluster_df)}")
-                outlier_indices.extend(outliers.index)
+            # Collect outlier indices
+            outliers = cluster_df[(cluster_df['exalts'] < lower_bound) | (cluster_df['exalts'] > upper_bound)]
+            logging.info(f"\tCluster: filtered out {len(outliers)} listings out of {len(cluster_df)}")
+            outlier_indices.extend(outliers.index)
 
-            # Step 4: Drop outliers from the original DataFrame
-            df_clean = df.drop(index=outlier_indices)"""
+        # Step 4: Drop outliers from the original DataFrame
+        df_clean = df.drop(index=outlier_indices)
+        return df_clean
 
     def prep_data(self):
-        pairs = self._find_correlating_pair_columns(min_correlation=0.3)
-        standalones = self._find_correlating_single_columns(min_correlation=0.3)
+        pairs = self._find_correlating_pair_columns(min_correlation=0.2)
+        standalones = self._find_correlating_single_columns(min_correlation=0.2)
 
         valid_pairs = set(pair for pair in pairs if pair[0] not in standalones and pair[1] not in standalones)
         interaction_df = pd.DataFrame({
@@ -149,6 +155,8 @@ class StatsPrep:
         result_df = result_df.fillna(0)
 
         scaler = StandardScaler()
-        self._find_outliers(scaler=scaler, df=result_df)
+        cleaned_df = self._find_outliers(scaler=scaler, df=result_df)
+        logging.info(f"Atype {self.atype} data prep\n\tStart listings: {len(self.df)}\n\tEnd listings: {len(cleaned_df)}")
+        return cleaned_df
 
 
