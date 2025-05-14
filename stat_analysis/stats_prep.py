@@ -22,49 +22,46 @@ class CorrelationAnalysis:
         self.df = df.drop(columns=[price_column])
         self.prices = df[price_column]
 
-        self.s_corr = min_single_correlation
-        self.m_corr = min_pair_correlation
+        self.single_corr = min_single_correlation
+        self.pair_corr = min_pair_correlation
 
-    def _find_single_columns(self):
+    def _determine_suitable_single_columns(self):
         df = utils.filter_blank_columns(self.df)
         corrs = df.corrwith(self.prices)
         mods = []
         for mod, corr in corrs.items():
-            if corr >= self.s_corr:
+            if corr >= self.single_corr:
                 mods.append(mod)
 
         return mods
 
-    def _find_valid_correlations(self) -> dict:
+    def _determine_suitable_pair_columns(self) -> dict:
         df = utils.filter_blank_columns(self.df)
 
         mod_combinations = list(itertools.combinations(df.columns, 2))
 
-        pair_dfs = {
-            (mod1, mod2): self.df[utils.get_nonzero_indices(df, [mod1, mod2])]
+        # Step 1: Build initial dictionary of DataFrames filtered by nonzero indices
+        filtered_dfs = {
+            (mod1, mod2): self.df[utils.get_nonzero_indices(self.df, [mod1, mod2])]
             for mod1, mod2 in mod_combinations
         }
-        # Sample size for the pair has to be at least 30
-        pair_dfs = {
-            mod_pair: df for mod_pair, df in pair_dfs.items() if len(df) >= 30
-        }
+
+        # Step 2: Filter out DataFrames with fewer than 30 samples
+        pair_dfs = {pair: df[[pair[0], pair[1]]] for pair, df in filtered_dfs.items() if len(df) >= 30}
+
+        # Step 3: Determine how each mod pair correlates with the price of the item
         valid_pairs = dict()
-        for (mod1, mod2), filtered_df in pair_dfs.items():
-            combo_df = pd.DataFrame({
-                (mod1, mod2): filtered_df[mod1] * filtered_df[mod2],
-                'exalts': filtered_df['exalts']
-            })
-            prices = combo_df['exalts']
-            combo_df.drop(columns=['exalts'])
-            pair_corr = combo_df.corrwith(prices)
+        for (mod1, mod2), pair_df in pair_dfs.items():
+            # Create a dataframe with a single column that is the product of mod columns
+            product_df = pd.DataFrame({(mod1, mod2): pair_df[mod1] * pair_df[mod2]})
+
+            pair_corr = product_df.corrwith(self.prices)
             corr_val = pair_corr[(mod1, mod2)]
-            if corr_val >= min_correlation:
+            if corr_val >= self.pair_corr:
                 logging.info(f"{(mod1, mod2)} correlation: {corr_val}")
                 valid_pairs[(mod1, mod2)] = corr_val
 
         return valid_pairs
-
-        return mods
 
     def transform_columns_by_correlation(self):
 
@@ -76,58 +73,6 @@ class StatsPrep:
         self.atype = atype
         self.df = df.select_dtypes(include=['int64', 'float64'])
         self.price_column = price_column
-
-    def filter_blank_columns(self):
-        self.df = self.df.loc[:, ~((self.df.eq(0) | self.df.isna()).all())]
-        return self
-
-    def _find_correlating_single_columns(self, min_correlation: float) -> dict:
-        df = self.df.drop(columns=['exalts'])
-
-        dfs = {
-            mod: self.df[self.df[mod] > 0]
-            for mod in df.columns
-        }
-        mods = dict()
-        for mod, df in dfs.items():
-            filtered_df = df[[mod, 'exalts']]
-            prices = filtered_df['exalts']
-            filtered_df = filtered_df.drop(columns=['exalts'])
-            corr = filtered_df.corrwith(prices)
-            corr_val = corr[mod]
-            if corr_val >= min_correlation:
-                logging.info(f"{mod} correlation: {corr_val}")
-                mods[mod] = corr_val
-
-        return mods
-
-    def _find_correlating_pair_columns(self, min_correlation: float) -> dict:
-        non_price_cols = [col for col in self.df.columns if col != 'exalts']
-        mod_combinations = list(combinations(non_price_cols, 2))
-
-        pair_dfs = {
-            (mod1, mod2): self.df[(self.df[mod1] > 0) & (self.df[mod2] > 0)]
-            for mod1, mod2 in mod_combinations
-        }
-        # Sample size for the pair has to be at least 30
-        pair_dfs = {
-            mod_pair: df for mod_pair, df in pair_dfs.items() if len(df) >= 30
-        }
-        valid_pairs = dict()
-        for (mod1, mod2), filtered_df in pair_dfs.items():
-            combo_df = pd.DataFrame({
-                (mod1, mod2): filtered_df[mod1] * filtered_df[mod2],
-                'exalts': filtered_df['exalts']
-            })
-            prices = combo_df['exalts']
-            combo_df.drop(columns=['exalts'])
-            pair_corr = combo_df.corrwith(prices)
-            corr_val = pair_corr[(mod1, mod2)]
-            if corr_val >= min_correlation:
-                logging.info(f"{(mod1, mod2)} correlation: {corr_val}")
-                valid_pairs[(mod1, mod2)] = corr_val
-
-        return valid_pairs
 
     def plot_correlations(self, df: pd.DataFrame):
         df = df.drop(columns=['exalts'], errors='ignore')
@@ -204,6 +149,28 @@ class StatsPrep:
                 break
 
         neighbors_df = pd.DataFrame(data)
+
+    def filter_insignificant_columns(self, variance_threshold: float, correlation_threshold) -> pd.DataFrame:
+        non_blank_cols = self.df.columns[(self.df > 0).any() & (~self.df.isna()).any()]
+        self.df = self.df[non_blank_cols]
+
+        # Filter out columns that have less than 30 values that are not the mode value
+        invalid_cols = []
+        for col in self.df.columns:
+            most_frequent_value = self.df[col].mode()[0]
+
+            non_constant_count = self.df[self.df[col] != most_frequent_value].count()
+            if non_constant_count < 30:
+                invalid_cols.append(col)
+                continue
+
+            variance = non_constant_count / len(self.df)
+            if variance >= variance_threshold:  # If there's enough non-mode values then this column is okay
+                continue
+
+            variance_df = self.df[self.df[col] != most_frequent_value]
+            corr_val = variance_df.corrwith(self.prices)
+
 
     def _filter_out_outliers(self, df, radius=0.2, price_column='exalts', min_neighbors: int = 3, threshold=0.25):
         df = df.copy()

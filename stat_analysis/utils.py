@@ -1,10 +1,42 @@
 import pandas as pd
 
 
-def filter_blank_columns(df) -> pd.DataFrame:
+def _determine_number_of_infrequent_values(df, col):
+    most_frequent_value = df[col].mode()[0]
+    non_constant_count = df[df[col] != most_frequent_value].count()
+
+
+def filter_insignificant_columns(df, variance_threshold: float) -> pd.DataFrame:
     non_blank_cols = df.columns[(df > 0).any() & (~df.isna()).any()]
     df = df[non_blank_cols]
+
+    # Filter out columns that have less than 30 values that are not the mode value
+    invalid_cols = []
+    for col in df.columns:
+        most_frequent_value = df[col].mode()[0]
+
+        non_constant_count = df[df[col] != most_frequent_value].count()
+        if non_constant_count < 30:
+            invalid_cols.append(col)
+            continue
+
+        variance = non_constant_count / len(df)
+        if variance >= variance_threshold: # If there's enough non-mode values then this column is okay
+            continue
+
+        variance_df = df[df[col] != most_frequent_value]
+        corr_val = variance_df
+
+    df = df.drop(columns=invalid_cols)
+
+
+
     return df
+
+
+def filter_low_variance_columns(df, threshold: float) -> pd.DataFrame:
+    low_variance_cols = [col for col in df.columns if df[col].nunique() / len(df) <= threshold]
+    return df.drop(columns=low_variance_cols)
 
 
 def get_nonzero_indices(df, cols: list[str]):
