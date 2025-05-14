@@ -108,13 +108,47 @@ class StatsPrep:
 
     def _filter_out_outliers(self, df, radius=0.2, price_column='exalts', threshold=0.25):
         df = df.copy()
+        df = df.dropna(axis=1, how='all')
+        df = df.loc[:, df.nunique() > 1]
         prices = df[price_column].values
         features = df.drop(columns=[price_column])
 
-        radius_neighbors = RadiusNeighborsRegressor(radius=radius, weights='distance')
-        radius_neighbors.fit(features, prices)
+        regressor = RadiusNeighborsRegressor(radius=radius, weights='distance')
+        regressor.fit(features, prices)
 
-        local_avg_prices = radius_neighbors.predict(features)
+        # Find neighbors for each point
+        dxs, indices = regressor.radius_neighbors(features)
+
+        data = {
+            'distance': [],
+            **{f"mainpoint_{f}": [] for f in features.columns},
+            **{f: [] for f in features.columns}
+        }
+        # Display the neighbors
+        inputs = list(zip(dxs, indices))
+        for i, (dx_to_ns, idxs) in enumerate(inputs):
+            # Get the features of the main point
+            main_point_features = features.iloc[i].values
+            for i, col in enumerate(features.columns):
+                data[f"mainpoint_{col}"].append(main_point_features[i])
+            # Loop through each index and corresponding distance
+            for dx, idx in zip(dx_to_ns, idxs):
+                data['distance'].append(dx)
+                neighbor_features = features.iloc[idx].values
+
+                # Append a row with both main point and its neighbor's features
+                rows.append({
+                    'Main Point': main_point_features,
+                    'Neighbor Point': neighbor_features,
+                    'Distance': distance
+                })
+
+            if i >= 250:
+                break
+
+            # Convert the list of rows into a DataFrame
+            neighbor_df = pd.DataFrame(rows)
+        local_avg_prices = regressor.predict(features)
         df['local_avg_price'] = local_avg_prices
 
         # Calculate price deviation
