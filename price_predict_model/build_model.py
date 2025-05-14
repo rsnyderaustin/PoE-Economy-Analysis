@@ -145,7 +145,7 @@ def build_price_predict_model(df: pd.DataFrame,
     # _plot_correlation_matrix(df)
 
     # Split features and target variable
-    features = df.drop(columns=['exalts'])
+    features = df.drop(columns=['exalts'], errors='ignore')
     target_col = df['exalts']
 
     # Train/test split

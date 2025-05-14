@@ -1,5 +1,11 @@
 import itertools
 import logging
+from sklearn.neighbors import RadiusNeighborsRegressor
+from sklearn.metrics import silhouette_score
+import hdbscan
+from sklearn.metrics import pairwise_distances
+from sklearn.cluster import KMeans
+from sklearn.neighbors import NearestNeighbors
 from scipy.spatial.distance import pdist, squareform
 from matplotlib import pyplot as plt
 from sklearn.preprocessing import StandardScaler
@@ -16,6 +22,7 @@ def _normalize_col(col: tuple | str):
         return f"{col[0]}_{col[1]}"
 
     return col
+
 
 class StatsPrep:
 
@@ -79,29 +86,48 @@ class StatsPrep:
         sns.heatmap(corr, annot=True, cmap='coolwarm')
         plt.show()
 
-    def _plot_pca(self, original_df: pd.DataFrame, mod_data_df: pd.DataFrame):
+    def _plot_pca(self, df: pd.DataFrame):
+        price = df['exalts']
         pca = PCA(n_components=2)
-        reduced_data = pca.fit_transform(mod_data_df)
+        reduced_data = pca.fit_transform(df.drop(columns=['exalts']))
+        pca_df = pd.DataFrame(reduced_data, columns=['pca1', 'pca2'])
+        pca_df['exalts'] = price
 
-        # Add the cluster labels to the reduced data (so we can color the points by cluster)
-        original_df['pca1'] = reduced_data[:, 0]
-        original_df['pca2'] = reduced_data[:, 1]
-
-        num_colors = len(original_df['cluster'].unique())
         # Plot the clusters
         plt.figure(figsize=(10, 7))
-        c_palette = sns.color_palette("pastel", num_colors)
-        plot_df = original_df.copy()
-        plot_df.drop(columns=['exalts'], inplace=True)
+        c_palette = sns.color_palette("flare", as_cmap=True)
         # plot_df.loc[plot_df['cluster'] == -1, 'cluster'] = 999
-        sns.scatterplot(data=plot_df, x='pca1', y='pca2', hue='cluster', palette=c_palette, edgecolor='black')
+        sns.scatterplot(data=pca_df, x='pca1', y='pca2', hue='exalts', palette=c_palette, edgecolor='black')
 
         # Customize the plot
         plt.title("Clusters of Mod Combinations (Excluding Price) Based on PCA Components")
         plt.xlabel("PCA Component 1")
         plt.ylabel("PCA Component 2")
-        plt.legend(title='Cluster')
+        plt.legend(title='exalts')
         plt.show()
+
+    def _filter_out_outliers(self, df, radius=0.2, price_column='exalts', threshold=0.25):
+        df = df.copy()
+        prices = df[price_column].values
+        features = df.drop(columns=[price_column])
+
+        radius_neighbors = RadiusNeighborsRegressor(radius=radius, weights='distance')
+        radius_neighbors.fit(features, prices)
+
+        local_avg_prices = radius_neighbors.predict(features)
+        df['local_avg_price'] = local_avg_prices
+
+        # Calculate price deviation
+        df['price_deviation'] = np.abs(df[price_column] - df['local_avg_price']) / df['local_avg_price']
+
+        # Flag as outlier if it deviates more than the threshold
+        df['is_outlier'] = df['price_deviation'] > threshold
+
+        cleaned_df = df[~df['is_outlier']]
+        cleaned_df = cleaned_df.drop(columns=['local_avg_price', 'price_deviation', 'is_outlier'])
+        cleaned_df.reset_index(inplace=True, drop=True)
+
+        return cleaned_df
 
     def _find_outliers(self, pair_weights: dict, standalone_weights: dict):
         scaler = StandardScaler()
@@ -125,51 +151,12 @@ class StatsPrep:
 
         fit_df = fit_df.fillna(0)
 
-
-        """inputs = [
-            (eps, min_samples)
-            for eps, min_samples in list(itertools.product(
-                [0.05, 0.1, 0.15, 0.2, 0.25],
-                [3, 4, 5, 7, 10]
-            ))
-        ]
-        for eps, min_samples in inputs:
-        logging.info(f"Eps: {eps}, Min Samples: {min_samples}")"""
-        dbscan = DBSCAN(eps=0.05, min_samples=3)  # These values are adjustable
-        labels = dbscan.fit_predict(fit_df)
-
-        fit_df['cluster'] = labels
         fit_df['exalts'] = self.df['exalts']
-        # self._plot_pca(original_df=df, mod_data_df=mod_data)
 
-        logging.info(f"\tNum clusters: {len(fit_df['cluster'].unique())}")
-        outlier_indices = []
-        for cluster_id in fit_df['cluster'].unique():
-            if cluster_id == -1:
-                continue  # Skip noise points
+        # self._plot_pca(df=fit_df)
 
-            cluster_df = fit_df[fit_df['cluster'] == cluster_id]
-
-            """plt.figure(figsize=(10, 5))
-            sns.boxplot(x=cluster_df['exalts'])
-            plt.title("Exalts Distribution with IQR Detection")
-            plt.show()"""
-
-            # IQR Method to detect outliers
-            q1 = cluster_df['exalts'].quantile(0.25)
-            q3 = cluster_df['exalts'].quantile(0.75)
-            iqr = q3 - q1
-            lower_bound = q1 - 1.5 * iqr
-            upper_bound = q3 + 1.5 * iqr
-
-            # Collect outlier indices
-            outliers = cluster_df[(cluster_df['exalts'] < lower_bound) | (cluster_df['exalts'] > upper_bound)]
-            logging.info(f"\tCluster: filtered out {len(outliers)} listings out of {len(cluster_df)}")
-            outlier_indices.extend(outliers.index)
-
-        # Step 4: Drop outliers from the original DataFrame
-        df_clean = fit_df.drop(index=outlier_indices)
-        return df_clean
+        cleaned_df = self._filter_out_outliers(df=fit_df)
+        return cleaned_df
 
     def prep_data(self):
         pair_corrs = self._find_correlating_pair_columns(min_correlation=0.25)
