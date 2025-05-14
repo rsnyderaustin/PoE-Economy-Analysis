@@ -1,9 +1,9 @@
 import logging
 import re
 from datetime import datetime, timezone
-from dateutil.parser import isoparse
 
 import pytz
+from dateutil.parser import isoparse
 
 from instances_and_definitions import ModClass, ModAffixType
 from shared import shared_utils

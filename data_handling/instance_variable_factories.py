@@ -1,9 +1,9 @@
 import logging
 
-from .mod_matching.poecd_attribute_finder import PoecdAttributeFinder
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
 from shared import ATypeClassifier, shared_utils
 from . import utils
+from .mod_matching.poecd_attribute_finder import PoecdAttributeFinder
 
 
 class ModFactory:

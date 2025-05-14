@@ -1,20 +1,19 @@
 
 import configparser
-import itertools
 import logging
 import random
 
 import xgboost as xgb
 
 import data_handling
-import price_predict_model
-from price_predict_model.build_model import build_price_predict_model
 import poecd_api
+import price_predict_model
 import trade_api
-from price_predict_model.stats_prep import StatsPrep
+from file_management import FilesManager, FileKey
+from price_predict_model.build_model import build_price_predict_model
+from stat_analysis.stats_prep import StatsPrep
 from shared import shared_utils
 from trade_api import query
-from file_management import FilesManager, FileKey
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
@@ -99,7 +98,7 @@ class OperationsCoordinator:
             for atype, atype_df in model_df.groupby('atype')
         }
         atype_dfs = {
-            atype: StatsPrep(df=atype_df.reset_index(drop=True), atype=str(atype)).prep_data()
+            atype: StatsPrep(df=atype_df.reset_index(drop=True), atype=str(atype), price_column='exalts').prep_data()
             for atype, atype_df in atype_dfs.items()
         }
 

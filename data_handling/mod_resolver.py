@@ -1,14 +1,13 @@
 import logging
 
-import data_handling
 import file_management
+import poecd_api
 from data_handling import utils
 from file_management import FileKey
 from instances_and_definitions import ModClass, utils as instance_utils, ItemMod
 from shared import ATypeClassifier
-from .instance_variable_factories import ModFactory
-import poecd_api
 from . import mod_matching
+from .instance_variable_factories import ModFactory
 
 
 class ModResolver:

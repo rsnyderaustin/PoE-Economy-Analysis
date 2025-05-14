@@ -2,7 +2,7 @@ import logging
 
 from file_management import FilesManager, FileKey
 from .atype_manager_factory import AtypeManagerFactory
-from .data_management import PoecdSourceStore, PoecdAtypeManager, GlobalAtypesManager
+from .data_management import PoecdSourceStore, GlobalAtypesManager
 from .data_pull import PoecdDataPuller, PoecdEndpoint
 
 

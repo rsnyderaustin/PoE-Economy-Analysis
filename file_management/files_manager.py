@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 import xgboost as xgb
 
-from instances_and_definitions import ItemMod, ModifiableListing
+from instances_and_definitions import ItemMod
 from . import utils
 
 

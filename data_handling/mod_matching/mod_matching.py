@@ -4,7 +4,6 @@ import rapidfuzz
 
 from instances_and_definitions import ItemMod
 from poecd_api.data_management import GlobalAtypesManager
-from shared import shared_utils
 from . import utils
 
 

@@ -1,7 +1,7 @@
 
-from typing import Iterable
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Iterable
 
 from dateutil.parser import isoparse
 

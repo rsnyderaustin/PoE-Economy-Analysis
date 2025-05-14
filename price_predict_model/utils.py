@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 from instances_and_definitions import ModifiableListing
 

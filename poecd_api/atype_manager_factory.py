@@ -1,7 +1,6 @@
-import itertools
 from instances_and_definitions import ModAffixType
 from shared import shared_utils
-from .data_management import PoecdMod, PoecdAtypeManager, PoecdSourceStore
+from .data_management import PoecdMod, PoecdAtypeManager
 
 
 class AtypeManagerFactory:

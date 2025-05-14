@@ -1,7 +1,6 @@
 {
     "exalts": [],
     "atype": [],
-    "btype": [],
     "rarity": [],
     "corrupted": [],
     "Critical Hit Chance": [],
@@ -41,7 +40,6 @@
     "strikes_deal_splash_damage_to_targets_within_#.#_metres": [],
     "convert_#%_of_requirements_to_dexterity": [],
     "convert_#%_of_requirements_to_intelligence": [],
-    "bow_attacks_fire_an_additional_arrow": [],
     "#%_chance_to_chain_an_additional_time": [],
     "bow_attacks_fire_#_additional_arrows": [],
     "convert_#%_of_requirements_to_strength": [],
@@ -57,5 +55,7 @@
     "minions_gain_#%_of_their_physical_damage_as_extra_lightning_damage": [],
     "recover_#%_of_maximum_mana_on_kill": [],
     "#%_increased_chance_to_shock": [],
-    "leeches_#%_of_physical_damage_as_mana": []
+    "leeches_#%_of_physical_damage_as_mana": [],
+    "meta_skills_gain_#%_increased_energy": [],
+    "recover_#%_of_maximum_life_on_kill": []
 }

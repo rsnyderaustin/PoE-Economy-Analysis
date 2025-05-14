@@ -4,8 +4,8 @@ from datetime import datetime
 
 import requests
 
-from trade_api.request_throttler import RequestThrottler
 from shared import env
+from trade_api.request_throttler import RequestThrottler
 
 
 def chunk_list(items: list, chunk_size: int = 10):
