@@ -1,6 +1,10 @@
 import pandas as pd
 
 
+def normalize_column_name(col: str | tuple) -> str:
+    return f"{col[0]}_{col[1]}" if isinstance(col, tuple) else col
+
+
 def _determine_number_of_infrequent_values(df, col):
     most_frequent_value = df[col].mode()[0]
     non_constant_count = df[df[col] != most_frequent_value].count()
@@ -39,10 +43,10 @@ def filter_low_variance_columns(df, threshold: float) -> pd.DataFrame:
     return df.drop(columns=low_variance_cols)
 
 
-def get_nonzero_indices(df, cols: list[str]):
+def get_nonzero_dataframe(df, cols: list[str]):
     df = df[cols]
     filtered_df = df[(df > 0).all(axis=1) & (~pd.isna(df)).all(axis=1)]
-    return filtered_df.index
+    return filtered_df
 
 
 class DataFrameModifier:
