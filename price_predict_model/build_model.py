@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import xgboost as xgb
+from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
 from file_management import FilesManager, FileKey
@@ -186,6 +187,19 @@ def build_price_predict_model(df: pd.DataFrame,
 
     # Evaluate performance
     test_predictions = model.predict(test_data)
+
+    import numpy as np
+
+    test_results_df = pd.DataFrame(
+        {
+            'test_target': test_target,
+            'test_predictions': test_predictions,
+            'error': np.where(test_predictions != 0, (test_target - test_predictions).abs() / test_predictions, np.nan)
+        }
+    )
+    test_results_df = pd.concat([test_results_df, features])
+    test_results_df.sort_values(by='error')
+
     mse = utils.weighted_mse(test_target, test_predictions,
                              overprediction_weight=overprediction_weight,
                              underprediction_weight=underprediction_weight)

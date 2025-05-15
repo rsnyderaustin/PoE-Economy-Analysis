@@ -1,5 +1,6 @@
 import logging
 import time
+import zlib
 
 from collections import deque
 

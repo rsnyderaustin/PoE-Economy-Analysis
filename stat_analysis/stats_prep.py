@@ -7,10 +7,11 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
-from sklearn.neighbors import RadiusNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.neighbors import RadiusNeighborsRegressor, KNeighborsRegressor
 from sklearn.preprocessing import StandardScaler
 
-from . import utils
+from . import utils, visualize
 
 
 class DataFrameParts:
@@ -67,226 +68,111 @@ class CorrelationAnalyzer:
 
         return valid_pairs_weights
 
-    @classmethod
-    def transform_columns_by_correlation(cls,
-                                         df_parts: DataFrameParts,
-                                         single_correlation_threshold: float,
-                                         pair_correlation_threshold: float) -> CorrelationResults:
-        single_weights = cls._determine_suitable_single_columns(features=df_parts.features,
-                                                                prices=df_parts.prices,
-                                                                correlation_threshold=single_correlation_threshold)
-        pair_weights = cls._determine_suitable_pair_columns(features=df_parts.features,
-                                                            prices=df_parts.prices,
-                                                            correlation_threshold=pair_correlation_threshold)
-        df_setup = {col: df_parts.features[col] for col in single_weights.keys()}
-        for mod1, mod2 in pair_weights.keys():
-            df_setup[utils.normalize_column_name((mod1, mod2))] = df_parts.features[mod1] * df_parts.features[mod2]
-
-        features = pd.DataFrame(df_setup)
-
-        return CorrelationResults(transformed_features=features,
-                                  single_weights=single_weights,
-                                  pair_weights=pair_weights)
-
 
 class StatsPrep:
 
-    def __init__(self, df: pd.DataFrame, atype: str, price_column: str):
-        self.df_parts = DataFrameParts(df=df,
-                                       price_column=price_column)
-        self.atype = atype
-        self.price_column = price_column
+    @classmethod
+    def _determine_insignificant_columns(cls,
+                                         features_df: pd.DataFrame,
+                                         prices: pd.Series,
+                                         non_null_count_threshold: int = 50,
+                                         non_mode_count_threshold: int = 50,
+                                         non_mode_percent_threshold: float = 0.05,
+                                         non_null_percent_threshold: float = 0.05,
+                                         correlation_threshold: float = 0.5) -> set[str]:
+        invalid_cols = set()
+        empty_cols = features_df.columns[((features_df == 0) | (pd.isna(features_df))).all()]
+        invalid_cols.update(empty_cols)
 
-        self.corr_transformed_features = None
+        non_null_counts = cls._determine_non_null_value_counts(features_df)
+        non_mode_counts = cls._determine_non_mode_value_counts(features_df)
 
-    def plot_correlations(self, df: pd.DataFrame):
-        df = df.drop(columns=['exalts'], errors='ignore')
-        corr = df.corr()
-        plt.figure(figsize=(8, 6))
-        plt.title(f'{self.atype}')
-        sns.heatmap(corr, annot=True, cmap='coolwarm')
-        plt.show()
+        invalid_cols.update([col for col, non_nulls in non_null_counts.items()
+                             if non_nulls < non_null_count_threshold])
+        invalid_cols.update([col for col, non_mode in non_mode_counts.items()
+                             if non_mode < non_mode_count_threshold])
 
-    @staticmethod
-    def plot_dimensions(self, df: pd.DataFrame):
-        for col in df.columns:
-            if col == 'exalts':
-                continue
+        valid_cols = [col for col in features_df.columns if col not in invalid_cols]
 
-            plt.figure(figsize=(8, 6))
-            plt.title(f'{self.atype}_{col}')
-            sns.scatterplot(x=df[col], y=df['exalts'])
-            plt.show()
+        for col in valid_cols:
+            if non_null_counts[col] / len(features_df) < non_null_percent_threshold:
+                non_null_df = features_df[(features_df[col] != 0) & ~pd.isna(features_df[col])]
+                non_null_series = non_null_df[col]
 
-    def plot_pca(self, df: pd.DataFrame):
-        if self.price_column in df.columns:
-            price = df['exalts']
-
-        pca = PCA(n_components=2)
-        reduced_data = pca.fit_transform(df.drop(columns=['exalts']))
-        pca_df = pd.DataFrame(reduced_data, columns=['pca1', 'pca2'])
-        pca_df['exalts'] = price
-
-        # Plot the clusters
-        plt.figure(figsize=(10, 7))
-        c_palette = sns.color_palette("flare", as_cmap=True)
-        # plot_df.loc[plot_df['cluster'] == -1, 'cluster'] = 999
-        sns.scatterplot(data=pca_df, x='pca1', y='pca2', hue='exalts', palette=c_palette, edgecolor='black')
-
-        # Customize the plot
-        plt.title("Clusters of Mod Combinations (Excluding Price) Based on PCA Components")
-        plt.xlabel("PCA Component 1")
-        plt.ylabel("PCA Component 2")
-        plt.legend(title='exalts')
-        plt.show()
-
-    def _visualize_radius_neighbors_regression(self, distances, indices):
-        data = {
-            'index': [],
-            'distance': [],
-            'neighbor_price': [],
-            'listing_price': [],
-            **{f"mainpoint_{f}": [] for f in self.corr_transformed_features.columns},
-            **{f: [] for f in self.corr_transformed_features.columns}
-        }
-        # Display the neighbors
-        inputs = list(zip(distances, indices))
-        for main_i, (dx_to_ns, idxs) in enumerate(inputs):
-            # Get the features of the main point
-            main_point_features = self.corr_transformed_features.iloc[main_i].values
-            # Loop through each index and corresponding distance
-            for dx, idx in zip(dx_to_ns, idxs):
-                if dx == main_i:  # Skip this neighbor if its ourself
+                corr_val = non_null_series.corr(prices)
+                if pd.isna(corr_val) or corr_val < correlation_threshold:  # Is NA when all non-null values are the same
+                    invalid_cols.add(col)
                     continue
 
-                data['index'].append(main_i)
-                data['listing_price'].append(self.df_parts.prices.iloc[main_i])
-                data['neighbor_price'].append(self.df_parts.prices.iloc[idx])
-                for i, col in enumerate(self.corr_transformed_features.columns):
-                    data[f"mainpoint_{col}"].append(main_point_features[i])
+            if non_mode_counts[col] / len(features_df) < non_mode_percent_threshold:
+                mode_value = features_df[col].mode()[0]
 
-                data['distance'].append(dx)
-                neighbor_features = self.corr_transformed_features.iloc[idx]
+                variance_df = features_df[features_df[col] != mode_value]
+                variance_series = variance_df[col]
 
-                for col, val in neighbor_features.items():
-                    data[col].append(val)
-
-            if main_i >= 250:
-                break
-
-        neighbors_df = pd.DataFrame(data)
-        return neighbors_df
-
-    @staticmethod
-    def _determine_insignificant_columns(features_df: pd.DataFrame,
-                                         prices: pd.Series,
-                                         variance_threshold: float = 0.05,
-                                         non_mode_count_threshold: int = 30,
-                                         correlation_threshold: float = 0.3) -> list[str]:
-        invalid_cols = []
-        df = features_df.select_dtypes(['int64', 'float64'])
-        empty_cols = df.columns[((df == 0) | (pd.isna(df))).all()]
-        invalid_cols.extend(empty_cols)
-
-        # Filter out columns that have less than 30 values that are not the mode value
-        for col in df.columns:
-            mode_val = df[col].mode()[0]
-            s = df[col] != mode_val
-            non_mode_count = s.sum()
-            if non_mode_count < non_mode_count_threshold:
-                invalid_cols.extend(col)
-                continue
-
-            non_mode_percent = non_mode_count / len(df)
-            if non_mode_percent >= variance_threshold:  # If there's enough non-mode values then this column is okay
-                continue
-
-            variance_df = df[df[col] != mode_val]
-            corr_val = variance_df[col].corr(prices)
-            if corr_val < correlation_threshold:
-                invalid_cols.extend(col)
-                continue
+                corr_val = variance_series.corr(prices)
+                if pd.isna(corr_val) or corr_val < correlation_threshold: # Is NA when all non-mode values are the same
+                    invalid_cols.add(col)
+                    continue
 
         return invalid_cols
 
-    def _filter_out_outliers(self,
-                             features_df,
-                             radius: float = 0.2,
-                             price_column='exalts',
-                             min_neighbors: int = 3,
-                             price_deviation_threshold=0.25):
+    @staticmethod
+    def _apply_determine_neighborhood_price(row):
+        neighbor_prices = row['prices']
+        neighbor_distances = row['distances']
+        sorted_prices, sorted_distances = zip(*sorted(zip(neighbor_prices, neighbor_distances)))
+        neighbor_prices = list(sorted_prices)
+        neighbor_distances = list(sorted_distances)
 
-        neighbors_df.reset_index(drop=True)
-        sorted_prices = [np.sort(subarray) for subarray in prices if len(subarray) >= min_neighbors]
-        bottom_3_prices = [
-            np.median(subarray[:3])
-            for subarray in sorted_prices
-        ]
-        # medians = [np.median(subarray) for subarray in prices if len(subarray) >= min_neighbors]
-        neighbors_df['neighbors_exalts'] = bottom_3_prices
+        neighbor_weights = [(1 / (distance + 1e-10)) for distance in neighbor_distances]
+        median_weight = sum(neighbor_weights) / 2
 
-        # Calculate price deviation
-        neighbors_df['price_deviation'] = np.abs(neighbors_df[price_column] - neighbors_df['neighbors_exalts']) / \
-                                          neighbors_df['neighbors_exalts']
+        current_weight = 0
+        for price, weight in zip(neighbor_prices, neighbor_weights):
+            current_weight += weight
+            if median_weight < current_weight:
+                return price
 
-        # Flag as outlier if it deviates more than the threshold
-        neighbors_df['is_outlier'] = neighbors_df['price_deviation'] > threshold
+    @classmethod
+    def _determine_nearest_neighbor_outliers(cls,
+                                             features_df: pd.DataFrame,
+                                             prices: pd.Series,
+                                             radius: float = 0.5,
+                                             price_deviation_threshold=0.15) -> set[int]:
+        regressor = KNeighborsRegressor(n_neighbors=25, weights='distance')
+        regressor.fit(features_df, prices)
+        distances, indices = regressor.kneighbors(features_df)
 
-        cleaned_df = neighbors_df[~neighbors_df['is_outlier']]
-        cleaned_df = cleaned_df.drop(columns=['neighbors_exalts', 'price_deviation', 'is_outlier'])
+        outlier_indices = set()
+        out_of_range_indices = {
+            i for i, array in enumerate(distances)
+            if not all(distance <= radius for distance in array)
+        }
+        outlier_indices.update(out_of_range_indices)
 
-        df = pd.concat([standalones_df, cleaned_df])
-        df.reset_index(inplace=True, drop=True)
-
-        return df
-
-    def fit_nearest_neighbor(self,
-                             col_weights: dict,
-                             radius: float = 0.2,
-                             min_neighbors: int = 3,
-                             price_deviation_threshold=0.25):
-        original_feature_cols = self.df_parts.features.columns
-        features = self.df_parts.features
-
-        scaler = StandardScaler()
-        scaled_data = scaler.fit_transform(features)
-
-        features = pd.DataFrame(scaled_data)
-        features.columns = original_feature_cols
-
-        for col, weighting in col_weights.items():
-            col = utils.normalize_column_name(col)
-            features[col] = features[col] * weighting
-
-        regressor = RadiusNeighborsRegressor(radius=radius, weights='distance')
-        regressor.fit(features, self.df_parts.prices)
-        dxs, indices = regressor.radius_neighbors(features)
-
-        # The first value for dxs and indices is the point itself. We only want neighbors
-        distances = [subarray[1:] for subarray in dxs if len(subarray) >= min_neighbors + 1]
-        indices = [subarray[1:] for subarray in indices if len(subarray) >= min_neighbors + 1]
-        prices = [
-            [self.df_parts.prices.iloc[index] for index in subarray]
-            for subarray in indices
-        ]
-
-        neighbor_indices = [i for i, subarray in enumerate(prices) if len(subarray) >= min_neighbors]
-        isolated_indices = [i for i, subarray in enumerate(prices) if len(subarray) < min_neighbors]
-
-        visual_df = self._visualize_radius_neighbors_regression(
-            distances=distances,
-            indices=indices
+        predictions = regressor.predict(features_df)
+        knn_df = pd.DataFrame(
+            {'predicted_price': predictions}
         )
+        knn_df['real_price'] = prices
 
-        standalones_df = features.iloc[isolated_indices]
-        neighbors_df = features.iloc[neighbor_indices]
+        knn_df['price_deviation'] = knn_df['real_price'] - knn_df['predicted_price']
 
-        x = 0
+        knn_df['is_outlier'] = knn_df['price_deviation'].abs() > price_deviation_threshold
+
+        outlier_indices.update(list(knn_df[knn_df['is_outlier']].index))
+        return outlier_indices
 
     @staticmethod
     def _normalize_data(features_df: pd.DataFrame) -> pd.DataFrame:
+        original_cols = features_df.columns
+
+        features_df.columns = [utils.normalize_column_name(col) for col in features_df.columns]
         scaler = StandardScaler()
-        new_df = scaler.fit_transform(features_df)
+        new_data = scaler.fit_transform(features_df)
+        new_df = pd.DataFrame(new_data)
+        new_df.columns = original_cols
         return new_df
 
     @staticmethod
@@ -303,12 +189,47 @@ class StatsPrep:
 
         return pd.DataFrame(df_setup)
 
+    @staticmethod
+    def _weight_data(features_df: pd.DataFrame,
+                     column_weights: dict) -> pd.DataFrame:
+        new_cols = {}
+        for col, weight in column_weights.items():
+            new_cols[col] = features_df[col] * weight
+
+        return pd.DataFrame(new_cols)
+
+    @staticmethod
+    def _count_not_mode(df_column):
+        mode_value = df_column.mode()[0]
+        return (df_column != mode_value).sum()
+
+    @classmethod
+    def _determine_non_mode_value_counts(cls, df: pd.DataFrame) -> dict:
+        not_mode_counts = {col: cls._count_not_mode(df[col]) for col in df.columns}
+
+        return not_mode_counts
+
+    @staticmethod
+    def _determine_non_null_value_counts(df: pd.DataFrame) -> dict:
+        non_zero_non_nan_counts = {col: ((df[col] != 0) & ~pd.isna(df[col])).sum() for col in df.columns}
+
+        return non_zero_non_nan_counts
+
     @classmethod
     def prep_data(cls, df: pd.DataFrame, price_column: str, atype: str):
+        df = df.reset_index(drop=True)
         df = df.select_dtypes(['int64', 'float64'])
         df = df.fillna(0)
 
+        df = df.drop(columns=['max_quality_pdps'])
+
+        df[price_column] = np.log1p(df[price_column])
+
         features = df.drop(columns=[price_column])
+
+        # Drop all rows where all values are either 0 or NaN
+        features = features[~((features == 0) | (pd.isna(features))).all(axis=1)]
+
         prices = df[price_column]
 
         insignificant_cols = cls._determine_insignificant_columns(
@@ -320,34 +241,39 @@ class StatsPrep:
         single_column_weights = CorrelationAnalyzer.determine_single_column_weights(
             features=features,
             prices=prices,
-            correlation_threshold=0.3
+            correlation_threshold=0.4
         )
         pair_column_weights = CorrelationAnalyzer.determine_pair_column_weights(
             features=features,
             prices=prices,
-            correlation_threshold=0.3
+            correlation_threshold=0.4
         )
 
         valid_columns = list(single_column_weights.keys()) + list(pair_column_weights.keys())
-        tr_features = cls._transform_columns(features_df=features,
+        tr_features = cls._transform_columns(features_df=features.copy(),
                                              columns=valid_columns)
-        tr_features = cls._normalize_data(features_df=tr_features)
+        non_normalized_features = tr_features.copy()
 
+        if tr_features.empty:
+            return None
 
+        single_column_weights = {utils.normalize_column_name(col): val for col, val in single_column_weights.items()}
+        pair_column_weights = {utils.normalize_column_name(col): val for col, val in pair_column_weights.items()}
 
-        self.df_parts.features = self._filter_insignificant_columns()
+        tr_features = cls._normalize_data(features_df=tr_features.copy())
+        tr_features = cls._weight_data(features_df=tr_features.copy(),
+                                       column_weights={**single_column_weights, **pair_column_weights})
 
-        self.df_parts.features = self._filter_insignificant_columns()
+        outlier_indices = cls._determine_nearest_neighbor_outliers(
+            features_df=tr_features.copy(),
+            prices=prices.copy()
+        )
 
-        correlation_results = CorrelationAnalyzer.transform_columns_by_correlation(df_parts=self.df_parts,
-                                                                                   single_correlation_threshold=0.25,
-                                                                                   pair_correlation_threshold=0.25)
-        self.corr_transformed_features = correlation_results.transformed_features.copy()
-        self.df_parts.features = correlation_results.transformed_features
+        non_normalized_features = non_normalized_features[~non_normalized_features.index.isin(outlier_indices)]
+        df = non_normalized_features
+        df['exalts'] = prices
 
-        # Filter rows that dont have any positive value for a feature
-        self.df_parts.features = self.df_parts.features[(self.df_parts.features != 0).any(axis=1)]
-        self.df_parts.prices = self.df_parts.prices.iloc[self.df_parts.features.index]
+        visualize.plot_dimensions(df=df, atype=atype)
 
-        self.fit_nearest_neighbor(col_weights={**correlation_results.single_weights,
-                                               **correlation_results.pair_weights})
+        return df
+
