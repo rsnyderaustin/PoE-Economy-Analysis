@@ -31,7 +31,7 @@ class CorrelationResults:
 class CorrelationAnalyzer:
 
     @staticmethod
-    def _determine_suitable_single_columns(features, prices, correlation_threshold: float) -> dict:
+    def determine_single_column_weights(features, prices, correlation_threshold: float) -> dict:
         corrs = features.corrwith(prices)
         mod_weights = dict()
         for mod, corr in corrs.items():
@@ -41,7 +41,7 @@ class CorrelationAnalyzer:
         return mod_weights
 
     @staticmethod
-    def _determine_suitable_pair_columns(features: pd.DataFrame, prices, correlation_threshold: float) -> dict:
+    def determine_pair_column_weights(features: pd.DataFrame, prices, correlation_threshold: float) -> dict:
         mod_combinations = list(itertools.combinations(features.columns, 2))
 
         # Step 1: Build initial dictionary of DataFrames filtered by nonzero indices
@@ -177,36 +177,37 @@ class StatsPrep:
         neighbors_df = pd.DataFrame(data)
         return neighbors_df
 
-    def _filter_insignificant_columns(self,
-                                      variance_threshold: float = 0.05,
-                                      non_mode_count_threshold: int = 30,
-                                      correlation_threshold: float = 0.3) -> pd.DataFrame:
-
-        df = self.df_parts.features.select_dtypes(['int64', 'float64'])
-        valid_cols = df.columns[((df != 0) & ~(pd.isna(df))).any()]
-        df = df[valid_cols]
+    @staticmethod
+    def _determine_insignificant_columns(features_df: pd.DataFrame,
+                                         prices: pd.Series,
+                                         variance_threshold: float = 0.05,
+                                         non_mode_count_threshold: int = 30,
+                                         correlation_threshold: float = 0.3) -> list[str]:
+        invalid_cols = []
+        df = features_df.select_dtypes(['int64', 'float64'])
+        empty_cols = df.columns[((df == 0) | (pd.isna(df))).all()]
+        invalid_cols.extend(empty_cols)
 
         # Filter out columns that have less than 30 values that are not the mode value
-        valid_cols = []
         for col in df.columns:
             mode_val = df[col].mode()[0]
             s = df[col] != mode_val
             non_mode_count = s.sum()
             if non_mode_count < non_mode_count_threshold:
+                invalid_cols.extend(col)
                 continue
 
             non_mode_percent = non_mode_count / len(df)
             if non_mode_percent >= variance_threshold:  # If there's enough non-mode values then this column is okay
-                valid_cols.append(col)
                 continue
 
             variance_df = df[df[col] != mode_val]
-            corr_val = variance_df[col].corr(self.df_parts.prices)
-            if corr_val >= correlation_threshold:
-                valid_cols.append(col)
+            corr_val = variance_df[col].corr(prices)
+            if corr_val < correlation_threshold:
+                invalid_cols.extend(col)
                 continue
 
-        return df[valid_cols]
+        return invalid_cols
 
     def _filter_out_outliers(self,
                              features_df,
@@ -280,9 +281,62 @@ class StatsPrep:
         standalones_df = features.iloc[isolated_indices]
         neighbors_df = features.iloc[neighbor_indices]
 
-        x=0
+        x = 0
 
-    def prep_data(self):
+    @staticmethod
+    def _normalize_data(features_df: pd.DataFrame) -> pd.DataFrame:
+        scaler = StandardScaler()
+        new_df = scaler.fit_transform(features_df)
+        return new_df
+
+    @staticmethod
+    def _transform_columns(features_df: pd.DataFrame,
+                           columns: list[str | tuple]) -> pd.DataFrame:
+        df_setup = dict()
+
+        single_columns = [col for col in columns if isinstance(col, str)]
+        df_setup.update({col: features_df[col] for col in single_columns})
+
+        pair_columns = [col for col in columns if isinstance(col, tuple)]
+        for mod1, mod2 in pair_columns:
+            df_setup[utils.normalize_column_name((mod1, mod2))] = features_df[mod1] * features_df[mod2]
+
+        return pd.DataFrame(df_setup)
+
+    @classmethod
+    def prep_data(cls, df: pd.DataFrame, price_column: str, atype: str):
+        df = df.select_dtypes(['int64', 'float64'])
+        df = df.fillna(0)
+
+        features = df.drop(columns=[price_column])
+        prices = df[price_column]
+
+        insignificant_cols = cls._determine_insignificant_columns(
+            features_df=features,
+            prices=prices
+        )
+        features = features.drop(columns=insignificant_cols)
+
+        single_column_weights = CorrelationAnalyzer.determine_single_column_weights(
+            features=features,
+            prices=prices,
+            correlation_threshold=0.3
+        )
+        pair_column_weights = CorrelationAnalyzer.determine_pair_column_weights(
+            features=features,
+            prices=prices,
+            correlation_threshold=0.3
+        )
+
+        valid_columns = list(single_column_weights.keys()) + list(pair_column_weights.keys())
+        tr_features = cls._transform_columns(features_df=features,
+                                             columns=valid_columns)
+        tr_features = cls._normalize_data(features_df=tr_features)
+
+
+
+        self.df_parts.features = self._filter_insignificant_columns()
+
         self.df_parts.features = self._filter_insignificant_columns()
 
         correlation_results = CorrelationAnalyzer.transform_columns_by_correlation(df_parts=self.df_parts,
@@ -297,4 +351,3 @@ class StatsPrep:
 
         self.fit_nearest_neighbor(col_weights={**correlation_results.single_weights,
                                                **correlation_results.pair_weights})
-
