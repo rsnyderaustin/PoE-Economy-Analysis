@@ -221,22 +221,25 @@ class StatsPrep:
         df = df.select_dtypes(['int64', 'float64'])
         df = df.fillna(0)
 
-        df = df.drop(columns=['max_quality_pdps'])
+        print(df.duplicated().sum())
 
         df[price_column] = np.log1p(df[price_column])
 
         features = df.drop(columns=[price_column])
+        prices = df[price_column]
 
         # Drop all rows where all values are either 0 or NaN
         features = features[~((features == 0) | (pd.isna(features))).all(axis=1)]
 
-        prices = df[price_column]
+        print(features.duplicated().sum())
 
         insignificant_cols = cls._determine_insignificant_columns(
             features_df=features,
             prices=prices
         )
         features = features.drop(columns=insignificant_cols)
+
+        print(features.duplicated().sum())
 
         single_column_weights = CorrelationAnalyzer.determine_single_column_weights(
             features=features,
@@ -252,11 +255,20 @@ class StatsPrep:
         valid_columns = list(single_column_weights.keys()) + list(pair_column_weights.keys())
         tr_features = cls._transform_columns(features_df=features.copy(),
                                              columns=valid_columns)
+
         non_normalized_features = tr_features.copy()
+        print(non_normalized_features.duplicated().sum())
+        non_normalized_features['exalts'] = prices
+
+        duplicates = non_normalized_features[non_normalized_features.duplicated(keep=False)]  # 'keep=False' ensures all duplicate rows are shown
+
+        # Sort duplicates so identical rows are grouped together
+        duplicates_sorted = duplicates.sort_values(by=list(non_normalized_features.columns))
 
         if tr_features.empty:
             return None
 
+        """ Normalize column / column pair correlations """
         single_column_weights = {utils.normalize_column_name(col): val for col, val in single_column_weights.items()}
         pair_column_weights = {utils.normalize_column_name(col): val for col, val in pair_column_weights.items()}
 
