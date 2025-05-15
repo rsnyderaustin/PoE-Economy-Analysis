@@ -18,7 +18,7 @@ class DataFrameParts:
     def __init__(self, df: pd.DataFrame, price_column: str):
         self.df = df
         self.prices = df[price_column]
-        self.features = df.drop(columns=[price_column])
+        self.features = df.drop(columns=[price_column]).select_dtypes(['int64', 'float64']).fillna(0)
 
 
 @dataclass
@@ -83,6 +83,7 @@ class CorrelationAnalyzer:
             df_setup[utils.normalize_column_name((mod1, mod2))] = df_parts.features[mod1] * df_parts.features[mod2]
 
         features = pd.DataFrame(df_setup)
+
         return CorrelationResults(transformed_features=features,
                                   single_weights=single_weights,
                                   pair_weights=pair_weights)
@@ -94,7 +95,9 @@ class StatsPrep:
         self.df_parts = DataFrameParts(df=df,
                                        price_column=price_column)
         self.atype = atype
+        self.price_column = price_column
 
+        self.corr_transformed_features = None
 
     def plot_correlations(self, df: pd.DataFrame):
         df = df.drop(columns=['exalts'], errors='ignore')
@@ -137,41 +140,42 @@ class StatsPrep:
         plt.legend(title='exalts')
         plt.show()
 
-    def _visualize_radius_neighbors_regression(self, df, features, distances, indices, price_column):
+    def _visualize_radius_neighbors_regression(self, distances, indices):
         data = {
             'index': [],
             'distance': [],
             'neighbor_price': [],
             'listing_price': [],
-            **{f"mainpoint_{f}": [] for f in features.columns},
-            **{f: [] for f in features.columns}
+            **{f"mainpoint_{f}": [] for f in self.corr_transformed_features.columns},
+            **{f: [] for f in self.corr_transformed_features.columns}
         }
         # Display the neighbors
         inputs = list(zip(distances, indices))
         for main_i, (dx_to_ns, idxs) in enumerate(inputs):
             # Get the features of the main point
-            main_point_features = features.iloc[main_i].values
+            main_point_features = self.corr_transformed_features.iloc[main_i].values
             # Loop through each index and corresponding distance
             for dx, idx in zip(dx_to_ns, idxs):
                 if dx == main_i:  # Skip this neighbor if its ourself
                     continue
 
                 data['index'].append(main_i)
-                data['listing_price'].append(df[price_column].iloc[main_i])
-                data['neighbor_price'].append(df[price_column].iloc[idx])
-                for i, col in enumerate(features.columns):
+                data['listing_price'].append(self.df_parts.prices.iloc[main_i])
+                data['neighbor_price'].append(self.df_parts.prices.iloc[idx])
+                for i, col in enumerate(self.corr_transformed_features.columns):
                     data[f"mainpoint_{col}"].append(main_point_features[i])
 
                 data['distance'].append(dx)
-                neighbor_features = features.iloc[idx]
+                neighbor_features = self.corr_transformed_features.iloc[idx]
 
                 for col, val in neighbor_features.items():
                     data[col].append(val)
 
-            if i >= 250:
+            if main_i >= 250:
                 break
 
         neighbors_df = pd.DataFrame(data)
+        return neighbors_df
 
     def _filter_insignificant_columns(self,
                                       variance_threshold: float = 0.05,
@@ -197,7 +201,7 @@ class StatsPrep:
                 continue
 
             variance_df = df[df[col] != mode_val]
-            corr_val = variance_df.corrwith(self.df_parts.prices)
+            corr_val = variance_df[col].corr(self.df_parts.prices)
             if corr_val >= correlation_threshold:
                 valid_cols.append(col)
                 continue
@@ -209,24 +213,7 @@ class StatsPrep:
                              radius: float = 0.2,
                              price_column='exalts',
                              min_neighbors: int = 3,
-                             threshold=0.25):
-        features = self.df_parts.features
-
-        regressor = RadiusNeighborsRegressor(radius=radius, weights='distance')
-        regressor.fit(features, self.prices)
-        dxs, indices = regressor.radius_neighbors(features)
-
-        # The first value for dxs and indices is the point itself. We only want neighbors
-        indices = [subarray[1:] for subarray in indices]
-        prices = [
-            [self.prices.iloc[index] for index in subarray]
-            for subarray in indices
-        ]
-
-        neighbor_indices = [i for i, subarray in enumerate(prices) if len(subarray) >= min_neighbors]
-        isolated_indices = [i for i, subarray in enumerate(prices) if len(subarray) < min_neighbors]
-        standalones_df = features.iloc[isolated_indices]
-        neighbors_df = features.iloc[neighbor_indices]
+                             price_deviation_threshold=0.25):
 
         neighbors_df.reset_index(drop=True)
         sorted_prices = [np.sort(subarray) for subarray in prices if len(subarray) >= min_neighbors]
@@ -253,36 +240,60 @@ class StatsPrep:
         return df
 
     def fit_nearest_neighbor(self,
-                             col_weights: dict):
-        cols = df.columns
+                             col_weights: dict,
+                             radius: float = 0.2,
+                             min_neighbors: int = 3,
+                             price_deviation_threshold=0.25):
+        original_feature_cols = self.df_parts.features.columns
+        features = self.df_parts.features
 
         scaler = StandardScaler()
-        fit_data = scaler.fit_transform(df)
+        scaled_data = scaler.fit_transform(features)
 
-        fit_df = pd.DataFrame(fit_data)
-        fit_df.columns = cols
+        features = pd.DataFrame(scaled_data)
+        features.columns = original_feature_cols
 
         for col, weighting in col_weights.items():
             col = utils.normalize_column_name(col)
-            fit_df[col] = fit_df[col] * weighting
+            features[col] = features[col] * weighting
 
         regressor = RadiusNeighborsRegressor(radius=radius, weights='distance')
-        regressor.fit(features, self.prices)
+        regressor.fit(features, self.df_parts.prices)
         dxs, indices = regressor.radius_neighbors(features)
 
         # The first value for dxs and indices is the point itself. We only want neighbors
-        indices = [subarray[1:] for subarray in indices]
+        distances = [subarray[1:] for subarray in dxs if len(subarray) >= min_neighbors + 1]
+        indices = [subarray[1:] for subarray in indices if len(subarray) >= min_neighbors + 1]
         prices = [
-            [self.prices.iloc[index] for index in subarray]
+            [self.df_parts.prices.iloc[index] for index in subarray]
             for subarray in indices
         ]
 
+        neighbor_indices = [i for i, subarray in enumerate(prices) if len(subarray) >= min_neighbors]
+        isolated_indices = [i for i, subarray in enumerate(prices) if len(subarray) < min_neighbors]
+
+        visual_df = self._visualize_radius_neighbors_regression(
+            distances=distances,
+            indices=indices
+        )
+
+        standalones_df = features.iloc[isolated_indices]
+        neighbors_df = features.iloc[neighbor_indices]
+
+        x=0
+
     def prep_data(self):
         self.df_parts.features = self._filter_insignificant_columns()
-        
-        correlation_results = CorrelationAnalyzer.transform_columns_by_correlation(single_correlation_threshold=0.25,
+
+        correlation_results = CorrelationAnalyzer.transform_columns_by_correlation(df_parts=self.df_parts,
+                                                                                   single_correlation_threshold=0.25,
                                                                                    pair_correlation_threshold=0.25)
+        self.corr_transformed_features = correlation_results.transformed_features.copy()
         self.df_parts.features = correlation_results.transformed_features
+
+        # Filter rows that dont have any positive value for a feature
+        self.df_parts.features = self.df_parts.features[(self.df_parts.features != 0).any(axis=1)]
+        self.df_parts.prices = self.df_parts.prices.iloc[self.df_parts.features.index]
 
         self.fit_nearest_neighbor(col_weights={**correlation_results.single_weights,
                                                **correlation_results.pair_weights})
