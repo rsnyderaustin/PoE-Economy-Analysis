@@ -95,7 +95,8 @@ class StatsPrep:
         valid_cols = [col for col in features_df.columns if col not in invalid_cols]
 
         for col in valid_cols:
-            if non_null_counts[col] / len(features_df) < non_null_percent_threshold:
+            percent_null = non_null_counts[col] / len(features_df)
+            if percent_null < non_null_percent_threshold:
                 non_null_df = features_df[(features_df[col] != 0) & ~pd.isna(features_df[col])]
                 non_null_series = non_null_df[col]
 
@@ -104,7 +105,8 @@ class StatsPrep:
                     invalid_cols.add(col)
                     continue
 
-            if non_mode_counts[col] / len(features_df) < non_mode_percent_threshold:
+            percent_non_mode = non_mode_counts[col] / len(features_df)
+            if percent_non_mode < non_mode_percent_threshold:
                 mode_value = features_df[col].mode()[0]
 
                 variance_df = features_df[features_df[col] != mode_value]
@@ -118,20 +120,22 @@ class StatsPrep:
         return invalid_cols
 
     @staticmethod
-    def _apply_determine_neighborhood_price(row):
-        neighbor_prices = row['prices']
-        neighbor_distances = row['distances']
-        sorted_prices, sorted_distances = zip(*sorted(zip(neighbor_prices, neighbor_distances)))
-        neighbor_prices = list(sorted_prices)
-        neighbor_distances = list(sorted_distances)
+    def _apply_predict_price(row):
+        distances = pd.Series(row['distances'])
+        weights = (1 / (distances + 0.1))
 
-        neighbor_weights = [(1 / (distance + 1e-10)) for distance in neighbor_distances]
-        median_weight = sum(neighbor_weights) / 2
+        prices = pd.Series(row['prices'])
+        sorted_indices = np.argsort(prices)
+
+        sorted_prices = prices[sorted_indices]
+        sorted_weights = weights[sorted_indices]
+
+        weighted_median_20 = np.sum(sorted_weights) * 0.2
 
         current_weight = 0
-        for price, weight in zip(neighbor_prices, neighbor_weights):
+        for weight, price in zip(sorted_weights, sorted_prices):
             current_weight += weight
-            if median_weight < current_weight:
+            if current_weight >= weighted_median_20:
                 return price
 
     @classmethod
@@ -140,7 +144,7 @@ class StatsPrep:
                                              prices: pd.Series,
                                              radius: float = 0.5,
                                              price_deviation_threshold=0.15) -> set[int]:
-        regressor = KNeighborsRegressor(n_neighbors=25, weights='distance')
+        regressor = KNeighborsRegressor(n_neighbors=18, weights='distance')
         regressor.fit(features_df, prices)
         distances, indices = regressor.kneighbors(features_df)
 
@@ -151,17 +155,21 @@ class StatsPrep:
         }
         outlier_indices.update(out_of_range_indices)
 
-        predictions = regressor.predict(features_df)
-        knn_df = pd.DataFrame(
-            {'predicted_price': predictions}
-        )
-        knn_df['real_price'] = prices
+        cols_dict = {
+            'distances': distances.tolist(),
+            'prices': [prices.iloc[idx].tolist() for idx in indices]
+        }
+        df = pd.DataFrame(cols_dict)
 
-        knn_df['price_deviation'] = knn_df['real_price'] - knn_df['predicted_price']
+        df['predicted_price'] = df.apply(cls._apply_predict_price, axis=1)
 
-        knn_df['is_outlier'] = knn_df['price_deviation'].abs() > price_deviation_threshold
+        df['real_price'] = prices
 
-        outlier_indices.update(list(knn_df[knn_df['is_outlier']].index))
+        df['price_deviation'] = df['real_price'] - df['predicted_price']
+
+        df['is_outlier'] = df['price_deviation'].abs() > price_deviation_threshold
+
+        outlier_indices.update(list(df[df['is_outlier']].index))
         return outlier_indices
 
     @staticmethod
@@ -231,15 +239,11 @@ class StatsPrep:
         # Drop all rows where all values are either 0 or NaN
         features = features[~((features == 0) | (pd.isna(features))).all(axis=1)]
 
-        print(features.duplicated().sum())
-
         insignificant_cols = cls._determine_insignificant_columns(
             features_df=features,
             prices=prices
         )
         features = features.drop(columns=insignificant_cols)
-
-        print(features.duplicated().sum())
 
         single_column_weights = CorrelationAnalyzer.determine_single_column_weights(
             features=features,
@@ -251,22 +255,16 @@ class StatsPrep:
             prices=prices,
             correlation_threshold=0.4
         )
+        if not single_column_weights and not pair_column_weights:
+            return
 
         valid_columns = list(single_column_weights.keys()) + list(pair_column_weights.keys())
         tr_features = cls._transform_columns(features_df=features.copy(),
                                              columns=valid_columns)
 
         non_normalized_features = tr_features.copy()
-        print(non_normalized_features.duplicated().sum())
+
         non_normalized_features['exalts'] = prices
-
-        duplicates = non_normalized_features[non_normalized_features.duplicated(keep=False)]  # 'keep=False' ensures all duplicate rows are shown
-
-        # Sort duplicates so identical rows are grouped together
-        duplicates_sorted = duplicates.sort_values(by=list(non_normalized_features.columns))
-
-        if tr_features.empty:
-            return None
 
         """ Normalize column / column pair correlations """
         single_column_weights = {utils.normalize_column_name(col): val for col, val in single_column_weights.items()}
@@ -276,6 +274,14 @@ class StatsPrep:
         tr_features = cls._weight_data(features_df=tr_features.copy(),
                                        column_weights={**single_column_weights, **pair_column_weights})
 
+        plot = pd.concat([tr_features, prices])
+
+        plt.figure(figsize=(10, 7))
+        plt.title("Before removing outliers")
+        sns.scatterplot(x=plot['max_quality_pdps'],
+                        y=plot['exalts'])
+        plt.show()
+
         outlier_indices = cls._determine_nearest_neighbor_outliers(
             features_df=tr_features.copy(),
             prices=prices.copy()
@@ -283,9 +289,15 @@ class StatsPrep:
 
         non_normalized_features = non_normalized_features[~non_normalized_features.index.isin(outlier_indices)]
         df = non_normalized_features
-        df['exalts'] = prices
 
-        visualize.plot_dimensions(df=df, atype=atype)
+        plt.figure(figsize=(10, 7))
+        plt.title("After filtering outliers.")
+        df['exalts'] = prices
+        sns.scatterplot(x=df['max_quality_pdps'],
+                        y=df['exalts'])
+        plt.show()
+
+        # visualize.plot_dimensions(df=df, atype=atype)
 
         return df
 

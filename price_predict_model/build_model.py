@@ -84,11 +84,6 @@ def _plot_correlation_matrix(df: pd.DataFrame):
     plt.show()
 
 
-def _plot_exalts_histogram(df: pd.DataFrame):
-    df['exalts'].hist()
-    plt.show()
-
-
 def _plot_feature_importance(model, atype: str):
     importance = model.get_score(importance_type='weight')
 
@@ -171,14 +166,24 @@ def build_price_predict_model(df: pd.DataFrame,
     evals = [(train_data, 'train'), (test_data, 'test')]
 
     # Train XGBoost model
-    model = xgb.train(
-        params, train_data,
+    """model = xgb.train(
+        params, 
+        train_data,
         num_boost_round=num_boost_rounds,
         early_stopping_rounds=50,
         evals=evals,
         obj=lambda preds, dmatrix: custom_objective(
             preds, dmatrix, overprediction_weight, underprediction_weight
         ),
+        verbose_eval=False
+    )"""
+
+    model = xgb.train(
+        params,
+        train_data,
+        num_boost_round=num_boost_rounds,
+        early_stopping_rounds=50,
+        evals=evals,
         verbose_eval=False
     )
 
@@ -187,8 +192,8 @@ def build_price_predict_model(df: pd.DataFrame,
 
     # Evaluate performance
     test_predictions = model.predict(test_data)
-
-    import numpy as np
+    test_predictions = np.exp(test_predictions)
+    test_target = np.exp(test_target)
 
     test_results_df = pd.DataFrame(
         {
@@ -200,9 +205,10 @@ def build_price_predict_model(df: pd.DataFrame,
     test_results_df = pd.concat([test_results_df, features])
     test_results_df.sort_values(by='error')
 
-    mse = utils.weighted_mse(test_target, test_predictions,
+    """mse = utils.weighted_mse(test_target, test_predictions,
                              overprediction_weight=overprediction_weight,
-                             underprediction_weight=underprediction_weight)
+                             underprediction_weight=underprediction_weight)"""
+    mse = mean_squared_error(test_target, test_predictions)
 
     logging.info(f"Weighted Mean Squared Error: {mse}")
 
