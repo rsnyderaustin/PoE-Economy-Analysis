@@ -157,6 +157,9 @@ class ModifiableListing:
     def quality(self):
         return self.item_properties['Quality']
 
+    def set_quality(self, new_quality: int):
+        self.item_properties['Quality'] = new_quality
+
     @property
     def permanent_mods(self) -> list[ItemMod]:
         return self.fractured_mods

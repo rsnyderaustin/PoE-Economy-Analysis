@@ -3,7 +3,7 @@ import logging
 from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
 from shared import ATypeClassifier, shared_utils
 from . import utils
-from .mod_matching.poecd_attribute_finder import PoecdAttributeFinder
+from .mods.poecd_attribute_finder import PoecdAttributeFinder
 
 
 class ModFactory:
@@ -110,7 +110,7 @@ class ModFactory:
             sub_mods=sub_mods
         )
 
-        poecd_attributes = self.poecd_attribute_finder.get_mod_attributes(item_mod=item_mod)
+        poecd_attributes = self.poecd_attribute_finder.get_poecd_mod_attributes(item_mod=item_mod)
         if poecd_attributes:  # returns None if
             item_mod.weighting = poecd_attributes.weighting
             item_mod.mod_types = poecd_attributes.mod_types

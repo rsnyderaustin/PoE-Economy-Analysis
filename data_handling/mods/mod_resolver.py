@@ -6,8 +6,8 @@ from data_handling import utils
 from file_management import FileKey
 from instances_and_definitions import ModClass, utils as instance_utils, ItemMod
 from shared import ATypeClassifier
-from . import mod_matching
-from .instance_variable_factories import ModFactory
+from data_handling import mods
+from data_handling.instance_variable_factories import ModFactory
 
 
 class ModResolver:
@@ -16,19 +16,16 @@ class ModResolver:
         self.files_manager = file_management.FilesManager()
         self.file_item_mods = self.files_manager.file_data[FileKey.MODS] or dict()
 
-        poecd_attribute_finder = mod_matching.PoecdAttributeFinder(global_atypes_manager=global_atypes_manager)
+        poecd_attribute_finder = mods.PoecdAttributeFinder(global_atypes_manager=global_atypes_manager)
         self.mod_factory = ModFactory(poecd_attribute_finder)
 
-    def _should_skip_mod(self, mod_data: dict):
+    def _mod_is_valid(self, mod_data: dict):
         """
         This currently only applies to a blank implicit mod on spears
         """
-        return len(mod_data['name']) == 0 and len(mod_data['tier']) == 0 and not mod_data['magnitudes']
+        return not (len(mod_data['name']) == 0 and len(mod_data['tier']) == 0 and not mod_data['magnitudes'])
 
-    def _cache_mod(self, item_mod: ItemMod):
-        self.file_item_mods[item_mod.mod_id] = item_mod
-
-    def pull_mods(self, item_data: dict) -> list[ItemMod]:
+    def process_mods(self, item_data: dict) -> list[ItemMod]:
         """
         Attempts to pull each mod in the item's data from file. Otherwise, it manages the mod's creation and caching
         :return: All mods from the item data
@@ -45,7 +42,7 @@ class ModResolver:
             abbrev_class = utils.abbreviate_mod_class(mod_class_enum)
 
             mods_data = item_data['extended']['mods'][abbrev_class]
-            valid_mods_data = [mod_data for mod_data in mods_data if not self._should_skip_mod(mod_data)]
+            valid_mods_data = [mod_data for mod_data in mods_data if self._mod_is_valid(mod_data)]
 
             for mod_data in valid_mods_data:
                 mod_ids = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
@@ -61,7 +58,7 @@ class ModResolver:
                                                            mod_id_to_text=mod_id_to_text,
                                                            mod_class=mod_class_enum,
                                                            atype=atype)
-                self._cache_mod(new_mod)
+                self.file_item_mods[new_mod.mod_id] = new_mod  # Add the new mod to our mod JSON file
                 mods.append(new_mod)
 
         return mods

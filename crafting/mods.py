@@ -16,18 +16,14 @@ def _distribute_mods(mods: list[ItemMod]):
     return mods_dict
 
 
-class ModTier:
-
-    def __init__(self, ilvl, tier):
-        self.ilvl = ilvl
-        self.tier = tier
-
-
 class ModsManager:
+    """
+    This is a mods manager built only for the RL crafting environment.
+    """
 
     def __init__(self):
         files_manager = FilesManager()
-        self.mods_data = _distribute_mods(mods=files_manager.file_data[FileKey.ATYPE_MODS])
+        self.mods_data = _distribute_mods(mods=files_manager.file_data[FileKey.MODS])
 
     def fetch_mod_tiers(self,
                         atype: str,

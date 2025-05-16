@@ -1,42 +1,13 @@
+from datetime import datetime
+
 import numpy as np
+import shared
 
 from instances_and_definitions import ModifiableListing
 
 
 def form_column_name(col_name: str) -> str:
     return col_name.lower().replace(' ', '_')
-
-
-def sum_sub_mod_values(listing: ModifiableListing):
-    summed_sub_mods = {}
-    for mod in listing.mods:
-        for sub_mod in mod.sub_mods:
-            col_name = form_column_name(sub_mod.sanitized_mod_text)
-            if sub_mod.actual_values:
-                avg_value = sum(sub_mod.actual_values) / len(sub_mod.actual_values)
-                if sub_mod.mod_id not in summed_sub_mods:
-                    summed_sub_mods[col_name] = avg_value
-                else:
-                    summed_sub_mods[col_name] += avg_value
-            else:
-                # If there is no value then it's just a static property (ex: "You cannot be poisoned"), and so
-                # we assign it a 1 to indicate to the model that it's an active mod
-                summed_sub_mods[col_name] = 1
-
-    # Sometimes there is overlap in regular mods with socketer mods, so including them is the easiest way to provide
-    # their effect to the AI training data
-    for socketer in listing.socketers:
-        col_name = socketer.sanitized_socketer_text
-        if socketer.actual_values:
-            avg_value = sum(socketer.actual_values) / len(socketer.actual_values)
-            if col_name not in summed_sub_mods:
-                summed_sub_mods[col_name] = avg_value
-            else:
-                summed_sub_mods[col_name] += avg_value
-        else:
-            summed_sub_mods[col_name] = 1
-
-    return summed_sub_mods
 
 
 def weighted_mse(y_true, y_pred, overprediction_weight, underprediction_weight):
@@ -73,28 +44,41 @@ def weighted_mse(y_true, y_pred, overprediction_weight, underprediction_weight):
     return weighted_mse_value
 
 
-def calculate_max_quality_pdps(listing_data: dict):
-    quality = listing_data.get('Quality', 0)
-    damage = listing_data.get('Physical Damage', 0)
-    attacks_per_second = listing_data.get('Attacks per Second', 0)
+def _flatten_listing(listing: ModifiableListing) -> dict:
+    flattened_properties = _flatten_listing_properties(listing)
+    dt_date_fetched = datetime.strptime(listing.date_fetched, "%m-%d-%Y")
+    exalts_price = shared.currency_converter.convert_to_exalts(currency=listing.currency,
+                                                               currency_amount=listing.currency_amount,
+                                                               relevant_date=dt_date_fetched)
 
-    current_multiplier = 1 + (quality / 100)
-    max_multiplier = 1.20
+    flattened_data = {
+        'minutes_since_listed': listing.minutes_since_listed,
+        'minutes_since_league_start': listing.minutes_since_league_start,
+        'exalts': exalts_price,
+        'open_prefixes': listing.open_prefixes,
+        'open_suffixes': listing.open_suffixes,
+        'rarity': listing.rarity,
+        'corrupted': listing.corrupted,
+        **flattened_properties
+    }
 
-    # Calculate the base damage and then the 20% quality damage
-    base_damage = damage / current_multiplier
-    max_quality_damage = base_damage * max_multiplier
+    # Split up hybrid mods and average their value ranges. No known value ranges are not averageable
+    summed_sub_mods = sum_sub_mod_values(listing)
+    flattened_data.update(summed_sub_mods)
 
-    max_quality_pdps = max_quality_damage * attacks_per_second
-    return max_quality_pdps
+    skills_dict = {item_skill.name: item_skill.level for item_skill in listing.item_skills}
+    flattened_data.update(skills_dict)
 
+    flattened_data['max_quality_pdps'] = utils.calculate_max_quality_pdps(flattened_data)
+    flattened_data['edps'] = utils.calculate_elemental_dps(flattened_data)
 
-def calculate_elemental_dps(listing_data: dict):
-    cold_damage = listing_data.get('Cold Damage', 0)
-    fire_damage = listing_data.get('Fire Damage', 0)
-    lightning_damage = listing_data.get('Lightning Damage', 0)
-    attacks_per_second = listing_data.get('Attacks per Second', 0)
+    for col in [*self.__class__._aggregate_remove_cols]:
+        flattened_data.pop(col, None)
 
-    edps = (cold_damage + fire_damage + lightning_damage) * attacks_per_second
-    return edps
+    # Some columns have just one letter - not sure why but need to find out
+    cols_to_remove = [col for col in flattened_data if len(col) == 1]
+    for col in cols_to_remove:
+        logging.error(f"Found 1-length attribute name {cols_to_remove} for listing {listing.__dict__}")
+        flattened_data.pop(col)
 
+    return flattened_data

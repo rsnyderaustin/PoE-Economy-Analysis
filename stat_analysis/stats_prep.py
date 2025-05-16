@@ -8,8 +8,10 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.neighbors import RadiusNeighborsRegressor, KNeighborsRegressor
 from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import mutual_info_regression
 
 from . import utils, visualize
 
@@ -60,10 +62,16 @@ class CorrelationAnalyzer:
             # Create a dataframe with a single column that is the product of mod columns
             product_df = pd.DataFrame({(mod1, mod2): pair_df[mod1] * pair_df[mod2]})
 
+            # In rare cases, multiplying two columns together creates a column of all the same value
+            mode_val = product_df[(mod1, mod2)].mode()[0]
+            mode_count = (product_df[(mod1, mod2)] == mode_val).sum()
+            if mode_count == len(product_df):
+                continue
+
             pair_corr = product_df.corrwith(prices)
             corr_val = pair_corr[(mod1, mod2)]
             if corr_val >= correlation_threshold:
-                logging.info(f"{(mod1, mod2)} correlation: {corr_val}")
+                logging.info(f"Valid column correlation {(mod1, mod2)}: {corr_val}")
                 valid_pairs_weights[(mod1, mod2)] = corr_val
 
         return valid_pairs_weights
@@ -74,12 +82,10 @@ class StatsPrep:
     @classmethod
     def _determine_insignificant_columns(cls,
                                          features_df: pd.DataFrame,
-                                         prices: pd.Series,
                                          non_null_count_threshold: int = 50,
                                          non_mode_count_threshold: int = 50,
-                                         non_mode_percent_threshold: float = 0.05,
-                                         non_null_percent_threshold: float = 0.05,
-                                         correlation_threshold: float = 0.5) -> set[str]:
+                                         non_mode_percent_threshold: float = 0.02,
+                                         non_null_percent_threshold: float = 0.02) -> set[str]:
         invalid_cols = set()
         empty_cols = features_df.columns[((features_df == 0) | (pd.isna(features_df))).all()]
         invalid_cols.update(empty_cols)
@@ -97,25 +103,13 @@ class StatsPrep:
         for col in valid_cols:
             percent_null = non_null_counts[col] / len(features_df)
             if percent_null < non_null_percent_threshold:
-                non_null_df = features_df[(features_df[col] != 0) & ~pd.isna(features_df[col])]
-                non_null_series = non_null_df[col]
-
-                corr_val = non_null_series.corr(prices)
-                if pd.isna(corr_val) or corr_val < correlation_threshold:  # Is NA when all non-null values are the same
-                    invalid_cols.add(col)
-                    continue
+                invalid_cols.add(col)
+                continue
 
             percent_non_mode = non_mode_counts[col] / len(features_df)
             if percent_non_mode < non_mode_percent_threshold:
-                mode_value = features_df[col].mode()[0]
-
-                variance_df = features_df[features_df[col] != mode_value]
-                variance_series = variance_df[col]
-
-                corr_val = variance_series.corr(prices)
-                if pd.isna(corr_val) or corr_val < correlation_threshold:  # Is NA when all non-mode values are the same
-                    invalid_cols.add(col)
-                    continue
+                invalid_cols.add(col)
+                continue
 
         return invalid_cols
 
@@ -132,41 +126,96 @@ class StatsPrep:
         sorted_weights = weights[sorted_indices]
 
         total_weight = sum(sorted_weights)
-        weighted_bottom = total_weight * 0.15
-        weighted_top = total_weight * 0.5
+        weighted_bottom = total_weight * 0.1
+        weighted_top = total_weight * 0.35
 
         cum_weight = 0
         for current_weight, current_price in zip(sorted_weights, sorted_prices):
             cum_weight += current_weight
 
             if cum_weight >= weighted_bottom and listed_price < current_price:
+                """print(f"Listed price: {listed_price}\nReturned price: {current_price}"
+                      f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")"""
                 return current_price
 
             # If we hit the top of the weight range, then check the listed price against the
             # top of the price range (which is the loop's current price)
             if cum_weight >= weighted_top:
                 if listed_price > current_price:
+                    """print(f"Listed price: {listed_price}\nReturned price: {current_price}"
+                          f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")"""
                     return current_price
                 else:  # This condition indicates that the listed price was within the bottom and top weight range
+                    """print(f"Listed price: {listed_price}\nReturned price: {listed_price}"
+                          f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")"""
                     return listed_price
+
+    @staticmethod
+    def _apply_visualize_neighbors(row, features_df: pd.DataFrame, return_data: dict):
+        print(f"Current idx: {row.name}")
+        
+        distances = pd.Series(row['neighbor_distances'])
+        weights = (1 / (distances + 0.1))
+
+        prices = pd.Series(row['neighbor_prices'])
+        sorted_indices = np.argsort(prices)
+
+        sorted_prices = prices[sorted_indices]
+        sorted_weights = weights[sorted_indices]
+
+        for idx in sorted_indices:
+            item_features = features_df.iloc[row.name].to_dict()
+            for col, val in item_features.items():
+                if col not in return_data:
+                    return_data[col] = list()
+                return_data[col].append(val)
+
+            listed_price = row['item_price']
+            if 'item_price' not in return_data:
+                return_data['item_price'] = list()
+            return_data['item_price'].append(listed_price)
+
+            neighbor_features = features_df.iloc[idx].to_dict()
+            for col, val in neighbor_features.items():
+                if f"neighbor_{col}" not in return_data:
+                    return_data[f"neighbor_{col}"] = list()
+                
+                return_data[f"neighbor_{col}"].append(val)
+                
+            if "neighbor_price" not in return_data:
+                return_data[f"neighbor_price"] = []
+            neighbor_price = sorted_prices.iloc[idx]
+            return_data[f"neighbor_price"].append(neighbor_price)
+            
+            if "neighbor_weight" not in return_data:
+                return_data[f"neighbor_weight"] = []
+            neighbor_weight = sorted_weights.iloc[idx]
+            return_data[f"neighbor_weight"].append(neighbor_weight)
 
     @classmethod
     def _normalize_prices_via_nearest_neighbor(cls,
                                                features_df: pd.DataFrame,
                                                prices: pd.Series,
-                                               num_neighbors: int = 20,
-                                               required_radius: float = 0.5):
-        regressor = KNeighborsRegressor(n_neighbors=18, weights='distance')
-        regressor.fit(features_df, prices)
-        distances, indices = regressor.kneighbors(features_df)
+                                               min_neighbors: int = 20,
+                                               radius_range: float = 0.5) -> tuple[pd.Series, list]:
+        features_df = features_df.reset_index(drop=True)
+        radius_neighbors = RadiusNeighborsClassifier(radius=radius_range, weights='distance')
+        radius_neighbors.fit(features_df, prices)
+        distances, indices = radius_neighbors.radius_neighbors(features_df)
 
-        
+        isolated_indices = [i for i, distances in enumerate(distances) if len(distances) < min_neighbors]
 
-        """out_of_range_indices = {
-            i for i, array in enumerate(distances)
-            if not all(distance <= radius for distance in array)
-        }
-        outlier_indices.update(out_of_range_indices)"""
+        """vis_df = pd.DataFrame({
+            'neighbor_distances': distances.tolist(),
+            'neighbor_indices': indices.tolist(),
+            'neighbor_prices': [prices.iloc[idx].tolist() for idx in indices],
+            'item_price': prices
+        })
+
+        vis_data = dict()
+        vis_df.apply(cls._apply_visualize_neighbors, args=(features_df, vis_data), axis=1)
+        vis_df = pd.DataFrame(vis_data)
+        vis_df = vis_df[~vis_df.index.isin(isolated_indices)]"""
 
         cols_dict = {
             'distances': distances.tolist(),
@@ -177,7 +226,7 @@ class StatsPrep:
         df['real_price'] = prices
 
         prices = df.apply(cls._apply_determine_market_price, axis=1)
-        return prices
+        return prices, isolated_indices
 
     @staticmethod
     def _normalize_data(features_df: pd.DataFrame) -> pd.DataFrame:
@@ -191,8 +240,8 @@ class StatsPrep:
         return new_df
 
     @staticmethod
-    def _transform_columns(features_df: pd.DataFrame,
-                           columns: list[str | tuple]) -> pd.DataFrame:
+    def _pair_columns(features_df: pd.DataFrame,
+                      columns: list[str | tuple]) -> pd.DataFrame:
         df_setup = dict()
 
         single_columns = [col for col in columns if isinstance(col, str)]
@@ -232,58 +281,88 @@ class StatsPrep:
 
     @classmethod
     def prep_data(cls, df: pd.DataFrame, price_column: str, atype: str):
+        logging.info("Setting up data for statistical data prep.")
         df = df.reset_index(drop=True)
         df = df.select_dtypes(['int64', 'float64'])
         df = df.fillna(0)
 
-        df[price_column] = np.log1p(df[price_column])
+        df[f"log_{price_column}"] = np.log1p(df[price_column])
 
-        features = df.drop(columns=[price_column])
+        features_df = df.drop(columns=[price_column, f"log_{price_column}"])
         prices = df[price_column]
+        log_prices = df[f"log_{price_column}"]
 
         # Drop all rows where all values are either 0 or NaN
-        features = features[~((features == 0) | (pd.isna(features))).all(axis=1)]
+        features_df = features_df[~((features_df == 0) | (pd.isna(features_df))).all(axis=1)]
 
-        insignificant_cols = cls._determine_insignificant_columns(
-            features_df=features,
-            prices=prices
-        )
-        features = features.drop(columns=insignificant_cols)
+        logging.info("Determining insignificant columns.")
+        insignificant_cols = cls._determine_insignificant_columns(features_df=features_df)
+        features_df = features_df.drop(columns=list(insignificant_cols))
 
+        logging.info("Determining single column weights.")
         single_column_weights = CorrelationAnalyzer.determine_single_column_weights(
-            features=features,
-            prices=prices,
+            features=features_df,
+            prices=log_prices,
             correlation_threshold=0.4
         )
+        single_column_weights = {col: weight * 2.5 for col, weight in single_column_weights.items()}
+
+        logging.info("Determining pair column weights.")
         pair_column_weights = CorrelationAnalyzer.determine_pair_column_weights(
-            features=features,
-            prices=prices,
+            features=features_df,
+            prices=log_prices,
             correlation_threshold=0.4
         )
         if not single_column_weights and not pair_column_weights:
             return
 
         valid_columns = list(single_column_weights.keys()) + list(pair_column_weights.keys())
-        tr_features = cls._transform_columns(features_df=features.copy(),
-                                             columns=valid_columns)
 
-        non_normalized_features = tr_features.copy()
+        logging.info("Combining column pairs into their product.")
+        tr_features = cls._pair_columns(features_df=features_df.copy(),
+                                        columns=valid_columns)
 
-        non_normalized_features['exalts'] = prices
+        logging.info("Normalizing data.")
+        norm_features = cls._normalize_data(features_df=tr_features.copy())
 
-        """ Normalize column / column pair correlations """
-        single_column_weights = {utils.normalize_column_name(col): val for col, val in single_column_weights.items()}
-        pair_column_weights = {utils.normalize_column_name(col): val for col, val in pair_column_weights.items()}
+        """igs = dict(zip(norm_features.columns, mutual_info_regression(norm_features, prices)))
+        igs = {col: ig for col, ig in igs.items() if ig >= 0.10}
+        norm_features = norm_features[list(igs.keys())]"""
 
-        tr_features = cls._normalize_data(features_df=tr_features.copy())
-        tr_features = cls._weight_data(features_df=tr_features.copy(),
-                                       column_weights={**single_column_weights, **pair_column_weights})
+        logging.info("Weighting data.")
+        single_column_weights = {utils.normalize_column_name(col): weight for col, weight in single_column_weights.items()}
+        pair_column_weights = {utils.normalize_column_name(col): weight for col, weight in pair_column_weights.items()}
+        norm_features = cls._weight_data(features_df=norm_features,
+                                         column_weights={**single_column_weights, **pair_column_weights})
 
-        prices = cls._normalize_prices_via_nearest_neighbor(
-            features_df=tr_features.copy(),
+        """plot = pd.concat([tr_features, log_prices])
+
+        plt.figure(figsize=(10, 7))
+        plt.title("Before nearest neighbor")
+        sns.scatterplot(x=plot['max_quality_pdps'],
+                        y=plot[f"log_{price_column}"])
+        plt.show()"""
+
+        logging.info("Determining correct prices and isolated indices via NearestNeighbor.")
+        # We pass in prices instead of log_prices here on purpose to KNN
+        new_prices, out_of_range_indices = cls._normalize_prices_via_nearest_neighbor(
+            features_df=norm_features.copy(),
             prices=prices.copy()
         )
 
-        non_normalized_features = non_normalized_features[~non_normalized_features.index.isin(outlier_indices)]
-        df = non_normalized_features.assign(exalts=prices)
+        tr_features = tr_features[~tr_features.index.isin(out_of_range_indices)]
+        df = tr_features
+
+        df[price_column] = new_prices
+        df[f"log_{price_column}"] = np.log1p(new_prices)
+
+        # visualize.plot_pca(df, price_column=f"log_{price_column}")
+        # visualize.plot_dimensions(df, price_column=price_column, atype=atype)
+
+        """plt.figure(figsize=(10, 7))
+        plt.title("After nearest neighbor")
+        sns.scatterplot(x=df['max_quality_pdps'],
+                        y=df[f"log_{price_column}"])
+        plt.show()"""
+
         return df

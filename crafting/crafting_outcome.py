@@ -16,7 +16,7 @@ class CraftingOutcome:
                  new_sockets: int = None):
 
         self.original_item = original_listing
-        self.outcome_probability = outcome_probability
+        self.probability = outcome_probability
 
         self.new_item_mod = new_item_mod
         self.remove_modifier = remove_modifier

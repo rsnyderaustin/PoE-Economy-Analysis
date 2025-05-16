@@ -2,6 +2,7 @@ import pprint
 import re
 from collections import Counter
 from datetime import datetime
+from enum import Enum
 
 import pandas as pd
 import pytz
@@ -142,7 +143,7 @@ class CurrencyConverter:
         return cls.instance
 
     def __init__(self):
-        if hasattr(self, '_initalized') and self._initialized:
+        if getattr(self, '_initialized', False):
             return
 
         files_manager = file_management.FilesManager()
@@ -162,6 +163,9 @@ class CurrencyConverter:
         return currency_amount * exchange_rate
 
 
+currency_converter = CurrencyConverter()
+
+
 def log_dict(dict_, only_real_values: bool = True):
     print("\n\n")
     if only_real_values:
@@ -177,25 +181,3 @@ def parse_poecd_mtypes_string(mtypes_string: str) -> list:
         return []
     parsed = [part for part in mtypes_string.split('|') if part]
     return parsed
-
-
-def determine_dict_length(dict_):
-    """
-
-    :param dict_: A dict containing only iterables for keys.
-    :return: Length of the dict iterables.
-    :raise: ValueError if any iterable is a different length
-    """
-    # Get an iterator of the lengths of each iterable
-    lengths = [len(v) for v in dict_.values()]
-
-    # If there are no values, we assume length is 0
-    if not lengths:
-        return 0
-
-    # Check if all lengths are the same
-    if len(set(lengths)) > 1:
-        raise ValueError("Not all iterables are the same length.")
-
-    # Return the consistent length
-    return lengths[0]

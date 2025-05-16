@@ -100,9 +100,15 @@ def _plot_feature_importance(model, atype: str):
 
 
 def _plot_actual_vs_predicted(atype, test_predictions, test_targets):
+    min_predict_axis = min(test_predictions) * 0.8
+    max_predict_axis = max(test_predictions) * 1.2
+
+    min_target_axis = min(test_targets) * 0.8
+    max_target_axis = max(test_targets) * 1.2
+
     plt.figure(figsize=(8, 5))
     plt.scatter(test_predictions, test_targets, alpha=0.5)
-    plt.plot([0, 4000], [0, 4000], color='red', linestyle='--')
+    plt.plot([min_predict_axis, max_predict_axis], [min_target_axis, max_target_axis], color='red', linestyle='--')
     plt.xlabel("Predicted Price (Exalts)")
     plt.ylabel("Actual Prices (Exalts)")
 
@@ -128,6 +134,7 @@ def _print_outliers(test_target_df: pd.DataFrame,
 
 
 def build_price_predict_model(df: pd.DataFrame,
+                              price_column: str,
                               atype: str,
                               overprediction_weight: float = 2.0,
                               underprediction_weight: float = 0.1,
@@ -141,8 +148,8 @@ def build_price_predict_model(df: pd.DataFrame,
     # _plot_correlation_matrix(df)
 
     # Split features and target variable
-    features = df.drop(columns=['exalts'], errors='ignore')
-    target_col = df['exalts']
+    features = df.drop(columns=[price_column, f"log_{price_column}"], errors='ignore')
+    target_col = df[f"log_{price_column}"]
 
     # Train/test split
     training_feat, test_feat, training_target, test_target = train_test_split(

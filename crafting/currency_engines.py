@@ -206,7 +206,7 @@ class ChaosOrb(CurrencyEngine):
 
             for outcome in crafting_outcomes:
                 outcome.remove_modifier = modifier
-                outcome.outcome_probability /= len(listing.explicit_mods)
+                outcome.probability /= len(listing.explicit_mods)
 
             returnable_outcomes.extend(crafting_outcomes)
 

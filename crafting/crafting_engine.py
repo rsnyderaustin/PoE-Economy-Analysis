@@ -1,4 +1,4 @@
-from instances_and_definitions import ModifiableListing, ModAffixType, ItemMod
+from instances_and_definitions import ModifiableListing, ModAffixType, ItemMod, ModClass
 from .crafting_outcome import CraftingOutcome
 from .mods import ModsManager
 
@@ -62,3 +62,43 @@ class CraftingEngine:
             crafting_outcomes.append(crafting_outcome)
 
         return crafting_outcomes
+
+    @staticmethod
+    def apply_crafting_outcome(listing: ModifiableListing,
+                               outcome: CraftingOutcome) -> ModifiableListing:
+        mod_class_to_attribute = {
+            ModClass.IMPLICIT: listing.implicit_mods,
+            ModClass.ENCHANT: listing.enchant_mods,
+            ModClass.FRACTURED: listing.fractured_mods,
+            ModClass.EXPLICIT: listing.explicit_mods
+        }
+        if outcome.new_item_mod:
+            new_mod = outcome.new_item_mod
+            mod_attribute = mod_class_to_attribute[new_mod.mod_class]
+            mod_attribute.append(new_mod)
+
+        if outcome.remove_modifier:
+            remove_mod = outcome.remove_modifier
+            mod_attribute = mod_class_to_attribute[remove_mod.mod_class]
+            mod_class_to_attribute[remove_mod.mod_class] = [mod for mod in mod_attribute
+                                                            if mod.mod_id != remove_mod.mod_id]
+
+        if outcome.new_rarity:
+            listing.rarity = outcome.new_rarity
+
+        if outcome.mods_fractured:
+            for fractured_mod in outcome.mods_fractured:
+                mod_attribute = mod_class_to_attribute[fractured_mod.mod_class]
+                listing.fractured_mods.append(fractured_mod)
+                mod_class_to_attribute[fractured_mod.mod_class] = [mod for mod in mod_attribute
+                                                                   if mod.mod_id != fractured_mod.mod_id]
+
+        if outcome.new_quality:
+            listing.set_quality(outcome.new_quality)
+
+        if outcome.new_sockets:
+            listing.open_sockets += outcome.new_sockets
+
+        return listing
+
+
