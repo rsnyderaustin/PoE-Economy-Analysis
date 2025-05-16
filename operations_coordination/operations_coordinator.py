@@ -93,7 +93,6 @@ class OperationsCoordinator:
     def build_price_predict_model(self):
         model_df = self.price_predict_data_manager.export_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
 
-        model_df = model_df[model_df['atype'] == 'Spear']
         atype_dfs = {
             atype: atype_df
             for atype, atype_df in model_df.groupby('atype')
@@ -107,8 +106,6 @@ class OperationsCoordinator:
         for atype, atype_df in atype_dfs.items():
             if atype_df is None:
                 continue
-
-            atype_df = atype_df[['max_quality_pdps', 'exalts']]
 
             logging.info(f"Building model for Atype {atype}")
             model = build_price_predict_model(df=atype_df, atype=str(atype))

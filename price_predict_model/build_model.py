@@ -192,8 +192,8 @@ def build_price_predict_model(df: pd.DataFrame,
 
     # Evaluate performance
     test_predictions = model.predict(test_data)
-    test_predictions = np.exp(test_predictions)
-    test_target = np.exp(test_target)
+    test_predictions = np.expm1(test_predictions)
+    test_target = np.expm1(test_target)
 
     test_results_df = pd.DataFrame(
         {
