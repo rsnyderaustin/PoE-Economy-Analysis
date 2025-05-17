@@ -153,6 +153,7 @@ class ListingFlattener(ListingsClass):
         flattened_data.update(summed_sub_mods)
 
         skills_dict = {item_skill.name: item_skill.level for item_skill in listing.item_skills}
+        skills_dict = {utils.form_column_name(skill_name): lvl for skill_name, lvl in skills_dict.items()}
         flattened_data.update(skills_dict)
 
         flattened_data['max_quality_pdps'] = cls._calculate_max_quality_pdps(flattened_data)

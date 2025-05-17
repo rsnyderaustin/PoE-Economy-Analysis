@@ -1,4 +1,5 @@
 from typing import Iterable
+import re
 
 
 def python_dtype_to_postgres(dtype) -> str:
@@ -41,4 +42,11 @@ def determine_col_dtypes(raw_data: dict, col_names: list[str]):
         col_dtypes[col] = python_dtype_to_postgres(dtype)
 
     return col_dtypes
+
+
+def format_column_name(column_name: str):
+    c = column_name.replace('#', 'N')
+    c = c.replace('%', 'P')
+    c = re.sub(r'[^a-zA-Z0-9]', '_', c)
+    return c
 
