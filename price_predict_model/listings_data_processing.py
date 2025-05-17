@@ -69,6 +69,7 @@ class ListingFlattener(ListingsClass):
                 else:
                     raise ValueError(f"Property value {property_values} has unexpected structure.")
 
+        flattened_properties = {utils.form_column_name(col): val for col, val in flattened_properties.items()}
         return flattened_properties
 
     @staticmethod
