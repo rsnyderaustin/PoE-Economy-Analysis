@@ -40,3 +40,5 @@ def determine_col_dtypes(raw_data: dict, col_names: list[str]):
 
         col_dtypes[col] = python_dtype_to_postgres(dtype)
 
+    return col_dtypes
+
