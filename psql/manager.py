@@ -1,4 +1,4 @@
-
+import urllib
 from typing import Iterable
 
 import sqlalchemy
@@ -21,10 +21,12 @@ class PostgreSqlManager:
         e = EnvLoader()
         user = e.get_env(EnvVariable.PSQL_USERNAME)
         passw = e.get_env(EnvVariable.PSQL_PASSWORD)
+        passw = urllib.parse.quote_plus(passw)
         host = e.get_env(EnvVariable.PSQL_HOST)
         db_n = e.get_env(EnvVariable.PSQL_DATABASE)
         ip = e.get_env(EnvVariable.PSQL_IP)
         db_url = f"postgresql+psycopg2://{user}:{passw}@{ip}:{host}/{db_n}"
+        print(db_url)
 
         self.engine = sqlalchemy.create_engine(db_url)
         self.connection = self.engine.connect()
