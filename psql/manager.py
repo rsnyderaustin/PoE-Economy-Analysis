@@ -1,17 +1,18 @@
 
 from typing import Iterable
+
 import sqlalchemy
 from sqlalchemy import text, inspect
-from shared.env_loading import EnvLoader, EnvVariable
 
+from shared.env_loading import EnvLoader, EnvVariable
 from . import utils
 
 
 class PostgreSqlManager:
     def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(PostgreSqlManager, cls).__new__(cls)
-        return cls.instance
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(PostgreSqlManager, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self):
         if getattr(self, '_initialized', False):
@@ -22,7 +23,8 @@ class PostgreSqlManager:
         passw = e.get_env(EnvVariable.PSQL_PASSWORD)
         host = e.get_env(EnvVariable.PSQL_HOST)
         db_n = e.get_env(EnvVariable.PSQL_DATABASE)
-        db_url = f"postgresql+psycopg2://{user}:{passw}@localhost:{host}/{db_n}"
+        ip = e.get_env(EnvVariable.PSQL_IP)
+        db_url = f"postgresql+psycopg2://{user}:{passw}@{ip}:{host}/{db_n}"
 
         self.engine = sqlalchemy.create_engine(db_url)
         self.connection = self.engine.connect()

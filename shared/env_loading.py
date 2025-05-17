@@ -6,6 +6,7 @@ import os
 class EnvVariable(Enum):
     POSSESSID = "POSSESSID"
     PSQL_HOST = "PSQL_HOST"
+    PSQL_IP = "PSQL_IP"
     PSQL_DATABASE = "PSQL_DATABASE"
     PSQL_USERNAME = "PSQL_USERNAME"
     PSQL_PASSWORD = "PSQL_PASSWORD"
@@ -20,7 +21,7 @@ class EnvLoader:
         return cls.instance
 
     def __init__(self):
-        if not self._initialized:
+        if not getattr(self, '_initialized', False):
             dotenv.load_dotenv()
 
             self._initialized = True

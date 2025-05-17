@@ -43,8 +43,6 @@ class OperationsCoordinator:
         random.shuffle(training_queries)
 
         while True:
-            self.price_predict_data_manager.training_data[FileKey.CRITICAL_PRICE_PREDICT_TRAINING] = dict()
-
             listings = []
             for api_item_responses in self.trade_api_handler.process_queries(training_queries):
                 for api_item_response in api_item_responses:

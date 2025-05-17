@@ -4,7 +4,7 @@ from datetime import datetime
 
 import requests
 
-from shared import env
+from shared import env_loader, EnvVariable
 from trade_api.request_throttler import RequestThrottler
 
 
@@ -24,7 +24,7 @@ class TradeItemsFetcher:
         'Content-Type': 'application/json',
         # Used to be '5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
         'User-Agent': 'rsnyder.austin@gmail.com',
-        'Cookie': f'POESESSID={env.possess_id}',
+        'Cookie': f'POESESSID={env_loader.get_env(EnvVariable.POSSESSID)}',
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br, zstd',
         'Accept-Language': 'en-US,en;q=0.5',
@@ -72,7 +72,7 @@ class TradeItemsFetcher:
             get_url = f'{cls.get_url}{chunked_ids}'
 
             cookies = {
-                'POSSESSID': env.possess_id
+                'POSSESSID': env_loader.get_env(EnvVariable.POSSESSID)
             }
             response = cls.request_throttler.send_request(
                 request_func=requests.get,

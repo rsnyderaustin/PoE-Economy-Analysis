@@ -8,7 +8,6 @@ from pathlib import Path
 import pandas as pd
 import xgboost as xgb
 
-from instances_and_definitions import ItemMod
 from . import utils
 
 
@@ -38,7 +37,6 @@ class FilesManager:
             FileKey.MODS: Path.cwd() / 'file_management/files/item_mods.pkl',
             FileKey.CURRENCY_CONVERSIONS: Path.cwd() / 'file_management/files/currency_prices.csv',
             FileKey.LISTING_FETCHES: Path.cwd() / 'file_management/files/listing_fetch_dates.json',
-            FileKey.CRITICAL_PRICE_PREDICT_TRAINING: Path.cwd() / 'file_management/files/listings.json',
             FileKey.MARKET_SCAN: Path.cwd() / 'file_management/files/market_scan.json',
             FileKey.POECD_BASES: Path.cwd() / 'file_management/files/poecd_bases.json',
             FileKey.POECD_STATS: Path.cwd() / 'file_management/files/poecd_stats.json'
