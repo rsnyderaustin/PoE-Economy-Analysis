@@ -8,7 +8,7 @@ def python_dtype_to_postgres(dtype) -> str:
     Convert a Python/numpy/pandas dtype to a PostgreSQL column type.
     """
     # Normalize dtype to string for easier checking
-    dt = str(dtype).lower()
+    dt = dtype.__name__.lower()
 
     if dt.startswith('int') or dt == 'int64' or dt == 'int32' or dt == 'int':
         # Default integer type in PG
