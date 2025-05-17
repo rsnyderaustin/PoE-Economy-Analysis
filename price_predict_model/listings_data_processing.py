@@ -197,7 +197,7 @@ class ListingsDataProcessor(ListingsClass):
         return listings_data
 
     @classmethod
-    def prepare_flattened_listings_data_for_model(cls, data) -> pd.DataFrame:
+    def prepare_flattened_listings_data_for_model(cls, data: dict) -> pd.DataFrame:
         df = pd.DataFrame(data)
 
         select_dtype_cols = [col for col in cls._select_col_types if col in df.columns]

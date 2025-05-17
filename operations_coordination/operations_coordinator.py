@@ -2,6 +2,7 @@
 import configparser
 import logging
 import random
+import time
 
 import xgboost as xgb
 
@@ -12,7 +13,7 @@ import trade_api
 from file_management import FilesManager, FileKey
 from price_predict_model.build_model import build_price_predict_model
 from stat_analysis.stats_prep import StatsPrep
-from shared import shared_utils, env_loading
+from shared import shared_utils, env_loader, env_loading, EnvVariable
 from trade_api import query
 import psql
 
@@ -43,19 +44,23 @@ class OperationsCoordinator:
         random.shuffle(training_queries)
 
         while True:
-            listings = []
-            for api_item_responses in self.trade_api_handler.process_queries(training_queries):
-                for api_item_response in api_item_responses:
+            try:
+                listings = []
+                for api_item_responses in self.trade_api_handler.process_queries(training_queries):
+                    for api_item_response in api_item_responses:
 
-                    mods = self.resource_resolver.process_mods(item_data=api_item_response['item'])
-                    listing = data_handling.ListingFactory.create_listing(api_item_response=api_item_response,
-                                                                          item_mods=mods)
-                    listings.append(listing)
+                        mods = self.resource_resolver.process_mods(item_data=api_item_response['item'])
+                        listing = data_handling.ListingFactory.create_listing(api_item_response=api_item_response,
+                                                                              item_mods=mods)
+                        listings.append(listing)
 
-                flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
+                    flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
 
-                self.psql_manager.insert_data(table_name=self.env_loader.get_env(env_loading.EnvVariable.PSQL_TRAINING_TABLE),
-                                              data=flattened_data)
+                    self.psql_manager.insert_data(table_name=self.env_loader.get_env(env_loading.EnvVariable.PSQL_TRAINING_TABLE),
+                                                  data=flattened_data)
+            except Exception as e:
+                logging.error(f"Error in fill_training_data: {e}")
+                time.sleep(env_loader.get_env(EnvVariable.RETRY_SEC_DELAY.value))
 
     def find_underpriced_items(self):
         training_queries = query.QueryPresets().training_fills
@@ -63,54 +68,51 @@ class OperationsCoordinator:
 
         predict_model = self.files_manager.model_data[FileKey.PRICE_PREDICT_MODEL]
 
+        if not predict_model:
+            raise ValueError(f"Predict model is unexpectedly None.")
+
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = []
             for api_item_response in api_item_responses:
                 mods = self.resource_resolver.process_mods(item_data=api_item_response['item'])
-                listing = data_handling.ListingFactory.create_listing(
-                    api_item_response=api_item_response,
-                    item_mods=mods
-                )
+                listing = data_handling.ListingFactory.create_listing(api_item_response=api_item_response,
+                                                                      item_mods=mods)
                 listings.append(listing)
+            flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
+            model_df = self.price_predict_data_manager.prepare_flattened_listings_data_for_model(flattened_data)
+            prices = list(model_df['exalts'])
+            model_df = model_df.drop(columns=['exalts'])
 
-            listing_account_names = [listing.account_name for listing in listings]
-            self.price_predict_data_manager.cache_market_data(listings)
-            market_df = self.price_predict_data_manager.prepare_flattened_listings_data_for_model(which_file=FileKey.MARKET_SCAN)
-            listing_prices = list(market_df['exalts'])
-            market_df.drop(columns=['exalts'], inplace=True)
-
-            market_df = market_df[predict_model.feature_names]
-            dmatrix = xgb.DMatrix(market_df, enable_categorical=True)
+            model_df = model_df[predict_model.feature_names]
+            dmatrix = xgb.DMatrix(model_df, enable_categorical=True)
             predicts = predict_model.predict(dmatrix)
 
-            market_df['true_exalts'] = listing_prices
-            market_df['predicted_exalts'] = predicts
-            market_df['account_name'] = listing_account_names
+            model_df['true_exalts'] = prices
+            model_df['predicted_exalts'] = predicts
 
-            underpriced_items_df = market_df[market_df['predicted_exalts'] > market_df['true_exalts']]
-            underpriced_items = underpriced_items_df.to_dict(orient='records')
+            model_df['predict_portion'] = model_df['predicted_exalts'] / model_df['true_exalts']
+
+            underpriced_df = model_df[model_df['predict_portion'] < 0.8]
+            underpriced_items = underpriced_df.to_dict(orient='records')
             for item in underpriced_items:
                 shared_utils.log_dict(item)
 
     def build_price_predict_model(self):
-        model_df = self.price_predict_data_manager.prepare_flattened_listings_data_for_model(which_file=FileKey.CRITICAL_PRICE_PREDICT_TRAINING)
+        psql_table_name = env_loader.get_env(EnvVariable.PSQL_TRAINING_TABLE)
+        training_data = self.psql_manager.fetch_table_data(psql_table_name)
+        model_df = self.price_predict_data_manager.prepare_flattened_listings_data_for_model(training_data)
 
-        atype_dfs = {
-            atype: atype_df
-            for atype, atype_df in model_df.groupby('atype')
-            if not atype_df.empty
-        }
-        atype_dfs = {
-            atype: StatsPrep.prep_data(df=atype_df, atype=str(atype), price_column='exalts')
-            for atype, atype_df in atype_dfs.items()
-        }
+        atypes = model_df['atype'].unique()
+        for atype in atypes:
+            atype_df = model_df[model_df['atype'] == atype]
+            logging.info(f"Prepping model data for Atype {atype}")
+            atype_df = StatsPrep.prep_data(df=atype_df, atype=atype, price_column='exalts')
 
-        for atype, atype_df in atype_dfs.items():
-            if atype_df is None:
+            if atype_df is None:  # This only happens if no column in the atype_df has enough of a correlation
                 continue
 
             logging.info(f"Building model for Atype {atype}")
             model = build_price_predict_model(df=atype_df, atype=str(atype), price_column='exalts')
-            self.files_manager.model_data[FileKey.PRICE_PREDICT_MODEL] = model
-            self.files_manager.save_model(model_key=FileKey.PRICE_PREDICT_MODEL)
+            self.files_manager.save_model(model=model,
+                                          model_key=FileKey.PRICE_PREDICT_MODEL)
 

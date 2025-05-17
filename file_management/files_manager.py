@@ -120,9 +120,9 @@ class FilesManager:
         for key, file_path in file_paths.items():
             utils.write_to_file(data=self.file_data[key], file_path=file_path)
 
-    def save_model(self, model_key: FileKey):
+    def save_model(self, model_key: FileKey, model):
         logging.info(f"Exporting model {model_key}")
-        utils.write_to_file(data=self.model_data[model_key], file_path=self.model_paths[model_key])
+        utils.write_to_file(data=model, file_path=self.model_paths[model_key])
 
 
 
