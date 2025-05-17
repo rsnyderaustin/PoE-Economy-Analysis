@@ -21,7 +21,6 @@ class PostgreSqlManager:
         e = EnvLoader()
         user = e.get_env(EnvVariable.PSQL_USERNAME)
         passw = e.get_env(EnvVariable.PSQL_PASSWORD)
-        passw = urllib.parse.quote_plus(passw)
         host = e.get_env(EnvVariable.PSQL_HOST)
         db_n = e.get_env(EnvVariable.PSQL_DATABASE)
         ip = e.get_env(EnvVariable.PSQL_IP)
