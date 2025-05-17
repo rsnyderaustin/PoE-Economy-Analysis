@@ -48,5 +48,12 @@ def format_column_name(column_name: str):
     c = column_name.replace('#', 'N')
     c = c.replace('%', 'P')
     c = re.sub(r'[^a-zA-Z0-9]', '_', c)
+
+    c = c[:63]  # Psql column names have a character limit of 63
+
     return c
+
+
+
+
 
