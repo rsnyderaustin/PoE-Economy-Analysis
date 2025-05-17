@@ -56,8 +56,6 @@ class PostgreSqlManager:
             raise TypeError(f"Insert data function currently only supports inserting iterables as values.")
 
         data = {utils.format_column_name(col): val for col, val in data.items()}
-        data = utils.format_data_into_rows(data)
-
         table_col_names = self._fetch_table_column_names(table_name)
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
 
@@ -72,8 +70,11 @@ class PostgreSqlManager:
         cols = ', '.join(f'"{k}"' for k in data.keys())
         placeholders = ', '.join(f":{k}" for k in data.keys())
         insert_stmt = text(f'INSERT INTO {table_name} ({cols}) VALUES ({placeholders})')
+
+        # When inserting into psql via SqlAlchemy, the data has to be a list of dicts
+        formatted_data = utils.format_data_into_rows(data)
         with self.engine.begin() as conn:
-            conn.execute(insert_stmt, data)
+            conn.execute(insert_stmt, formatted_data)
 
     def fetch_table_data(self, table_name: str):
         with self.engine.connect() as conn:
