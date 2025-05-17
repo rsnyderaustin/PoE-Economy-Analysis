@@ -18,7 +18,7 @@ class PostgreSqlManager:
         if getattr(self, '_initialized', False):
             return
 
-        """e = EnvLoader()
+        e = EnvLoader()
         user = e.get_env(EnvVariable.PSQL_USERNAME)
         passw = e.get_env(EnvVariable.PSQL_PASSWORD)
         host = e.get_env(EnvVariable.PSQL_HOST)
@@ -29,7 +29,7 @@ class PostgreSqlManager:
 
         self.engine = sqlalchemy.create_engine(db_url)
         self.connection = self.engine.connect()
-        self.inspector = inspect(self.engine)"""
+        self.inspector = inspect(self.engine)
 
         self._initialized = True
 
