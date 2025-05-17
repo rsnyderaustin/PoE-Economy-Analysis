@@ -65,7 +65,7 @@ class PostgreSqlManager:
         placeholders = ', '.join(f":{k}" for k in data.keys())
         insert_stmt = text(f'INSERT INTO {table_name} ({cols}) VALUES ({placeholders})')
         with self.engine.begin() as conn:
-            conn.execute(insert_stmt, **data)
+            conn.execute(insert_stmt, data)
 
     def fetch_table_data(self, table_name: str):
         with self.engine.connect() as conn:
