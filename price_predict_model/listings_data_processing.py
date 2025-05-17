@@ -138,13 +138,20 @@ class ListingFlattener(ListingsClass):
                                                                    relevant_date=dt_date_fetched)
 
         flattened_data = {
+            'date_fetched': listing.date_fetched,
             'minutes_since_listed': listing.minutes_since_listed,
             'minutes_since_league_start': listing.minutes_since_league_start,
+            'currency': listing.currency,
+            'currency_amount': listing.currency_amount,
             'exalts': exalts_price,
             'open_prefixes': listing.open_prefixes,
             'open_suffixes': listing.open_suffixes,
+            'atype': listing.item_atype,
+            'ilvl': listing.ilvl,
+            'category': listing.item_category.value,
             'rarity': listing.rarity,
             'corrupted': listing.corrupted,
+            'identified': listing.identified,
             **flattened_properties
         }
 
