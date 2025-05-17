@@ -1,3 +1,4 @@
+import logging
 from typing import Iterable
 import re
 
@@ -39,7 +40,9 @@ def determine_col_dtypes(raw_data: dict, col_names: list[str]):
         else:
             dtype = type(value)
 
-        col_dtypes[col] = python_dtype_to_postgres(dtype)
+        psql_dtype = python_dtype_to_postgres(dtype)
+        logging.info(f"Determined new col {col} is psql dtype {psql_dtype}")
+        col_dtypes[col] = psql_dtype
 
     return col_dtypes
 
