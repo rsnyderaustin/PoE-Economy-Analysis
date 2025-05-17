@@ -52,10 +52,10 @@ class OperationsCoordinator:
                                                                           item_mods=mods)
                     listings.append(listing)
 
-            flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
+                flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
 
-            self.psql_manager.insert_data(table_name=self.env_loader.get_env(env_loading.EnvVariable.PSQL_TRAINING_TABLE),
-                                          data=flattened_data)
+                self.psql_manager.insert_data(table_name=self.env_loader.get_env(env_loading.EnvVariable.PSQL_TRAINING_TABLE),
+                                              data=flattened_data)
 
     def find_underpriced_items(self):
         training_queries = query.QueryPresets().training_fills
