@@ -60,6 +60,15 @@ def format_column_name(column_name: str):
     return c
 
 
+def format_data_into_rows(data: dict) -> list:
+    columns = list(data.keys())
+    values = zip(*data.values())
+
+    # Build the list of dictionaries
+    formatted_data = [dict(zip(columns, row)) for row in values]
+
+    return formatted_data
+
 
 
 

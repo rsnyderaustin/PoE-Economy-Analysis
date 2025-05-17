@@ -56,6 +56,7 @@ class PostgreSqlManager:
             raise TypeError(f"Insert data function currently only supports inserting iterables as values.")
 
         data = {utils.format_column_name(col): val for col, val in data.items()}
+        data = utils.format_data_into_rows(data)
 
         table_col_names = self._fetch_table_column_names(table_name)
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
