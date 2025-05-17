@@ -40,8 +40,9 @@ def determine_col_dtypes(raw_data: dict, col_names: list[str]):
         else:
             dtype = type(value)
 
+        logging.info(f"Determined new col {col} raw dtype: {dtype}")
         psql_dtype = python_dtype_to_postgres(dtype)
-        logging.info(f"Determined new col {col} is psql dtype {psql_dtype}")
+        logging.info(f"Determined new col {col} psql dtype: {psql_dtype}")
         col_dtypes[col] = psql_dtype
 
     return col_dtypes
