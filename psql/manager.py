@@ -59,11 +59,14 @@ class PostgreSqlManager:
 
         table_col_names = self._fetch_table_column_names(table_name)
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
-        logging.info(f"Current col names:\n{table_col_names}\nMissing col names:{missing_col_names}")
-        missing_col_dtypes = utils.determine_col_dtypes(raw_data=data,
-                                                        col_names=missing_col_names)
-        self._add_columns(table_name=table_name,
-                          col_dtypes=missing_col_dtypes)
+
+        if missing_col_names:
+            logging.info(f"Current col names:\n{table_col_names}\nMissing col names:{missing_col_names}")
+            missing_col_dtypes = utils.determine_col_dtypes(raw_data=data,
+                                                            col_names=missing_col_names)
+            self._add_columns(table_name=table_name,
+                              col_dtypes=missing_col_dtypes)
+            self.inspector = inspect(self.engine)  # Have to refresh inspector cache after changing schema
 
         cols = ', '.join(f'"{k}"' for k in data.keys())
         placeholders = ', '.join(f":{k}" for k in data.keys())
