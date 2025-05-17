@@ -27,9 +27,9 @@ class PostgreSqlManager:
         db_url = f"postgresql+psycopg2://{user}:{passw}@{ip}:{host}/{db_n}"
         print(db_url)
 
-        """self.engine = sqlalchemy.create_engine(db_url)
+        self.engine = sqlalchemy.create_engine(db_url)
         self.connection = self.engine.connect()
-        self.inspector = inspect(self.engine)"""
+        self.inspector = inspect(self.engine)
 
         self._initialized = True
 
