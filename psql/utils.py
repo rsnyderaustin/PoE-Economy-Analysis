@@ -39,8 +39,7 @@ def determine_col_dtypes(raw_data: dict, col_names: set[str]):
         if isinstance(value, Iterable) and len(value) > 0:
             dtype = type(next(iter(value)))
         else:
-            logging.warning(f"Column '{col}' is empty or not iterable. Defaulting to 'NoneType'")
-            dtype = type(None)  # or some other default type, depending on your needs
+            raise ValueError(f"Column '{col}' is empty or not iterable. Defaulting to 'NoneType'")
 
         logging.info(f"Determined new col {col} raw dtype: {dtype}")
         psql_dtype = python_dtype_to_postgres(dtype)
