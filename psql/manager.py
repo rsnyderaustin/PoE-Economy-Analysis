@@ -41,6 +41,17 @@ class PostgreSqlManager:
         :return:
         """
         logging.info(f"Adding columns {list(col_dtypes.keys())}")
+
+        col_names = self._fetch_column_names(table_name)
+        existing_cols = [col for col in col_dtypes if col in col_names]
+        if existing_cols:
+            raise ValueError(f"Requested to add already existing columns to table '{table_name}'. "
+                             f"\nExisting columns: {existing_cols}")
+            logging.error(f"Requested to add already existing columns to table '{table_name}'. "
+                          f"\nExisting columns: {existing_cols}")
+            for col in existing_cols:
+                col_dtypes.pop(col)
+
         with self.engine.begin() as conn:
             for col, dtype in col_dtypes.items():
                 # Add column as TEXT, you can customize type as needed
