@@ -51,6 +51,12 @@ class PostgreSqlManager:
                 conn.execute(alter_stmt)
                 print(f"Added column: {col}")
 
+    def _count_table_rows(self, table_name: str):
+        result = self.connection.execute(text(f"SELECT COUNT(*) FROM {table_name}}"))
+        count = result.scalar()
+
+        return count
+
     def insert_data(self, table_name: str, data: dict):
         if not all([isinstance(data_val, Iterable) for col_name, data_val in data.items()]):
             raise TypeError(f"Insert data function currently only supports inserting iterables as values.")
@@ -74,7 +80,9 @@ class PostgreSqlManager:
         # When inserting into psql via SqlAlchemy, the data has to be a list of dicts
         formatted_data = utils.format_data_into_rows(data)
         with self.engine.begin() as conn:
+            logging.info(f"{table_name} rows before insertion: {self._count_table_rows(table_name)}")
             conn.execute(insert_stmt, formatted_data)
+            logging.info(f"{table_name} rows after insertion: {self._count_table_rows(table_name)}")
 
     def fetch_table_data(self, table_name: str):
         with self.engine.connect() as conn:
