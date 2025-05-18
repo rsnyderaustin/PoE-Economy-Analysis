@@ -43,6 +43,7 @@ class PostgreSqlManager:
         missing_col_dtypes = utils.determine_col_dtypes(raw_data=new_data,
                                                         col_names=missing_col_names)
 
+        logging.info("Starting loop to add missing columns")
         with self.engine.begin() as conn:
             for col, dtype in missing_col_dtypes.items():
                 logging.info(f"Adding missing column {col}")
