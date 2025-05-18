@@ -56,6 +56,8 @@ class OperationsCoordinator:
 
                     flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
 
+                    all_none_cols = {col: val for col, val in flattened_data.items() if all(v is None for v in val)}
+
                     self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
                                                   data=flattened_data)
             except Exception as e:
