@@ -3,18 +3,6 @@ import dotenv
 import os
 
 
-class EnvVariable(Enum):
-    POSSESSID = "POSSESSID"
-
-    PSQL_HOST = "PSQL_HOST"
-    PSQL_IP = "PSQL_IP"
-    PSQL_DATABASE = "PSQL_DATABASE"
-    PSQL_USERNAME = "PSQL_USERNAME"
-    PSQL_PASSWORD = "PSQL_PASSWORD"
-    PSQL_TRAINING_TABLE = "PSQL_TRAINING_TABLE"
-
-    RETRY_SEC_DELAY = "RETRY_SEC_DELAY"
-
 
 
 class EnvLoader:
@@ -30,8 +18,8 @@ class EnvLoader:
 
             self._initialized = True
 
-    def get_env(self, env_variable: EnvVariable):
-        return os.getenv(env_variable.value)
+    def get_env(self, env_var: str):
+        return os.getenv(env_var)
 
 
 env_loader = EnvLoader()
