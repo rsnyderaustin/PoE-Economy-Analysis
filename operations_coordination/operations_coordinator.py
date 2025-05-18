@@ -60,7 +60,7 @@ class OperationsCoordinator:
                                                   data=flattened_data)
             except Exception as e:
                 logging.error(f"Error in fill_training_data: {e}")
-                time.sleep(env_loader.get_env(EnvVariable.RETRY_SEC_DELAY.value))
+                time.sleep(env_loader.get_env(EnvVariable.RETRY_SEC_DELAY))
 
     def find_underpriced_items(self):
         training_queries = query.QueryPresets().training_fills
