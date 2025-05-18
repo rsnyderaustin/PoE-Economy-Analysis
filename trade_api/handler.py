@@ -124,6 +124,9 @@ class TradeApiHandler:
 
         listing_ids = set(response['id'] for response in valid_responses)
         fetch_date_record[fetch_date].update(listing_ids)
+        # We save the listings every time because losing any in an unexpected program crash
+        # means duplicated data
+        self.files_manager.save_data(keys=[FileKey.LISTING_FETCHES])
 
         # Below is just logging logic
         self.valid_responses_found += len(valid_responses)
