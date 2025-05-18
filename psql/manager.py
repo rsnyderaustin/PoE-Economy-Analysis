@@ -64,6 +64,8 @@ class PostgreSqlManager:
 
                 print(f"Added column: {col}")
 
+        self.inspector = inspect(self.engine)
+
     def _count_table_rows(self, table_name: str):
         result = self.connection.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
         count = result.scalar()
@@ -71,7 +73,6 @@ class PostgreSqlManager:
         return count
 
     def _fetch_column_names(self, table_name: str):
-        self.inspector = inspect(self.engine)
         return {col['name'] for col in self.inspector.get_columns(table_name)}
 
     def insert_data(self, table_name: str, data: dict):
@@ -83,6 +84,10 @@ class PostgreSqlManager:
         data = {utils.format_column_name(col): val for col, val in data.items()}
         table_col_names = self._fetch_column_names(table_name)
         logging.info(f"Current col names: {table_col_names}")
+
+        table_col_names = self._fetch_column_names(table_name)
+        logging.info(f"Current col names: {table_col_names}")
+        
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
 
         if missing_col_names:
