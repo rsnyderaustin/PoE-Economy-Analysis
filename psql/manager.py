@@ -71,6 +71,7 @@ class PostgreSqlManager:
         return count
 
     def _fetch_column_names(self, table_name: str):
+        self.inspector = inspect(self.engine)
         return {col['name'] for col in self.inspector.get_columns(table_name)}
 
     def insert_data(self, table_name: str, data: dict):
@@ -90,8 +91,7 @@ class PostgreSqlManager:
             missing_col_dtypes = utils.determine_col_dtypes(raw_data=data,
                                                             col_names=missing_col_names)
             self._add_columns(table_name=table_name,
-                              col_dtypes=missing_col_dtypes)
-            self.inspector = inspect(self.engine)  # Have to refresh inspector cache after changing schema
+                              col_dtypes=missing_col_dtypes)  # Have to refresh inspector cache after changing schema
 
         cols = ', '.join(f'"{k}"' for k in data.keys())
         placeholders = ', '.join(f":{k}" for k in data.keys())
