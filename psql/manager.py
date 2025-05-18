@@ -33,36 +33,22 @@ class PostgreSqlManager:
 
         self._initialized = True
 
-    def _add_columns(self, table_name: str, col_dtypes: dict):
-        """
+    def _add_missing_columns(self, table_name: str, new_data: dict):
+        table_col_names = self._fetch_column_names(table_name)
+        logging.info(f"Current col names: {table_col_names}")
 
-        :param table_name:
-        :param col_dtypes: Keys are column names, and values are the data type
-        :return:
-        """
-        logging.info(f"Adding columns {list(col_dtypes.keys())}")
-
-        col_names = self._fetch_column_names(table_name)
-        preexisting_cols = [col for col in set(col_dtypes.keys()) if col in col_names]
-
-        if preexisting_cols:
-            raise ValueError(f"Requested to add already existing columns to table '{table_name}'. "
-                             f"\nExisting columns: {preexisting_cols}")
-            logging.error(f"Requested to add already existing columns to table '{table_name}'. "
-                          f"\nExisting columns: {existing_cols}")
-            for col in existing_cols:
-                col_dtypes.pop(col)
-        else:
-            logging.info(f"Checked - all columns are new.")
+        new_cols = set(new_data.keys())
+        missing_col_names = set(col for col in new_cols if col not in table_col_names)
+        logging.info(f"Missing col names: {missing_col_names}")
+        missing_col_dtypes = utils.determine_col_dtypes(raw_data=new_data,
+                                                        col_names=missing_col_names)
 
         with self.engine.begin() as conn:
-            for col, dtype in col_dtypes.items():
-                logging.info(f"Adding column {col}")
+            for col, dtype in missing_col_dtypes.items():
+                logging.info(f"Adding missing column {col}")
 
                 alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
                 conn.execute(alter_stmt)
-
-                print(f"Added column: {col}")
 
         self.inspector = inspect(self.engine)
 
@@ -73,27 +59,15 @@ class PostgreSqlManager:
         return count
 
     def _fetch_column_names(self, table_name: str):
-        return {col['name'] for col in self.inspector.get_columns(table_name)}
+        return set(col['name'] for col in self.inspector.get_columns(table_name))
 
     def insert_data(self, table_name: str, data: dict):
 
-        utils.validate_dict_lists(data)
-
-        logging.info(f"Insert data length: {shared_utils.determine_dict_length(data)}")
-
         data = {utils.format_column_name(col): val for col, val in data.items()}
-        table_col_names = self._fetch_column_names(table_name)
-        logging.info(f"Current col names: {table_col_names}")
 
-        missing_col_names = [col for col in data.keys() if col not in table_col_names]
-
-        if missing_col_names:
-            logging.info(f"Found missing column names: {missing_col_names}")
-            # logging.info(f"Current col names:\n{table_col_names}\nMissing col names:{missing_col_names}")
-            missing_col_dtypes = utils.determine_col_dtypes(raw_data=data,
-                                                            col_names=missing_col_names)
-            self._add_columns(table_name=table_name,
-                              col_dtypes=missing_col_dtypes)  # Have to refresh inspector cache after changing schema
+        utils.validate_dict_lists(data)
+        self._add_missing_columns(table_name=table_name,
+                                  new_data=data)
 
         cols = ', '.join(f'"{k}"' for k in data.keys())
         placeholders = ', '.join(f":{k}" for k in data.keys())
