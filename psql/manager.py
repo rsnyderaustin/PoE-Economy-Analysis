@@ -55,8 +55,9 @@ class PostgreSqlManager:
         self.inspector = inspect(self.engine)
 
     def _count_table_rows(self, table_name: str):
-        result = self.connection.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
-        count = result.scalar()
+        with self.connection.begin():
+            result = self.connection.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
+            count = result.scalar()
 
         return count
 
