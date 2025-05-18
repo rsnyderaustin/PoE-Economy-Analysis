@@ -81,6 +81,7 @@ class PostgreSqlManager:
 
         data = {utils.format_column_name(col): val for col, val in data.items()}
         table_col_names = self._fetch_column_names(table_name)
+        logging.info(f"Current col names: {table_col_names}")
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
 
         if missing_col_names:
