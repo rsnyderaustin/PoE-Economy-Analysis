@@ -56,11 +56,11 @@ class OperationsCoordinator:
 
                     flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
 
-                    self.psql_manager.insert_data(table_name=self.env_loader.get_env(env_loading.EnvVariable.PSQL_TRAINING_TABLE),
+                    self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
                                                   data=flattened_data)
             except Exception as e:
                 logging.error(f"Error in fill_training_data: {e}")
-                time.sleep(env_loader.get_env(EnvVariable.RETRY_SEC_DELAY))
+                time.sleep(env_loader.get_env("RETRY_SEC_DELAY"))
 
     def find_underpriced_items(self):
         training_queries = query.QueryPresets().training_fills
@@ -98,7 +98,7 @@ class OperationsCoordinator:
                 shared_utils.log_dict(item)
 
     def build_price_predict_model(self):
-        psql_table_name = env_loader.get_env(EnvVariable.PSQL_TRAINING_TABLE)
+        psql_table_name = env_loader.get_env("PSQL_TRAINING_TABLE")
         training_data = self.psql_manager.fetch_table_data(psql_table_name)
         model_df = self.price_predict_data_manager.prepare_flattened_listings_data_for_model(training_data)
 

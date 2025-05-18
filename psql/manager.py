@@ -21,11 +21,11 @@ class PostgreSqlManager:
             return
 
         e = EnvLoader()
-        user = e.get_env(EnvVariable.PSQL_USERNAME)
-        passw = e.get_env(EnvVariable.PSQL_PASSWORD)
-        host = e.get_env(EnvVariable.PSQL_HOST)
-        db_n = e.get_env(EnvVariable.PSQL_DATABASE)
-        ip = e.get_env(EnvVariable.PSQL_IP)
+        user = e.get_env("PSQL_USERNAME")
+        passw = e.get_env("PSQL_PASSWORD")
+        host = e.get_env("PSQL_HOST")
+        db_n = e.get_env("PSQL_DATABASE")
+        ip = e.get_env("PSQL_IP")
         db_url = f"postgresql+psycopg2://{user}:{passw}@{ip}:{host}/{db_n}"
         print(db_url)
 
