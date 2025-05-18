@@ -33,6 +33,7 @@ def python_dtype_to_postgres(dtype) -> str:
 def determine_col_dtypes(raw_data: dict, col_names: list[str]):
     cols_data = {col: val for col, val in raw_data.items() if col in col_names}
 
+    logging.info(f"New data for determine_col_dtypes:\n{raw_data}")
     col_dtypes = dict()
     for col, value in cols_data.items():
         if isinstance(value, Iterable):

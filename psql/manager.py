@@ -45,6 +45,7 @@ class PostgreSqlManager:
         :param col_dtypes: Keys are column names, and values are the data type
         :return:
         """
+        logging.info(f"Adding columns {list(col_dtypes.keys())}")
         with self.engine.begin() as conn:
             for col, dtype in col_dtypes.items():
                 # Add column as TEXT, you can customize type as needed
