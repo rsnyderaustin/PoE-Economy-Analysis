@@ -186,3 +186,5 @@ def parse_poecd_mtypes_string(mtypes_string: str) -> list:
 def determine_dict_length(data: dict):
     length = min(len(v) for k, v in data.items())
     return length
+
+

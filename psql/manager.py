@@ -35,9 +35,6 @@ class PostgreSqlManager:
 
         self._initialized = True
 
-    def _fetch_table_column_names(self, table_name: str):
-        return [col['name'] for col in self.inspector.get_columns(table_name)]
-
     def _add_columns(self, table_name: str, col_dtypes: dict):
         """
 
@@ -60,13 +57,13 @@ class PostgreSqlManager:
         return count
 
     def insert_data(self, table_name: str, data: dict):
-        if not all([isinstance(data_val, Iterable) for col_name, data_val in data.items()]):
-            raise TypeError(f"Insert data function currently only supports inserting iterables as values.")
+
+        utils.validate_dict_lists(data)
 
         logging.info(f"Insert data length: {shared_utils.determine_dict_length(data)}")
 
         data = {utils.format_column_name(col): val for col, val in data.items()}
-        table_col_names = self._fetch_table_column_names(table_name)
+        table_col_names = set(self.inspector.get_columns(table_name))
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
 
         if missing_col_names:

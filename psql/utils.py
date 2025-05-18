@@ -33,13 +33,13 @@ def python_dtype_to_postgres(dtype) -> str:
 def determine_col_dtypes(raw_data: dict, col_names: list[str]):
     cols_data = {col: val for col, val in raw_data.items() if col in col_names}
 
-    logging.info(f"New data for determine_col_dtypes:\n{raw_data}")
     col_dtypes = dict()
     for col, value in cols_data.items():
-        if isinstance(value, Iterable):
+        if isinstance(value, Iterable) and len(value) > 0:
             dtype = type(next(iter(value)))
         else:
-            dtype = type(value)
+            logging.warning(f"Column '{col}' is empty or not iterable. Defaulting to 'NoneType'")
+            dtype = type(None)  # or some other default type, depending on your needs
 
         logging.info(f"Determined new col {col} raw dtype: {dtype}")
         psql_dtype = python_dtype_to_postgres(dtype)
@@ -69,6 +69,16 @@ def format_data_into_rows(data: dict) -> list:
     formatted_data = [dict(zip(columns, row)) for row in values]
 
     return formatted_data
+
+
+def validate_dict_lists(data: dict):
+    vtypes = [type(v) for v in data.values()]
+    if not all(isinstance(v, list) for v in data.values()):
+        raise TypeError(f"Expected only lists for dict value types. Got:\n{vtypes}")
+
+    lengths = set(len(v) for v in data.values())
+    if len(lengths) > 1:
+        raise ValueError(f"All lists should be the same length. List lengths:\n{lengths}")
 
 
 
