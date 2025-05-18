@@ -43,11 +43,11 @@ class PostgreSqlManager:
         logging.info(f"Adding columns {list(col_dtypes.keys())}")
 
         col_names = self._fetch_column_names(table_name)
-        existing_cols = [col for col in col_dtypes if col in col_names]
-        logging.info(f"Existing columns: {existing_cols}")
-        if existing_cols:
+        preexisting_cols = [col for col in set(col_dtypes.keys()) if col in col_names]
+
+        if preexisting_cols:
             raise ValueError(f"Requested to add already existing columns to table '{table_name}'. "
-                             f"\nExisting columns: {existing_cols}")
+                             f"\nExisting columns: {preexisting_cols}")
             logging.error(f"Requested to add already existing columns to table '{table_name}'. "
                           f"\nExisting columns: {existing_cols}")
             for col in existing_cols:
@@ -85,9 +85,6 @@ class PostgreSqlManager:
         table_col_names = self._fetch_column_names(table_name)
         logging.info(f"Current col names: {table_col_names}")
 
-        table_col_names = self._fetch_column_names(table_name)
-        logging.info(f"Current col names: {table_col_names}")
-        
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
 
         if missing_col_names:
