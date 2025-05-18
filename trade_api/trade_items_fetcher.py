@@ -4,7 +4,7 @@ from datetime import datetime
 
 import requests
 
-from shared import env_loader, EnvVariable
+from shared import env_loader
 from trade_api.request_throttler import RequestThrottler
 
 

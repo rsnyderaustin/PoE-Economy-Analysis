@@ -13,7 +13,7 @@ import trade_api
 from file_management import FilesManager, FileKey
 from price_predict_model.build_model import build_price_predict_model
 from stat_analysis.stats_prep import StatsPrep
-from shared import shared_utils, env_loader, env_loading, EnvVariable
+from shared import shared_utils, env_loader, env_loading
 from trade_api import query
 import psql
 

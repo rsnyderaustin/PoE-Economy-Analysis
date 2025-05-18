@@ -1,6 +1,6 @@
 import logging
-from typing import Iterable
 import re
+from typing import Iterable
 
 
 def python_dtype_to_postgres(dtype) -> str:

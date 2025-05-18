@@ -1,8 +1,6 @@
-from enum import Enum
+
 import dotenv
 import os
-
-
 
 
 class EnvLoader:

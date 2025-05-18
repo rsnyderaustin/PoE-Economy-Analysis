@@ -1,13 +1,11 @@
 import logging
-import urllib
-from typing import Iterable
 
 import sqlalchemy
 from sqlalchemy import text, inspect
 
-from shared.env_loading import EnvLoader, EnvVariable
-from . import utils
 from shared import shared_utils
+from shared.env_loading import EnvLoader
+from . import utils
 
 
 class PostgreSqlManager:
