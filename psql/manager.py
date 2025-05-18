@@ -44,6 +44,7 @@ class PostgreSqlManager:
 
         col_names = self._fetch_column_names(table_name)
         existing_cols = [col for col in col_dtypes if col in col_names]
+        logging.info(f"Existing columns: {existing_cols}")
         if existing_cols:
             raise ValueError(f"Requested to add already existing columns to table '{table_name}'. "
                              f"\nExisting columns: {existing_cols}")
