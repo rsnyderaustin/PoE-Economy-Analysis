@@ -181,3 +181,8 @@ def parse_poecd_mtypes_string(mtypes_string: str) -> list:
         return []
     parsed = [part for part in mtypes_string.split('|') if part]
     return parsed
+
+
+def determine_dict_length(data: dict):
+    length = min(len(v) for k, v in data.items())
+    return length

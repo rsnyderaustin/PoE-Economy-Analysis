@@ -182,6 +182,7 @@ class ListingsDataProcessor(ListingsClass):
 
     @staticmethod
     def flatten_listings_into_dict(listings: list[ModifiableListing]) -> dict:
+        logging.info(f"Flattening {len(listings)} listings.")
         listings_data = dict()
         rows = 0
         for listing in listings:

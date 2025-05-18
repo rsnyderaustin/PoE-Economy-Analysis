@@ -45,8 +45,8 @@ class OperationsCoordinator:
 
         while True:
             try:
-                listings = []
                 for api_item_responses in self.trade_api_handler.process_queries(training_queries):
+                    listings = []
                     for api_item_response in api_item_responses:
 
                         mods = self.resource_resolver.process_mods(item_data=api_item_response['item'])

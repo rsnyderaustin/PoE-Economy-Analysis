@@ -7,6 +7,7 @@ from sqlalchemy import text, inspect
 
 from shared.env_loading import EnvLoader, EnvVariable
 from . import utils
+from shared import shared_utils
 
 
 class PostgreSqlManager:
@@ -61,6 +62,8 @@ class PostgreSqlManager:
         if not all([isinstance(data_val, Iterable) for col_name, data_val in data.items()]):
             raise TypeError(f"Insert data function currently only supports inserting iterables as values.")
 
+        logging.info(f"Insert data length: {shared_utils.determine_dict_length(data)}")
+
         data = {utils.format_column_name(col): val for col, val in data.items()}
         table_col_names = self._fetch_table_column_names(table_name)
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
@@ -79,7 +82,7 @@ class PostgreSqlManager:
 
         # When inserting into psql via SqlAlchemy, the data has to be a list of dicts
         formatted_data = utils.format_data_into_rows(data)
-        
+
         logging.info(f"{table_name} rows before insertion: {self._count_table_rows(table_name)}")
         with self.engine.begin() as conn:
             conn.execute(insert_stmt, formatted_data)
