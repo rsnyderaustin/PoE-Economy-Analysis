@@ -191,8 +191,9 @@ class ListingsDataProcessor(ListingsClass):
             new_cols_dict = {col: [None] * rows for col in new_cols}
             listings_data.update(new_cols_dict)
 
-            for col, val in new_listing_data.items():
-                listings_data[col].append(val)
+            for col in listings_data:
+                new_val = new_listing_data.get(col, None)
+                listings_data[col].append(new_val)
 
             rows += 1
 
