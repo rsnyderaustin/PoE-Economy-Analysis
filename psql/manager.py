@@ -40,8 +40,9 @@ class PostgreSqlManager:
         new_cols = set(new_data.keys())
         missing_col_names = set(col for col in new_cols if col not in table_col_names)
         logging.info(f"Missing col names: {missing_col_names}")
-        missing_col_dtypes = utils.determine_col_dtypes(raw_data=new_data,
-                                                        col_names=missing_col_names)
+
+        missing_col_data = {k: v for k, v in new_data.items() if k in missing_col_names}
+        missing_col_dtypes = utils.determine_col_dtypes(raw_data=missing_col_data)
 
         logging.info("Starting loop to add missing columns")
         with self.engine.begin() as conn:

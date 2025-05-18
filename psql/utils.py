@@ -30,14 +30,14 @@ def python_dtype_to_postgres(dtype) -> str:
         return 'TEXT'
 
 
-def determine_col_dtypes(raw_data: dict, col_names: set[str]):
+def determine_col_dtypes(raw_data: dict):
     logging.info("Determining column dtypes")
-    cols_data = {col: val for col, val in raw_data.items() if col in col_names}
 
     col_dtypes = dict()
-    for col, value in cols_data.items():
+    for col, value in raw_data.items():
         if isinstance(value, Iterable) and len(value) > 0:
-            dtype = type(next(iter(value)))
+            valid_val = list(val for val in value if val)[0]
+            dtype = type(valid_val)
         else:
             raise ValueError(f"Column '{col}' is empty or not iterable. Defaulting to 'NoneType'")
 
