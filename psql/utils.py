@@ -36,7 +36,7 @@ def determine_col_dtypes(raw_data: dict):
     col_dtypes = dict()
     for col, value in raw_data.items():
         if isinstance(value, Iterable) and len(value) > 0:
-            valid_values = list(val for val in value if val)
+            valid_values = list(val for val in value if val is not None)
 
             if not valid_values:
                 raise ValueError(f"Was not able to determine the dtype for column {col}. Values below:\n{value}")
