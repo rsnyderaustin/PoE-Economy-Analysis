@@ -54,6 +54,9 @@ class PostgreSqlManager:
 
         return count
 
+    def _fetch_column_names(self, table_name: str):
+        return {col['name'] for col in self.inspector.get_columns(table_name)}
+
     def insert_data(self, table_name: str, data: dict):
 
         utils.validate_dict_lists(data)
@@ -61,11 +64,12 @@ class PostgreSqlManager:
         logging.info(f"Insert data length: {shared_utils.determine_dict_length(data)}")
 
         data = {utils.format_column_name(col): val for col, val in data.items()}
-        table_col_names = set(self.inspector.get_columns(table_name))
+        table_col_names = self._fetch_column_names(table_name)
         missing_col_names = [col for col in data.keys() if col not in table_col_names]
 
         if missing_col_names:
-            logging.info(f"Current col names:\n{table_col_names}\nMissing col names:{missing_col_names}")
+            logging.info(f"Found missing column names: {missing_col_names}")
+            # logging.info(f"Current col names:\n{table_col_names}\nMissing col names:{missing_col_names}")
             missing_col_dtypes = utils.determine_col_dtypes(raw_data=data,
                                                             col_names=missing_col_names)
             self._add_columns(table_name=table_name,
