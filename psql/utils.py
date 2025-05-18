@@ -60,7 +60,7 @@ def format_column_name(column_name: str):
     c = c.lower()
     c = c.replace(' ', '_')
 
-    c = c[:63]  # Psql column names have a character limit of 63
+    c = c[:55]  # Psql column names have a character limit of 63
 
     return c
 
