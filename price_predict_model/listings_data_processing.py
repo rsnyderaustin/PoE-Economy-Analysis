@@ -194,6 +194,8 @@ class ListingsDataProcessor(ListingsClass):
             for col, val in new_listing_data.items():
                 listings_data[col].append(val)
 
+            rows += 1
+
         return listings_data
 
     @classmethod
