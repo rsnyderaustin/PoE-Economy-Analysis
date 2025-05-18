@@ -52,7 +52,7 @@ class PostgreSqlManager:
                 print(f"Added column: {col}")
 
     def _count_table_rows(self, table_name: str):
-        result = self.connection.execute(text(f"SELECT COUNT(*) FROM {table_name}}"))
+        result = self.connection.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
         count = result.scalar()
 
         return count
