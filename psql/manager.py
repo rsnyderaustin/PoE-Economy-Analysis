@@ -51,12 +51,16 @@ class PostgreSqlManager:
                           f"\nExisting columns: {existing_cols}")
             for col in existing_cols:
                 col_dtypes.pop(col)
+        else:
+            logging.info(f"Checked - all columns are new.")
 
         with self.engine.begin() as conn:
             for col, dtype in col_dtypes.items():
-                # Add column as TEXT, you can customize type as needed
+                logging.info(f"Adding column {col}")
+
                 alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
                 conn.execute(alter_stmt)
+
                 print(f"Added column: {col}")
 
     def _count_table_rows(self, table_name: str):
