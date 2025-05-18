@@ -36,12 +36,12 @@ def determine_col_dtypes(raw_data: dict):
     col_dtypes = dict()
     for col, value in raw_data.items():
         if isinstance(value, Iterable) and len(value) > 0:
-            valid_val = list(val for val in value if val)[0]
+            valid_values = list(val for val in value if val)
 
-            if not valid_val:
+            if not valid_values:
                 raise ValueError(f"Was not able to determine the dtype for column {col}. Values below:\n{value}")
 
-            dtype = type(valid_val)
+            dtype = type(valid_values[0])
         else:
             raise ValueError(f"Column '{col}' is empty or not iterable. Defaulting to 'NoneType'")
 
