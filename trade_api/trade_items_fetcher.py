@@ -23,7 +23,7 @@ class TradeItemsFetcher:
     headers = {
         'Content-Type': 'application/json',
         # Used to be '5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
-        'User-Agent': 'rsnyder.austin@gmail.com',
+        'User-Agent': 'OAuth poe_trade_analysis/1.0.0 (contact: rsnyder.austin@gmail.com)',
         'Cookie': f'POESESSID={env_loader.get_env("POSSESSID")}',
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br, zstd',
