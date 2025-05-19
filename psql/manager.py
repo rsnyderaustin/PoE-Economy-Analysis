@@ -3,7 +3,6 @@ import logging
 import sqlalchemy
 from sqlalchemy import text, inspect
 
-from shared import shared_utils
 from shared.env_loading import EnvLoader
 from . import utils
 

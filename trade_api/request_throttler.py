@@ -112,6 +112,12 @@ class RequestThrottler:
     def set_limits(self, func_name: str, response_headers: dict):
         account_limits, account_state, ip_limits, ip_state = self._fetch_limits_and_state(response_headers)
 
+        logging.info(f"Setting new limits."
+                     f"\n\tAccount limits: {account_limits}"
+                     f"\n\tAccount state: {account_state}"
+                     f"\n\tIP limits: {ip_limits}"
+                     f"\n\tIP state: {ip_state}")
+
         self.current_account_limits[func_name] = account_limits
         self.current_ip_limits[func_name] = ip_limits
 
@@ -193,8 +199,8 @@ class RequestThrottler:
         # ip_state = _parse_rate_string(response.headers['x-rate-limit-ip-state'])
         # account_state = _parse_rate_string(response.headers['x-rate-limit-account-state'])
 
-        if self.request_counter % 5 == 0 and self._check_if_limits_have_changed(func_name=func_name,
-                                                                                response_headers=response.headers):
+        if self._check_if_limits_have_changed(func_name=func_name,
+                                              response_headers=response.headers):
             logging.info(f"Limits have changed for func '{func_name}'. Resetting limits.")
             self.set_limits(func_name=func_name,
                             response_headers=response.headers)
