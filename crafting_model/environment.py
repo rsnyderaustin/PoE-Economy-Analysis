@@ -12,8 +12,10 @@ from . import utils
 
 class CraftingEnvironment(gym.Env):
 
-    def __init__(self, listing, price_predictor):
+    def __init__(self, listing, price_predictor, exalts_budget):
         super(CraftingEnvironment, self).__init__()
+
+        self.exalts_budget = exalts_budget
 
         self.original_state = copy.deepcopy(listing)
         self.original_price = price_predictor.predict_price(listing=listing)
@@ -25,63 +27,28 @@ class CraftingEnvironment(gym.Env):
         self.price_predictor = price_predictor
 
         self.action_space = spaces.Discrete(14)
-        self.observation_space = spaces.Dict({
 
-        })
+        self.currency_map = {
+            0: crafting.ArcanistsEtcher,
+            1: crafting.ArmourersScrap,
+            2: crafting.ArtificersOrb,
+            3: crafting.BlacksmithsWhetstone,
+            4: crafting.ChaosOrb,
+            5: crafting.ExaltedOrb,
+            6: crafting.FracturingOrb,
+            7: crafting.GemcuttersPrism,
+            8: crafting.GlassblowersBauble,
+            9: crafting.OrbOfAlchemy,
+            10: crafting.OrbOfAnnulment,
+            11: crafting.OrbOfAugmentation,
+            12: crafting.OrbOfTransmutation
+        }
 
-    def step(self, action):
-        if action == 0:
-            outcomes = crafting.ArcanistsEtcher.apply(self.crafting_engine,
-                                                      listing=self.listing)
-        elif action == 1:
-            outcomes = crafting.ArmourersScrap.apply(self.crafting_engine,
-                                                     listing=self.listing)
-        elif action == 2:
-            outcomes = crafting.ArtificersOrb.apply(self.crafting_engine,
-                                                    listing=self.listing)
-        elif action == 3:
-            outcomes = crafting.BlacksmithsWhetstone.apply(self.crafting_engine,
-                                                           listing=self.listing)
-        elif action == 4:
-            outcomes = crafting.ChaosOrb.apply(self.crafting_engine,
-                                               listing=self.listing)
-        elif action == 5:
-            outcomes = crafting.ExaltedOrb.apply(self.crafting_engine,
-                                                 listing=self.listing)
-        elif action == 6:
-            outcomes = crafting.FracturingOrb.apply(self.crafting_engine,
-                                                    listing=self.listing)
-        elif action == 7:
-            outcomes = crafting.GemcuttersPrism.apply(self.crafting_engine,
-                                                      listing=self.listing)
-        elif action == 8:
-            outcomes = crafting.GlassblowersBauble.apply(self.crafting_engine,
-                                                         listing=self.listing)
-        elif action == 9:
-            outcomes = crafting.OrbOfAlchemy.apply(self.crafting_engine,
-                                                   listing=self.listing)
-        elif action == 10:
-            outcomes = crafting.OrbOfAnnulment.apply(self.crafting_engine,
-                                                     listing=self.listing)
-        elif action == 11:
-            outcomes = crafting.OrbOfAugmentation.apply(self.crafting_engine,
-                                                        listing=self.listing)
-        elif action == 12:
-            outcomes = crafting.OrbOfTransmutation.apply(self.crafting_engine,
-                                                         listing=self.listing)
+        self.observation_space = spaces.Dict({})
 
-        random_outcome = random.choices(outcomes,
-                                        weights=[outcome.probability for outcome in outcomes],
-                                        k=1)
-        self.crafting_engine.apply_crafting_outcome(listing=self.listing,
-                                                    outcome=random_outcome)
-
-        predicted_price = self.price_predictor.predict_price(listing=self.listing)
-
-        reward = predicted_price - self.current_price
-
+    def _create_observation(self) -> dict:
         obs = {
-            'atype': self.listing.atype,
+            'atype': self.listing.item_atype,
             'rarity': self.listing.rarity,
             'ilvl': self.listing.ilvl,
             'corrupted': self.listing.corrupted,
@@ -94,11 +61,30 @@ class CraftingEnvironment(gym.Env):
             'properties': self.listing.item_properties
         }
 
+        return obs
+
+    def step(self, action):
+        currency = self.currency_map[action]
+        currency_cost = shared.currency_converter.convert_to_exalts(currency=str(currency),
+                                                                    currency_amount=1)
+        outcomes = currency.apply(crafting_engine=self.crafting_engine,
+                                  listing=self.listing)
+
+        random_outcome = random.choices(outcomes,
+                                        weights=[outcome.probability for outcome in outcomes],
+                                        k=1)[0]
+        self.listing = self.crafting_engine.apply_crafting_outcome(listing=self.listing,
+                                                                   outcome=random_outcome)
+
+        predicted_price = self.price_predictor.predict_price(listing=self.listing)
+
+        reward = predicted_price - self.current_price - currency_cost
+        self.current_price = predicted_price
+
+        obs = self._create_observation()
+
         return obs, reward, True, {}
 
     def reset(self):
         self.listing = copy.deepcopy(self.original_state)
         self.current_price = self.original_price
-
-
-
