@@ -140,11 +140,18 @@ class RequestThrottler:
     def _check_if_limits_have_changed(self, func_name: str, response_headers: dict):
         account_limits, account_state, ip_limits, ip_state = self._fetch_limits_and_state(response_headers)
 
+        limits_changed = False
         if account_limits != self.current_account_limits[func_name]:
-            return True
+            logging.info(f"Previous account limit for {func_name}: {self.current_account_limits[func_name]}"
+                         f"\n\tNew account limit for {func_name}: {account_limits}")
+            limits_changed = True
 
         if ip_limits != self.current_ip_limits[func_name]:
-            return True
+            logging.info(f"Previous IP limit for {func_name}: {self.current_ip_limits[func_name]}"
+                         f"\n\tNew IP limit for {func_name}: {ip_limits}")
+            limits_changed = True
+
+        return limits_changed
 
     def _wait_if_needed(self, func_name: str):
         now = time.time()

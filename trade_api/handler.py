@@ -100,27 +100,11 @@ class FilterSplitter:
         return None
 
 
-def _determine_valid_responses(response: dict, fetch_date_record: dict, raw_listings: list):
-    fetch_date = shared_utils.today_date()
-    if fetch_date not in fetch_date_record:
-        fetch_date_record[fetch_date] = set()
-
-    valid_responses = [api_response for api_response in response['responses']
-                       if api_response['id'] not in fetch_date_record[fetch_date]]
-    raw_listings.extend(valid_responses)  # Save to file
-
-    valid_listing_ids = set(response['id'] for response in valid_responses)
-    fetch_date_record[fetch_date].update(valid_listing_ids)  # Save to file
-
-    return valid_responses
-
-
 class TradeApiHandler:
 
     def __init__(self):
         self.fetcher = TradeItemsFetcher()
         self.files_manager = FilesManager()
-        self.fetch_date_record = self.files_manager.file_data[DataPath.LISTING_FETCH_DATES]
         self.raw_listings = self.files_manager.file_data[DataPath.RAW_LISTINGS]
 
         self.split_threshold = 175
@@ -129,11 +113,9 @@ class TradeApiHandler:
 
         self.program_start = datetime.now()
 
-    def _log_responses_progress(self, valid_query_responses, total_query_responses):
+    def _log_responses_progress(self):
         minutes_since_start = round((datetime.now() - self.program_start).seconds / 60, 1)
-        logging.info(f"\n\tTrade API total responses: {total_query_responses}"
-                     f"\n\tTrade API valid responses: {valid_query_responses}"
-                     f"\n\tTotal valid responses in {minutes_since_start} minutes: {self.total_valid_responses}")
+        logging.info(f"Total valid responses in {minutes_since_start} minutes: {self.total_valid_responses}")
 
     def process_queries(self, queries: list[Query]):
         for i, query in enumerate(queries):
@@ -146,44 +128,41 @@ class TradeApiHandler:
                 total_query_responses += raw_responses
                 yield responses
 
-            self._log_responses_progress(valid_query_responses=valid_query_responses,
-                                         total_query_responses=total_query_responses)
-            self.files_manager.save_data(paths=[DataPath.RAW_LISTINGS, DataPath.LISTING_FETCH_DATES])
+            self._log_responses_progress()
+            self.files_manager.save_data(paths=[DataPath.RAW_LISTINGS])
 
     def _process_query(self, query: Query):
         query_dict = query_construction.create_trade_query(query=query)
 
-        raw_response = self.fetcher.fetch_items_response(query_dict)
-        total_raw_responses = raw_response['total']
-        valid_responses = _determine_valid_responses(response=raw_response,
-                                                     fetch_date_record=self.fetch_date_record,
-                                                     raw_listings=self.raw_listings)
-        if not valid_responses:
+        responses, total_raw_responses = self.fetcher.fetch_items_response(query_dict)
+
+        if not responses:
             return
 
-        yield valid_responses, total_raw_responses
+        self.raw_listings.extend(responses)
+
+        yield responses, total_raw_responses
 
         # If we didn't fetch a ton of raw responses then just end the query
         if total_raw_responses < self.split_threshold:
-            logging.info(f"Only fetched {len(valid_responses)} from initial query. Will not split. Returning.")
+            logging.info(f"Only fetched {len(responses)} from initial query. Will not split. Returning.")
             return
 
         for i in list(range(len(query.meta_filters))):
             query_copy = deepcopy(query)
             filter_splits = FilterSplitter.split_filter(n_items=total_raw_responses, meta_filter=query.meta_filters[i])
-            if not filter_splits:
+            if not filter_splits:  # Skip if we weren't able to split this filter up into parts
                 continue
 
             for new_filter in filter_splits:
                 query_copy.meta_filters[i] = new_filter
                 query_dict = query_construction.create_trade_query(query=query_copy)
-                raw_response = self.fetcher.fetch_items_response(query_dict)
-                valid_responses = _determine_valid_responses(response=raw_response,
-                                                             fetch_date_record=self.fetch_date_record,
-                                                             raw_listings=self.raw_listings)
+                responses, total_raw_responses = self.fetcher.fetch_items_response(query_dict)
 
-                if not valid_responses:
-                    continue
+                if not responses:
+                    return
 
-                yield valid_responses, total_raw_responses
+                self.raw_listings.extend(responses)
+
+                yield responses, total_raw_responses
 

@@ -57,7 +57,7 @@ class TradeItemsFetcher:
         return json_data
 
     @classmethod
-    def _get_with_item_ids(cls, post_response, item_ids):
+    def _get_with_item_ids(cls, post_response, item_ids) -> list:
         chunked_list = chunk_list(items=item_ids, chunk_size=10)
 
         params = {
@@ -90,7 +90,7 @@ class TradeItemsFetcher:
         return response_items
 
     @classmethod
-    def fetch_items_response(cls, query) -> dict:
+    def fetch_items_response(cls, query) -> tuple[list, int]:
         post_response = cls._post_for_search_id(query=query)
 
         total_responses = post_response['total']
@@ -98,7 +98,4 @@ class TradeItemsFetcher:
 
         get_response = cls._get_with_item_ids(post_response=post_response,
                                               item_ids=item_ids)
-        return {
-            'responses': get_response,
-            'total': total_responses
-        }
+        return get_response, total_responses

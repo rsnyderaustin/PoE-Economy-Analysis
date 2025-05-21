@@ -13,7 +13,6 @@ import xgboost as xgb
 class DataPath(Enum):
     MODS = Path.cwd() / 'file_management/files/item_mods.pkl'
     CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/files/currency_prices.csv'
-    LISTING_FETCH_DATES = Path.cwd() / 'file_management/files/listing_fetch_dates.json'
     MARKET_SCAN = Path.cwd() / 'file_management/files/market_scan.json'
     POECD_BASES = Path.cwd() / 'file_management/files/poecd_bases.json'
     POECD_STATS = Path.cwd() / 'file_management/files/poecd_stats.json'
