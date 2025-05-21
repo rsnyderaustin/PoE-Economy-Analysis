@@ -136,3 +136,5 @@ class OperationsCoordinator:
                     price_predictor_model=price_predict_model,
                     crafting_model=craft_model
                 )
+
+            self.files_manager.save_data(paths=[ModelPath.CRAFTING_MODEL])
