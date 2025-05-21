@@ -1,8 +1,8 @@
 from datetime import datetime
 
 import numpy as np
-import shared
 
+import shared
 from instances_and_definitions import ModifiableListing
 
 

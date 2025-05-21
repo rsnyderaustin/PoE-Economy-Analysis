@@ -2,22 +2,27 @@
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 
-import file_management
-from file_management import FileKey
 from . import environment
 
 
 class RlTrainer:
 
     @classmethod
-    def train(cls, listing):
-        price_predictor = file_management.FilesManager().model_data[FileKey.PRICE_PREDICT_MODEL]
+    def train(cls,
+              listing,
+              price_predictor_model,
+              exalts_budget: int = 200,
+              total_timesteps: int = 10000,
+              crafting_model=None):
         env = environment.CraftingEnvironment(listing=listing,
-                                              price_predictor=price_predictor)
+                                              price_predictor=price_predictor_model,
+                                              exalts_budget=exalts_budget)
         check_env(env)
 
-        model = PPO("MultiInputPolicy", env, verbose=1)
-        model.learn(total_timesteps=10000)
+        if crafting_model is None:
+            crafting_model = PPO("MultiInputPolicy", env, verbose=1)
 
-        # Save the model
-        model.save("crafting_model")
+        crafting_model.set_env(env)
+        crafting_model.learn(total_timesteps=total_timesteps)
+
+        return crafting_model

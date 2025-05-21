@@ -4,16 +4,11 @@ import itertools
 from dataclasses import dataclass
 import numpy as np
 import pandas as pd
-import seaborn as sns
-from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import RadiusNeighborsClassifier
-from sklearn.neighbors import RadiusNeighborsRegressor, KNeighborsRegressor
 from sklearn.preprocessing import StandardScaler
-from sklearn.feature_selection import mutual_info_regression
 
-from . import utils, visualize
+from . import utils
 
 
 class DataFrameParts:

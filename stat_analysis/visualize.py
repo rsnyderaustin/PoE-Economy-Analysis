@@ -1,7 +1,7 @@
 import pandas as pd
+import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
-import seaborn as sns
 
 
 def plot_correlations(df: pd.DataFrame, atype: str):

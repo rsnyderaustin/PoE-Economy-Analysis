@@ -1,6 +1,7 @@
 
-import dotenv
 import os
+
+import dotenv
 
 
 class EnvLoader:

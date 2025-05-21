@@ -1,5 +1,6 @@
 import logging
 from abc import abstractmethod, ABC
+from enum import Enum
 
 import shared
 from crafting import CraftingOutcome, utils
@@ -8,31 +9,36 @@ from instances_and_definitions import ModifiableListing, ModAffixType
 from shared.trade_item_enums import Rarity, ItemCategory
 
 
+class StaticOutcome(Enum):
+    NO_CHANGE = 'no_change'
+
+
 class CurrencyEngine(ABC):
     item_id = None
 
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if not hasattr(cls, 'item_id') or cls.item_id is None:
+            raise ValueError(f"Class {cls.__name__} must define 'item_id'")
+
     @abstractmethod
-    def apply(self, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(self, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome] | list[StaticOutcome]:
         pass
 
-    @staticmethod
-    def no_outcome_change(listing: ModifiableListing) -> CraftingOutcome:
-        return CraftingOutcome(
-            original_listing=listing,
-            outcome_probability=1.0
-        )
+    def __str__(self):
+        return self.__class__.item_id
 
 
 class ArcanistsEtcher(CurrencyEngine):
     item_id = 'etcher'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.item_category not in shared.non_martial_weapons:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -44,10 +50,10 @@ class ArcanistsEtcher(CurrencyEngine):
             quality_increase = 1
         else:
             logging.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if item_quality == listing.maximum_quality:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         return [
             CraftingOutcome(
@@ -62,12 +68,12 @@ class ArmourersScrap(CurrencyEngine):
     item_id = 'scrap'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.item_category not in shared.armour:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -79,10 +85,10 @@ class ArmourersScrap(CurrencyEngine):
             quality_increase = 1
         else:
             logging.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if item_quality == listing.maximum_quality:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         return [
             CraftingOutcome(
@@ -98,16 +104,16 @@ class ArtificersOrb(CurrencyEngine):
     item_id ='artificers'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         max_sockets = utils.determine_max_sockets(item_category=listing.item_category)
 
         total_listing_sockets = len(listing.socketers) + listing.open_sockets
 
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if total_listing_sockets == max_sockets:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         return [
             CraftingOutcome(
@@ -122,12 +128,12 @@ class BlacksmithsWhetstone(CurrencyEngine):
     item_id = 'whetstone'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.item_category not in shared.martial_weapons:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -139,10 +145,10 @@ class BlacksmithsWhetstone(CurrencyEngine):
             quality_increase = 1
         else:
             logging.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if item_quality == listing.maximum_quality:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         return [
             CraftingOutcome(
@@ -157,7 +163,7 @@ class ChaosOrb(CurrencyEngine):
     item_id = 'chaos'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.rarity != Rarity.RARE:
             return [
                 cls.no_outcome_change(listing=listing)
@@ -217,7 +223,7 @@ class ExaltedOrb(CurrencyEngine):
     item_id = 'exalt'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.rarity != Rarity.RARE:
             return [
                 cls.no_outcome_change(listing=listing)
@@ -253,12 +259,12 @@ class FracturingOrb(CurrencyEngine):
     item_id = 'fracturing-orb'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.fractured_mods:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         outcomes = []
         for mod in listing.explicit_mods:
@@ -277,12 +283,12 @@ class GemcuttersPrism(CurrencyEngine):
     item_id = 'gcp'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.item_category != ItemCategory.ANY_GEM:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         new_quality = listing.quality + 5
         new_quality = min(new_quality, listing.maximum_quality)
@@ -301,12 +307,12 @@ class GlassblowersBauble(CurrencyEngine):
     item_id = 'bauble'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.item_category != ItemCategory.ANY_FLASK:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -323,12 +329,12 @@ class OrbOfAlchemy(CurrencyEngine):
     item_id = 'alch'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.rarity != Rarity.NORMAL:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
                                                               affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
@@ -342,12 +348,12 @@ class OrbOfAnnulment(CurrencyEngine):
     item_id = 'annul'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if not listing.explicit_mods:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         outcomes = []
         for mod in listing.removable_mods:
@@ -366,18 +372,18 @@ class OrbOfAugmentation(CurrencyEngine):
     item_id = 'aug'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.rarity != Rarity.MAGIC:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         open_prefixes = 1 - len(listing.prefixes)
         open_suffixes = 1 - len(listing.suffixes)
 
         if not open_prefixes and not open_suffixes:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         affix_types = []
         if open_prefixes:
@@ -396,12 +402,12 @@ class OrbOfTransmutation(CurrencyEngine):
     item_id = 'transmute'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.rarity != Rarity.NORMAL:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         outcomes = crafting_engine.roll_new_modifier(listing=listing,
                                                      affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
@@ -415,12 +421,12 @@ class RegalOrb(CurrencyEngine):
     item_id = 'regal'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome]:
+    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
         if listing.rarity != Rarity.MAGIC:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         if listing.corrupted:
-            return [cls.no_outcome_change(listing=listing)]
+            return [StaticOutcome.NO_CHANGE]
 
         crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
                                                               affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])

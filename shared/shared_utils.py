@@ -2,7 +2,6 @@ import pprint
 import re
 from collections import Counter
 from datetime import datetime
-from enum import Enum
 
 import pandas as pd
 import pytz
