@@ -3,7 +3,7 @@ import math
 from copy import deepcopy
 from datetime import datetime
 
-from file_management import FilesManager, FileKey
+from file_management import FilesManager, DataPath
 from shared import shared_utils
 from . import query_construction
 from .query import Query, MetaFilter
@@ -55,6 +55,10 @@ class FilterSplitter:
 
     @classmethod
     def split_filter(cls, n_items: int, meta_filter: MetaFilter) -> list[MetaFilter] | None:
+        """
+        Evenly splits a singular query filter (ex: price range) into separate parts. This is used when
+        we fetch too many results and have to split up the query to capture all possible results.
+        """
         filter_copy = deepcopy(meta_filter)
         filter_range = cls._fetch_filter_range(filter_copy)
 
@@ -96,57 +100,68 @@ class FilterSplitter:
         return None
 
 
+def _determine_valid_responses(response: dict, fetch_date_record: dict, raw_listings: list):
+    fetch_date = shared_utils.today_date()
+    if fetch_date not in fetch_date_record:
+        fetch_date_record[fetch_date] = set()
+
+    valid_responses = [api_response for api_response in response['responses']
+                       if api_response['id'] not in fetch_date_record[fetch_date]]
+    raw_listings.extend(valid_responses)  # Save to file
+
+    valid_listing_ids = set(response['id'] for response in valid_responses)
+    fetch_date_record[fetch_date].update(valid_listing_ids)  # Save to file
+
+    return valid_responses
+
+
 class TradeApiHandler:
 
     def __init__(self):
         self.fetcher = TradeItemsFetcher()
         self.files_manager = FilesManager()
+        self.fetch_date_record = self.files_manager.file_data[DataPath.LISTING_FETCH_DATES]
+        self.raw_listings = self.files_manager.file_data[DataPath.RAW_LISTINGS]
 
         self.split_threshold = 175
 
-        self.valid_responses_found = 0
+        self.total_valid_responses = 0
+
         self.program_start = datetime.now()
+
+    def _log_responses_progress(self, valid_query_responses, total_query_responses):
+        minutes_since_start = round((datetime.now() - self.program_start).seconds / 60, 1)
+        logging.info(f"\n\tTrade API total responses: {total_query_responses}"
+                     f"\n\tTrade API valid responses: {valid_query_responses}"
+                     f"\n\tTotal valid responses in {minutes_since_start} minutes: {self.total_valid_responses}")
 
     def process_queries(self, queries: list[Query]):
         for i, query in enumerate(queries):
-            logging.info(f"Processing query {i} of {len(queries)} queries.")
-            yield from self.process_query(query)
+            logging.info(f"Processing query {i + 1} of {len(queries)} queries.")
+            valid_query_responses = 0
+            total_query_responses = 0
+            for responses, raw_responses in self._process_query(query):
+                self.total_valid_responses += len(responses)
+                valid_query_responses += len(responses)
+                total_query_responses += raw_responses
+                yield responses
 
-    def _process_raw_response(self, response: dict):
-        fetch_date = shared_utils.today_date()
-        fetch_date_record = self.files_manager.file_data[FileKey.LISTING_FETCHES]
+            self._log_responses_progress(valid_query_responses=valid_query_responses,
+                                         total_query_responses=total_query_responses)
+            self.files_manager.save_data(paths=[DataPath.RAW_LISTINGS, DataPath.LISTING_FETCH_DATES])
 
-        if fetch_date not in fetch_date_record:
-            fetch_date_record[fetch_date] = set()
-
-        valid_responses = [api_response for api_response in response['responses']
-                           if api_response['id'] not in fetch_date_record[fetch_date]]
-
-        listing_ids = set(response['id'] for response in valid_responses)
-        fetch_date_record[fetch_date].update(listing_ids)
-        # We save the listings every time because losing any in an unexpected program crash
-        # means duplicated data
-        self.files_manager.save_data(keys=[FileKey.LISTING_FETCHES])
-
-        # Below is just logging logic
-        self.valid_responses_found += len(valid_responses)
-        minutes_since_start = round((datetime.now() - self.program_start).seconds / 60, 1)
-        logging.info(f"\n\tTrade API total responses: {len(response['responses'])}"
-                     f"\n\tTrade API valid responses: {len(valid_responses)}"
-                     f"\n\tTotal valid responses in {minutes_since_start} minutes: {self.valid_responses_found}")
-
-        return valid_responses
-
-    def process_query(self, query: Query):
+    def _process_query(self, query: Query):
         query_dict = query_construction.create_trade_query(query=query)
 
         raw_response = self.fetcher.fetch_items_response(query_dict)
         total_raw_responses = raw_response['total']
-        valid_responses = self._process_raw_response(response=raw_response)
+        valid_responses = _determine_valid_responses(response=raw_response,
+                                                     fetch_date_record=self.fetch_date_record,
+                                                     raw_listings=self.raw_listings)
         if not valid_responses:
             return
 
-        yield valid_responses
+        yield valid_responses, total_raw_responses
 
         # If we didn't fetch a ton of raw responses then just end the query
         if total_raw_responses < self.split_threshold:
@@ -163,9 +178,12 @@ class TradeApiHandler:
                 query_copy.meta_filters[i] = new_filter
                 query_dict = query_construction.create_trade_query(query=query_copy)
                 raw_response = self.fetcher.fetch_items_response(query_dict)
-                valid_responses = self._process_raw_response(response=raw_response)
+                valid_responses = _determine_valid_responses(response=raw_response,
+                                                             fetch_date_record=self.fetch_date_record,
+                                                             raw_listings=self.raw_listings)
+
                 if not valid_responses:
                     continue
 
-                yield valid_responses
+                yield valid_responses, total_raw_responses
 

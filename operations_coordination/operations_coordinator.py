@@ -5,15 +5,15 @@ import random
 
 import xgboost as xgb
 
-import crafting_model
+import crafting_ai_model
 import data_handling
 import poecd_api
-import price_predict_model
+import price_predict_ai_model
 import psql
 import trade_api
 from file_management import FilesManager, DataPath, ModelPath
 from instances_and_definitions import ModifiableListing
-from price_predict_model.build_model import build_price_predict_model
+from price_predict_ai_model.build_model import build_price_predict_model
 from shared import shared_utils, env_loader, env_loading
 from stat_analysis.stats_prep import StatsPrep
 from trade_api import query
@@ -34,7 +34,7 @@ class OperationsCoordinator:
         global_atypes_manager = poecd_api.PoecdManager(refresh_data=refresh_poecd_source).create_global_atypes_manager()
         self.resource_resolver = data_handling.ModResolver(global_atypes_manager=global_atypes_manager)
 
-        self.price_predict_data_manager = price_predict_model.ListingsDataProcessor()
+        self.price_predict_data_manager = price_predict_ai_model.ListingsDataProcessor()
 
         self.env_loader = env_loading.EnvLoader()
         self.psql_manager = psql.PostgreSqlManager()
@@ -131,7 +131,7 @@ class OperationsCoordinator:
             listings = self._create_listings(api_item_responses)
 
             for listing in listings:
-                crafting_model.RlTrainer.train(
+                crafting_ai_model.RlTrainer.train(
                     listing=listing,
                     price_predictor_model=price_predict_model,
                     crafting_model=craft_model

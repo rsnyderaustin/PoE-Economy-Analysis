@@ -88,7 +88,7 @@ filter_enum_to_meta_search_type = {
 }
 
 
-class ModifierClass(Enum):
+class ModClass(Enum):
     IMPLICIT = 'implicitMods'
     EXPLICIT = 'explicitMods'
     ENCHANT = 'enchantMods'

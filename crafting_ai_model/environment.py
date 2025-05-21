@@ -3,6 +3,7 @@ import pprint
 import random
 
 import gymnasium as gym
+import numpy as np
 from gymnasium import spaces
 
 import crafting
@@ -28,8 +29,8 @@ def create_observation(listing) -> dict:
     return obs
 
 
-def log_action(action: str, done: bool, cost: float, original_price: float, predicted_price: float, reward: float, message: str,
-               listing_data: dict = None):
+def log_action(action: str, done: bool, original_price: float, predicted_price: float, message: str,
+               cost: float = None, reward: float = None, listing_data: dict = None):
     logging.info(f"\n---- New Action ----"
                  f"\nAction: {action}"
                  f"\nDone crafting: {done}"
@@ -74,7 +75,13 @@ class CraftingEnvironment(gym.Env):
             13: 'STOP'
         }
 
-        self.observation_space = spaces.Dict({})
+        self.observation_space = spaces.Dict({
+            'atype': None,
+            'rarity': spaces.Discrete(4),
+            'ilvl': spaces.Box(low=1, high=100, shape=(), dtype=np.int32),
+            'corrupted': spaces.Discrete(2),
+            'identified': spaces.Discrete(1)
+        })
 
         self.total_exalts_spent = 0
 
@@ -82,19 +89,22 @@ class CraftingEnvironment(gym.Env):
         revenue = self.current_price
         cost = self.original_price + self.total_exalts_spent
         percent_profit = (revenue - cost) / cost
-        is_done = True
-        return create_observation(self.listing), percent_profit, is_done, {}
+        done = True
+        log_action(action='STOP', done=done, cost=None, original_price=self.current_price,
+                   predicted_price=self.current_price, reward=None, message="Exceeded budget.",
+                   listing_data=self.listing.__dict__)
+        return create_observation(self.listing), percent_profit, done, {}
 
     def _handle_currency_engine_action(self, action) -> tuple:
         done = False
-        currency = self.currency_map[action]
+        currency = action
         currency_cost = shared.currency_converter.convert_to_exalts(currency=str(currency),
                                                                     currency_amount=1)
 
         if self.total_exalts_spent + currency_cost > self.exalts_budget:
             reward = -1
             done = True
-            log_action(action=str(action), done=done, cost=currency_cost, original_price=self.current_price,
+            log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                        predicted_price=self.current_price, reward=reward, message="Exceeded budget.",
                        listing_data=self.listing.__dict__)
             return create_observation(self.listing), reward, done, {}
@@ -106,7 +116,7 @@ class CraftingEnvironment(gym.Env):
 
         if len(outcomes) == 1 and outcomes[0] is StaticOutcome.NO_CHANGE:
             reward = -1
-            log_action(action=str(action), done=done, cost=currency_cost, original_price=self.current_price,
+            log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                        predicted_price=self.current_price, reward=reward, message="No change on item.",
                        listing_data=self.listing.__dict__)
             return create_observation(self.listing), reward, done, {}
@@ -126,7 +136,7 @@ class CraftingEnvironment(gym.Env):
 
         obs = create_observation(self.listing)
 
-        log_action(action=str(action), done=done, cost=currency_cost, original_price=self.current_price,
+        log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                    predicted_price=self.current_price, reward=reward, message="No change on item.")
         return obs, percent_profit, done, {}
 

@@ -13,15 +13,19 @@ import xgboost as xgb
 class DataPath(Enum):
     MODS = Path.cwd() / 'file_management/files/item_mods.pkl'
     CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/files/currency_prices.csv'
-    LISTING_FETCHES = Path.cwd() / 'file_management/files/listing_fetch_dates.json'
+    LISTING_FETCH_DATES = Path.cwd() / 'file_management/files/listing_fetch_dates.json'
     MARKET_SCAN = Path.cwd() / 'file_management/files/market_scan.json'
     POECD_BASES = Path.cwd() / 'file_management/files/poecd_bases.json'
     POECD_STATS = Path.cwd() / 'file_management/files/poecd_stats.json'
+    OFFICIAL_STATIC = Path.cwd() / 'file_management/files/official_static.json'
+    OFFICIAL_STATS = Path.cwd() / 'file_management/files/official_stats.json'
+    MOD_ENCODES = Path.cwd() / 'file_management/files/mod_encodes.json'
+    RAW_LISTINGS = Path.cwd() / 'file_management/files/raw_listings.json'
 
 
 class ModelPath(Enum):
-    PRICE_PREDICT_MODEL = Path.cwd() / 'file_management/files/price_predict_model.json'
-    CRAFTING_MODEL = Path.cwd() / 'file_management/files/crafting_model.pt'
+    PRICE_PREDICT_MODEL = Path.cwd() / 'file_management/files/price_predict_ai_model.json'
+    CRAFTING_MODEL = Path.cwd() / 'file_management/files/crafting_ai_model.pt'
 
 
 class SetEncoder(json.JSONEncoder):
@@ -90,9 +94,9 @@ def load_data_files() -> dict:
                 raise ValueError(f"Unsupported file type {path.suffix}")
 
     # LISTING_FETCHES is a special case because its dict values are sets
-    file_data[DataPath .LISTING_FETCHES] = {
+    file_data[DataPath .LISTING_FETCH_DATES] = {
         fetch_date: set(listing_ids)
-        for fetch_date, listing_ids in file_data[DataPath.LISTING_FETCHES].items()
+        for fetch_date, listing_ids in file_data[DataPath.LISTING_FETCH_DATES].items()
     }
 
     return file_data

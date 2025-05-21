@@ -1,7 +1,7 @@
 import re
 
-from shared.trade_item_enums import ItemCategory
-from .utils import ModClass, ModAffixType, generate_mod_id
+from shared.trade_item_enums import ItemCategory, ModClass
+from .utils import ModAffixType, generate_mod_id
 
 
 class SubMod:
