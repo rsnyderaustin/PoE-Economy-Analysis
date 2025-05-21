@@ -43,22 +43,21 @@ class OperationsCoordinator:
         training_queries = query.QueryPresets().training_fills
         random.shuffle(training_queries)
 
-        while True:
-            for api_item_responses in self.trade_api_handler.process_queries(training_queries):
-                listings = []
-                for api_item_response in api_item_responses:
+        for api_item_responses in self.trade_api_handler.process_queries(training_queries):
+            listings = []
+            for api_item_response in api_item_responses:
 
-                    mods = self.resource_resolver.process_mods(item_data=api_item_response['item'])
-                    listing = data_handling.ListingFactory.create_listing(api_item_response=api_item_response,
-                                                                          item_mods=mods)
-                    listings.append(listing)
+                mods = self.resource_resolver.process_mods(item_data=api_item_response['item'])
+                listing = data_handling.ListingFactory.create_listing(api_item_response=api_item_response,
+                                                                      item_mods=mods)
+                listings.append(listing)
 
-                flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
+            flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
 
-                all_none_cols = {col: val for col, val in flattened_data.items() if all(v is None for v in val)}
+            all_none_cols = {col: val for col, val in flattened_data.items() if all(v is None for v in val)}
 
-                self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
-                                              data=flattened_data)
+            self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
+                                          data=flattened_data)
 
 
     def find_underpriced_items(self):
