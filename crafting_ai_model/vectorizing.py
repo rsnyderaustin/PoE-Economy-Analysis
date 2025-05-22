@@ -17,7 +17,10 @@ def _vectorize_mod(mod_str: str, max_mods: int, possible_values: int):
 class VectorizedAttributes:
 
     def __init__(self,
-                 max_mods: int = ):
+                 max_implicit_mods: int = 6,
+                 max_fractured_mods: int = 18,
+                 max_
+                 max_values_per_mod: int = 6):
 
         self.num_mods = {
             ModClass.IMPLICIT: 0,

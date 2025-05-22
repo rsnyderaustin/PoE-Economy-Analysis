@@ -5,6 +5,7 @@ from typing import Iterable
 
 from dateutil.parser import isoparse
 
+
 class ModAffixType(Enum):
     PREFIX = 'prefix'
     SUFFIX = 'suffix'

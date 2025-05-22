@@ -56,6 +56,11 @@ class PricePredictTransformer:
         max_quality_damage = base_damage * max_multiplier
 
         max_quality_pdps = max_quality_damage * attacks_per_second
+
+        if max_quality_pdps == 0:
+            logging.error("max_quality_pdps calculated as 0. Ensure that local mods were not removed before inserting"
+                          "max quality pdps.")
+
         self.data[column_name] = max_quality_pdps
         return self
 
@@ -66,6 +71,10 @@ class PricePredictTransformer:
         attacks_per_second = self.data.get('Attacks per Second', 0)
 
         edps = (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+
+        if edps == 0:
+            logging.error("edps calculated as 0. Ensure that local mods were not removed before inserting elemental dps.")
+
         self.data[column_name] = edps
         return self
 
