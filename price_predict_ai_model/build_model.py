@@ -8,7 +8,7 @@ import xgboost as xgb
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
-from file_management import FilesManager, FileKey
+from file_management import FilesManager, ModelPath
 
 
 def lowest_price_focused_error(y_true, y_pred):
@@ -194,7 +194,7 @@ def build_price_predict_model(df: pd.DataFrame,
     )
 
     # Cache trained model
-    FilesManager().file_data[FileKey.PRICE_PREDICT_MODEL] = model
+    FilesManager().file_data[ModelPath.PRICE_PREDICT_MODEL] = model
 
     # Evaluate performance
     test_predictions = model.predict(test_data)

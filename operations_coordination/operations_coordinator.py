@@ -58,7 +58,7 @@ class OperationsCoordinator:
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = self._create_listings(api_item_responses)
 
-            flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
+            flattened_data = self.price_predict_data_manager.flatten_listings(listings)
 
             all_none_cols = {col: val for col, val in flattened_data.items() if all(v is None for v in val)}
             if all_none_cols:
@@ -79,7 +79,7 @@ class OperationsCoordinator:
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = self._create_listings(api_item_responses)
 
-            flattened_data = self.price_predict_data_manager.flatten_listings_into_dict(listings)
+            flattened_data = self.price_predict_data_manager.flatten_listings(listings)
             model_df = self.price_predict_data_manager.prepare_flattened_listings_data_for_model(flattened_data)
             prices = list(model_df['exalts'])
             model_df = model_df.drop(columns=['exalts'])

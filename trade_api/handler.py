@@ -104,6 +104,7 @@ class TradeApiHandler:
 
     def __init__(self):
         self.fetcher = TradeItemsFetcher()
+
         self.files_manager = FilesManager()
         self.raw_listings = self.files_manager.file_data[DataPath.RAW_LISTINGS]
 
@@ -122,10 +123,12 @@ class TradeApiHandler:
             logging.info(f"Processing query {i + 1} of {len(queries)} queries.")
             valid_query_responses = 0
             total_query_responses = 0
-            for responses, raw_responses in self._process_query(query):
+            for responses, response_results_count in self._process_query(query):
+                self.raw_listings.extend(responses)
+
                 self.total_valid_responses += len(responses)
                 valid_query_responses += len(responses)
-                total_query_responses += raw_responses
+                total_query_responses += response_results_count
                 yield responses
 
             self._log_responses_progress()
@@ -134,35 +137,31 @@ class TradeApiHandler:
     def _process_query(self, query: Query):
         query_dict = query_construction.create_trade_query(query=query)
 
-        responses, total_raw_responses = self.fetcher.fetch_items_response(query_dict)
+        responses, response_results_count = self.fetcher.fetch_items_response(query_dict)
 
         if not responses:
             return
 
-        self.raw_listings.extend(responses)
-
-        yield responses, total_raw_responses
+        yield responses, response_results_count
 
         # If we didn't fetch a ton of raw responses then just end the query
-        if total_raw_responses < self.split_threshold:
+        if response_results_count < self.split_threshold:
             logging.info(f"Only fetched {len(responses)} from initial query. Will not split. Returning.")
             return
 
         for i in list(range(len(query.meta_filters))):
             query_copy = deepcopy(query)
-            filter_splits = FilterSplitter.split_filter(n_items=total_raw_responses, meta_filter=query.meta_filters[i])
+            filter_splits = FilterSplitter.split_filter(n_items=response_results_count, meta_filter=query.meta_filters[i])
             if not filter_splits:  # Skip if we weren't able to split this filter up into parts
                 continue
 
             for new_filter in filter_splits:
                 query_copy.meta_filters[i] = new_filter
                 query_dict = query_construction.create_trade_query(query=query_copy)
-                responses, total_raw_responses = self.fetcher.fetch_items_response(query_dict)
+                responses, response_results_count = self.fetcher.fetch_items_response(query_dict)
 
                 if not responses:
                     return
 
-                self.raw_listings.extend(responses)
-
-                yield responses, total_raw_responses
+                yield responses, response_results_count
 

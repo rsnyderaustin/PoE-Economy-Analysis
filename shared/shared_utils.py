@@ -34,6 +34,10 @@ bgroup_to_category = {
 }
 
 
+def form_column_name(col_name: str) -> str:
+    return col_name.lower().replace(' ', '_')
+
+
 def _process_bracketed_text(match):
     content = match.group(1)
 

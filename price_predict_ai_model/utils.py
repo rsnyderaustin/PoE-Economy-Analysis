@@ -6,10 +6,6 @@ import shared
 from instances_and_definitions import ModifiableListing
 
 
-def form_column_name(col_name: str) -> str:
-    return col_name.lower().replace(' ', '_')
-
-
 def weighted_mse(y_true, y_pred, overprediction_weight, underprediction_weight):
     """
     Custom MSE function that weights overpredictions and underpredictions differently.

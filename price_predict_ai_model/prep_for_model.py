@@ -10,15 +10,13 @@ from . import utils
 
 
 class ListingsClass(ABC):
-    _replaced_attribute_cols = [
+
+    _local_weapon_mod_cols = [
         'Attacks per Second',
         'Physical Damage',
         'Cold Damage',
         'Fire Damage',
-        'Lightning Damage'
-    ]
-
-    _local_weapon_mod_cols = [
+        'Lightning Damage',
         'adds_#_to_#_fire_damage',
         '#%_increased_attack_speed',
         '#%_increased_physical_damage',
@@ -178,7 +176,7 @@ class ListingFlattener(ListingsClass):
 class ListingsDataProcessor(ListingsClass):
 
     @staticmethod
-    def flatten_listings_into_dict(listings: list[ModifiableListing]) -> dict:
+    def flatten_listings(listings: list[ModifiableListing]) -> dict:
         logging.info(f"Flattening {len(listings)} listings.")
         listings_data = dict()
         rows = 0
