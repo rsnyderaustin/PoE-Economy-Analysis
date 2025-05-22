@@ -299,14 +299,13 @@ class CraftingEnvironment(gym.Env):
         outcome = currency.apply(crafting_engine=self.crafting_engine,
                                  listing=self.listing)
 
-        if outcome == outcome.listing_changed:
+        if not outcome.listing_changed:
             reward = -1
             log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                        predicted_price=self.current_price, reward=reward, message="No change on item.",
                        listing_data=self.listing.__dict__)
             return self._create_observation_space(), reward, done, {}
 
-        # If the outcome isn't NO_CHANGE, then it's just the new listing
         self.listing = outcome.new_listing
 
         predicted_price = self.price_predictor.predict_prices(listings=[self.listing])[0]
