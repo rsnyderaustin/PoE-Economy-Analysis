@@ -228,12 +228,6 @@ class ObservationSpace:
         self.mods[mod.mod_class_e][mod.mod_id] = detail
 
     def add_attributes(self, listing: ModifiableListing):
-        for listing_attribute in self.__class__.listing_attributes:
-            if not hasattr(listing, listing_attribute):
-                raise ValueError(f"Attribute {listing_attribute} not found in listing. Listing data below:"
-                                 f"\n{pprint.pprint(listing_attribute)}")
-            
-            start_index = self._key_to_index[listing_attribute]
         attributes = {
             att: getattr(listing, att) for att in self.__class__.listing_attributes
         }
@@ -276,13 +270,7 @@ class CraftingEnvironment(gym.Env):
             13: 'STOP'
         }
 
-        self.observation_space = spaces.Dict({
-            'atype': None,
-            'rarity': spaces.Discrete(4),
-            'ilvl': spaces.Box(low=1, high=100, shape=(), dtype=np.int32),
-            'corrupted': spaces.Discrete(2),
-            'identified': spaces.Discrete(1)
-        })
+        self.observation_space = ObservationSpace()
 
         self.total_exalts_spent = 0
 
@@ -294,7 +282,7 @@ class CraftingEnvironment(gym.Env):
         log_action(action='STOP', done=done, cost=None, original_price=self.current_price,
                    predicted_price=self.current_price, reward=None, message="Exceeded budget.",
                    listing_data=self.listing.__dict__)
-        return create_observation(self.listing), percent_profit, done, {}
+        return self.observation_space.get(), percent_profit, done, {}
 
     def _handle_currency_engine_action(self, action) -> tuple:
         done = False
@@ -308,7 +296,7 @@ class CraftingEnvironment(gym.Env):
             log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                        predicted_price=self.current_price, reward=reward, message="Exceeded budget.",
                        listing_data=self.listing.__dict__)
-            return create_observation(self.listing), reward, done, {}
+            return self.observation_space.get(), reward, done, {}
 
         self.total_exalts_spent += currency_cost
 
@@ -320,7 +308,7 @@ class CraftingEnvironment(gym.Env):
             log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                        predicted_price=self.current_price, reward=reward, message="No change on item.",
                        listing_data=self.listing.__dict__)
-            return create_observation(self.listing), reward, done, {}
+            return self.observation_space.get(), reward, done, {}
 
         random_outcome = random.choices(outcomes,
                                         weights=[outcome.probability for outcome in outcomes],
