@@ -316,7 +316,7 @@ class CraftingEnvironment(gym.Env):
         reward = percent_profit
 
         log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
-                   predicted_price=self.current_price, reward=reward, message="No change on item.")
+                   predicted_price=self.current_price, reward=reward, message=f"Successfully applied {action}")
         return self._create_observation_space(), percent_profit, done, {}
 
     def step(self, action):
