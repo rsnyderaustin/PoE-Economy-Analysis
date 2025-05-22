@@ -1,10 +1,9 @@
-import logging
 import itertools
-
+import logging
 from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
-from sklearn.decomposition import PCA
 from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 

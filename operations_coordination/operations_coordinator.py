@@ -7,16 +7,18 @@ import xgboost as xgb
 
 import crafting_ai_model
 import data_handling
+import data_transforming
 import poecd_api
 import price_predict_ai_model
 import psql
 import trade_api
-from file_management import FilesManager, DataPath, ModelPath
+from file_management import FilesManager, ModelPath
 from instances_and_definitions import ModifiableListing
 from price_predict_ai_model.build_model import build_price_predict_model
 from shared import shared_utils, env_loader, env_loading
 from stat_analysis.stats_prep import StatsPrep
 from trade_api import query
+from . import utils
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
@@ -57,15 +59,11 @@ class OperationsCoordinator:
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = self._create_listings(api_item_responses)
+            listings_data = [data_transforming.default_flatten_preset(listing) for listing in listings]
+            row_data = utils.flatten_data_into_rows(listings_data)
 
-            flattened_data = self.price_predict_data_manager.flatten_listings(listings)
-
-            all_none_cols = {col: val for col, val in flattened_data.items() if all(v is None for v in val)}
-            if all_none_cols:
-                raise ValueError(f"flatten_listing returned columns {all_none_cols.keys()} with all Nones. Invalid because "
-                                 f"psql cannot determine the datatype for a blank column.")
             self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
-                                          data=flattened_data)
+                                          data=row_data)
 
     def find_underpriced_items(self):
         training_queries = query.QueryPresets().training_fills

@@ -4,7 +4,6 @@ from copy import deepcopy
 from datetime import datetime
 
 from file_management import FilesManager, DataPath
-from shared import shared_utils
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
