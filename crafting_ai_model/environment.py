@@ -47,6 +47,11 @@ class ObservationSpace:
         'max_quality_pdps'
     ]
 
+    calculated_attributes = [
+        'edps',
+        'max_quality_pdps'
+    ]
+
     def __init__(self,
                  max_skills: int = 3,
                  max_implicits: int = 3,
@@ -161,6 +166,7 @@ class ObservationSpace:
                 shape[mod_value_key] = None
         return shape
 
+    @classmethod
     def _determine_skills_shape(cls, max_skills: int) -> dict:
         shape = dict()
         for skill_i in list(range(max_skills)):
@@ -285,28 +291,23 @@ class CraftingEnvironment(gym.Env):
             reward = -1
             done = True
             log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
-                       predicted_price=self.current_price, reward=reward, message="Exceeded budget.",
-                       listing_data=self.listing.__dict__)
+                       predicted_price=self.current_price, reward=reward, message="Exceeded budget.")
             return self._create_observation_space(), reward, done, {}
 
         self.total_exalts_spent += currency_cost
 
-        outcomes = currency.apply(crafting_engine=self.crafting_engine,
-                                  listing=self.listing)
+        outcome = currency.apply(crafting_engine=self.crafting_engine,
+                                 listing=self.listing)
 
-        # Return a small negative reward if this was an invalid action on the item
-        if len(outcomes) == 1 and outcomes[0] is StaticOutcome.NO_CHANGE:
+        if outcome == StaticOutcome.NO_CHANGE:
             reward = -1
             log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                        predicted_price=self.current_price, reward=reward, message="No change on item.",
                        listing_data=self.listing.__dict__)
             return self._create_observation_space(), reward, done, {}
 
-        random_outcome = random.choices(outcomes,
-                                        weights=[outcome.probability for outcome in outcomes],
-                                        k=1)[0]
-        self.listing = self.crafting_engine.apply_crafting_outcome(listing=self.listing,
-                                                                   outcome=random_outcome)
+        # If the outcome isn't NO_CHANGE, then it's just the new listing
+        self.listing = outcome
 
         predicted_price = self.price_predictor.predict_price(listing=self.listing)
 

@@ -22,8 +22,8 @@ class ModFactory:
             ]
             values_ranges = [
                 (
-                    float(magnitude['min']) if 'min' in magnitude else None,
-                    float(magnitude['max']) if 'max' in magnitude else None
+                    utils.convert_string_into_number(magnitude['min']) if 'min' in magnitude else None,
+                    utils.convert_string_into_number(magnitude['max']) if 'max' in magnitude else None
                 )
                 for magnitude in same_mod_magnitudes
             ]
@@ -48,11 +48,18 @@ class ModFactory:
             mod_id = magnitude['hash']
             value_ranges = [
                 (
-                    float(magnitude['min']) if 'min' in magnitude else None,
-                    float(magnitude['max']) if 'max' in magnitude else None
+                    utils.convert_string_into_number(magnitude['min']) if 'min' in magnitude else None,
+                    utils.convert_string_into_number(magnitude['max']) if 'max' in magnitude else None
                 )
             ]
             mod_text = mod_id_to_text[mod_id]
+            actual_values = shared_utils.parse_values_from_text(mod_text)
+
+            if len(actual_values) != len(value_ranges):
+                raise ValueError(f"Item has a different number of ranges and actual values:"
+                                 f"\n\tRanges: {value_ranges}"
+                                 f"\n\tActual values: {actual_values}")
+
             sanitized_text = shared_utils.sanitize_mod_text(mod_text)
             sub_mod = SubMod(
                 mod_id=mod_id,

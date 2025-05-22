@@ -1,15 +1,15 @@
 import re
 
-from shared.trade_item_enums import ItemCategory, ModClass
+from shared.trade_item_enums import ItemCategory, ModClass, Rarity
 from .utils import ModAffixType, generate_mod_id
 
 
 class SubMod:
     def __init__(self,
                  mod_id: str,
-                 actual_values: tuple[float],
                  sanitized_mod_text: str,
-                 values_ranges: list[tuple[float | None, float | None]]):
+                 actual_values: tuple[float] | tuple[int] = None,
+                 values_ranges: list[tuple[float | None, float | None]] | list[tuple[int | None, int | None]] = None):
         self.mod_id = mod_id
         self.actual_values = actual_values
         self.sanitized_mod_text = sanitized_mod_text
@@ -37,6 +37,12 @@ class ItemMod:
         # These variables should be very quickly filled in after creation
         self.mod_types = None
         self.weighting = None
+
+    def __eq__(self, other):
+        if not isinstance(other, ItemMod):
+            return False
+
+        return self.mod_id == other.mod_id
 
     @property
     def is_hybrid(self):
@@ -134,6 +140,13 @@ class ModifiableListing:
 
         self.maximum_quality = self._determine_max_quality()
 
+        self._mod_class_to_attribute = {
+            ModClass.IMPLICIT: self.implicit_mods,
+            ModClass.ENCHANT: self.enchant_mods,
+            ModClass.FRACTURED: self.fractured_mods,
+            ModClass.EXPLICIT: self.explicit_mods
+        }
+
     def _determine_max_quality(self) -> int:
         implicit_sub_mods = [sub_mod for mod in self.implicit_mods for sub_mod in mod.sub_mods]
         max_quality = 20
@@ -158,19 +171,19 @@ class ModifiableListing:
         return self.explicit_mods + self.fractured_mods
 
     @property
+    def removable_mods(self) -> list[ItemMod]:
+        return self.explicit_mods
+
+    @property
     def quality(self):
         return self.item_properties['Quality']
 
-    def set_quality(self, new_quality: int):
+    @quality.setter
+    def quality(self, new_quality):
         self.item_properties['Quality'] = new_quality
 
-    @property
-    def permanent_mods(self) -> list[ItemMod]:
-        return self.fractured_mods
-
-    @property
-    def removable_mods(self) -> list[ItemMod]:
-        return self.explicit_mods
+    def set_quality(self, new_quality: int):
+        self.item_properties['Quality'] = new_quality
 
     @property
     def prefixes(self):
@@ -178,7 +191,12 @@ class ModifiableListing:
 
     @property
     def open_prefixes(self) -> int:
-        return 3 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.PREFIX])
+        if self.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
+            return 0
+        elif self.rarity == Rarity.MAGIC:
+            return 2 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.PREFIX])
+        else:
+            return 3 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.PREFIX])
 
     @property
     def suffixes(self):
@@ -186,4 +204,12 @@ class ModifiableListing:
 
     @property
     def open_suffixes(self) -> int:
-        return 3 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.SUFFIX])
+        if self.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
+            return 0
+        elif self.rarity == Rarity.MAGIC:
+            return 2 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.SUFFIX])
+        else:
+            return 3 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.SUFFIX])
+
+    def fetch_mods(self, mod_class: ModClass):
+        return self._mod_class_to_attribute[mod_class]

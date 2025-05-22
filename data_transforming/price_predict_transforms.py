@@ -6,6 +6,7 @@ import pandas as pd
 
 from instances_and_definitions import ModifiableListing
 from shared import shared_utils
+from . import utils
 
 _select_col_types = {
     'atype': 'category',
@@ -67,37 +68,21 @@ class PricePredictTransformer:
         return self
 
     def insert_max_quality_pdps(self, column_name: str = 'max_quality_pdps'):
-        quality = self.data.get('Quality', 0)
-        damage = self.data.get('Physical Damage', 0)
-        attacks_per_second = self.data.get('Attacks per Second', 0)
-
-        current_multiplier = 1 + (quality / 100)
-        max_multiplier = 1.20
-
-        # Calculate the base damage and then the 20% quality damage
-        base_damage = damage / current_multiplier
-        max_quality_damage = base_damage * max_multiplier
-
-        max_quality_pdps = max_quality_damage * attacks_per_second
-
-        if max_quality_pdps == 0:
-            logging.error("max_quality_pdps calculated as 0. Ensure that local mods were not removed before inserting"
-                          "max quality pdps.")
-
+        max_quality_pdps = shared_utils.calculate_max_quality_pdps(
+            quality=self.data.get('Quality', 0),
+            phys_damage=self.data.get('Physical Damage', 0),
+            attacks_per_second=self.data.get('Attacks per Second', 0)
+        )
         self.data[column_name] = max_quality_pdps
         return self
 
     def insert_elemental_dps(self, column_name: str = 'edps'):
-        cold_damage = self.data.get('Cold Damage', 0)
-        fire_damage = self.data.get('Fire Damage', 0)
-        lightning_damage = self.data.get('Lightning Damage', 0)
-        attacks_per_second = self.data.get('Attacks per Second', 0)
-
-        edps = (cold_damage + fire_damage + lightning_damage) * attacks_per_second
-
-        if edps == 0:
-            logging.error("edps calculated as 0. Ensure that local mods were not removed before inserting elemental dps.")
-
+        edps = shared_utils.calculate_elemental_dps(
+            cold_damage=self.data.get('Cold Damage', 0),
+            fire_damage=self.data.get('Fire Damage', 0),
+            lightning_damage=self.data.get('Lightning Damage', 0),
+            attacks_per_second=self.data.get('Attacks per Second', 0)
+        )
         self.data[column_name] = edps
         return self
 

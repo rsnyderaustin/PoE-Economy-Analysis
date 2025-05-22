@@ -186,8 +186,21 @@ def parse_poecd_mtypes_string(mtypes_string: str) -> list:
     return parsed
 
 
-def determine_dict_length(data: dict):
-    length = min(len(v) for k, v in data.items())
-    return length
+def calculate_max_quality_pdps(quality, phys_damage, attacks_per_second):
+    current_multiplier = 1 + (quality / 100)
+    max_multiplier = 1.20
+
+    # Calculate the base damage and then the 20% quality damage
+    base_damage = phys_damage / current_multiplier
+    max_quality_damage = base_damage * max_multiplier
+
+    max_quality_pdps = max_quality_damage * attacks_per_second
+
+    return max_quality_pdps
+
+
+def calculate_elemental_dps(cold_damage, fire_damage, lightning_damage, attacks_per_second):
+    edps = (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+    return edps
 
 

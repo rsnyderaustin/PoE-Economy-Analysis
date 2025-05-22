@@ -1,12 +1,14 @@
 import logging
+import random
 from abc import abstractmethod, ABC
 from enum import Enum
 
 import shared
-from crafting import CraftingOutcome, utils
-from crafting.crafting_engine import CraftingEngine
+from crafting import utils
+from crafting.mod_rolling import ModifierRoller
 from instances_and_definitions import ModifiableListing, ModAffixType
-from shared.trade_item_enums import Rarity, ItemCategory
+from shared.trade_item_enums import Rarity, ItemCategory, ModClass
+from shared import trade_item_enums
 
 
 class StaticOutcome(Enum):
@@ -22,7 +24,7 @@ class CurrencyEngine(ABC):
             raise ValueError(f"Class {cls.__name__} must define 'item_id'")
 
     @abstractmethod
-    def apply(self, crafting_engine: CraftingEngine, listing: ModifiableListing) -> list[CraftingOutcome] | list[StaticOutcome]:
+    def apply(self, mod_roller: ModifierRoller, listing: ModifiableListing) -> ModifiableListing | StaticOutcome:
         pass
 
     def __str__(self):
@@ -33,12 +35,12 @@ class ArcanistsEtcher(CurrencyEngine):
     item_id = 'etcher'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
-        if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category not in shared.non_martial_weapon_categories:
+            return StaticOutcome.NO_CHANGE
 
-        if listing.item_category not in shared.non_martial_weapons:
-            return [StaticOutcome.NO_CHANGE]
+        if listing.corrupted:
+            return StaticOutcome.NO_CHANGE
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -49,31 +51,25 @@ class ArcanistsEtcher(CurrencyEngine):
         elif listing.rarity in (Rarity.RARE, Rarity.UNIQUE):
             quality_increase = 1
         else:
-            logging.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
         if item_quality == listing.maximum_quality:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        return [
-            CraftingOutcome(
-                original_listing=listing,
-                outcome_probability=1.0,
-                new_quality=min(listing.maximum_quality, item_quality + quality_increase)
-            )
-        ]
+        listing.quality = min(listing.maximum_quality, item_quality + quality_increase)
+        return listing
 
 
 class ArmourersScrap(CurrencyEngine):
     item_id = 'scrap'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
-        if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category not in trade_item_enums.armour_categories:
+            return StaticOutcome.NO_CHANGE
 
-        if listing.item_category not in shared.armour:
-            return [StaticOutcome.NO_CHANGE]
+        if listing.corrupted:
+            return StaticOutcome.NO_CHANGE
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -84,56 +80,48 @@ class ArmourersScrap(CurrencyEngine):
         elif listing.rarity in (Rarity.RARE, Rarity.UNIQUE):
             quality_increase = 1
         else:
-            logging.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
         if item_quality == listing.maximum_quality:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        return [
-            CraftingOutcome(
-                original_listing=listing,
-                outcome_probability=1.0,
-                new_quality=min(listing.maximum_quality, item_quality + quality_increase)
-            )
-        ]
+        listing.quality = min(listing.maximum_quality, item_quality + quality_increase)
+        return listing
 
 
 class ArtificersOrb(CurrencyEngine):
 
-    item_id ='artificers'
+    item_id = 'artificers'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category not in trade_item_enums.socketable_item_categories:
+            return StaticOutcome.NO_CHANGE
+
+        if listing.corrupted:
+            return StaticOutcome.NO_CHANGE
+
         max_sockets = utils.determine_max_sockets(item_category=listing.item_category)
 
         total_listing_sockets = len(listing.socketers) + listing.open_sockets
 
-        if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
-
         if total_listing_sockets == max_sockets:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        return [
-            CraftingOutcome(
-                original_listing=listing,
-                outcome_probability=1.0,
-                new_sockets=total_listing_sockets + 1
-            )
-        ]
+        listing.open_sockets += 1
+        return listing
 
 
 class BlacksmithsWhetstone(CurrencyEngine):
     item_id = 'whetstone'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
-        if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category not in trade_item_enums.martial_weapon_categories:
+            return StaticOutcome.NO_CHANGE
 
-        if listing.item_category not in shared.martial_weapons:
-            return [StaticOutcome.NO_CHANGE]
+        if listing.corrupted:
+            return StaticOutcome.NO_CHANGE
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -145,113 +133,111 @@ class BlacksmithsWhetstone(CurrencyEngine):
             quality_increase = 1
         else:
             logging.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
         if item_quality == listing.maximum_quality:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        return [
-            CraftingOutcome(
-                original_listing=listing,
-                outcome_probability=1.0,
-                new_quality=min(listing.maximum_quality, item_quality + quality_increase)
-            )
-        ]
+        listing.quality = min(listing.maximum_quality, item_quality + quality_increase)
+        return listing
 
 
 class ChaosOrb(CurrencyEngine):
     item_id = 'chaos'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            return StaticOutcome.NO_CHANGE
+
         if listing.rarity != Rarity.RARE:
-            return [
-                cls.no_outcome_change(listing=listing)
-            ]
+            return StaticOutcome.NO_CHANGE
 
         if listing.corrupted:
-            return [
-                cls.no_outcome_change(listing=listing)
-            ]
+            return StaticOutcome.NO_CHANGE
 
-        open_prefixes = 3 - len(listing.prefixes)
+        removed_mod = listing.removable_mods[random.randint(0, len(listing.removable_mods))]
 
-        open_suffixes = 3 - len(listing.suffixes)
+        # Remove the mod
+        mods_of_removed_mod_class = listing.fetch_mods(removed_mod.mod_class_e)
+        for i, mod in enumerate(mods_of_removed_mod_class):
+            if mod == removed_mod:
+                del mods_of_removed_mod_class[i]
+                break
 
-        irremovable_mod_ids = set(
-            irremovable_mod.mod_id for irremovable_mod in listing.permanent_mods
-        )
+        new_mod = mod_roller.roll_new_modifier(listing=listing,
+                                               force_mod_class=ModClass.EXPLICIT)
+        listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
-        returnable_outcomes = []
-        # If there are open prefixes, then we can roll any prefix no matter what is removed. The same is true for suffixes.
-        # Note that when rolling for a new modifier, chaos orbs can replace the same mod they just removed with the same mod.
-        # So we pass only the modifiers that cannot be removed (fractured mods) to exclude_mod_ids parameter
-        crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                              affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX],
-                                                              exclude_mod_ids=irremovable_mod_ids)
-        possible_item_mods = [outcome.new_item_mod for outcome in crafting_outcomes]
-        for modifier in listing.explicit_mods:
-            if open_prefixes and open_suffixes:
-                viable_item_mods = possible_item_mods
-            # If we rolled a prefix and there are no open suffixes then we CANNOT roll a suffix
-            elif modifier.affix_type_e == ModAffixType.PREFIX and not open_suffixes:
-                viable_item_mods = [mod for mod in possible_item_mods if mod.affix_type_e == ModAffixType.PREFIX]
-            # If we rolled a suffix and there are no open prefixes then we CANNOT roll a prefix
-            elif modifier.affix_type_e == ModAffixType.SUFFIX and not open_prefixes:
-                viable_item_mods = [mod for mod in possible_item_mods if mod.affix_type_e == ModAffixType.SUFFIX]
-            # In all other cases, we can roll any mod
-            else:
-                viable_item_mods = possible_item_mods
+        return listing
 
-            other_mod_ids = [listing_mod.mod_id for listing_mod in listing.affixed_mods if listing_mod != modifier]
-            crafting_outcomes = crafting_engine.create_crafting_outcomes(
-                listing=listing,
-                item_mods=viable_item_mods,
-                exclude_mod_ids=other_mod_ids,
-            )
 
-            for outcome in crafting_outcomes:
-                outcome.remove_modifier = modifier
-                outcome.probability /= len(listing.explicit_mods)
+class DivineOrb(CurrencyEngine):
+    item_id = 'divine'
 
-            returnable_outcomes.extend(crafting_outcomes)
+    @classmethod
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            return StaticOutcome.NO_CHANGE
 
-        return returnable_outcomes
+        if listing.rarity == Rarity.NORMAL:
+            return StaticOutcome.NO_CHANGE
+
+        if listing.corrupted:
+            return StaticOutcome.NO_CHANGE
+
+        mods_to_reroll = [*listing.implicit_mods, *listing.enchant_mods, *listing.explicit_mods]
+        sub_mods_to_reroll = [sub_mod for mod in mods_to_reroll for sub_mod in mod.sub_mods]
+        for sub_mod in sub_mods_to_reroll:
+            if not sub_mod.values_ranges:
+                continue
+
+            new_actual_values = []
+            for actual_value, value_range in zip(sub_mod.actual_values, sub_mod.values_ranges):
+                low_r = value_range[0]
+                high_r = value_range[1]
+                if low_r is None or high_r is None:
+                    value = low_r if high_r is None else high_r
+                    new_actual_values.append(value)
+                    continue
+
+                if low_r is not None and high_r is not None:
+                    if isinstance(low_r, int) and isinstance(high_r, int):
+                        new_value = random.randint(low_r, high_r)
+                        new_actual_values.append(new_value)
+                    elif isinstance(low_r, float) and isinstance(high_r, float):
+                        new_value = round(random.uniform(low_r, high_r), 2)
+                        new_actual_values.append(new_value)
+                    else:  # This should only happen when there is no range
+                        raise ValueError(f"Received unexpected value types for range {low_r} - {high_r}")
+
+            sub_mod.actual_values = new_actual_values
+
+        return listing
 
 
 class ExaltedOrb(CurrencyEngine):
     item_id = 'exalt'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            return StaticOutcome.NO_CHANGE
+
         if listing.rarity != Rarity.RARE:
-            return [
-                cls.no_outcome_change(listing=listing)
-            ]
+            return StaticOutcome.NO_CHANGE
 
         if listing.corrupted:
-            return [
-                cls.no_outcome_change(listing=listing)
-            ]
+            return StaticOutcome.NO_CHANGE
 
-        open_prefixes = 3 - len(listing.prefixes)
-        open_suffixes = 3 - len(listing.suffixes)
+        if not listing.open_prefixes and not listing.open_suffixes:
+            return StaticOutcome.NO_CHANGE
 
-        if not open_prefixes and not open_suffixes:
-            return [
-                cls.no_outcome_change(listing=listing)
-            ]
+        new_mod = mod_roller.roll_new_modifier(listing=listing,
+                                               force_mod_class=ModClass.EXPLICIT)
+        listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
-        affix_types = []
-        if open_prefixes:
-            affix_types.append(ModAffixType.PREFIX)
-
-        if open_suffixes:
-            affix_types.append(ModAffixType.SUFFIX)
-
-        crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                              affix_types=affix_types)
-        return crafting_outcomes
+        return listing
 
 
 class FracturingOrb(CurrencyEngine):
@@ -259,47 +245,47 @@ class FracturingOrb(CurrencyEngine):
     item_id = 'fracturing-orb'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            return StaticOutcome.NO_CHANGE
+
         if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        if listing.fractured_mods:
-            return [StaticOutcome.NO_CHANGE]
+        if listing.rarity != Rarity.RARE:
+            return StaticOutcome.NO_CHANGE
 
-        outcomes = []
-        for mod in listing.explicit_mods:
-            outcomes.append(
-                CraftingOutcome(
-                    original_listing=listing,
-                    outcome_probability=(1.0 / len(listing.explicit_mods)),
-                    mods_fractured=[mod]
-                )
-            )
+        if listing.fractured_mods:  # You cannot fracture mods on an item that already has fractured mods
+            return StaticOutcome.NO_CHANGE
 
-        return outcomes
+        fractured_mod = listing.removable_mods[random.randint(0, len(listing.removable_mods))]
+
+        # Fracture a mod, removing it from its current mod class list and adding it to the fractured mods
+        mods_of_fractured_mod_class = listing.fetch_mods(fractured_mod.mod_class_e)
+        for i, mod in enumerate(mods_of_fractured_mod_class):
+            if mod == fractured_mod:
+                del mods_of_fractured_mod_class[i]
+                listing.fractured_mods.append(mod)
 
 
 class GemcuttersPrism(CurrencyEngine):
     item_id = 'gcp'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
-        if listing.item_category != ItemCategory.ANY_GEM:
-            return [StaticOutcome.NO_CHANGE]
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category not in [ItemCategory.SKILL_GEM, ItemCategory.META_GEM]:
+            return StaticOutcome.NO_CHANGE
 
         if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        new_quality = listing.quality + 5
-        new_quality = min(new_quality, listing.maximum_quality)
+        if listing.quality == listing.maximum_quality:
+            return StaticOutcome.NO_CHANGE
 
-        return [
-            CraftingOutcome(
-                original_listing=listing,
-                outcome_probability=1.0,
-                new_quality=new_quality
-            )
-        ]
+        new_quality = min(listing.quality + 5, listing.maximum_quality)
+        listing.quality = new_quality
+
+        return listing
 
 
 class GlassblowersBauble(CurrencyEngine):
@@ -307,130 +293,170 @@ class GlassblowersBauble(CurrencyEngine):
     item_id = 'bauble'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category not in trade_item_enums.flask_categories:
+            return StaticOutcome.NO_CHANGE
+
         if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        if listing.item_category != ItemCategory.ANY_FLASK:
-            return [StaticOutcome.NO_CHANGE]
+        if listing.quality == listing.maximum_quality:
+            return StaticOutcome.NO_CHANGE
 
-        item_quality = listing.quality if listing.quality else 0
+        listing.quality += 1
 
-        return [
-            CraftingOutcome(
-                original_listing=listing,
-                outcome_probability=1.0,
-                new_quality=min(listing.maximum_quality, item_quality + 1)
-            )
-        ]
+        return listing
 
 
 class OrbOfAlchemy(CurrencyEngine):
     item_id = 'alch'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK, ItemCategory.META_GEM, ItemCategory.SKILL_GEM):
+            return StaticOutcome.NO_CHANGE
+
         if listing.rarity != Rarity.NORMAL:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
         if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                              affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
-        for outcome in crafting_outcomes:
-            outcome.new_rarity = Rarity.RARE
+        listing.rarity = Rarity.RARE
 
-        return crafting_outcomes
+        num_mods = random.randint(4, 6)
+
+        for _ in list(range(num_mods)):
+            new_mod = mod_roller.roll_new_modifier(listing=listing,
+                                                   force_mod_class=ModClass.EXPLICIT)
+            listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
+
+        return listing
 
 
 class OrbOfAnnulment(CurrencyEngine):
     item_id = 'annul'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
+            return StaticOutcome.NO_CHANGE
+
         if not listing.explicit_mods:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
         if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        outcomes = []
-        for mod in listing.removable_mods:
-            outcomes.append(
-                CraftingOutcome(
-                    original_listing=listing,
-                    outcome_probability=(1 / len(listing.removable_mods)),
-                    remove_modifier=mod
-                )
-            )
+        if listing.rarity not in (Rarity.MAGIC, Rarity.RARE):
+            return StaticOutcome.NO_CHANGE
 
-        return outcomes
+        removed_mod = listing.removable_mods[random.randint(0, len(listing.removable_mods))]
+
+        # Remove the mod
+        mods_of_removed_mod_class = listing.fetch_mods(removed_mod.mod_class_e)
+        for i, mod in enumerate(mods_of_removed_mod_class):
+            if mod == removed_mod:
+                del mods_of_removed_mod_class[i]
+                break
+
+        return listing
 
 
 class OrbOfAugmentation(CurrencyEngine):
     item_id = 'aug'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
+            return StaticOutcome.NO_CHANGE
+
         if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
         if listing.rarity != Rarity.MAGIC:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        open_prefixes = 1 - len(listing.prefixes)
-        open_suffixes = 1 - len(listing.suffixes)
+        if not listing.open_prefixes and not listing.open_suffixes:
+            return StaticOutcome.NO_CHANGE
 
-        if not open_prefixes and not open_suffixes:
-            return [StaticOutcome.NO_CHANGE]
+        new_mod = mod_roller.roll_new_modifier(listing=listing,
+                                               force_mod_class=ModClass.EXPLICIT)
+        listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
-        affix_types = []
-        if open_prefixes:
-            affix_types.append(ModAffixType.PREFIX)
-
-        if open_suffixes:
-            affix_types.append(ModAffixType.SUFFIX)
-
-        crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                              affix_types=affix_types,
-                                                              exclude_mod_ids=set(mod.mod_id for mod in listing.affixed_mods))
-        return crafting_outcomes
+        return listing
 
 
 class OrbOfTransmutation(CurrencyEngine):
     item_id = 'transmute'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
+            return StaticOutcome.NO_CHANGE
+
         if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
         if listing.rarity != Rarity.NORMAL:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                     affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
-        for outcome in outcomes:
-            outcome.new_rarity = Rarity.MAGIC
+        listing.rarity = Rarity.MAGIC
 
-        return outcomes
+        num_mods = random.randint(1, 2)
+
+        for _ in list(range(num_mods)):
+            new_mod = mod_roller.roll_new_modifier(listing=listing)
+            listing.explicit_mods.append(new_mod)
+
+        return listing
 
 
 class RegalOrb(CurrencyEngine):
     item_id = 'regal'
 
     @classmethod
-    def apply(cls, crafting_engine: CraftingEngine, listing: ModifiableListing):
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            return StaticOutcome.NO_CHANGE
+
         if listing.rarity != Rarity.MAGIC:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
         if listing.corrupted:
-            return [StaticOutcome.NO_CHANGE]
+            return StaticOutcome.NO_CHANGE
 
-        crafting_outcomes = crafting_engine.roll_new_modifier(listing=listing,
-                                                              affix_types=[ModAffixType.SUFFIX, ModAffixType.PREFIX])
-        for outcome in crafting_outcomes:
-            outcome.new_rarity = Rarity.RARE
+        listing.rarity = Rarity.RARE
 
-        return crafting_outcomes
+        new_mod = mod_roller.roll_new_modifier(listing=listing)
+        listing.explicit_mods.append(new_mod)
+
+        return listing
+
+
+class ScrollOfWisdom(CurrencyEngine):
+    item_id = 'wisdom'
+
+    @classmethod
+    def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
+        # You technically can identify corrupted items, but we don't currently have the proper data to roll enchanted mods
+        if listing.corrupted:
+            return StaticOutcome.NO_CHANGE
+
+        if listing.identified:
+            return StaticOutcome.NO_CHANGE
+
+        listing.identified = True
+
+        if listing.rarity == Rarity.MAGIC:
+            num_mods = random.randint(1, 2)
+        elif listing.rarity == Rarity.RARE:
+            num_mods = random.randint(4, 6)
+        else:
+            num_mods = 0
+
+        for _ in list(range(num_mods)):
+            new_mod = mod_roller.roll_new_modifier(listing=listing)
+            listing.explicit_mods.append(new_mod)
+
+        return listing

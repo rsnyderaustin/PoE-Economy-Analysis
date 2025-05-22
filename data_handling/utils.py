@@ -88,3 +88,15 @@ def determine_mod_tier(mod_dict: dict) -> int | None:
             logging.error(f"Did not find a tier number for item tier {mod_dict['tier']}")
             mod_tier = None
     return int(mod_tier) if mod_tier else None
+
+
+def convert_string_into_number(s):
+    try:
+        int_val = int(s)
+        return int_val
+    except ValueError:
+        try:
+            float_val = float(s)
+            return float_val
+        except ValueError:
+            raise TypeError(f"String value {s} expected to represent a number, but did not.")

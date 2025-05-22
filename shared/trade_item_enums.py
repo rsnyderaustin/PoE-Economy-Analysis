@@ -214,7 +214,7 @@ class Currency(Enum):
     GEMCUTTERS_PRISM = "gcp"
 
 
-socketable_items = [
+socketable_item_categories = [
     ItemCategory.ONE_HANDED_MACE,
     ItemCategory.SPEAR,
     ItemCategory.TWO_HANDED_MACE,
@@ -233,7 +233,7 @@ socketable_items = [
     ItemCategory.BUCKLER
 ]
 
-martial_weapons = [
+martial_weapon_categories = [
     ItemCategory.ONE_HANDED_MACE,
     ItemCategory.SPEAR,
     ItemCategory.TWO_HANDED_MACE,
@@ -242,13 +242,13 @@ martial_weapons = [
     ItemCategory.CROSSBOW
 ]
 
-non_martial_weapons = [
+non_martial_weapon_categories = [
     ItemCategory.WAND,
     ItemCategory.SCEPTRE,
     ItemCategory.STAFF
 ]
 
-armour = [
+armour_categories = [
     ItemCategory.HELMET,
     ItemCategory.BODY_ARMOUR,
     ItemCategory.GLOVES,
@@ -257,5 +257,11 @@ armour = [
     ItemCategory.SHIELD,
     ItemCategory.FOCUS,
     ItemCategory.BUCKLER
+]
+
+
+flask_categories = [
+    ItemCategory.LIFE_FLASK,
+    ItemCategory.MANA_FLASK
 ]
 
