@@ -39,12 +39,69 @@ _local_weapon_mod_cols = [
 ]
 
 
+class ListingsTransforming:
+
+    @staticmethod
+    def to_flat_rows(listings: list[ModifiableListing]) -> dict:
+        listings_data = dict()
+        for row, listing in enumerate(listings):
+            flattened_data = (
+                PricePredictTransformer(listing)
+                .insert_listing_properties()
+                .insert_max_quality_pdps()
+                .insert_elemental_dps()
+                .insert_metadata()
+                .insert_currency_info()
+                .insert_item_base_info()
+                .insert_sub_mod_values()
+                .insert_skills()
+                .remove_local_mods()
+                .clean_columns()
+                .flattened_data
+            )
+            missing_cols = [col for col in flattened_data.keys() if col not in listings_data]
+
+            # Fill in the previously missing columns with Nones up to all the rows before this loop
+            listings_data.update(
+                {
+                    missing_col: [] if row == 0 else [None] * (row - 1)
+                    for missing_col in missing_cols
+                }
+            )
+
+            for k, v in flattened_data.items():
+                listings_data[k].append(v)
+
+        return listings_data
+
+    @classmethod
+    def to_price_predict_df(cls, listings: list[ModifiableListing] = None, rows: dict = None) -> pd.DataFrame:
+        if not rows:
+            rows = cls.to_flat_rows(listings)
+
+        df = pd.DataFrame(rows)
+
+        select_dtype_cols = [col for col in _select_col_types if col in df.columns]
+        for col in select_dtype_cols:
+            dtype = _select_col_types[col]
+            df[col] = df[col].astype(dtype)
+
+        abnormal_type_cols = [col for col in df.columns
+                              if col not in _select_col_types
+                              and df[col].dtype not in ['int64', 'float64', 'bool', 'category']]
+        for col in abnormal_type_cols:
+            df[col] = df[col].astype('float64')
+
+        df = df.select_dtypes(include=['int64', 'float64', 'bool', 'category'])
+
+        return df
+
+
 class PricePredictTransformer:
 
     def __init__(self, listing: ModifiableListing):
         self.listing = listing
-
-        self.data = dict()
+        self.flattened_data = dict()
 
     def _determine_date_fetched(self):
         return datetime.strptime(self.listing.date_fetched, "%m-%d-%Y")
@@ -64,26 +121,26 @@ class PricePredictTransformer:
                     raise ValueError(f"Property value {property_values} has unexpected structure.")
 
         flattened_properties = {shared_utils.form_column_name(col): val for col, val in flattened_properties.items()}
-        self.data.update(flattened_properties)
+        self.flattened_data.update(flattened_properties)
         return self
 
     def insert_max_quality_pdps(self, column_name: str = 'max_quality_pdps'):
         max_quality_pdps = shared_utils.calculate_max_quality_pdps(
-            quality=self.data.get('Quality', 0),
-            phys_damage=self.data.get('Physical Damage', 0),
-            attacks_per_second=self.data.get('Attacks per Second', 0)
+            quality=self.flattened_data.get('Quality', 0),
+            phys_damage=self.flattened_data.get('Physical Damage', 0),
+            attacks_per_second=self.flattened_data.get('Attacks per Second', 0)
         )
-        self.data[column_name] = max_quality_pdps
+        self.flattened_data[column_name] = max_quality_pdps
         return self
 
     def insert_elemental_dps(self, column_name: str = 'edps'):
         edps = shared_utils.calculate_elemental_dps(
-            cold_damage=self.data.get('Cold Damage', 0),
-            fire_damage=self.data.get('Fire Damage', 0),
-            lightning_damage=self.data.get('Lightning Damage', 0),
-            attacks_per_second=self.data.get('Attacks per Second', 0)
+            cold_damage=self.flattened_data.get('Cold Damage', 0),
+            fire_damage=self.flattened_data.get('Fire Damage', 0),
+            lightning_damage=self.flattened_data.get('Lightning Damage', 0),
+            attacks_per_second=self.flattened_data.get('Attacks per Second', 0)
         )
-        self.data[column_name] = edps
+        self.flattened_data[column_name] = edps
         return self
 
     def insert_metadata(self):
@@ -92,30 +149,30 @@ class PricePredictTransformer:
             'minutes_since_listed': self.listing.minutes_since_listed,
             'minutes_since_league_start': self.listing.minutes_since_league_start
         }
-        self.data.update(metadata)
+        self.flattened_data.update(metadata)
         return self
 
     def insert_currency_info(self):
-        self.data['currency'] = self.listing.currency
-        self.data['currency_amount'] = self.listing.currency_amount
+        self.flattened_data['currency'] = self.listing.currency
+        self.flattened_data['currency_amount'] = self.listing.currency_amount
 
         exalts_price = shared_utils.currency_converter.convert_to_exalts(
             currency=self.listing.currency,
             currency_amount=self.listing.currency_amount,
             relevant_date=self._determine_date_fetched()
         )
-        self.data['exalts'] = exalts_price
+        self.flattened_data['exalts'] = exalts_price
         return self
 
     def insert_item_base_info(self):
-        self.data['open_prefixes'] = self.listing.open_prefixes
-        self.data['open_suffixes'] = self.listing.open_suffixes
-        self.data['atype'] = self.listing.item_atype
-        self.data['ilvl'] = self.listing.ilvl
-        self.data['category'] = self.listing.item_category.value
-        self.data['rarity'] = self.listing.rarity
-        self.data['corrupted'] = self.listing.corrupted
-        self.data['identified'] = self.listing.identified
+        self.flattened_data['open_prefixes'] = self.listing.open_prefixes
+        self.flattened_data['open_suffixes'] = self.listing.open_suffixes
+        self.flattened_data['atype'] = self.listing.item_atype
+        self.flattened_data['ilvl'] = self.listing.ilvl
+        self.flattened_data['category'] = self.listing.item_category.value
+        self.flattened_data['rarity'] = self.listing.rarity
+        self.flattened_data['corrupted'] = self.listing.corrupted
+        self.flattened_data['identified'] = self.listing.identified
         return self
 
     def insert_sub_mod_values(self):
@@ -135,61 +192,26 @@ class PricePredictTransformer:
                 # we assign it a 1 to indicate to the model that it's an active mod
                 summed_sub_mods[col_name] = 1
 
-        self.data.update(summed_sub_mods)
+        self.flattened_data.update(summed_sub_mods)
         return self
 
     def insert_skills(self):
         skills_dict = {item_skill.name: item_skill.level for item_skill in self.listing.item_skills}
         skills_dict = {shared_utils.form_column_name(skill_name): lvl for skill_name, lvl in skills_dict.items()}
-        self.data.update(skills_dict)
+        self.flattened_data.update(skills_dict)
         return self
 
     def remove_local_mods(self):
         for local_mod_col in _local_weapon_mod_cols:
-            self.data.pop(local_mod_col, None)
+            self.flattened_data.pop(local_mod_col, None)
         return self
 
     def clean_columns(self):
         # Some columns have just one letter - not sure why but need to find out
-        cols_to_remove = [col for col in self.data if len(col) == 1]
+        cols_to_remove = [col for col in self.flattened_data if len(col) == 1]
         for col in cols_to_remove:
             logging.error(f"Found 1-length attribute name {cols_to_remove} for listing: "
                           f"\n{pprint.pprint(self.listing.__dict__)}")
-            self.data.pop(col)
+            self.flattened_data.pop(col)
         return self
 
-
-def default_flatten_preset(listing: ModifiableListing) -> dict:
-    return (
-        PricePredictTransformer(listing)
-        .insert_listing_properties()
-        .insert_max_quality_pdps()
-        .insert_elemental_dps()
-        .insert_metadata()
-        .insert_currency_info()
-        .insert_item_base_info()
-        .insert_sub_mod_values()
-        .insert_skills()
-        .remove_local_mods()
-        .clean_columns()
-        .data
-    )
-
-
-def prepare_listing_data_for_model(data: dict) -> pd.DataFrame:
-    df = pd.DataFrame(data)
-
-    select_dtype_cols = [col for col in _select_col_types if col in df.columns]
-    for col in select_dtype_cols:
-        dtype = _select_col_types[col]
-        df[col] = df[col].astype(dtype)
-
-    abnormal_type_cols = [col for col in df.columns
-                          if col not in _select_col_types
-                          and df[col].dtype not in ['int64', 'float64', 'bool', 'category']]
-    for col in abnormal_type_cols:
-        df[col] = df[col].astype('float64')
-
-    df = df.select_dtypes(include=['int64', 'float64', 'bool', 'category'])
-
-    return df

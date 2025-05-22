@@ -18,7 +18,6 @@ from price_predict_ai_model.build_model import build_price_predict_model
 from shared import shared_utils, env_loader, env_loading
 from stat_analysis.stats_prep import StatsPrep
 from trade_api import query
-from . import utils
 
 logging.basicConfig(level=logging.INFO,
                     force=True)
@@ -35,8 +34,6 @@ class OperationsCoordinator:
 
         global_atypes_manager = poecd_api.PoecdManager(refresh_data=refresh_poecd_source).create_global_atypes_manager()
         self.resource_resolver = data_handling.ModResolver(global_atypes_manager=global_atypes_manager)
-
-        self.price_predict_data_manager = price_predict_ai_model.ListingsDataProcessor()
 
         self.env_loader = env_loading.EnvLoader()
         self.psql_manager = psql.PostgreSqlManager()
@@ -59,9 +56,7 @@ class OperationsCoordinator:
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = self._create_listings(api_item_responses)
-            listings_data = [data_transforming.default_flatten_preset(listing) for listing in listings]
-            row_data = utils.flatten_data_into_rows(listings_data)
-
+            row_data = data_transforming.ListingsTransforming.to_flat_rows(listings)
             self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
                                           data=row_data)
 
@@ -76,22 +71,21 @@ class OperationsCoordinator:
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = self._create_listings(api_item_responses)
+            listings_df = data_transforming.ListingsTransforming.to_price_predict_df(listings)
 
-            flattened_data = self.price_predict_data_manager.flatten_listings(listings)
-            model_df = self.price_predict_data_manager.prepare_flattened_listings_data_for_model(flattened_data)
-            prices = list(model_df['exalts'])
-            model_df = model_df.drop(columns=['exalts'])
+            prices = list(listings_df['exalts'])
+            listings_df = listings_df.drop(columns=['exalts'])
 
-            model_df = model_df[predict_model.feature_names]
-            dmatrix = xgb.DMatrix(model_df, enable_categorical=True)
+            listings_df = listings_df[predict_model.feature_names]
+            dmatrix = xgb.DMatrix(listings_df, enable_categorical=True)
             predicts = predict_model.predict(dmatrix)
 
-            model_df['true_exalts'] = prices
-            model_df['predicted_exalts'] = predicts
+            listings_df['true_exalts'] = prices
+            listings_df['predicted_exalts'] = predicts
 
-            model_df['predict_portion'] = model_df['predicted_exalts'] / model_df['true_exalts']
+            listings_df['predict_portion'] = listings_df['predicted_exalts'] / listings_df['true_exalts']
 
-            underpriced_df = model_df[model_df['predict_portion'] < 0.8]
+            underpriced_df = listings_df[listings_df['predict_portion'] < 0.8]
             underpriced_items = underpriced_df.to_dict(orient='records')
             for item in underpriced_items:
                 shared_utils.log_dict(item)
@@ -99,7 +93,7 @@ class OperationsCoordinator:
     def build_price_predict_model(self):
         psql_table_name = env_loader.get_env("PSQL_TRAINING_TABLE")
         training_data = self.psql_manager.fetch_table_data(psql_table_name)
-        model_df = self.price_predict_data_manager.prepare_flattened_listings_data_for_model(training_data)
+        model_df = data_transforming.ListingsTransforming.to_price_predict_df(rows=training_data)
 
         atypes = model_df['atype'].unique()
         for atype in atypes:
