@@ -3,6 +3,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 
 from . import environment
+from price_predict_ai_model import PricePredictor
 
 
 class RlTrainer:
@@ -10,12 +11,12 @@ class RlTrainer:
     @classmethod
     def train(cls,
               listing,
-              price_predictor_model,
+              price_predictor: PricePredictor,
               exalts_budget: int = 200,
               total_timesteps: int = 10000,
               crafting_model=None):
         env = environment.CraftingEnvironment(listing=listing,
-                                              price_predictor=price_predictor_model,
+                                              price_predictor=price_predictor,
                                               exalts_budget=exalts_budget)
         check_env(env)
 

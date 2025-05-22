@@ -147,6 +147,9 @@ class ModifiableListing:
             ModClass.EXPLICIT: self.explicit_mods
         }
 
+    def __hash__(self):
+        return hash((self.listing_id, self.minutes_since_listed))
+
     def _determine_max_quality(self) -> int:
         implicit_sub_mods = [sub_mod for mod in self.implicit_mods for sub_mod in mod.sub_mods]
         max_quality = 20

@@ -11,6 +11,7 @@ import crafting
 from crafting import *
 from instances_and_definitions import ItemMod, ItemSkill
 from shared import ModClass
+from price_predict_ai_model import PricePredictor
 
 
 def log_action(action: str, done: bool, original_price: float, predicted_price: float, message: str,
@@ -224,13 +225,13 @@ class ObservationSpace:
 
 class CraftingEnvironment(gym.Env):
 
-    def __init__(self, listing: ModifiableListing, price_predictor, exalts_budget):
+    def __init__(self, listing: ModifiableListing, price_predictor: PricePredictor, exalts_budget):
         super(CraftingEnvironment, self).__init__()
 
         self.exalts_budget = exalts_budget
 
         self.original_state = copy.deepcopy(listing)
-        self.original_price = price_predictor.predict_price(listing=listing)
+        self.original_price = price_predictor.predict_prices(listings=[listing])[0]
 
         self.listing = listing
         self.current_price = self.original_price
@@ -308,7 +309,7 @@ class CraftingEnvironment(gym.Env):
         # If the outcome isn't NO_CHANGE, then it's just the new listing
         self.listing = outcome.new_listing
 
-        predicted_price = self.price_predictor.predict_price(listing=self.listing)
+        predicted_price = self.price_predictor.predict_prices(listings=[self.listing])[0]
 
         revenue = predicted_price
         cost = self.original_price + self.total_exalts_spent
