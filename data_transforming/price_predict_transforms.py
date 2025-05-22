@@ -7,6 +7,15 @@ from shared import shared_utils
 from . import utils
 
 
+select_col_types = {
+    'atype': 'category',
+    'btype': 'category',
+    'rarity': 'category',
+    'identified': bool,
+    'corrupted': bool
+}
+
+
 class PricePredictTransformer:
 
     def __init__(self, listing: ModifiableListing):
