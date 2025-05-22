@@ -11,8 +11,11 @@ from shared.trade_item_enums import Rarity, ItemCategory, ModClass
 from shared import trade_item_enums
 
 
-class StaticOutcome(Enum):
-    NO_CHANGE = 'no_change'
+class Outcome:
+
+    def __init__(self, new_listing: ModifiableListing = None):
+        self.new_listing = new_listing
+        self.listing_changed = new_listing is not None
 
 
 class CurrencyEngine(ABC):
@@ -24,7 +27,7 @@ class CurrencyEngine(ABC):
             raise ValueError(f"Class {cls.__name__} must define 'item_id'")
 
     @abstractmethod
-    def apply(self, mod_roller: ModifierRoller, listing: ModifiableListing) -> ModifiableListing | StaticOutcome:
+    def apply(self, mod_roller: ModifierRoller, listing: ModifiableListing) -> Outcome:
         pass
 
     def __str__(self):
@@ -37,10 +40,10 @@ class ArcanistsEtcher(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category not in shared.non_martial_weapon_categories:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -51,13 +54,13 @@ class ArcanistsEtcher(CurrencyEngine):
         elif listing.rarity in (Rarity.RARE, Rarity.UNIQUE):
             quality_increase = 1
         else:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if item_quality == listing.maximum_quality:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.quality = min(listing.maximum_quality, item_quality + quality_increase)
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class ArmourersScrap(CurrencyEngine):
@@ -66,10 +69,10 @@ class ArmourersScrap(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category not in trade_item_enums.armour_categories:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -80,13 +83,13 @@ class ArmourersScrap(CurrencyEngine):
         elif listing.rarity in (Rarity.RARE, Rarity.UNIQUE):
             quality_increase = 1
         else:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if item_quality == listing.maximum_quality:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.quality = min(listing.maximum_quality, item_quality + quality_increase)
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class ArtificersOrb(CurrencyEngine):
@@ -96,20 +99,20 @@ class ArtificersOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category not in trade_item_enums.socketable_item_categories:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         max_sockets = utils.determine_max_sockets(item_category=listing.item_category)
 
         total_listing_sockets = len(listing.socketers) + listing.open_sockets
 
         if total_listing_sockets == max_sockets:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.open_sockets += 1
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class BlacksmithsWhetstone(CurrencyEngine):
@@ -118,10 +121,10 @@ class BlacksmithsWhetstone(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category not in trade_item_enums.martial_weapon_categories:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         item_quality = listing.quality if listing.quality else 0
 
@@ -133,13 +136,13 @@ class BlacksmithsWhetstone(CurrencyEngine):
             quality_increase = 1
         else:
             logging.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if item_quality == listing.maximum_quality:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.quality = min(listing.maximum_quality, item_quality + quality_increase)
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class ChaosOrb(CurrencyEngine):
@@ -148,13 +151,13 @@ class ChaosOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity != Rarity.RARE:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         removed_mod = listing.removable_mods[random.randint(0, len(listing.removable_mods))]
 
@@ -169,7 +172,7 @@ class ChaosOrb(CurrencyEngine):
                                                force_mod_class=ModClass.EXPLICIT)
         listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class DivineOrb(CurrencyEngine):
@@ -178,13 +181,13 @@ class DivineOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity == Rarity.NORMAL:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         mods_to_reroll = [*listing.implicit_mods, *listing.enchant_mods, *listing.explicit_mods]
         sub_mods_to_reroll = [sub_mod for mod in mods_to_reroll for sub_mod in mod.sub_mods]
@@ -213,7 +216,7 @@ class DivineOrb(CurrencyEngine):
 
             sub_mod.actual_values = new_actual_values
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class ExaltedOrb(CurrencyEngine):
@@ -222,22 +225,22 @@ class ExaltedOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity != Rarity.RARE:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if not listing.open_prefixes and not listing.open_suffixes:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         new_mod = mod_roller.roll_new_modifier(listing=listing,
                                                force_mod_class=ModClass.EXPLICIT)
         listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class FracturingOrb(CurrencyEngine):
@@ -247,16 +250,16 @@ class FracturingOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity != Rarity.RARE:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.fractured_mods:  # You cannot fracture mods on an item that already has fractured mods
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         fractured_mod = listing.removable_mods[random.randint(0, len(listing.removable_mods))]
 
@@ -274,18 +277,18 @@ class GemcuttersPrism(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category not in [ItemCategory.SKILL_GEM, ItemCategory.META_GEM]:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.quality == listing.maximum_quality:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         new_quality = min(listing.quality + 5, listing.maximum_quality)
         listing.quality = new_quality
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class GlassblowersBauble(CurrencyEngine):
@@ -295,17 +298,17 @@ class GlassblowersBauble(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category not in trade_item_enums.flask_categories:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.quality == listing.maximum_quality:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.quality += 1
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class OrbOfAlchemy(CurrencyEngine):
@@ -314,13 +317,13 @@ class OrbOfAlchemy(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK, ItemCategory.META_GEM, ItemCategory.SKILL_GEM):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity != Rarity.NORMAL:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.rarity = Rarity.RARE
 
@@ -331,7 +334,7 @@ class OrbOfAlchemy(CurrencyEngine):
                                                    force_mod_class=ModClass.EXPLICIT)
             listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class OrbOfAnnulment(CurrencyEngine):
@@ -340,16 +343,16 @@ class OrbOfAnnulment(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if not listing.explicit_mods:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity not in (Rarity.MAGIC, Rarity.RARE):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         removed_mod = listing.removable_mods[random.randint(0, len(listing.removable_mods))]
 
@@ -360,7 +363,7 @@ class OrbOfAnnulment(CurrencyEngine):
                 del mods_of_removed_mod_class[i]
                 break
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class OrbOfAugmentation(CurrencyEngine):
@@ -369,22 +372,22 @@ class OrbOfAugmentation(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity != Rarity.MAGIC:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if not listing.open_prefixes and not listing.open_suffixes:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         new_mod = mod_roller.roll_new_modifier(listing=listing,
                                                force_mod_class=ModClass.EXPLICIT)
         listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class OrbOfTransmutation(CurrencyEngine):
@@ -393,13 +396,13 @@ class OrbOfTransmutation(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity != Rarity.NORMAL:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.rarity = Rarity.MAGIC
 
@@ -409,7 +412,7 @@ class OrbOfTransmutation(CurrencyEngine):
             new_mod = mod_roller.roll_new_modifier(listing=listing)
             listing.explicit_mods.append(new_mod)
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class RegalOrb(CurrencyEngine):
@@ -418,20 +421,20 @@ class RegalOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.rarity != Rarity.MAGIC:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.rarity = Rarity.RARE
 
         new_mod = mod_roller.roll_new_modifier(listing=listing)
         listing.explicit_mods.append(new_mod)
 
-        return listing
+        return Outcome(new_listing=listing)
 
 
 class ScrollOfWisdom(CurrencyEngine):
@@ -441,10 +444,10 @@ class ScrollOfWisdom(CurrencyEngine):
     def apply(cls, mod_roller: ModifierRoller, listing: ModifiableListing):
         # You technically can identify corrupted items, but we don't currently have the proper data to roll enchanted mods
         if listing.corrupted:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         if listing.identified:
-            return StaticOutcome.NO_CHANGE
+            return Outcome()
 
         listing.identified = True
 
@@ -459,4 +462,4 @@ class ScrollOfWisdom(CurrencyEngine):
             new_mod = mod_roller.roll_new_modifier(listing=listing)
             listing.explicit_mods.append(new_mod)
 
-        return listing
+        return Outcome(new_listing=listing)
