@@ -20,19 +20,19 @@ class ItemMod:
 
     def __init__(self,
                  atype: str,
-                 mod_class: ModClass,
+                 mod_class_e: ModClass,
                  mod_name: str,
-                 affix_type: ModAffixType,
+                 affix_type_e: ModAffixType,
                  mod_tier: int,
                  mod_ilvl: int,
                  sub_mods: list[SubMod]):
         self.atype = atype
-        self.mod_class = mod_class
+        self.mod_class_e = mod_class_e
         self.mod_name = mod_name
-        self.affix_type = affix_type
+        self.affix_type_e = affix_type_e
         self.mod_tier = mod_tier
         self.mod_ilvl = mod_ilvl
-        self.sub_mods = sub_mods
+        self.sub_mods = sorted(sub_mods, key=lambda sm: sm.mod_id)
 
         # These variables should be very quickly filled in after creation
         self.mod_types = None
@@ -46,7 +46,11 @@ class ItemMod:
     def mod_id(self):
         return generate_mod_id(atype=self.atype,
                                mod_ids=[sub_mod.mod_id for sub_mod in self.sub_mods],
-                               affix_type=self.affix_type)
+                               affix_type=self.affix_type_e)
+
+    @property
+    def mod_values(self):
+        return
 
 
 class ItemSkill:
@@ -170,16 +174,16 @@ class ModifiableListing:
 
     @property
     def prefixes(self):
-        return [mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX]
+        return [mod for mod in self.mods if mod.affix_type_e == ModAffixType.PREFIX]
 
     @property
     def open_prefixes(self) -> int:
-        return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX])
+        return 3 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.PREFIX])
 
     @property
     def suffixes(self):
-        return [mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX]
+        return [mod for mod in self.mods if mod.affix_type_e == ModAffixType.SUFFIX]
 
     @property
     def open_suffixes(self) -> int:
-        return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
+        return 3 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.SUFFIX])

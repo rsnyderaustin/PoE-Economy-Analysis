@@ -3,7 +3,7 @@ def format_mods_into_dict(mods):
     return [
         {
             'mod_id': mod.mod_id,
-            'mod_affix_type': mod.affix_type.value,
+            'mod_affix_type': mod.affix_type_e.value,
             'sub_mod_values': [sub_mod.actual_values for sub_mod in mod.sub_mods]
         } for mod in mods
     ]

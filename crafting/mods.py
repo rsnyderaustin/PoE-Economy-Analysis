@@ -43,7 +43,7 @@ class ModsManager:
 
         if affix_types:
             atype_mods = {mod_id: mod_data for mod_id, mod_data in atype_mods.items()
-                          if mod_data.affix_type and mod_data.affix_type in affix_types}
+                          if mod_data.affix_type_e and mod_data.affix_type_e in affix_types}
 
         atype_mods = [item_mod
                       for mod_id, mod_data in atype_mods.items()

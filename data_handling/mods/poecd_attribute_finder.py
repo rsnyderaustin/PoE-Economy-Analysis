@@ -26,7 +26,7 @@ class PoecdAttributeFinder:
         :param item_mod:
         :return: Mod attributes (weighting and mod types) that are not available in official PoE API
         """
-        if item_mod.mod_class in [ModClass.IMPLICIT, ModClass.ENCHANT]:
+        if item_mod.mod_class_e in [ModClass.IMPLICIT, ModClass.ENCHANT]:
             return None
 
         poecd_mod_id = self._mod_matcher.match_mod(item_mod)

@@ -36,8 +36,8 @@ class ModMatcher:
         for each hybrid mod text, we just determine which Poecd hybrid mod is the best fit
         """
         for sub_mod in item_mod.sub_mods:
-            mod_to_parent_dict = (atype_manager.hybrid_parts_to_parent_affixed_dict[item_mod.affix_type]
-                                  if item_mod.affix_type else atype_manager.hybrid_parts_to_parent_dict)
+            mod_to_parent_dict = (atype_manager.hybrid_parts_to_parent_affixed_dict[item_mod.affix_type_e]
+                                  if item_mod.affix_type_e else atype_manager.hybrid_parts_to_parent_dict)
             hybrid_mod_texts = list(mod_to_parent_dict.keys())
 
             matches = rapidfuzz.process.extract(sub_mod.sanitized_mod_text,
@@ -66,8 +66,8 @@ class ModMatcher:
 
     def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float):
         atype_manager = self._global_atypes_manager.fetch_atype_manager(atype_name=item_mod.atype)
-        if item_mod.affix_type:
-            poecd_mod_texts = list(atype_manager._mods_affixed_dict[item_mod.affix_type].keys())
+        if item_mod.affix_type_e:
+            poecd_mod_texts = list(atype_manager._mods_affixed_dict[item_mod.affix_type_e].keys())
         else:
             poecd_mod_texts = list(atype_manager.mods_dict.keys())
 
@@ -82,7 +82,7 @@ class ModMatcher:
         match, score, idx = result
 
         mod = atype_manager.fetch_mod(mod_text=match,
-                                      affix_type=item_mod.affix_type)
+                                      affix_type=item_mod.affix_type_e)
 
         return mod.mod_id
 

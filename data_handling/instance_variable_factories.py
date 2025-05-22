@@ -102,10 +102,10 @@ class ModFactory:
 
         item_mod = ItemMod(
             atype=atype,
-            mod_class=mod_class,
+            mod_class_e=mod_class,
             mod_ilvl=mod_ilvl,
             mod_name=mod_name,
-            affix_type=affix_type,
+            affix_type_e=affix_type,
             mod_tier=mod_tier,
             sub_mods=sub_mods
         )
@@ -292,10 +292,10 @@ class ListingFactory:
             str_requirement=reqs['str_requirement'],
             int_requirement=reqs['int_requirement'],
             dex_requirement=reqs['dex_requirement'],
-            implicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.IMPLICIT],
-            enchant_mods=[mod for mod in item_mods if mod.mod_class == ModClass.ENCHANT],
-            fractured_mods=[mod for mod in item_mods if mod.mod_class == ModClass.FRACTURED],
-            explicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.EXPLICIT],
+            implicit_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.IMPLICIT],
+            enchant_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.ENCHANT],
+            fractured_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.FRACTURED],
+            explicit_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.EXPLICIT],
             item_skills=item_skills,
             socketers=socketers,
             open_sockets=len(item_data['sockets']) if 'sockets' in item_data else 0,

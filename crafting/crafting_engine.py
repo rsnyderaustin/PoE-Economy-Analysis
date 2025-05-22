@@ -74,24 +74,24 @@ class CraftingEngine:
         }
         if outcome.new_item_mod:
             new_mod = outcome.new_item_mod
-            mod_attribute = mod_class_to_attribute[new_mod.mod_class]
+            mod_attribute = mod_class_to_attribute[new_mod.mod_class_e]
             mod_attribute.append(new_mod)
 
         if outcome.remove_modifier:
             remove_mod = outcome.remove_modifier
-            mod_attribute = mod_class_to_attribute[remove_mod.mod_class]
-            mod_class_to_attribute[remove_mod.mod_class] = [mod for mod in mod_attribute
-                                                            if mod.mod_id != remove_mod.mod_id]
+            mod_attribute = mod_class_to_attribute[remove_mod.mod_class_e]
+            mod_class_to_attribute[remove_mod.mod_class_e] = [mod for mod in mod_attribute
+                                                              if mod.mod_id != remove_mod.mod_id]
 
         if outcome.new_rarity:
             listing.rarity = outcome.new_rarity
 
         if outcome.mods_fractured:
             for fractured_mod in outcome.mods_fractured:
-                mod_attribute = mod_class_to_attribute[fractured_mod.mod_class]
+                mod_attribute = mod_class_to_attribute[fractured_mod.mod_class_e]
                 listing.fractured_mods.append(fractured_mod)
-                mod_class_to_attribute[fractured_mod.mod_class] = [mod for mod in mod_attribute
-                                                                   if mod.mod_id != fractured_mod.mod_id]
+                mod_class_to_attribute[fractured_mod.mod_class_e] = [mod for mod in mod_attribute
+                                                                     if mod.mod_id != fractured_mod.mod_id]
 
         if outcome.new_quality:
             listing.set_quality(outcome.new_quality)

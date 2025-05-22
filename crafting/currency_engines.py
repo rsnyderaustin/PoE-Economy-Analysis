@@ -194,11 +194,11 @@ class ChaosOrb(CurrencyEngine):
             if open_prefixes and open_suffixes:
                 viable_item_mods = possible_item_mods
             # If we rolled a prefix and there are no open suffixes then we CANNOT roll a suffix
-            elif modifier.affix_type == ModAffixType.PREFIX and not open_suffixes:
-                viable_item_mods = [mod for mod in possible_item_mods if mod.affix_type == ModAffixType.PREFIX]
+            elif modifier.affix_type_e == ModAffixType.PREFIX and not open_suffixes:
+                viable_item_mods = [mod for mod in possible_item_mods if mod.affix_type_e == ModAffixType.PREFIX]
             # If we rolled a suffix and there are no open prefixes then we CANNOT roll a prefix
-            elif modifier.affix_type == ModAffixType.SUFFIX and not open_prefixes:
-                viable_item_mods = [mod for mod in possible_item_mods if mod.affix_type == ModAffixType.SUFFIX]
+            elif modifier.affix_type_e == ModAffixType.SUFFIX and not open_prefixes:
+                viable_item_mods = [mod for mod in possible_item_mods if mod.affix_type_e == ModAffixType.SUFFIX]
             # In all other cases, we can roll any mod
             else:
                 viable_item_mods = possible_item_mods

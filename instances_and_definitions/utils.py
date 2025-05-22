@@ -12,10 +12,9 @@ class ModAffixType(Enum):
 
 
 def generate_mod_id(atype: str,
-                    mod_ids: Iterable[str] = None,
+                    mod_ids: list[str] = None,
                     affix_type: ModAffixType = None):
     atype = atype.lower().replace(' ', '_')
-    mod_ids = sorted(mod_ids) if mod_ids else []
     if mod_ids and len(mod_ids) == 1:
         mod_id = f"{atype}_{mod_ids[0]}_{affix_type.value}" if affix_type else mod_ids[0]
         return mod_id

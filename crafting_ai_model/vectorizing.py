@@ -13,7 +13,6 @@ def _vectorize_mod(mod_str: str, max_mods: int, possible_values: int):
 
     return vectored
 
-
 class VectorizedAttributes:
 
     def __init__(self,
@@ -30,13 +29,13 @@ class VectorizedAttributes:
         }
 
         def add_mod(mod: ItemMod):
-            num_mods = self.num_mods[mod.mod_class]
-            max_mods = self.max_mods[mod.mod_class]
-            if num_mods == self.max_mods[mod.mod_class]:
+            num_mods = self.num_mods[mod.mod_class_e]
+            max_mods = self.max_mods[mod.mod_class_e]
+            if num_mods == self.max_mods[mod.mod_class_e]:
                 raise RuntimeError(f"Attempted to add mod # {num_mods + 1} to vectorized attributes"
                                    f"when max is {max_mods}.")
 
-            max_values = self.max_values[mod.mod_class]
+            max_values = self.max_values[mod.mod_class_e]
             if len(mod.)
 
 
