@@ -2,8 +2,8 @@
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 
-from . import environment
 from price_predict_ai_model import PricePredictor
+from . import environment
 
 
 class RlTrainer:
@@ -26,4 +26,3 @@ class RlTrainer:
         crafting_model.set_env(env)
         crafting_model.learn(total_timesteps=total_timesteps)
 
-        return crafting_model

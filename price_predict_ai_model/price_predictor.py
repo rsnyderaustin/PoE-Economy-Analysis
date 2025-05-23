@@ -1,13 +1,12 @@
-from file_management import FilesManager, ModelPath
+
 import data_transforming
 from instances_and_definitions import ModifiableListing
 
 
 class PricePredictor:
 
-    def __init__(self):
-        files_manager = FilesManager()
-        self.predict_model = files_manager.model_data[ModelPath.PRICE_PREDICT_MODEL]
+    def __init__(self, predict_mode):
+        self.predict_model = predict_mode
 
     def predict_prices(self, listings: list[ModifiableListing]) -> list:
         listings_df = data_transforming.ListingsTransforming.to_price_predict_df(listings=listings)

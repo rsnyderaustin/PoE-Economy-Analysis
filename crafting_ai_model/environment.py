@@ -1,17 +1,17 @@
 import copy
 import pprint
-import random
 from dataclasses import dataclass
 from typing import Any
 
 import gymnasium as gym
 import numpy as np
 
-import crafting
-from crafting import *
-from instances_and_definitions import ItemMod, ItemSkill
-from shared import ModClass
+from instances_and_definitions import ItemMod, ItemSkill, ModifiableListing
 from price_predict_ai_model import PricePredictor
+from shared import ModClass
+from .currency_engines import *
+from .currency_engines import CurrencyEngine
+from .mod_rolling import ModRoller
 
 
 def log_action(action: str, done: bool, original_price: float, predicted_price: float, message: str,
@@ -237,22 +237,26 @@ class CraftingEnvironment(gym.Env):
         self.current_price = self.original_price
 
         self.price_predictor = price_predictor
+        self.mod_roller = ModRoller()
 
         self.action_map = {
-            0: crafting.ArcanistsEtcher,
-            1: crafting.ArmourersScrap,
-            2: crafting.ArtificersOrb,
-            3: crafting.BlacksmithsWhetstone,
-            4: crafting.ChaosOrb,
-            5: crafting.ExaltedOrb,
-            6: crafting.FracturingOrb,
-            7: crafting.GemcuttersPrism,
-            8: crafting.GlassblowersBauble,
-            9: crafting.OrbOfAlchemy,
-            10: crafting.OrbOfAnnulment,
-            11: crafting.OrbOfAugmentation,
-            12: crafting.OrbOfTransmutation,
-            13: 'STOP'
+            0: ArcanistsEtcher,
+            1: ArmourersScrap,
+            2: ArtificersOrb,
+            3: BlacksmithsWhetstone,
+            4: ChaosOrb,
+            5: DivineOrb,
+            6: ExaltedOrb,
+            7: FracturingOrb,
+            8: GemcuttersPrism,
+            9: GlassblowersBauble,
+            10: OrbOfAlchemy,
+            11: OrbOfAnnulment,
+            12: OrbOfAugmentation,
+            13: OrbOfTransmutation,
+            14: RegalOrb,
+            15: ScrollOfWisdom,
+            16: 'STOP'
         }
 
         self.total_exalts_spent = 0
@@ -280,7 +284,13 @@ class CraftingEnvironment(gym.Env):
                    listing_data=self.listing.__dict__)
         return self._create_observation_space(), percent_profit, done, {}
 
-    def _handle_currency_engine_action(self, action) -> tuple:
+    @staticmethod
+    def _determine_reward(revenue, cost):
+        percent_profit = (revenue - cost) / cost
+        reward = percent_profit
+        return reward
+
+    def _handle_currency_engine_action(self, action: CurrencyEngine) -> tuple:
         done = False
         currency = action
         currency_cost = shared.currency_converter.convert_to_exalts(currency=str(currency),
@@ -296,7 +306,7 @@ class CraftingEnvironment(gym.Env):
 
         self.total_exalts_spent += currency_cost
 
-        outcome = currency.apply(crafting_engine=self.crafting_engine,
+        outcome = currency.apply(mod_roller=self.mod_roller,
                                  listing=self.listing)
 
         if not outcome.listing_changed:
@@ -310,21 +320,19 @@ class CraftingEnvironment(gym.Env):
 
         predicted_price = self.price_predictor.predict_prices(listings=[self.listing])[0]
 
-        revenue = predicted_price
-        cost = self.original_price + self.total_exalts_spent
-        percent_profit = (revenue - cost) / cost
-        reward = percent_profit
+        reward = self._determine_reward(revenue=predicted_price,
+                                        cost=self.original_price + self.total_exalts_spent)
 
         log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
-                   predicted_price=self.current_price, reward=reward, message=f"Successfully applied {action}")
-        return self._create_observation_space(), percent_profit, done, {}
+                   predicted_price=self.current_price, reward=reward, message=f"Successfully applied {currency}")
+        return self._create_observation_space(), reward, done, {}
 
     def step(self, action):
         action = self.action_map[action]
 
         if action == 'STOP':
             return self._handle_stop_action()
-        elif isinstance(action, crafting.CurrencyEngine):
+        elif isinstance(action, CurrencyEngine):
             return self._handle_currency_engine_action(action)
 
     def reset(self):

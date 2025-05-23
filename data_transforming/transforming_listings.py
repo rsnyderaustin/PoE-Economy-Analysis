@@ -6,7 +6,6 @@ import pandas as pd
 
 from instances_and_definitions import ModifiableListing
 from shared import shared_utils
-from . import utils
 
 _select_col_types = {
     'atype': 'category',
@@ -103,6 +102,9 @@ class PricePredictTransformer:
         self.listing = listing
         self.flattened_data = dict()
 
+        # Derived columns like pdps/edps shouldn't be compared to their source columns in analyses like stats.
+        self.derived_columns = dict()
+
     def _determine_date_fetched(self):
         return datetime.strptime(self.listing.date_fetched, "%m-%d-%Y")
 
@@ -131,6 +133,8 @@ class PricePredictTransformer:
             attacks_per_second=self.flattened_data.get('Attacks per Second', 0)
         )
         self.flattened_data[column_name] = max_quality_pdps
+
+        self.derived_columns[column_name] = {'Quality', 'Physical Damage', 'Attacks per Second'}
         return self
 
     def insert_elemental_dps(self, column_name: str = 'edps'):
@@ -141,6 +145,8 @@ class PricePredictTransformer:
             attacks_per_second=self.flattened_data.get('Attacks per Second', 0)
         )
         self.flattened_data[column_name] = edps
+
+        self.derived_columns[column_name] = {'Cold Damage', 'Fire Damage', 'Lightning Damage', 'Attacks per Second'}
         return self
 
     def insert_metadata(self):

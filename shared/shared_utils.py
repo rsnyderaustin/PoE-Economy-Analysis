@@ -8,7 +8,7 @@ import pytz
 
 import file_management
 from file_management import FileKey
-from .trade_item_enums import ItemCategory
+from .trade_enums import ItemCategory
 
 bgroup_to_category = {
     'Spear': ItemCategory.SPEAR,

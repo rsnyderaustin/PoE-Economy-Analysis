@@ -10,21 +10,6 @@ from sklearn.preprocessing import StandardScaler
 from . import utils
 
 
-class DataFrameParts:
-
-    def __init__(self, df: pd.DataFrame, price_column: str):
-        self.df = df
-        self.prices = df[price_column]
-        self.features = df.drop(columns=[price_column]).select_dtypes(['int64', 'float64']).fillna(0)
-
-
-@dataclass
-class CorrelationResults:
-    transformed_features: pd.DataFrame
-    single_weights: dict
-    pair_weights: dict
-
-
 class CorrelationAnalyzer:
 
     @staticmethod
@@ -38,7 +23,10 @@ class CorrelationAnalyzer:
         return mod_weights
 
     @staticmethod
-    def determine_pair_column_weights(features: pd.DataFrame, prices, correlation_threshold: float) -> dict:
+    def determine_pair_column_weights(features: pd.DataFrame,
+                                      prices,
+                                      derived_columns: dict,
+                                      correlation_threshold: float) -> dict:
         mod_combinations = list(itertools.combinations(features.columns, 2))
 
         # Step 1: Build initial dictionary of DataFrames filtered by nonzero indices
@@ -84,13 +72,32 @@ class StatsPrep:
         empty_cols = features_df.columns[((features_df == 0) | (pd.isna(features_df))).all()]
         invalid_cols.update(empty_cols)
 
-        non_null_counts = cls._determine_non_null_value_counts(features_df)
-        non_mode_counts = cls._determine_non_mode_value_counts(features_df)
+        null_counts = cls._determine_null_counts(features_df)
+        mode_counts = cls._determine_mode_counts(features_df)
 
-        invalid_cols.update([col for col, non_nulls in non_null_counts.items()
-                             if non_nulls < non_null_count_threshold])
-        invalid_cols.update([col for col, non_mode in non_mode_counts.items()
-                             if non_mode < non_mode_count_threshold])
+        total_count = len(features_df)
+        for col in features_df.columns:
+            non_nulls = total_count - null_counts[col]
+            non_nulls_percent = non_nulls / total_count
+
+            if non_nulls < non_null_count_threshold:
+                invalid_cols.add(col)
+                continue
+
+            if non_nulls_percent < non_null_percent_threshold:
+                invalid_cols.add(col)
+                continue
+
+            non_modes = total_count - mode_counts[col]
+            non_modes_percent = non_modes / total_count
+
+            if non_modes < non_mode_count_threshold:
+                invalid_cols.add(col)
+                continue
+
+            if non_modes_percent < non_mode_percent_threshold:
+                invalid_cols.add(col)
+                continue
 
         valid_cols = [col for col in features_df.columns if col not in invalid_cols]
 
@@ -235,6 +242,7 @@ class StatsPrep:
 
     @staticmethod
     def _pair_columns(features_df: pd.DataFrame,
+                      derived_columns: dict,
                       columns: list[str | tuple]) -> pd.DataFrame:
         df_setup = dict()
 
@@ -256,26 +264,28 @@ class StatsPrep:
 
         return pd.DataFrame(new_cols)
 
-    @staticmethod
-    def _count_not_mode(df_column):
-        mode_value = df_column.mode()[0]
-        return (df_column != mode_value).sum()
-
     @classmethod
-    def _determine_non_mode_value_counts(cls, df: pd.DataFrame) -> dict:
-        not_mode_counts = {col: cls._count_not_mode(df[col]) for col in df.columns}
+    def _determine_mode_counts(cls, df: pd.DataFrame) -> dict:
+        mode_counts = dict()
+        for col in df.columns:
+            mode_value = df[col].mode()[0]
+            mode_counts[col] = (df[col] == mode_value).sum()
 
-        return not_mode_counts
+        return mode_counts
 
     @staticmethod
-    def _determine_non_null_value_counts(df: pd.DataFrame) -> dict:
-        non_zero_non_nan_counts = {col: ((df[col] != 0) & ~pd.isna(df[col])).sum() for col in df.columns}
+    def _determine_null_counts(df: pd.DataFrame) -> dict:
+        null_counts = dict()
+        for col in df.columns:
+            zero_rows = df[col] == 0
+            na_rows = pd.isna(df[col])
+            null_rows = zero_rows | na_rows
+            null_counts[col] = null_rows.sum()
 
-        return non_zero_non_nan_counts
+        return null_counts
 
-    @classmethod
-    def prep_data(cls, df: pd.DataFrame, price_column: str, atype: str):
-        logging.info("Setting up data for statistical data prep.")
+    @staticmethod
+    def _prep_dataframe(df: pd.DataFrame, price_column: str) -> tuple:
         df = df.reset_index(drop=True)
         df = df.select_dtypes(['int64', 'float64'])
         df = df.fillna(0)
@@ -289,11 +299,16 @@ class StatsPrep:
         # Drop all rows where all values are either 0 or NaN
         features_df = features_df[~((features_df == 0) | (pd.isna(features_df))).all(axis=1)]
 
-        logging.info("Determining insignificant columns.")
+        return features_df, prices, log_prices
+
+    @classmethod
+    def prep_dataframe(cls, df: pd.DataFrame, price_column: str, derived_columns: dict):
+        features_df, prices, log_prices = cls._prep_dataframe(df,
+                                                              price_column=price_column)
+
         insignificant_cols = cls._determine_insignificant_columns(features_df=features_df)
         features_df = features_df.drop(columns=list(insignificant_cols))
 
-        logging.info("Determining single column weights.")
         single_column_weights = CorrelationAnalyzer.determine_single_column_weights(
             features=features_df,
             prices=log_prices,
@@ -301,10 +316,10 @@ class StatsPrep:
         )
         single_column_weights = {col: weight * 2.5 for col, weight in single_column_weights.items()}
 
-        logging.info("Determining pair column weights.")
         pair_column_weights = CorrelationAnalyzer.determine_pair_column_weights(
             features=features_df,
             prices=log_prices,
+            derived_columns=derived_columns,
             correlation_threshold=0.4
         )
         if not single_column_weights and not pair_column_weights:

@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from enum import Enum
 
 import trade_api
-from shared import trade_item_enums
 
 
 class MetaFilter:

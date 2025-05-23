@@ -2,28 +2,43 @@ import random
 
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ModifiableListing, ModAffixType, ItemMod, ModClass
-from shared import Rarity
+
+
+def _mods_into_dict(mods: list[ItemMod]):
+    """
+
+    :param mods:
+    :return: A nested dict of mods by their atype and mod class.
+    """
+    d = dict()
+    for mod in mods:
+        if mod.atype not in d:
+            d[mod.atype] = dict()
+
+        if mod.mod_class_e not in d[mod.atype]:
+            d[mod.atype][mod.mod_class_e] = set()
+
+        d[mod.atype][mod.mod_class_e].add(mod)
+
+    return d
 
 
 class ModsFetcher:
 
     def __init__(self):
-        self.files_manager = FilesManager()
+        files_manager = FilesManager()
+        mods = files_manager.file_data[DataPath.MODS]
+
+        self.mods_dict = _mods_into_dict(mods)
 
     def fetch_mod_tiers(self,
                         atype: str,
                         max_ilvl: int,
-                        force_mod_class: ModClass = None,
+                        mod_class: ModClass,
                         force_mod_type: str = None,
                         exclude_mod_ids: set[str] = None,
                         affix_types: list[ModAffixType] = None) -> list[ItemMod]:
-        mods = [
-            mod for mod in self.files_manager.file_data[DataPath.MODS]
-            if mod.atype == atype and mod.mod_ilvl <= max_ilvl
-        ]
-
-        if force_mod_class:
-            mods = [mod for mod in mods if mod.mod_class == force_mod_class]
+        mods = self.mods_dict[atype][mod_class]
 
         if force_mod_type:
             mods = [mod for mod in mods if force_mod_type in mod.mod_types]
@@ -37,22 +52,35 @@ class ModsFetcher:
         return mods
 
 
-class ModifierRoller:
+class ModRoller:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(ModRoller, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self):
+        cls = self.__class__
+        if getattr(cls, '_initialized', False):
+            return
+
         # Need to validate that we have all or nearly all of the mods represented in Poecd
         self.mods_manager = ModsFetcher()
 
+        cls._initialized = True
+
     def roll_new_modifier(self,
                           listing: ModifiableListing,
-                          force_mod_class: ModClass = None,
+                          mod_class: ModClass,
                           force_type: str = None,
                           exclude_mod_ids: set = None,
                           force_affix_type: ModAffixType = None) -> ItemMod:
         """
 
         :param force_affix_type:
-        :param force_mod_class:
+        :param mod_class:
         :param listing:
         :param force_type:
         :param exclude_mod_ids: If not supplied, the function assumes that all current mods on the item are not eligible to roll.
@@ -72,7 +100,7 @@ class ModifierRoller:
         atype_item_mods = self.mods_manager.fetch_mod_tiers(
             atype=listing.item_atype,
             max_ilvl=listing.ilvl,
-            force_mod_class=force_mod_class,
+            mod_class=mod_class,
             force_mod_type=force_type,
             exclude_mod_ids=set(mod.mod_id for mod in listing.mods) if not exclude_mod_ids else exclude_mod_ids,
             affix_types=affix_types

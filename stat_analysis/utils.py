@@ -37,15 +37,12 @@ def filter_insignificant_columns(df, variance_threshold: float) -> pd.DataFrame:
 
     return df
 
+def filter_out_blank_columns(df):
+    non_negative_rows = (df > 0).all(axis=1)
+    no_nans = ~df.isna().any(axis=1)
 
-def filter_low_variance_columns(df, threshold: float) -> pd.DataFrame:
-    low_variance_cols = [col for col in df.columns if df[col].nunique() / len(df) <= threshold]
-    return df.drop(columns=low_variance_cols)
+    filtered_df = df[non_negative_rows & no_nans]
 
-
-def get_nonzero_dataframe(df, cols: list[str]):
-    df = df[cols]
-    filtered_df = df[(df > 0).all(axis=1) & (~pd.isna(df)).all(axis=1)]
     return filtered_df
 
 

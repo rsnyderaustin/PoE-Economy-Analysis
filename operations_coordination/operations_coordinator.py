@@ -95,16 +95,14 @@ class OperationsCoordinator:
         training_data = self.psql_manager.fetch_table_data(psql_table_name)
         model_df = data_transforming.ListingsTransforming.to_price_predict_df(rows=training_data)
 
-        atypes = model_df['atype'].unique()
-        for atype in atypes:
-            atype_df = model_df[model_df['atype'] == atype]
-            logging.info(f"Prepping model data for Atype {atype}")
-            atype_df = StatsPrep.prep_data(df=atype_df, atype=atype, price_column='exalts')
+        atype_dfs = model_df.groupby('atype')
+
+        for atype, atype_df in atype_dfs.items():
+            atype_df = StatsPrep.prep_dataframe(df=atype_df, atype=atype, price_column='exalts')
 
             if atype_df is None:  # This only happens if no column in the atype_df has enough of a correlation
                 continue
 
-            logging.info(f"Building model for Atype {atype}")
             model = build_price_predict_model(df=atype_df, atype=str(atype), price_column='exalts')
             self.files_manager.model_data[ModelPath.PRICE_PREDICT_MODEL] = model
             self.files_manager.save_data(paths=[ModelPath.PRICE_PREDICT_MODEL])
@@ -115,6 +113,7 @@ class OperationsCoordinator:
             raise ValueError("Called train_crafting_model when there is no price predict model stored.")
 
         price_predict_model = self.files_manager.model_data[ModelPath.PRICE_PREDICT_MODEL]
+        price_predictor = price_predict_ai_model.PricePredictor(price_predict_model)
 
         training_queries = query.QueryPresets().training_fills
         random.shuffle(training_queries)
@@ -122,11 +121,15 @@ class OperationsCoordinator:
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = self._create_listings(api_item_responses)
 
+            if not listings:
+                continue
+
             for listing in listings:
                 crafting_ai_model.RlTrainer.train(
                     listing=listing,
-                    price_predictor_model=price_predict_model,
+                    price_predictor=price_predictor,
                     crafting_model=craft_model
                 )
 
+            self.files_manager.model_data[ModelPath.CRAFTING_MODEL] = craft_model
             self.files_manager.save_data(paths=[ModelPath.CRAFTING_MODEL])
