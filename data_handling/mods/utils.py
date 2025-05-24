@@ -6,13 +6,6 @@ from poecd_api.data_management import PoecdMod
 from shared import shared_utils
 
 
-def parse_poecd_mtypes_string(mtypes_string: str) -> list:
-    if not mtypes_string:
-        return []
-    parsed = [part for part in mtypes_string.split('|') if part]
-    return parsed
-
-
 class MatchScoreTracker:
 
     def __init__(self):
@@ -58,36 +51,15 @@ def transform_text(text: str, transform_dict: dict) -> str:
     :return: Possibly transformed text
     """
     transforms = {
-        start: end
-        for start, end in transform_dict.items()
-        if start in text
+        before: after
+        for before, after in transform_dict.items()
+        if before in text
     }
 
-    for start, end in transforms.items():
-        text = re.sub(re.escape(start), end, text)
+    for before, after in transforms.items():
+        text = re.sub(re.escape(before), after, text)
 
     return text
-
-
-def throw_no_match_error(item_mod: ItemMod):
-    logging.info(f"Parent mod:")
-    shared_utils.log_dict(item_mod.__dict__)
-    logging.info(f"Sub Mods:")
-    for sub_mod in item_mod.sub_mods:
-        shared_utils.log_dict(sub_mod.__dict__)
-    raise RuntimeError(f"Could not find matching Poecd mod for Trade API mod. See above")
-
-
-def throw_unavailable_mod_error(item_mod: ItemMod, poecd_mod: PoecdMod):
-    logging.info("\n\n--------------- Item Mod ----------------")
-    api_trade_skills = [sub_mod.sanitized_mod_text for sub_mod in item_mod.sub_mods]
-    logging.info(f"Item mod: {api_trade_skills}")
-    shared_utils.log_dict(item_mod.__dict__)
-
-    logging.info("\n\n")
-    logging.info("------------ Poecd Matched Mod ---------------")
-    shared_utils.log_dict(f"Poecd mod: {poecd_mod.mod_text}")
-    raise KeyError
 
 
 
