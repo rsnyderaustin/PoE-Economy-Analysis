@@ -115,7 +115,7 @@ class JewelRadius(Enum):
     MASSIVE = 'massive'
 
 
-class ItemCategory(Enum):
+class TradeItemCategory(Enum):
     ANY_ARMOUR = 'armour'
     ANY_WEAPON = 'weapon'
     ANY_ONE_HANDED_MELEE_WEAPON = 'weapon.onemelee'

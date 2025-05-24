@@ -5,8 +5,9 @@ from abc import abstractmethod, ABC
 import shared
 from crafting_ai_model.mod_rolling import ModRoller
 from instances_and_definitions import ModifiableListing
-from shared import item_enums
-from shared.trade_enums import Rarity, ItemCategory, ModClass
+from shared import item_enums, ItemCategoryGroups
+from shared.item_enums import ItemCategory
+from shared.trade_enums import Rarity, ModClass
 from . import utils
 
 
@@ -38,7 +39,7 @@ class ArcanistsEtcher(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in shared.non_martial_weapon_categories:
+        if listing.item_category not in ItemCategoryGroups.fetch_non_martial_weapon_categories():
             return Outcome()
 
         if listing.corrupted:
@@ -67,7 +68,7 @@ class ArmourersScrap(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in item_enums.armour_categories:
+        if listing.item_category not in ItemCategoryGroups.fetch_armour_categories():
             return Outcome()
 
         if listing.corrupted:
@@ -97,7 +98,7 @@ class ArtificersOrb(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in item_enums.socketable_item_categories:
+        if listing.item_category not in ItemCategoryGroups.fetch_socketable_item_categories():
             return Outcome()
 
         if listing.corrupted:
@@ -119,7 +120,7 @@ class BlacksmithsWhetstone(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in item_enums.martial_weapon_categories:
+        if listing.item_category not in ItemCategoryGroups.fetch_martial_weapon_categories():
             return Outcome()
 
         if listing.corrupted:
@@ -189,7 +190,7 @@ class DivineOrb(CurrencyEngine):
             return Outcome()
 
         mods_to_reroll = [*listing.implicit_mods, *listing.enchant_mods, *listing.explicit_mods]
-        sub_mods_to_reroll = [sub_mod for mod in mods_to_reroll for sub_mod in mod.sub_mods]
+        sub_mods_to_reroll = [sub_mod for mod in mods_to_reroll for sub_mod in mod._sub_mods]
         for sub_mod in sub_mods_to_reroll:
             if not sub_mod.values_ranges:
                 continue
@@ -294,7 +295,7 @@ class GlassblowersBauble(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in item_enums.flask_categories:
+        if listing.item_category not in ItemCategoryGroups.fetch_flask_categories():
             return Outcome()
 
         if listing.corrupted:

@@ -57,9 +57,10 @@ class _ModResolver:
         files_manager = FilesManager()
         self.file_item_mods = files_manager.file_data[DataPath.MODS] or dict()
 
-    @staticmethod
-    def _build_sub_mod(mod_id: str, mod_id_to_text: dict, magnitudes: list[dict]) -> SubMod:
-        mod_text = mod_id_to_text[mod_id]
+        self.current_rp = None
+
+    def _build_sub_mod(self, mod_id: str, mod_class: ModClass, magnitudes: list[dict]) -> SubMod:
+        mod_text = self.current_rp.fetch_mod_id_to_text(mod_class)
         sanitized_text = shared_utils.sanitize_mod_text(mod_text)
         actual_values = shared_utils.extract_values_from_text(mod_text)
 
@@ -84,8 +85,7 @@ class _ModResolver:
             values_ranges=value_ranges
         )
 
-    @classmethod
-    def _create_sub_mods(cls, mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]:
+    def _create_sub_mods(self, current_mod: ItemMod, mod_magnitudes: list) -> list[SubMod]:
         # Sub-mods within a hybrid mod that share a magnitude represent a range of values
         mod_id_to_mags = dict()
         for magnitude in mod_magnitudes:
@@ -94,34 +94,31 @@ class _ModResolver:
 
             mod_id_to_mags[magnitude['hash']].append(magnitude)
 
+        mod_id_to_text = self.current_rp.fetch_mod_id_to_text(current_mod.mod_class_e)
         sub_mods = []
         for mod_id, magnitudes in mod_id_to_mags.items():
-            sub_mod = cls._build_sub_mod(mod_id, mod_id_to_text, magnitudes)
+            sub_mod = self._build_sub_mod(mod_id, mod_id_to_text, magnitudes)
             sub_mods.append(sub_mod)
 
         return sub_mods
 
-    def _create_item_mod(self, mod_data: dict, mod_id_to_text: dict, mod_class: ModClass, atype: str):
-        mod_name = mod_data['name']
-        mod_tier = utils.determine_mod_tier(mod_data)
-        mod_ilvl = mod_data['level']
-        affix_type = utils.determine_mod_affix_type(mod_data)
+    def _create_item_mod(self, mod_data: dict, mod_class: ModClass):
+        new_mod = ItemMod(
+            atype=self.current_atype,
+            mod_class_e=mod_class,
+            mod_name=mod_data['name'],
+            affix_type_e=utils.determine_mod_affix_type(mod_data),
+            mod_tier=utils.determine_mod_tier(mod_data),
+            mod_ilvl=int(mod_data['level'])
+        )
         magnitudes = mod_data['magnitudes']
 
         sub_mods = self._create_sub_mods(
-            mod_id_to_text=mod_id_to_text,
+            current_mod=new_mod,
             mod_magnitudes=magnitudes
         )
 
-        item_mod = ItemMod(
-            atype=atype,
-            mod_class_e=mod_class,
-            mod_ilvl=mod_ilvl,
-            mod_name=mod_name,
-            affix_type_e=affix_type,
-            mod_tier=mod_tier,
-            sub_mods=sub_mods
-        )
+        new_mod.insert_sub_mods(sub_mods)
 
         poecd_attributes = self.poecd_attribute_finder.get_poecd_mod_attributes(item_mod=item_mod)
         if poecd_attributes:  # returns None if
@@ -135,9 +132,10 @@ class _ModResolver:
         Attempts to pull each mod in the item's data from file. Otherwise, it manages the mod's creation and caching
         :return: All mods from the item data
         """
-        mods = []
+        self.current_rp = rp
+        self.current_atype = ATypeClassifier.classify(rp)
 
-        atype = ATypeClassifier.classify(rp)
+        mods = []
 
         mod_datas = [
             (mod_class_e, mod_data)
@@ -147,7 +145,7 @@ class _ModResolver:
         for mod_class_e, mod_data in mod_datas:
             mod_ids = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
             affix_type = utils.determine_mod_affix_type(mod_data)
-            mod_id = generate_mod_id(atype=atype, mod_ids=mod_ids, affix_type=affix_type)
+            mod_id = generate_mod_id(atype=self.current_atype, mod_ids=mod_ids, affix_type=affix_type)
 
             if mod_id in self.file_item_mods:
                 mods.append(self.file_item_mods[mod_id])
@@ -155,9 +153,7 @@ class _ModResolver:
 
             logging.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
             new_mod = self._create_item_mod(mod_data=mod_data,
-                                            mod_id_to_text=rp.fetch_mod_id_to_mod_text(mod_class_e),
-                                            mod_class=mod_class_e,
-                                            atype=atype)
+                                            mod_class=mod_class_e)
             self.file_item_mods[new_mod.mod_id] = new_mod  # Add the new mod to our mod JSON file
             mods.append(new_mod)
 

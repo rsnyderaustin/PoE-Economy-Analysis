@@ -31,7 +31,7 @@ class OperationsCoordinator:
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
 
-        att_finder = poecd_api.PoecdManager(refresh_data=refresh_poecd_source).build_attributes_finder()
+        att_finder = poecd_api.PoecdDataManager(refresh_data=refresh_poecd_source).build_attributes_finder()
         self.listing_builder = ListingBuilder(att_finder)
 
         self.env_loader = env_loading.EnvLoader()
@@ -44,7 +44,7 @@ class OperationsCoordinator:
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = [self.listing_builder.build_listing(api_r) for api_r in api_item_responses]
-            row_data = data_transforming.ListingsTransforming.to_flat_rows(listings)
+            row_data = ListingsTransforming.to_flat_rows(listings)
             self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
                                           data=row_data)
 

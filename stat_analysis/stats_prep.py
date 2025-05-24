@@ -242,7 +242,6 @@ class StatsPrep:
 
     @staticmethod
     def _pair_columns(features_df: pd.DataFrame,
-                      derived_columns: dict,
                       columns: list[str | tuple]) -> pd.DataFrame:
         df_setup = dict()
 

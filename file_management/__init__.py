@@ -1,3 +1,3 @@
 from .files_manager import FilesManager
-from .utils import DataPath, ModelPath
+from .io_utils import DataPath, ModelPath
 

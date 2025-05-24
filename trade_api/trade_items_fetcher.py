@@ -23,7 +23,7 @@ class TradeItemsFetcher:
     headers = {
         'Content-Type': 'application/json',
         # Used to be '5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
-        'User-Agent': '',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0',
         'Cookie': f'POESESSID={env_loader.get_env("POSSESSID")}',
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br, zstd',

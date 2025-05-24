@@ -5,9 +5,7 @@ from datetime import datetime, timezone
 import pytz
 from dateutil.parser import isoparse
 
-from instances_and_definitions import ModClass, ModAffixType
-from shared import shared_utils
-
+from shared.item_enums import ModAffixType
 
 _dt = datetime(2025, 4, 4, 12, 0, 0)
 _pacific = pytz.timezone('US/Pacific')
@@ -32,9 +30,9 @@ def determine_mod_affix_type(mod_dict: dict) -> ModAffixType:
     mod_affix = None
     if mod_dict['tier']:
         first_letter = mod_dict['tier'][0]
-        if first_letter == 'S':
+        if first_letter == 's':
             mod_affix = ModAffixType.SUFFIX
-        elif first_letter == 'P':
+        elif first_letter == 'p':
             mod_affix = ModAffixType.PREFIX
         else:
             raise ValueError(f"Did not recognize first character as an affix type for "

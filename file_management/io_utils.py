@@ -18,13 +18,12 @@ class DataPath(Enum):
     POECD_STATS = Path.cwd() / 'file_management/files/poecd_stats.json'
     OFFICIAL_STATIC = Path.cwd() / 'file_management/files/official_static.json'
     OFFICIAL_STATS = Path.cwd() / 'file_management/files/official_stats.json'
-    MOD_ENCODES = Path.cwd() / 'file_management/files/mod_encodes.json'
     RAW_LISTINGS = Path.cwd() / 'file_management/files/raw_listings.json'
 
 
 class ModelPath(Enum):
-    PRICE_PREDICT_MODEL = Path.cwd() / 'file_management/files/price_predict_ai_model.json'
-    CRAFTING_MODEL = Path.cwd() / 'file_management/files/crafting_ai_model.pt'
+    PRICE_PREDICT_MODEL = Path.cwd() / 'file_management/files/price_predict_model.json'
+    CRAFTING_MODEL = Path.cwd() / 'file_management/files/crafting_model.pt'
 
 
 class SetEncoder(json.JSONEncoder):
@@ -92,21 +91,14 @@ def load_data_files() -> dict:
             else:
                 raise ValueError(f"Unsupported file type {path.suffix}")
 
-    # LISTING_FETCHES is a special case because its dict values are sets
-    file_data[DataPath .LISTING_FETCH_DATES] = {
-        fetch_date: set(listing_ids)
-        for fetch_date, listing_ids in file_data[DataPath.LISTING_FETCH_DATES].items()
-    }
-
     return file_data
 
 
 def _load_xgboost_model(model_enum):
     model = xgb.Booster()
-    model_path = str(ModelPath[model_enum])
 
-    if os.path.getsize(model_path) > 2:
-        model.load_model(model_path)
+    if os.path.getsize(model_enum.value) > 2:
+        model.load_model(model_enum.value)
         return model
     else:
         return None

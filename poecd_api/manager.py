@@ -40,7 +40,7 @@ class PoecdSourceStore:
         }
 
         mod_id_to_mod_type_ids = {
-            mod_data['id_modifier']: _determine_mod_types(mod_data['mtypes'])
+            mod_data['id_modifier']: self._determine_mod_types(mod_data['mtypes'])
             for mod_data in self.stats_data['modifiers']['seq']
         }
 

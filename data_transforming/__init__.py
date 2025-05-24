@@ -1,3 +1,3 @@
 
-from .transforming_listings import PricePredictTransformer, ListingsTransforming
+from .transforming_listings import ListingsTransforming
 

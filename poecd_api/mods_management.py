@@ -1,6 +1,4 @@
-
-from instances_and_definitions import ModAffixType
-from shared import shared_utils
+from shared.item_enums import ModAffixType
 
 
 class PoecdMod:

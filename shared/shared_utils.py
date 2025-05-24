@@ -8,11 +8,11 @@ import pytz
 
 import file_management
 from file_management import DataPath
-from .trade_enums import ItemCategory
+from .item_enums import ItemCategory
 
 
 def extract_values_from_text(text) -> int | float | tuple | None:
-    raw_numbers = re.findall(r'\d+\.\d+|\d+', text)
+    raw_numbers = re.findall(r'-?\d+\.\d+|-?\d+', text)
     if len(raw_numbers) == 0:
         return None
     elif len(raw_numbers) == 1:

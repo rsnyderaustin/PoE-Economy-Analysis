@@ -4,6 +4,7 @@ from copy import deepcopy
 from datetime import datetime
 
 from file_management import FilesManager, DataPath
+from shared import shared_utils
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
@@ -123,7 +124,12 @@ class TradeApiHandler:
             valid_query_responses = 0
             total_query_responses = 0
             for responses, response_results_count in self._process_query(query):
-                self.raw_listings.extend(responses)
+                responses = [shared_utils.sanitize_dict_texts(response) for response in responses]
+                keyed_responses = {
+                    (response['id'], response['listing']['indexed']): response
+                    for response in responses
+                }
+                self.raw_listings.update(keyed_responses)
 
                 self.total_valid_responses += len(responses)
                 valid_query_responses += len(responses)

@@ -1,8 +1,8 @@
 import re
 from typing import Iterable
 
-from shared.trade_enums import ItemCategory, ModClass, Rarity, Currency
-from .utils import ModAffixType
+from shared.item_enums import ModAffixType, ItemCategory
+from shared.trade_enums import ModClass, Rarity, Currency
 
 
 class SubMod:
@@ -35,14 +35,14 @@ class ItemMod:
                  affix_type_e: ModAffixType,
                  mod_tier: int,
                  mod_ilvl: int,
-                 sub_mods: list[SubMod]):
+                 sub_mods: list[SubMod] = None):
         self.atype = atype
         self.mod_class_e = mod_class_e
         self.mod_name = mod_name
         self.affix_type_e = affix_type_e
         self.mod_tier = mod_tier
         self.mod_ilvl = mod_ilvl
-        self.sub_mods = sorted(sub_mods, key=lambda sm: sm.mod_id)
+        self._sub_mods = sorted(sub_mods, key=lambda sm: sm.mod_id) if sub_mods else []
 
         # These variables should be very quickly filled in after creation
         self.mod_types = None
@@ -56,17 +56,23 @@ class ItemMod:
 
     @property
     def is_hybrid(self):
-        return len(self.sub_mods) >= 2
+        return len(self._sub_mods) >= 2
 
     @property
     def mod_id(self):
         return generate_mod_id(atype=self.atype,
-                               mod_ids=[sub_mod.mod_id for sub_mod in self.sub_mods],
+                               mod_ids=[sub_mod.mod_id for sub_mod in self._sub_mods],
                                affix_type=self.affix_type_e)
 
     @property
     def mod_values(self):
         return
+
+    def insert_sub_mods(self, sub_mods: list[SubMod]):
+        self._sub_mods = sorted(sub_mods, key=lambda sm: sm.mod_id)
+
+    def get_sub_mods(self):
+        return self._sub_mods
 
 
 class ItemSkill:
@@ -149,7 +155,7 @@ class ModifiableListing:
         return hash((self.listing_id, self.minutes_since_listed))
 
     def _determine_max_quality(self) -> int:
-        implicit_sub_mods = [sub_mod for mod in self.implicit_mods for sub_mod in mod.sub_mods]
+        implicit_sub_mods = [sub_mod for mod in self.implicit_mods for sub_mod in mod._sub_mods]
         max_quality = 20
         for sub_mod in implicit_sub_mods:
             if bool(re.fullmatch(r"maximum_quality_is", sub_mod.sanitized_mod_text)):

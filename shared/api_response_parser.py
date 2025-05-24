@@ -1,7 +1,9 @@
 import logging
 from dataclasses import dataclass
 
-from shared import ModClass, shared_utils, Currency, Rarity, ItemCategory
+from .item_enums import ItemCategory
+from .trade_enums import ModClass, Currency, Rarity
+from . import shared_utils
 
 
 @dataclass
@@ -13,11 +15,11 @@ class Price:
 class ApiResponseParser:
 
     _mod_class_to_abbrev = {
-        'implicitMods': 'implicit',
-        'enchantMods': 'enchant',
-        'explicitMods': 'explicit',
-        'fracturedMods': 'fractured',
-        'runeMods': 'rune'
+        ModClass.IMPLICIT: 'implicit',
+        ModClass.ENCHANT: 'enchant',
+        ModClass.EXPLICIT: 'explicit',
+        ModClass.FRACTURED: 'fractured',
+        ModClass.RUNE: 'rune'
     }
 
     _elemental_id_map = {
@@ -61,7 +63,7 @@ class ApiResponseParser:
         raw_properties = self.item_data['properties'][1:]
 
         for raw_property in raw_properties:
-            property_name = shared_utils.sanitize_text(raw_property['name'])
+            property_name = raw_property['name']
 
             if property_name == 'elemental_damage':
                 # Elemental damage is a hybrid of the different elemental damage types
@@ -71,8 +73,8 @@ class ApiResponseParser:
                     properties[elemental_type] = value
 
                 continue
-
-            property_values = shared_utils.extract_values_from_text(raw_property['values'][0])
+            property_value_str = raw_property['values'][0][0]
+            property_values = shared_utils.extract_values_from_text(property_value_str)
             properties[property_name] = property_values
 
         return properties
@@ -148,11 +150,11 @@ class ApiResponseParser:
 
     @property
     def item_name(self):
-        return shared_utils.sanitize_text(self.item_data['name'])
+        return self.item_data['name']
 
     @property
     def item_btype(self):
-        return shared_utils.sanitize_text(self.item_data['baseType'])
+        return self.item_data['baseType']
 
     @property
     def item_rarity(self) -> Rarity:
@@ -174,7 +176,6 @@ class ApiResponseParser:
     @property
     def item_category(self) -> ItemCategory:
         category_str = self.item_data['properties'][0]['name']
-        category_str = shared_utils.sanitize_text(category_str)
         return ItemCategory(category_str)
 
     @property
@@ -182,19 +183,19 @@ class ApiResponseParser:
         return self._properties
 
     @property
-    def strength_requirement(self) -> int:
+    def str_requirement(self) -> int:
         requirements = self.item_data['requirements']
         str_req = [req for req in requirements if req.name == '[Strength|Str]']
         return int(str_req[0]['values']) if str_req else 0
 
     @property
-    def intelligence_requirement(self) -> int:
+    def int_requirement(self) -> int:
         requirements = self.item_data['requirements']
         int_req = [req for req in requirements if req.name == '[Intelligence|Int]']
         return int(int_req[0]['values']) if int_req else 0
 
     @property
-    def dexterity_requirement(self) -> int:
+    def dex_requirement(self) -> int:
         requirements = self.item_data['requirements']
         dex_req = [req for req in requirements if req.name == '[Dexterity|Dex]']
         return int(dex_req[0]['values']) if dex_req else 0

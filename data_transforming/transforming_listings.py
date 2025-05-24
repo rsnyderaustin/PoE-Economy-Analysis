@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 from instances_and_definitions import ModifiableListing
-from shared import shared_utils, ItemCategory, item_enums
-from shared.item_enums import LocalMod, DerivedMod
+from shared import shared_utils, item_enums, ItemCategoryGroups
+from shared.item_enums import LocalMod, DerivedMod, ItemCategory
 
 
 class ListingFeatureCalculator(ABC):
@@ -47,7 +47,7 @@ class CalculatorRegistry:
 
 @CalculatorRegistry.register
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
-    applicable_item_categories = item_enums.martial_weapon_categories
+    applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
 
     @classmethod
@@ -69,7 +69,7 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
 
 @CalculatorRegistry.register
 class ElementalDpsCalculator(ListingFeatureCalculator):
-    applicable_item_categories = item_enums.martial_weapon_categories
+    applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
 
@@ -193,7 +193,6 @@ class _PricePredictTransformer:
                 else:
                     raise ValueError(f"Property value {property_values} has unexpected structure.")
 
-        flattened_properties = {shared_utils.form_column_name(col): val for col, val in flattened_properties.items()}
         self.flattened_data.update(flattened_properties)
         return self
 
@@ -226,7 +225,7 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        exalts_price = shared_utils.currency_converter.convert_to_exalts(
+        exalts_price = shared_utils.CurrencyConverter.convert_to_exalts(
             currency=self.listing.currency,
             currency_amount=self.listing.currency_amount,
             relevant_date=self._determine_date_fetched()
@@ -246,28 +245,27 @@ class _PricePredictTransformer:
         return self
 
     def insert_sub_mod_values(self):
-        sub_mods = [sub_mod for mod in self.listing.mods for sub_mod in mod.sub_mods]
+        sub_mods = [sub_mod for mod in self.listing.mods for sub_mod in mod._sub_mods]
 
         summed_sub_mods = {}
         for sub_mod in sub_mods:
-            col_name = shared_utils.form_column_name(sub_mod.sanitized_mod_text)
             if sub_mod.actual_values:
                 avg_value = sum(sub_mod.actual_values) / len(sub_mod.actual_values)
                 if sub_mod.mod_id not in summed_sub_mods:
-                    summed_sub_mods[col_name] = avg_value
+                    summed_sub_mods[sub_mod.sanitized_mod_text] = avg_value
                 else:
-                    summed_sub_mods[col_name] += avg_value
+                    summed_sub_mods[sub_mod.sanitized_mod_text] += avg_value
             else:
                 # If there is no value then it's just a static property (ex: "You cannot be poisoned"), and so
                 # we assign it a 1 to indicate to the model that it's an active mod
-                summed_sub_mods[col_name] = 1
+                summed_sub_mods[sub_mod.sanitized_mod_text] = 1
 
         self.flattened_data.update(summed_sub_mods)
         return self
 
     def insert_skills(self):
         skills_dict = {item_skill.name: item_skill.level for item_skill in self.listing.item_skills}
-        skills_dict = {shared_utils.form_column_name(skill_name): lvl for skill_name, lvl in skills_dict.items()}
+        skills_dict = {skill_name: lvl for skill_name, lvl in skills_dict.items()}
         self.flattened_data.update(skills_dict)
         return self
 

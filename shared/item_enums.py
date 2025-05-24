@@ -1,14 +1,9 @@
 from enum import Enum
 
-from shared import ItemCategory
-
 
 class ModAffixType(Enum):
     PREFIX = 'prefix'
     SUFFIX = 'suffix'
-
-
-class Atype(Enum):
 
 
 class DerivedMod(Enum):
@@ -17,6 +12,7 @@ class DerivedMod(Enum):
     COLD_DPS = 'cold_dps'
     LIGHTNING_DPS = 'lightning_dps'
     ELEMENTAL_DPS = 'elemental_dps'
+
 
 class LocalMod(Enum):
     # Base Stats
@@ -41,53 +37,26 @@ class LocalMod(Enum):
     CRIT_CHANCE = 'critical_hit_chance'
 
 
-socketable_item_categories = [
-    ItemCategory.ONE_HANDED_MACE,
-    ItemCategory.SPEAR,
-    ItemCategory.TWO_HANDED_MACE,
-    ItemCategory.QUARTERSTAFF,
-    ItemCategory.BOW,
-    ItemCategory.CROSSBOW,
-    ItemCategory.WAND,
-    ItemCategory.SCEPTRE,
-    ItemCategory.STAFF,
-    ItemCategory.HELMET,
-    ItemCategory.BODY_ARMOUR,
-    ItemCategory.GLOVES,
-    ItemCategory.BOOTS,
-    ItemCategory.SHIELD,
-    ItemCategory.FOCUS,
-    ItemCategory.BUCKLER
-]
-
-martial_weapon_categories = [
-    ItemCategory.ONE_HANDED_MACE,
-    ItemCategory.SPEAR,
-    ItemCategory.TWO_HANDED_MACE,
-    ItemCategory.QUARTERSTAFF,
-    ItemCategory.BOW,
-    ItemCategory.CROSSBOW
-]
-
-non_martial_weapon_categories = [
-    ItemCategory.WAND,
-    ItemCategory.SCEPTRE,
-    ItemCategory.STAFF
-]
-
-armour_categories = [
-    ItemCategory.HELMET,
-    ItemCategory.BODY_ARMOUR,
-    ItemCategory.GLOVES,
-    ItemCategory.BOOTS,
-    ItemCategory.QUIVER,
-    ItemCategory.SHIELD,
-    ItemCategory.FOCUS,
-    ItemCategory.BUCKLER
-]
-
-
-flask_categories = [
-    ItemCategory.LIFE_FLASK,
-    ItemCategory.MANA_FLASK
-]
+class ItemCategory(Enum):
+    ONE_HANDED_MACE = 'one_hand_mace'
+    SPEAR = 'spear'
+    TWO_HANDED_MACE = 'two_hand_mace'
+    QUARTERSTAFF = 'quarterstaff'
+    BOW = 'bow'
+    CROSSBOW = 'crossbow'
+    WAND = 'wand'
+    SCEPTRE = 'sceptre'
+    STAFF = 'staff'
+    HELMET = 'helmet'
+    BODY_ARMOUR = 'body_armour'
+    GLOVES = 'gloves'
+    BOOTS = 'boots'
+    SHIELD = 'shield'
+    FOCUS = 'focus'
+    BUCKLER = 'buckler'
+    QUIVER = 'quiver'
+    LIFE_FLASK = 'life_flask'
+    MANA_FLASK = 'mana_flask'
+    SKILL_GEM = 'skill_gem'
+    META_GEM = 'meta_gem'
+    SUPPORT_GEM = 'support_gem'

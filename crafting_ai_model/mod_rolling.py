@@ -1,7 +1,9 @@
 import random
 
 from file_management import FilesManager, DataPath
-from instances_and_definitions import ModifiableListing, ModAffixType, ItemMod, ModClass
+from instances_and_definitions import ModifiableListing, ItemMod
+from shared import ModClass
+from shared.item_enums import ModAffixType
 
 
 def _mods_into_dict(mods: list[ItemMod]):
@@ -39,6 +41,8 @@ class ModsFetcher:
                         exclude_mod_ids: set[str] = None,
                         affix_types: list[ModAffixType] = None) -> list[ItemMod]:
         mods = self.mods_dict[atype][mod_class]
+
+        mods = [mod for mod in mods if mod.ilvl <= max_ilvl]
 
         if force_mod_type:
             mods = [mod for mod in mods if force_mod_type in mod.mod_types]
