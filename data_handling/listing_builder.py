@@ -61,7 +61,7 @@ class _ModResolver:
     def _build_sub_mod(mod_id: str, mod_id_to_text: dict, magnitudes: list[dict]) -> SubMod:
         mod_text = mod_id_to_text[mod_id]
         sanitized_text = shared_utils.sanitize_mod_text(mod_text)
-        actual_values = shared_utils.parse_values_from_text(mod_text)
+        actual_values = shared_utils.extract_values_from_text(mod_text)
 
         value_ranges = [
             (

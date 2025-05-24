@@ -2,7 +2,7 @@ import logging
 from dataclasses import dataclass
 
 from instances_and_definitions import ItemMod
-from poecd_api.data_management import GlobalAtypesManager, PoecdMod
+from poecd_api.mods_management import GlobalAtypesManager, PoecdMod
 from data_handling.mods import utils
 from data_handling import mod_matching
 from shared import shared_utils, ModClass

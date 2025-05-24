@@ -21,19 +21,19 @@ class ApiResponseParser:
     }
 
     _elemental_id_map = {
-        4: 'Fire Damage',
-        5: 'Cold Damage',
-        6: 'Lightning Damage'
+        4: 'fire_damage',
+        5: 'cold_damage',
+        6: 'lightning_damage'
     }
 
     def __init__(self, api_response_data: dict):
-        self.api_d = self._clean_response_data(api_response_data)
+        self.api_d = self._clean_blank_spear_implicit(api_response_data)
 
         self._mod_id_to_text = self._determine_mod_id_to_mod_text()
         self._properties = self._parse_properties()
 
     @staticmethod
-    def _clean_response_data(response_data: dict):
+    def _clean_blank_spear_implicit(response_data: dict):
         # This currently only applies to the blank implicit mod on spears
         mods_data = response_data['item']['extended']['mods']
         if 'implicit' not in mods_data:
@@ -48,6 +48,7 @@ class ApiResponseParser:
                mod.get("level") == 1
             )
         ]
+        return response_data
 
     def _parse_properties(self) -> dict:
         properties = dict()
@@ -60,16 +61,18 @@ class ApiResponseParser:
         raw_properties = self.item_data['properties'][1:]
 
         for raw_property in raw_properties:
-            property_name = shared_utils.remove_piped_brackets(raw_property['name'])
+            property_name = shared_utils.sanitize_text(raw_property['name'])
 
-            if property_name == 'Elemental Damage':
+            if property_name == 'elemental_damage':
                 # Elemental damage is a hybrid of the different elemental damage types
                 for ele_value in raw_property['values']:
-                    value = shared_utils.parse_values_from_text(ele_value[0])
-                    elemental_type = self.__class__._elemental_id_map[value[1]]
+                    value = shared_utils.extract_values_from_text(ele_value[0])
+                    elemental_type = self.__class__._elemental_id_map[ele_value[1]]
                     properties[elemental_type] = value
 
-            property_values = shared_utils.parse_values_from_text(raw_property['values'][0])
+                continue
+
+            property_values = shared_utils.extract_values_from_text(raw_property['values'][0])
             properties[property_name] = property_values
 
         return properties
@@ -145,11 +148,11 @@ class ApiResponseParser:
 
     @property
     def item_name(self):
-        return self.item_data['name']
+        return shared_utils.sanitize_text(self.item_data['name'])
 
     @property
     def item_btype(self):
-        return self.item_data['baseType']
+        return shared_utils.sanitize_text(self.item_data['baseType'])
 
     @property
     def item_rarity(self) -> Rarity:
@@ -171,7 +174,7 @@ class ApiResponseParser:
     @property
     def item_category(self) -> ItemCategory:
         category_str = self.item_data['properties'][0]['name']
-        category_str = shared_utils.remove_piped_brackets(category_str)
+        category_str = shared_utils.sanitize_text(category_str)
         return ItemCategory(category_str)
 
     @property

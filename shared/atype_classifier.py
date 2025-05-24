@@ -1,6 +1,7 @@
 
 from shared import ApiResponseParser
 
+
 class ATypeClassifier:
 
     _convertable_raw_atypes = {
@@ -23,7 +24,7 @@ class ATypeClassifier:
             return 'Lightning Wand'
 
         # Sometimes the item's btype is surrounded by brackets, sometimes it's a string. I don't know why.
-        if raw_atype.startswith('[') and raw_atype.endswith(']'):
+        if rp.atype.startswith('[') and raw_atype.endswith(']'):
             raw_atype = raw_atype[1:-1]
 
         # For weapon types that can be one- or two-handed, there is a pipe '|' that we need to handle

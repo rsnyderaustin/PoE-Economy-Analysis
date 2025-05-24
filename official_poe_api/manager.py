@@ -6,38 +6,7 @@ from pathlib import Path
 
 import requests
 
-from shared import PathProcessor
-
-
-def _format_static_data(data: dict):
-
-    item_blocks = data['result']
-
-    returnable_dict = dict()
-    for item_block in item_blocks:
-        item_block_name = item_block['id'].lower()
-        returnable_dict[item_block_name] = list()
-
-        for entry in item_block['entries']:
-            if (not entry['id'] or len(entry['id']) == 0
-                    or not entry['text'] or len(entry['text']) == 0):
-                continue
-
-            if 'image' in entry:
-                del entry['image']
-
-            returnable_dict[item_block_name].append(entry)
-
-    return returnable_dict
-
-def _format_stats_data(data: dict):
-    stat_blocks = data['result']
-
-    stat_json = {
-        stat_block['id']: stat_block['entries'] for stat_block in stat_blocks
-    }
-
-    return stat_json
+from shared import PathProcessor, shared_utils
 
 
 class Endpoint(Enum):
@@ -114,6 +83,41 @@ class OfficialApiManager:
         if endpoint not in self.acceptable_endpoints:
             raise ValueError(f"Endpoint {endpoint} not one of acceptable values {self.acceptable_endpoints}.")
 
+    @staticmethod
+    def _format_static_data(data: dict):
+
+        item_blocks = data['result']
+
+        returnable_dict = dict()
+        for item_block in item_blocks:
+            item_block_name = item_block['id']
+            returnable_dict[item_block_name] = list()
+
+            for entry in item_block['entries']:
+                entry = entry
+                if (not entry['id'] or len(entry['id']) == 0
+                        or not entry['text'] or len(entry['text']) == 0):
+                    continue
+
+                entry.pop('image', None)
+
+                returnable_dict[item_block_name].append(entry)
+
+        returnable_dict = shared_utils.sanitize_dict_texts(returnable_dict)
+
+        return returnable_dict
+
+    @staticmethod
+    def _format_stats_data(data: dict):
+        stat_blocks = data['result']
+
+        stat_json = {
+            stat_block['id']: stat_block['entries'] for stat_block in stat_blocks
+        }
+        stat_json = shared_utils.sanitize_dict_texts(stat_json)
+
+        return stat_json
+
     def pull_data(self, endpoint: str, load_locally: bool = False):
         self._verify_endpoint(endpoint)
 
@@ -130,19 +134,19 @@ class OfficialApiManager:
             data = self._load_api_data(api_url=import_url)
 
             if endpoint == 'static':
-                data = _format_static_data(data)
+                data = self._format_static_data(data)
             else:
-                data = _format_stats_data(data)
+                data = self._format_stats_data(data)
 
             return data
 
     def save_data_to_json(self, endpoint: str):
         data = self.pull_data(endpoint=endpoint)
         if endpoint == 'static':
-            data = _format_static_data(data)
+            data = self._format_static_data(data)
             output_path = self.static_output_path
         else:
-            data = _format_stats_data(data)
+            data = self._format_stats_data(data)
             output_path = self.stats_output_path
 
         with open(output_path, "w") as f:
