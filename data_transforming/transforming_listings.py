@@ -1,13 +1,13 @@
 import logging
 import pprint
 from datetime import datetime
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import pandas as pd
 
 from instances_and_definitions import ModifiableListing
-from shared import shared_utils
-from shared.item_enums import LocalMod
+from shared import shared_utils, ItemCategory, item_enums
+from shared.item_enums import LocalMod, DerivedMod
 
 _select_col_types = {
     'atype': 'category',
@@ -17,41 +17,52 @@ _select_col_types = {
     'corrupted': bool
 }
 
-_local_weapon_mod_cols = [
-    'Attacks per Second',
-    'Physical Damage',
-    'Cold Damage',
-    'Fire Damage',
-    'Lightning Damage',
-    'adds_#_to_#_fire_damage',
-    '#%_increased_attack_speed',
-    '#%_increased_physical_damage',
-    'adds_#_to_#_cold_damage',
-    'adds_#_to_#_lightning_damage',
-    'adds_#_to_#_physical_damage',
-    '+#.#%_to_critical_hit_chance',
-    '+#%_to_critical_hit_chance',
-    '#% increased Physical Damage',
-    'Adds # to # Fire Damage',
-    'Adds # to # Lightning Damage',
-    'Adds # to # Cold Damage',
-    '#% increased Attack Speed',
-    'Quality'
-]
-
 
 class ListingFeatureCalculator(ABC):
+    applicable_item_categories = []
+    raw_columns = set()
 
-    @staticmethod
-    def calculate(listing: ModifiableListing):
+    @classmethod
+    @abstractmethod
+    def calculate(cls, listing: ModifiableListing) -> dict:
         pass
 
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if not hasattr(cls, 'raw_columns'):
+            raise TypeError(f"{cls.__name__} must define 'raw_columns'.")
+        if not hasattr(cls, 'applicable_item_categories'):
+            raise TypeError(f"{cls.__name__} must define 'applicable_item_categories'.")
 
+
+class CalculatorRegistry:
+    _calculators = dict()
+
+    @classmethod
+    def register(cls, calculator: type[ListingFeatureCalculator]):
+        for cat in calculator.applicable_item_categories:
+            if cat not in cls._calculators:
+                cls._calculators[cat] = list()
+
+            cls._calculators[cat].append(calculator)
+
+        return calculator
+
+    @classmethod
+    def fetch_calculators(cls, item_category: ItemCategory) -> list[ListingFeatureCalculator]:
+        return cls._calculators[item_category] if item_category in cls._calculators else []
+
+
+@CalculatorRegistry.register
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
-    derived_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
+    applicable_item_categories = item_enums.martial_weapon_categories
+    raw_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
 
-    @staticmethod
-    def calculate(listing: ModifiableListing):
+    @classmethod
+    def calculate(cls, listing: ModifiableListing):
+        if listing.item_category not in cls.applicable_item_categories:
+            raise TypeError(f"Listing with item category {listing.item_category} called {cls.__name__}")
+
         current_multiplier = 1 + (listing.quality / 100)
         max_multiplier = 1.20
 
@@ -61,25 +72,43 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
 
         max_quality_pdps = max_quality_damage * listing.item_properties[LocalMod.ATTACKS_PER_SECOND]
 
-        return max_quality_pdps
+        return {DerivedMod.MAX_QUALITY_PDPS: max_quality_pdps}
 
 
+@CalculatorRegistry.register
 class ElementalDpsCalculator(ListingFeatureCalculator):
+    applicable_item_categories = item_enums.martial_weapon_categories
+    raw_columns = {LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
+                     LocalMod.ATTACKS_PER_SECOND}
 
-    @staticmethod
-    def calculate(listing: ModifiableListing):
+    @classmethod
+    def calculate(cls, listing: ModifiableListing):
+        if listing.item_category not in cls.applicable_item_categories:
+            raise TypeError(f"Listing with item category {listing.item_category} called {cls.__name__}")
+
+        cold_damage = listing.item_properties[LocalMod.COLD_DAMAGE]
+        fire_damage = listing.item_properties[LocalMod.FIRE_DAMAGE]
+        lightning_damage = listing.item_properties[LocalMod.LIGHTNING_DAMAGE]
+        attacks_per_second = listing.item_properties[LocalMod.ATTACKS_PER_SECOND]
+
+        return {
+            DerivedMod.COLD_DPS: cold_damage * attacks_per_second,
+            DerivedMod.FIRE_DPS: fire_damage * attacks_per_second,
+            DerivedMod.LIGHTNING_DPS: lightning_damage * attacks_per_second,
+            DerivedMod.ELEMENTAL_DPS: (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+        }
+
 
 class ListingsTransforming:
 
     @staticmethod
-    def to_flat_rows(listings: list[ModifiableListing], atype_calculations: list[ListingFeatureCalculator]) -> dict:
+    def to_flat_rows(listings: list[ModifiableListing]) -> dict:
         listings_data = dict()
         for row, listing in enumerate(listings):
             flattened_data = (
-                PricePredictTransformer(listing)
+                _PricePredictTransformer(listing)
                 .insert_listing_properties()
-                .insert_max_quality_pdps()
-                .insert_elemental_dps()
+                .apply_calculators()
                 .insert_metadata()
                 .insert_currency_info()
                 .insert_item_base_info()
@@ -127,11 +156,13 @@ class ListingsTransforming:
         return df
 
 
-class PricePredictTransformer:
+class _PricePredictTransformer:
 
     def __init__(self, listing: ModifiableListing):
         self.listing = listing
         self.flattened_data = dict()
+
+        self.calculator_registry = CalculatorRegistry()
 
         # Derived columns like pdps/edps shouldn't be compared to their source columns in analyses like stats.
         self.derived_columns = dict()
@@ -157,27 +188,20 @@ class PricePredictTransformer:
         self.flattened_data.update(flattened_properties)
         return self
 
-    def insert_max_quality_pdps(self, column_name: str = 'max_quality_pdps'):
-        max_quality_pdps = shared_utils.calculate_max_quality_pdps(
-            quality=self.flattened_data.get('Quality', 0),
-            phys_damage=self.flattened_data.get('Physical Damage', 0),
-            attacks_per_second=self.flattened_data.get('Attacks per Second', 0)
-        )
-        self.flattened_data[column_name] = max_quality_pdps
+    def apply_calculators(self, delete_raw_columns: bool = True):
+        calculators = self.calculator_registry.fetch_calculators(self.listing.item_category)
+        derived_col_values = {
+            col_e.value: val
+            for calc in calculators
+            for col_e, val in calc.calculate(self.listing).items()
+        }
+        self.flattened_data.update(derived_col_values)
 
-        self.derived_columns[column_name] = {'Quality', 'Physical Damage', 'Attacks per Second'}
-        return self
+        if delete_raw_columns:
+            raw_columns = set(col for calc in calculators for col in calc.raw_columns)
+            for col_e in raw_columns:
+                del self.flattened_data[col_e.value]
 
-    def insert_elemental_dps(self, column_name: str = 'edps'):
-        edps = shared_utils.calculate_elemental_dps(
-            cold_damage=self.flattened_data.get('Cold Damage', 0),
-            fire_damage=self.flattened_data.get('Fire Damage', 0),
-            lightning_damage=self.flattened_data.get('Lightning Damage', 0),
-            attacks_per_second=self.flattened_data.get('Attacks per Second', 0)
-        )
-        self.flattened_data[column_name] = edps
-
-        self.derived_columns[column_name] = {'Cold Damage', 'Fire Damage', 'Lightning Damage', 'Attacks per Second'}
         return self
 
     def insert_metadata(self):
@@ -251,4 +275,3 @@ class PricePredictTransformer:
                           f"\n{pprint.pprint(self.listing.__dict__)}")
             self.flattened_data.pop(col)
         return self
-

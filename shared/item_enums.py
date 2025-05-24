@@ -10,6 +10,14 @@ class ModAffixType(Enum):
 
 class Atype(Enum):
 
+
+class DerivedMod(Enum):
+    MAX_QUALITY_PDPS = 'max_quality_pdps'
+    FIRE_DPS = 'fire_dps'
+    COLD_DPS = 'cold_dps'
+    LIGHTNING_DPS = 'lightning_dps'
+    ELEMENTAL_DPS = 'elemental_dps'
+
 class LocalMod(Enum):
     # Base Stats
     ATTACKS_PER_SECOND = 'attacks_per_second'
