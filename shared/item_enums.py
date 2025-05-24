@@ -8,28 +8,29 @@ class ModAffixType(Enum):
     SUFFIX = 'suffix'
 
 
+class Atype(Enum):
 
-local_weapon_mod_cols = [
-    'Attacks per Second',
-    'Physical Damage',
-    'Cold Damage',
-    'Fire Damage',
-    'Lightning Damage',
-    'adds_#_to_#_fire_damage',
-    '#%_increased_attack_speed',
-    '#%_increased_physical_damage',
-    'adds_#_to_#_cold_damage',
-    'adds_#_to_#_lightning_damage',
-    'adds_#_to_#_physical_damage',
-    '+#.#%_to_critical_hit_chance',
-    '+#%_to_critical_hit_chance',
-    '#% increased Physical Damage',
-    'Adds # to # Fire Damage',
-    'Adds # to # Lightning Damage',
-    'Adds # to # Cold Damage',
-    '#% increased Attack Speed',
-    'Quality'
-]
+class LocalMod(Enum):
+    # Base Stats
+    ATTACKS_PER_SECOND = 'attacks_per_second'
+    PHYSICAL_DAMAGE = 'physical_damage'
+    COLD_DAMAGE = 'cold_damage'
+    FIRE_DAMAGE = 'fire_damage'
+    LIGHTNING_DAMAGE = 'lightning_damage'
+    QUALITY = 'quality'
+
+    # Added Damage
+    ADDS_TO_FIRE_DAMAGE = 'adds_#_to_#_fire_damage'
+    ADDS_TO_COLD_DAMAGE = 'adds_#_to_#_cold_damage'
+    ADDS_TO_LIGHTNING_DAMAGE = 'adds_#_to_#_lightning_damage'
+    ADDS_TO_PHYSICAL_DAMAGE = 'adds_#_to_#_physical_damage'
+
+    # Increased Stats
+    INCREASED_ATTACK_SPEED = '#%_increased_attack_speed'
+    INCREASED_PHYSICAL_DAMAGE = '#%_increased_physical_damage'
+
+    # Critical Hit Chance
+    CRIT_CHANCE = 'critical_hit_chance'
 
 
 socketable_item_categories = [

@@ -7,7 +7,7 @@ import xgboost as xgb
 
 from data_handling import ListingBuilder
 import crafting_ai_model
-import data_transforming
+from data_transforming import ListingsTransforming
 import poecd_api
 import price_predict_ai_model
 import psql
@@ -59,7 +59,7 @@ class OperationsCoordinator:
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
             listings = [self.listing_builder.build_listing(api_r) for api_r in api_item_responses]
-            listings_df = data_transforming.ListingsTransforming.to_price_predict_df(listings)
+            listings_df = ListingsTransforming.to_price_predict_df(listings)
 
             prices = list(listings_df['exalts'])
             listings_df = listings_df.drop(columns=['exalts'])
@@ -81,12 +81,12 @@ class OperationsCoordinator:
     def build_price_predict_model(self):
         psql_table_name = env_loader.get_env("PSQL_TRAINING_TABLE")
         training_data = self.psql_manager.fetch_table_data(psql_table_name)
-        model_df = data_transforming.ListingsTransforming.to_price_predict_df(rows=training_data)
+        model_df = ListingsTransforming.to_price_predict_df(rows=training_data)
 
         atype_dfs = model_df.groupby('atype')
 
         for atype, atype_df in atype_dfs.items():
-            atype_df = StatsPrep.prep_dataframe(df=atype_df, atype=atype, price_column='exalts')
+            atype_df = StatsPrep.prep_dataframe(df=atype_df, price_column='exalts')
 
             if atype_df is None:  # This only happens if no column in the atype_df has enough of a correlation
                 continue

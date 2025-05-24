@@ -106,9 +106,6 @@ class ModifiableListing:
                  ilvl: int,
                  identified: bool,
                  corrupted: bool,
-                 str_requirement: int,
-                 int_requirement: int,
-                 dex_requirement: int,
                  implicit_mods: list[ItemMod],
                  enchant_mods: list[ItemMod],
                  fractured_mods: list[ItemMod],
@@ -131,9 +128,6 @@ class ModifiableListing:
         self.ilvl = ilvl
         self.identified = identified
         self.corrupted = corrupted
-        self.str_requirement = str_requirement
-        self.int_requirement = int_requirement
-        self.dex_requirement = dex_requirement
         self.implicit_mods = implicit_mods
         self.enchant_mods = enchant_mods
         self.item_skills = item_skills

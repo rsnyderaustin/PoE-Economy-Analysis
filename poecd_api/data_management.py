@@ -33,6 +33,12 @@ class PoecdMod:
         return self.ilvl_to_mod_tier[ilvl]['weighting']
 
 
+class HybridModAnalyzer:
+
+    def __init__(self, mods: set[PoecdMod]):
+
+
+
 class PoecdAtypeManager:
 
     def __init__(self,

@@ -1,11 +1,13 @@
 import logging
 import pprint
 from datetime import datetime
+from abc import ABC
 
 import pandas as pd
 
 from instances_and_definitions import ModifiableListing
 from shared import shared_utils
+from shared.item_enums import LocalMod
 
 _select_col_types = {
     'atype': 'category',
@@ -38,10 +40,39 @@ _local_weapon_mod_cols = [
 ]
 
 
+class ListingFeatureCalculator(ABC):
+
+    @staticmethod
+    def calculate(listing: ModifiableListing):
+        pass
+
+
+class MaxQualityPdpsCalculator(ListingFeatureCalculator):
+    derived_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
+
+    @staticmethod
+    def calculate(listing: ModifiableListing):
+        current_multiplier = 1 + (listing.quality / 100)
+        max_multiplier = 1.20
+
+        # Calculate the base damage and then the 20% quality damage
+        base_damage = listing.item_properties[LocalMod.PHYSICAL_DAMAGE] / current_multiplier
+        max_quality_damage = base_damage * max_multiplier
+
+        max_quality_pdps = max_quality_damage * listing.item_properties[LocalMod.ATTACKS_PER_SECOND]
+
+        return max_quality_pdps
+
+
+class ElementalDpsCalculator(ListingFeatureCalculator):
+
+    @staticmethod
+    def calculate(listing: ModifiableListing):
+
 class ListingsTransforming:
 
     @staticmethod
-    def to_flat_rows(listings: list[ModifiableListing]) -> dict:
+    def to_flat_rows(listings: list[ModifiableListing], atype_calculations: list[ListingFeatureCalculator]) -> dict:
         listings_data = dict()
         for row, listing in enumerate(listings):
             flattened_data = (
