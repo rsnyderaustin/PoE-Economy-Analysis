@@ -9,18 +9,10 @@ from instances_and_definitions import ModifiableListing
 from shared import shared_utils, ItemCategory, item_enums
 from shared.item_enums import LocalMod, DerivedMod
 
-_select_col_types = {
-    'atype': 'category',
-    'btype': 'category',
-    'rarity': 'category',
-    'identified': bool,
-    'corrupted': bool
-}
-
 
 class ListingFeatureCalculator(ABC):
     applicable_item_categories = []
-    raw_columns = set()
+    input_columns = set()
 
     @classmethod
     @abstractmethod
@@ -29,8 +21,8 @@ class ListingFeatureCalculator(ABC):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not hasattr(cls, 'raw_columns'):
-            raise TypeError(f"{cls.__name__} must define 'raw_columns'.")
+        if not hasattr(cls, 'input_columns'):
+            raise TypeError(f"{cls.__name__} must define 'input_columns'.")
         if not hasattr(cls, 'applicable_item_categories'):
             raise TypeError(f"{cls.__name__} must define 'applicable_item_categories'.")
 
@@ -56,7 +48,7 @@ class CalculatorRegistry:
 @CalculatorRegistry.register
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = item_enums.martial_weapon_categories
-    raw_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
+    input_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
 
     @classmethod
     def calculate(cls, listing: ModifiableListing):
@@ -78,7 +70,7 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
 @CalculatorRegistry.register
 class ElementalDpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = item_enums.martial_weapon_categories
-    raw_columns = {LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
+    input_columns = {LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
 
     @classmethod
@@ -100,21 +92,32 @@ class ElementalDpsCalculator(ListingFeatureCalculator):
 
 
 class ListingsTransforming:
+    _select_col_types = {
+        'atype': 'category',
+        'btype': 'category',
+        'rarity': 'category',
+        'identified': bool,
+        'corrupted': bool
+    }
 
     @staticmethod
     def to_flat_rows(listings: list[ModifiableListing]) -> dict:
+        """
+
+        :param listings:
+        :return: Listings flattened into rows - used for database storage
+        """
         listings_data = dict()
         for row, listing in enumerate(listings):
             flattened_data = (
                 _PricePredictTransformer(listing)
                 .insert_listing_properties()
-                .apply_calculators()
+                .apply_calculators(delete_input_columns=True)
                 .insert_metadata()
                 .insert_currency_info()
                 .insert_item_base_info()
                 .insert_sub_mod_values()
                 .insert_skills()
-                .remove_local_mods()
                 .clean_columns()
                 .flattened_data
             )
@@ -135,18 +138,24 @@ class ListingsTransforming:
 
     @classmethod
     def to_price_predict_df(cls, listings: list[ModifiableListing] = None, rows: dict = None) -> pd.DataFrame:
+        """
+
+        :param listings:
+        :param rows:
+        :return: Listings or rows data formatted into a DataFrame for the Price Predict AI model
+        """
         if not rows:
             rows = cls.to_flat_rows(listings)
 
         df = pd.DataFrame(rows)
 
-        select_dtype_cols = [col for col in _select_col_types if col in df.columns]
+        select_dtype_cols = [col for col in cls._select_col_types if col in df.columns]
         for col in select_dtype_cols:
-            dtype = _select_col_types[col]
+            dtype = cls._select_col_types[col]
             df[col] = df[col].astype(dtype)
 
         abnormal_type_cols = [col for col in df.columns
-                              if col not in _select_col_types
+                              if col not in cls._select_col_types
                               and df[col].dtype not in ['int64', 'float64', 'bool', 'category']]
         for col in abnormal_type_cols:
             df[col] = df[col].astype('float64')
@@ -188,7 +197,7 @@ class _PricePredictTransformer:
         self.flattened_data.update(flattened_properties)
         return self
 
-    def apply_calculators(self, delete_raw_columns: bool = True):
+    def apply_calculators(self, delete_input_columns: bool = True):
         calculators = self.calculator_registry.fetch_calculators(self.listing.item_category)
         derived_col_values = {
             col_e.value: val
@@ -197,9 +206,9 @@ class _PricePredictTransformer:
         }
         self.flattened_data.update(derived_col_values)
 
-        if delete_raw_columns:
-            raw_columns = set(col for calc in calculators for col in calc.raw_columns)
-            for col_e in raw_columns:
+        if delete_input_columns:
+            input_cols = set(col for calc in calculators for col in calc.input_columns)
+            for col_e in input_cols:
                 del self.flattened_data[col_e.value]
 
         return self
@@ -260,11 +269,6 @@ class _PricePredictTransformer:
         skills_dict = {item_skill.name: item_skill.level for item_skill in self.listing.item_skills}
         skills_dict = {shared_utils.form_column_name(skill_name): lvl for skill_name, lvl in skills_dict.items()}
         self.flattened_data.update(skills_dict)
-        return self
-
-    def remove_local_mods(self):
-        for local_mod_col in _local_weapon_mod_cols:
-            self.flattened_data.pop(local_mod_col, None)
         return self
 
     def clean_columns(self):
