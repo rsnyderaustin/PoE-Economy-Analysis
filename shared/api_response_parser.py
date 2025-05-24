@@ -88,7 +88,7 @@ class ApiResponseParser:
             abbrev_class = self.__class__._mod_class_to_abbrev[mod_class_e]
 
             if abbrev_class not in self.item_data['extended']['hashes']:
-                return dict()
+                continue
 
             hashes_list = self.item_data['extended']['hashes'][abbrev_class]
 
@@ -103,7 +103,7 @@ class ApiResponseParser:
 
         return id_to_text_dict
 
-    def fetch_mod_id_to_mod_text(self, mod_class: ModClass) -> dict:
+    def fetch_mod_id_to_text(self, mod_class: ModClass) -> dict:
         return self._mod_id_to_text[mod_class] if mod_class in self._mod_id_to_text else dict()
 
     @property

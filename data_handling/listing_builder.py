@@ -59,32 +59,6 @@ class _ModResolver:
 
         self.current_rp = None
 
-    def _build_sub_mod(self, mod_id: str, mod_class: ModClass, magnitudes: list[dict]) -> SubMod:
-        mod_text = self.current_rp.fetch_mod_id_to_text(mod_class)
-        sanitized_text = shared_utils.sanitize_mod_text(mod_text)
-        actual_values = shared_utils.extract_values_from_text(mod_text)
-
-        value_ranges = [
-            (
-                utils.convert_string_into_number(m['min']) if 'min' in m else None,
-                utils.convert_string_into_number(m['max']) if 'max' in m else None
-            )
-            for m in magnitudes
-        ]
-
-        # This is just a temporary error check
-        if len(value_ranges) != len(actual_values):
-            raise ValueError(f"Item has a different number of ranges and actual values:"
-                             f"\n\tRanges: {value_ranges}"
-                             f"\n\tActual values: {actual_values}")
-
-        return SubMod(
-            mod_id=mod_id,
-            sanitized_mod_text=sanitized_text,
-            actual_values=actual_values,
-            values_ranges=value_ranges
-        )
-
     def _create_sub_mods(self, current_mod: ItemMod, mod_magnitudes: list) -> list[SubMod]:
         # Sub-mods within a hybrid mod that share a magnitude represent a range of values
         mod_id_to_mags = dict()
@@ -97,8 +71,22 @@ class _ModResolver:
         mod_id_to_text = self.current_rp.fetch_mod_id_to_text(current_mod.mod_class_e)
         sub_mods = []
         for mod_id, magnitudes in mod_id_to_mags.items():
-            sub_mod = self._build_sub_mod(mod_id, mod_id_to_text, magnitudes)
-            sub_mods.append(sub_mod)
+            mod_text = mod_id_to_text[mod_id]
+
+            value_ranges = [
+                (
+                    utils.convert_string_into_number(m['min']) if 'min' in m else None,
+                    utils.convert_string_into_number(m['max']) if 'max' in m else None
+                )
+                for m in magnitudes
+            ]
+            new_sub_mod = SubMod(
+                mod_id=mod_id,
+                sanitized_mod_text=shared_utils.sanitize_mod_text(mod_text),
+                actual_values=shared_utils.extract_values_from_text(mod_text),
+                values_ranges=value_ranges
+            )
+            sub_mods.append(new_sub_mod)
 
         return sub_mods
 
@@ -120,12 +108,12 @@ class _ModResolver:
 
         new_mod.insert_sub_mods(sub_mods)
 
-        poecd_attributes = self.poecd_attribute_finder.get_poecd_mod_attributes(item_mod=item_mod)
+        poecd_attributes = self.poecd_attribute_finder.get_poecd_mod_attributes(item_mod=new_mod)
         if poecd_attributes:  # returns None if
-            item_mod.weighting = poecd_attributes.weighting
-            item_mod.mod_types = poecd_attributes.mod_types
+            new_mod.weighting = poecd_attributes.weighting
+            new_mod.mod_types = poecd_attributes.mod_types
 
-        return item_mod
+        return new_mod
 
     def resolve_mods(self, rp: ApiResponseParser) -> list[ItemMod]:
         """
