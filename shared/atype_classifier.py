@@ -1,4 +1,5 @@
 
+from shared import ApiResponseParser
 
 class ATypeClassifier:
 
@@ -8,22 +9,18 @@ class ATypeClassifier:
 
     @classmethod
     def classify(cls,
-                 item_data: dict):
+                 rp: ApiResponseParser):
 
-        base_type = item_data['baseType']
-
-        if base_type in ['Volatile Wand']:
+        if rp.item_btype in ['Volatile Wand']:
             return 'Fire Wand'
-        elif base_type in ['Withered Wand']:
+        elif rp.item_btype in ['Withered Wand']:
             return 'Chaos Wand'
-        elif base_type in ['Bone Wand']:
+        elif rp.item_btype in ['Bone Wand']:
             return 'Physical Wand'
-        elif base_type in ['Frigid Wand']:
+        elif rp.item_btype in ['Frigid Wand']:
             return 'Cold Wand'
-        elif base_type in ['Galvanic Wand']:
+        elif rp.item_btype in ['Galvanic Wand']:
             return 'Lightning Wand'
-
-        raw_atype = item_data['properties'][0]['name']
 
         # Sometimes the item's btype is surrounded by brackets, sometimes it's a string. I don't know why.
         if raw_atype.startswith('[') and raw_atype.endswith(']'):

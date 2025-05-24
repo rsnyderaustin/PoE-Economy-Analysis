@@ -7,31 +7,8 @@ import pandas as pd
 import pytz
 
 import file_management
-from file_management import FileKey
+from file_management import DataPath
 from .trade_enums import ItemCategory
-
-bgroup_to_category = {
-    'Spear': ItemCategory.SPEAR,
-    'One Hand Mace': ItemCategory.ONE_HANDED_MACE,
-    'Two Hand Mace': ItemCategory.TWO_HANDED_MACE,
-    'Quarterstaff': ItemCategory.QUARTERSTAFF,
-    'Bow': ItemCategory.BOW,
-    'Crossbow': ItemCategory.CROSSBOW,
-    'Wand': ItemCategory.WAND,
-    'Sceptre': ItemCategory.SCEPTRE,
-    'Staff': ItemCategory.STAFF,
-    'Helmet': ItemCategory.HELMET,
-    'Body Armour': ItemCategory.BODY_ARMOUR,
-    'Gloves': ItemCategory.GLOVES,
-    'Boots': ItemCategory.BOOTS,
-    'Quiver': ItemCategory.QUIVER,
-    'Shield': ItemCategory.SHIELD,
-    'Focus': ItemCategory.FOCUS,
-    'Buckler': ItemCategory.BUCKLER,
-    'Amulet': ItemCategory.AMULET,
-    'Belt': ItemCategory.BELT,
-    'Ring': ItemCategory.RING
-}
 
 
 def form_column_name(col_name: str) -> str:
@@ -60,16 +37,6 @@ def parse_values_from_text(mod_text) -> tuple:
     return numbers
 
 
-def replace_mod_text_numbers(mod_text: str, replacement_values):
-    replacement_values = [str(value) for value in replacement_values]
-
-    def repl_function(match):
-        return replacement_values.pop(0)
-
-    new_string = re.sub(r'\d+', string=mod_text, repl=repl_function)
-    return new_string
-
-
 def find_duplicate_values(items: list):
     counts = Counter(items)
 
@@ -90,16 +57,6 @@ def determine_mod_ids(mod_dict: dict):
         for mod_magnitude_dict in mod_dict['magnitudes']
     ]
     return mod_ids
-
-
-def determine_mod_values_range(mod_magnitude_dict: dict) -> tuple:
-    if 'min' in mod_magnitude_dict and 'max' in mod_magnitude_dict:
-        values_range = mod_magnitude_dict['min'], mod_magnitude_dict['max']
-    else:
-        value = next(v for k, v in mod_magnitude_dict.items() if k != 'hash')
-        values_range = value, value
-
-    return values_range
 
 
 def today_date() -> str:
@@ -151,11 +108,12 @@ class CurrencyConverter:
 
         files_manager = file_management.FilesManager()
 
-        conversions_df = files_manager.file_data[FileKey.CURRENCY_CONVERSIONS]
+        conversions_df = files_manager.file_data[DataPath.CURRENCY_CONVERSIONS]
         self.conversions_dict = dict()
         conversions_df.apply(_apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
 
         self._initialized = True
+
     def convert_to_exalts(self, currency: str, currency_amount: int | float, relevant_date: datetime):
         if currency == 'exalted':
             return currency_amount

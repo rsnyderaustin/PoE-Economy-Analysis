@@ -1,7 +1,7 @@
 import re
 from typing import Iterable
 
-from shared.trade_enums import ItemCategory, ModClass, Rarity
+from shared.trade_enums import ItemCategory, ModClass, Rarity, Currency
 from .utils import ModAffixType
 
 
@@ -96,17 +96,16 @@ class ModifiableListing:
                  date_fetched: str,
                  minutes_since_listed: float,
                  minutes_since_league_start: float,
-                 currency: str,
+                 currency: Currency,
                  currency_amount: int,
                  item_name: str,
                  item_btype: str,  # Hunting Shoes, Lunar Amulet, etc
                  item_atype: str,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
                  item_category: ItemCategory,
-                 rarity: str,
+                 rarity: Rarity,
                  ilvl: int,
                  identified: bool,
                  corrupted: bool,
-                 level_requirement: int,
                  str_requirement: int,
                  int_requirement: int,
                  dex_requirement: int,
@@ -114,8 +113,6 @@ class ModifiableListing:
                  enchant_mods: list[ItemMod],
                  fractured_mods: list[ItemMod],
                  explicit_mods: list[ItemMod],
-                 socketers: list[ItemSocketer],
-                 open_sockets: int,
                  item_skills: list[ItemSkill],
                  item_properties: dict = None
                  ):
@@ -134,14 +131,11 @@ class ModifiableListing:
         self.ilvl = ilvl
         self.identified = identified
         self.corrupted = corrupted
-        self.level_requirement = level_requirement
         self.str_requirement = str_requirement
         self.int_requirement = int_requirement
         self.dex_requirement = dex_requirement
         self.implicit_mods = implicit_mods
         self.enchant_mods = enchant_mods
-        self.open_sockets = open_sockets
-        self.socketers = socketers
         self.item_skills = item_skills
         self.fractured_mods = fractured_mods
         self.explicit_mods = explicit_mods

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from instances_and_definitions import ItemMod, ModClass
 from poecd_api.data_management import GlobalAtypesManager
-from . import utils, mod_matching
+from data_handling.mods import utils, mod_matching
 
 
 @dataclass

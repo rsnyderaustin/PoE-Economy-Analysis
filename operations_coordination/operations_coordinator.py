@@ -5,6 +5,7 @@ import random
 
 import xgboost as xgb
 
+from data_handling import ListingBuilder
 import crafting_ai_model
 import data_handling
 import data_transforming
@@ -12,6 +13,7 @@ import poecd_api
 import price_predict_ai_model
 import psql
 import trade_api
+from data_handling.mods import PoecdAttributeFinder
 from file_management import FilesManager, ModelPath
 from instances_and_definitions import ModifiableListing
 from price_predict_ai_model.build_model import build_price_predict_model
@@ -27,35 +29,24 @@ config = configparser.ConfigParser
 
 class OperationsCoordinator:
 
-    def __init__(self, refresh_poecd_source: bool = False):
+    def __init__(self, refresh_poecd_source: bool = True):
         logging.info("Initializing ProgramManager.")
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
 
-        global_atypes_manager = poecd_api.PoecdManager(refresh_data=refresh_poecd_source).create_global_atypes_manager()
-        self.resource_resolver = data_handling.ModResolver(global_atypes_manager=global_atypes_manager)
+        att_finder = poecd_api.PoecdManager(refresh_data=refresh_poecd_source).build_attributes_finder()
+        self.listing_builder = ListingBuilder(att_finder)
 
         self.env_loader = env_loading.EnvLoader()
         self.psql_manager = psql.PostgreSqlManager()
         logging.info("Finished initializing ProgramManager.")
-
-    def _create_listings(self, api_item_responses) -> list[ModifiableListing]:
-        listings = []
-
-        for api_item_response in api_item_responses:
-            mods = self.resource_resolver.process_mods(item_data=api_item_response['item'])
-            listing = data_handling.ListingFactory.create_listing(api_item_response=api_item_response,
-                                                                  item_mods=mods)
-            listings.append(listing)
-
-        return listings
 
     def fill_training_data(self):
         training_queries = query.QueryPresets().training_fills
         random.shuffle(training_queries)
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
-            listings = self._create_listings(api_item_responses)
+            listings = [self.listing_builder.build_listing(api_r) for api_r in api_item_responses]
             row_data = data_transforming.ListingsTransforming.to_flat_rows(listings)
             self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
                                           data=row_data)
@@ -70,7 +61,7 @@ class OperationsCoordinator:
         predict_model = self.files_manager.model_data[ModelPath.PRICE_PREDICT_MODEL]
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
-            listings = self._create_listings(api_item_responses)
+            listings = [self.listing_builder.build_listing(api_r) for api_r in api_item_responses]
             listings_df = data_transforming.ListingsTransforming.to_price_predict_df(listings)
 
             prices = list(listings_df['exalts'])
@@ -120,7 +111,7 @@ class OperationsCoordinator:
         random.shuffle(training_queries)
 
         for api_item_responses in self.trade_api_handler.process_queries(training_queries):
-            listings = self._create_listings(api_item_responses)
+            listings = [self.listing_builder.build_listing(api_r) for api_r in api_item_responses]
 
             if not listings:
                 continue

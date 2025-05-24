@@ -1,6 +1,7 @@
 import logging
 
-from file_management import FilesManager, FileKey
+from .attribute_finder import PoecdAttributeFinder
+from file_management import FilesManager, DataPath
 from .atype_manager_factory import AtypeManagerFactory
 from .data_management import PoecdSourceStore, GlobalAtypesManager
 from .data_pull import PoecdDataPuller, PoecdEndpoint
@@ -16,8 +17,8 @@ class PoecdManager:
         if refresh_data:
             self._refresh_data()
 
-        poecd_source_store = PoecdSourceStore(bases_data=self.files_manager.file_data[FileKey.POECD_BASES],
-                                              stats_data=self.files_manager.file_data[FileKey.POECD_STATS])
+        poecd_source_store = PoecdSourceStore(bases_data=self.files_manager.file_data[DataPath.POECD_BASES],
+                                              stats_data=self.files_manager.file_data[DataPath.POECD_STATS])
 
         return poecd_source_store
 
@@ -28,8 +29,8 @@ class PoecdManager:
         self._fix_data(bases_data=bases_data,
                        stats_data=stats_data)
 
-        self.files_manager.file_data[FileKey.POECD_BASES] = bases_data
-        self.files_manager.file_data[FileKey.POECD_STATS] = stats_data
+        self.files_manager.file_data[DataPath.POECD_BASES] = bases_data
+        self.files_manager.file_data[DataPath.POECD_STATS] = stats_data
 
     def _fix_data(self, bases_data: dict, stats_data: dict):
 
@@ -56,9 +57,9 @@ class PoecdManager:
         stats_data['basemods']['20'] = [mod_id for mod_id in stats_data['basemods']['20'] if mod_id != '5161']
         stats_data['modbases'].pop('5161')
 
-    def create_global_atypes_manager(self) -> GlobalAtypesManager:
+    def build_attributes_finder(self) -> PoecdAttributeFinder:
         atype_managers = AtypeManagerFactory(source_store=self.source_store).build_mods_managers()
-        return GlobalAtypesManager(atype_managers=atype_managers)
-
+        global_manager = GlobalAtypesManager(atype_managers=atype_managers)
+        return PoecdAttributeFinder(global_manager)
 
 
