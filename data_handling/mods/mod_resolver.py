@@ -4,7 +4,7 @@ import file_management
 import poecd_api
 from data_handling import mods
 from data_handling import utils
-from data_handling.instance_variable_factories import ModFactory
+from data_handling.listings_builder import ModFactory
 from file_management import FileKey
 from instances_and_definitions import ModClass, utils as instance_utils, ItemMod
 from shared import ATypeClassifier

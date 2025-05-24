@@ -108,9 +108,10 @@ class OperationsCoordinator:
             self.files_manager.save_data(paths=[ModelPath.PRICE_PREDICT_MODEL])
 
     def train_crafting_model(self):
-        craft_model = self.files_manager.model_data[ModelPath.CRAFTING_MODEL]
         if not self.files_manager.has_data(ModelPath.PRICE_PREDICT_MODEL):
             raise ValueError("Called train_crafting_model when there is no price predict model stored.")
+        
+        craft_model = self.files_manager.model_data[ModelPath.CRAFTING_MODEL]
 
         price_predict_model = self.files_manager.model_data[ModelPath.PRICE_PREDICT_MODEL]
         price_predictor = price_predict_ai_model.PricePredictor(price_predict_model)

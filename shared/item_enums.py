@@ -1,4 +1,12 @@
+from enum import Enum
+
 from shared import ItemCategory
+
+
+class ModAffixType(Enum):
+    PREFIX = 'prefix'
+    SUFFIX = 'suffix'
+
 
 
 local_weapon_mod_cols = [

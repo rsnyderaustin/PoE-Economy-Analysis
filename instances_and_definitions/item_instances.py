@@ -1,7 +1,8 @@
 import re
+from typing import Iterable
 
 from shared.trade_enums import ItemCategory, ModClass, Rarity
-from .utils import ModAffixType, generate_mod_id
+from .utils import ModAffixType
 
 
 class SubMod:
@@ -14,6 +15,15 @@ class SubMod:
         self.actual_values = actual_values
         self.sanitized_mod_text = sanitized_mod_text
         self.values_ranges = values_ranges
+
+
+def generate_mod_id(atype: str,
+                    mod_ids: Iterable,
+                    affix_type: ModAffixType = None):
+    atype = atype.lower().replace(' ', '_')
+    mod_ids = sorted(list(mod_ids))
+
+    return atype, *mod_ids, affix_type
 
 
 class ItemMod:

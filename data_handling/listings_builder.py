@@ -1,9 +1,221 @@
 import logging
 
-from instances_and_definitions import ItemMod, ItemSocketer, ModClass, SubMod, ItemSkill, ModifiableListing
-from shared import ATypeClassifier, shared_utils
+from file_management import FilesManager, DataPath
+from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
+from shared import ATypeClassifier, shared_utils, ModClass
 from . import utils
 from .mods.poecd_attribute_finder import PoecdAttributeFinder
+
+
+class ListingsBuilder:
+
+    def __init__(self, poecd_attribute_finder: PoecdAttributeFinder):
+        self.poecd_attribute_finder = poecd_attribute_finder
+
+
+class _ModResolver:
+    _mod_class_to_abbrev = {
+        'implicitMods': 'implicit',
+        'enchantMods': 'enchant',
+        'explicitMods': 'explicit',
+        'fracturedMods': 'fractured',
+        'runeMods': 'rune'
+    }
+
+    def __init__(self, poecd_attribute_finder: PoecdAttributeFinder):
+        self.poecd_attribute_finder = poecd_attribute_finder
+        self.files_manager = FilesManager()
+        self.file_item_mods = self.files_manager.file_data[DataPath.MODS] or dict()
+
+        poecd_attribute_finder = mods.PoecdAttributeFinder(global_atypes_manager=global_atypes_manager)
+        self.mod_factory = ModFactory(poecd_attribute_finder)
+
+    @staticmethod
+    def _create_duplicated_sub_mods(mod_id_to_text: dict, duplicate_mod_ids, mod_magnitudes):
+        sub_mods = []
+        for mod_id in duplicate_mod_ids:
+            same_mod_magnitudes = [
+                mod_magnitude
+                for mod_magnitude in mod_magnitudes
+                if mod_magnitude['hash'] == mod_id
+            ]
+            values_ranges = [
+                (
+                    utils.convert_string_into_number(magnitude['min']) if 'min' in magnitude else None,
+                    utils.convert_string_into_number(magnitude['max']) if 'max' in magnitude else None
+                )
+                for magnitude in same_mod_magnitudes
+            ]
+            mod_text = mod_id_to_text[mod_id]
+            sanitized_text = shared_utils.sanitize_mod_text(mod_text)
+            sub_mod = SubMod(
+                mod_id=mod_id,
+                sanitized_mod_text=sanitized_text,
+                actual_values=shared_utils.parse_values_from_text(mod_text),
+                values_ranges=values_ranges
+            )
+            sub_mods.append(sub_mod)
+
+        return sub_mods
+
+    @staticmethod
+    def _create_singleton_sub_mods(mod_id_to_text: dict, singleton_mod_ids, mod_magnitudes) -> list[SubMod]:
+        singleton_magnitudes = [magnitude for magnitude in mod_magnitudes if magnitude['hash'] in singleton_mod_ids]
+
+        sub_mods = []
+        for magnitude in singleton_magnitudes:
+            mod_id = magnitude['hash']
+            value_ranges = [
+                (
+                    utils.convert_string_into_number(magnitude['min']) if 'min' in magnitude else None,
+                    utils.convert_string_into_number(magnitude['max']) if 'max' in magnitude else None
+                )
+            ]
+            mod_text = mod_id_to_text[mod_id]
+            actual_values = shared_utils.parse_values_from_text(mod_text)
+
+            if len(actual_values) != len(value_ranges):
+                raise ValueError(f"Item has a different number of ranges and actual values:"
+                                 f"\n\tRanges: {value_ranges}"
+                                 f"\n\tActual values: {actual_values}")
+
+            sanitized_text = shared_utils.sanitize_mod_text(mod_text)
+            sub_mod = SubMod(
+                mod_id=mod_id,
+                sanitized_mod_text=sanitized_text,
+                actual_values=shared_utils.parse_values_from_text(mod_text),
+                values_ranges=value_ranges
+            )
+            sub_mods.append(sub_mod)
+
+        return sub_mods
+
+    @classmethod
+    def _create_sub_mods(cls, mod_id_to_text: dict, mod_magnitudes: list) -> list[SubMod]:
+        mod_ids = [
+            magnitude['hash']
+            for magnitude in mod_magnitudes
+        ]
+
+        sub_mods = []
+        # Duplicate mod ID's in the 'extended' data only happen when an item mod has multiple ranges in the same mod.
+        # Any duplicates are the same submod and so need to be combined
+        duplicate_mod_ids = shared_utils.find_duplicate_values(mod_ids)
+        duplicated_sub_mods = cls._create_duplicated_sub_mods(mod_id_to_text=mod_id_to_text,
+                                                              duplicate_mod_ids=duplicate_mod_ids,
+                                                              mod_magnitudes=mod_magnitudes)
+        sub_mods.extend(duplicated_sub_mods)
+
+        singleton_mod_ids = [mod_id for mod_id in mod_ids if mod_id not in duplicate_mod_ids]
+        singleton_sub_mods = cls._create_singleton_sub_mods(mod_id_to_text=mod_id_to_text,
+                                                            singleton_mod_ids=singleton_mod_ids,
+                                                            mod_magnitudes=mod_magnitudes)
+        sub_mods.extend(singleton_sub_mods)
+
+        return sub_mods
+
+    def _create_item_mod(self, mod_data: dict, mod_id_to_text: dict, mod_class: ModClass, atype: str):
+        mod_name = mod_data['name']
+        mod_tier = utils.determine_mod_tier(mod_data)
+        mod_ilvl = mod_data['level']
+        affix_type = utils.determine_mod_affix_type(mod_data)
+        magnitudes = mod_data['magnitudes']
+
+        sub_mods = self._create_sub_mods(
+            mod_id_to_text=mod_id_to_text,
+            mod_magnitudes=magnitudes
+        )
+
+        item_mod = ItemMod(
+            atype=atype,
+            mod_class_e=mod_class,
+            mod_ilvl=mod_ilvl,
+            mod_name=mod_name,
+            affix_type_e=affix_type,
+            mod_tier=mod_tier,
+            sub_mods=sub_mods
+        )
+
+        poecd_attributes = self.poecd_attribute_finder.get_poecd_mod_attributes(item_mod=item_mod)
+        if poecd_attributes:  # returns None if
+            item_mod.weighting = poecd_attributes.weighting
+            item_mod.mod_types = poecd_attributes.mod_types
+
+        return item_mod
+
+    @classmethod
+    def _determine_mod_id_to_mod_text(cls, mod_class_enum: ModClass, item_data: dict, sanitize_text: bool = False) -> dict:
+        mod_class = mod_class_enum.value
+        abbrev_class = cls._mod_class_to_abbrev[mod_class_enum]
+
+        if abbrev_class not in item_data['extended']['hashes']:
+            return dict()
+
+        hashes_list = item_data['extended']['hashes'][abbrev_class]
+
+        mod_id_display_order = [mod_hash[0] for mod_hash in hashes_list]
+        mod_text_display_order = item_data[mod_class]
+
+        mod_id_to_text = {
+            mod_id: mod_text
+            for mod_id, mod_text in zip(mod_id_display_order, mod_text_display_order)
+        }
+        if sanitize_text:
+            return {
+                mod_id: shared_utils.sanitize_mod_text(mod_text) for mod_id, mod_text in mod_id_to_text.items()
+            }
+
+        return mod_id_to_text
+
+    @staticmethod
+    def _mod_is_valid(mod_data: dict):
+        """
+        This currently only applies to a blank implicit mod on spears
+        """
+        return not (len(mod_data['name']) == 0 and len(mod_data['tier']) == 0 and not mod_data['magnitudes'])
+
+    def process_mods(self, item_data: dict) -> list[ItemMod]:
+        """
+        Attempts to pull each mod in the item's data from file. Otherwise, it manages the mod's creation and caching
+        :return: All mods from the item data
+        """
+        mods = []
+
+        atype = ATypeClassifier.classify(item_data)
+
+        # Filter only relevant mod classes present in the item data
+        mod_class_enums = [
+            mod_class for mod_class in ModClass
+            if mod_class != ModClass.RUNE and mod_class.value in item_data
+        ]
+
+        for mod_class_enum in mod_class_enums:
+            mod_id_to_text = self._determine_mod_id_to_mod_text(item_data=item_data,
+                                                                mod_class_enum=mod_class_enum,
+                                                                sanitize_text=False)
+            abbrev_class = self.__class__._mod_class_to_abbrev[mod_class_enum]
+
+            mods_data = item_data['extended']['mods'][abbrev_class]
+            valid_mods_data = [mod_data for mod_data in mods_data if self._mod_is_valid(mod_data)]
+
+            for mod_data in valid_mods_data:
+                mod_ids = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
+                affix_type = utils.determine_mod_affix_type(mod_data)
+                mod_id = generate_mod_id(atype=atype, mod_ids=mod_ids, affix_type=affix_type)
+
+                if mod_id in self.file_item_mods:
+                    mods.append(self.file_item_mods[mod_id])
+                    continue
+
+                logging.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
+                new_mod = self._create_item_mod(mod_data=mod_data,
+                                                mod_id_to_text=mod_id_to_text,
+                                                mod_class=mod_class_enum,
+                                                atype=atype)
+                self.file_item_mods[new_mod.mod_id] = new_mod  # Add the new mod to our mod JSON file
+                mods.append(new_mod)
+
+        return mods
 
 
 class ModFactory:
@@ -95,7 +307,7 @@ class ModFactory:
 
         return sub_mods
 
-    def create_item_mod(self, mod_data: dict, mod_id_to_text: dict, mod_class: ModClass, atype: str):
+    def _create_item_mod(self, mod_data: dict, mod_id_to_text: dict, mod_class: ModClass, atype: str):
         mod_name = mod_data['name']
         mod_tier = utils.determine_mod_tier(mod_data)
         mod_ilvl = mod_data['level']

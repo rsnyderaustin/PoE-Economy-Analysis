@@ -8,46 +8,11 @@ from dateutil.parser import isoparse
 from instances_and_definitions import ModClass, ModAffixType
 from shared import shared_utils
 
-_mod_class_to_abbrev = {
-    'implicitMods': 'implicit',
-    'enchantMods': 'enchant',
-    'explicitMods': 'explicit',
-    'fracturedMods': 'fractured',
-    'runeMods': 'rune'
-}
-
-
-def abbreviate_mod_class(mod_class_enum: ModClass):
-    return _mod_class_to_abbrev[mod_class_enum.value]
 
 _dt = datetime(2025, 4, 4, 12, 0, 0)
 _pacific = pytz.timezone('US/Pacific')
 
 league_start_date = _pacific.localize(_dt)
-
-
-def determine_mod_id_to_mod_text(mod_class_enum: ModClass, item_data: dict, sanitize_text: bool = False) -> dict:
-    mod_class = mod_class_enum.value
-    abbrev_class = abbreviate_mod_class(mod_class_enum)
-
-    if abbrev_class not in item_data['extended']['hashes']:
-        return dict()
-
-    hashes_list = item_data['extended']['hashes'][abbrev_class]
-
-    mod_id_display_order = [mod_hash[0] for mod_hash in hashes_list]
-    mod_text_display_order = item_data[mod_class]
-
-    mod_id_to_text = {
-        mod_id: mod_text
-        for mod_id, mod_text in list(zip(mod_id_display_order, mod_text_display_order))
-    }
-    if sanitize_text:
-        return {
-            mod_id: shared_utils.sanitize_mod_text(mod_text) for mod_id, mod_text in mod_id_to_text.items()
-        }
-
-    return mod_id_to_text
 
 
 def determine_minutes_since(relevant_date: str | datetime, later_date: str | datetime = None) -> float:
