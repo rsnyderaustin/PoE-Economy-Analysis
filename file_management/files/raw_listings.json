@@ -1,1 +1,2661 @@
-{}
+[
+  {
+    "id": "62513239cf58c611af8d0eb951247c1c21982957c4ddb44a2587bd6faaa1b698",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-24T17:22:13Z",
+      "stash": {
+        "name": "~price 2 aug",
+        "x": 8,
+        "y": 4
+      },
+      "whisper": "@Hipolitos Bonjour, je souhaiterais t'acheter  Tranchant glyphique Lance dentelée pour 1 aug dans la ligue Dawn of the Hunt (onglet de réserve \"~price 2 aug\" ; 9e en partant de la gauche, 5e en partant du haut)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6IkhpcG9saXRvcyIsImxvYyI6ImZyX0ZSIiwidG9rIjoiaXRlbSIsInN1YiI6IjYyNTEzMjM5Y2Y1OGM2MTFhZjhkMGViOTUxMjQ3YzFjMjE5ODI5NTdjNGRkYjQ0YTI1ODdiZDZmYWFhMWI2OTgiLCJkYXQiOiI5ZGE4YTIwMmYwYTdjMTVhNmIwNmM5YTgwNjZlODA1MiIsImlhdCI6MTc0ODEyODY5OSwiZXhwIjoxNzQ4MTI4OTk5fQ.9Da38bGLBsEufEukiVP0g1quzzIDPA2kACvF65p2Okg",
+      "account": {
+        "name": "toukine#5817",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "Hipolitos",
+        "language": "fr_FR",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 1,
+        "currency": "aug"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIwNyIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/9bda9719ba/1HSpear07.png",
+      "league": "Dawn of the Hunt",
+      "id": "62513239cf58c611af8d0eb951247c1c21982957c4ddb44a2587bd6faaa1b698",
+      "name": "Glyph Edge",
+      "typeLine": "Jagged Spear",
+      "baseType": "Jagged Spear",
+      "rarity": "Rare",
+      "ilvl": 62,
+      "identified": true,
+      "note": "~price 1 aug",
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[Physical] Damage",
+          "values": [
+            [
+              "40-73",
+              1
+            ]
+          ],
+          "displayMode": 0,
+          "type": 9
+        },
+        {
+          "name": "[ElementalDamage|Elemental] Damage",
+          "values": [
+            [
+              "11-14",
+              4
+            ],
+            [
+              "3-33",
+              6
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "6.50%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.60",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "59",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Strength|Str]",
+          "values": [
+            [
+              "42",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 63
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "105",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "explicitMods": [
+        "20% increased [Physical] Damage",
+        "Adds 11 to 14 [Fire|Fire] Damage",
+        "Adds 3 to 33 [Lightning|Lightning] Damage",
+        "+21 to [Accuracy|Accuracy] Rating",
+        "Gain 3 Mana per Enemy Killed"
+      ],
+      "frameType": 2,
+      "extended": {
+        "dps": 157.6,
+        "pdps": 108.8,
+        "edps": 48.8,
+        "dps_aug": true,
+        "pdps_aug": true,
+        "mods": {
+          "explicit": [
+            {
+              "name": "Smoking",
+              "tier": "P3",
+              "level": 18,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "7",
+                  "max": "11"
+                },
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "12",
+                  "max": "18"
+                }
+              ]
+            },
+            {
+              "name": "Journeyman's",
+              "tier": "P2",
+              "level": 11,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1509134228",
+                  "min": "20",
+                  "max": "24"
+                },
+                {
+                  "hash": "explicit.stat_691932474",
+                  "min": "21",
+                  "max": "46"
+                }
+              ]
+            },
+            {
+              "name": "of Absorption",
+              "tier": "S1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1368271171",
+                  "min": "2",
+                  "max": "3"
+                }
+              ]
+            },
+            {
+              "name": "Crackling",
+              "tier": "P4",
+              "level": 31,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_3336890334",
+                  "min": "1",
+                  "max": "3"
+                },
+                {
+                  "hash": "explicit.stat_3336890334",
+                  "min": "33",
+                  "max": "47"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_1509134228",
+              [
+                1
+              ]
+            ],
+            [
+              "explicit.stat_709508406",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_3336890334",
+              [
+                3
+              ]
+            ],
+            [
+              "explicit.stat_691932474",
+              [
+                1
+              ]
+            ],
+            [
+              "explicit.stat_1368271171",
+              [
+                2
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "c2de521b603aa5bbbd0c522dc776794221d82af6a61804e2705722febab3573c",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-19T22:38:27Z",
+      "stash": {
+        "name": "~price 1 aug",
+        "x": 0,
+        "y": 8
+      },
+      "whisper": "@EpiktoDawnMerc Hi, I would like to buy your Kraken Edge Striking Spear listed for 1 aug in Dawn of the Hunt (stash tab \"~price 1 aug\"; position: left 1, top 9)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6IkVwaWt0b0Rhd25NZXJjIiwibG9jIjoiZW5fVVMiLCJ0b2siOiJpdGVtIiwic3ViIjoiYzJkZTUyMWI2MDNhYTViYmJkMGM1MjJkYzc3Njc5NDIyMWQ4MmFmNmE2MTgwNGUyNzA1NzIyZmViYWIzNTczYyIsImRhdCI6ImFkNzM5NzVmMTA4NDA5ZmQ3MGZiYjMwNWQyZTA3YzIxIiwiaWF0IjoxNzQ4MTI4Njk5LCJleHAiOjE3NDgxMjg5OTl9.OKFnb5j41prShbkUmTIdJXVReXbDK9o6ir_gAYuMxK0",
+      "account": {
+        "name": "epikto#0285",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "EpiktoDawnMerc",
+        "language": "en_US",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 1,
+        "currency": "aug"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIxMiIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/6a35a6cbad/1HSpear12.png",
+      "league": "Dawn of the Hunt",
+      "id": "c2de521b603aa5bbbd0c522dc776794221d82af6a61804e2705722febab3573c",
+      "sockets": [
+        {
+          "group": 0,
+          "type": "rune",
+          "item": "rune"
+        }
+      ],
+      "name": "Kraken Edge",
+      "typeLine": "Striking Spear",
+      "baseType": "Striking Spear",
+      "rarity": "Rare",
+      "ilvl": 58,
+      "identified": true,
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[ElementalDamage|Elemental] Damage",
+          "values": [
+            [
+              "21-32",
+              4
+            ],
+            [
+              "24-111",
+              6
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "5.00%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.60",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "55",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Strength|Str]",
+          "values": [
+            [
+              "39",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 63
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "98",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "runeMods": [
+        "Adds 1 to 20 [Lightning|Lightning] Damage"
+      ],
+      "explicitMods": [
+        "18% increased [Physical] Damage",
+        "Adds 21 to 32 [Fire|Fire] Damage",
+        "+20 to [Accuracy|Accuracy] Rating",
+        "Gain 8 Mana per Enemy Killed",
+        "Causes 32% increased [Stun|Stun] Buildup"
+      ],
+      "frameType": 2,
+      "socketedItems": [
+        {
+          "realm": "poe2",
+          "verified": true,
+          "w": 1,
+          "h": 1,
+          "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvUnVuZXMvTGlnaHRuaW5nUnVuZSIsInciOjEsImgiOjEsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/bd6d087998/LightningRune.png",
+          "stackSize": 1,
+          "maxStackSize": 10,
+          "league": "Dawn of the Hunt",
+          "id": "203605cb8e039334c6f1ee8c5efaf15831de48c856fc978d23cb2297e2fdccc9",
+          "name": "",
+          "typeLine": "Storm Rune",
+          "baseType": "Storm Rune",
+          "ilvl": 0,
+          "identified": true,
+          "properties": [
+            {
+              "name": "Stack Size",
+              "values": [
+                [
+                  "1/10",
+                  0
+                ]
+              ],
+              "displayMode": 0,
+              "type": 32
+            }
+          ],
+          "requirements": [
+            {
+              "name": "Level",
+              "values": [
+                [
+                  "15",
+                  0
+                ]
+              ],
+              "displayMode": 0,
+              "type": 62
+            }
+          ],
+          "explicitMods": [
+            "[MartialWeapon|Martial Weapon]: Adds 1 to 20 [Lightning|Lightning] Damage",
+            "Armour: +12% to [Resistances|Lightning Resistance]",
+            "Wand or Staff: [Gain] 10% of Damage as Extra [Lightning] Damage"
+          ],
+          "descrText": "Place into an empty Rune Socket in a Weapon or Armour to apply its effect to that item. Once socketed it cannot be removed.",
+          "frameType": 5,
+          "socket": 0
+        }
+      ],
+      "extended": {
+        "dps": 150.4,
+        "pdps": 0,
+        "edps": 150.4,
+        "mods": {
+          "explicit": [
+            {
+              "name": "Squire's",
+              "tier": "P1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1509134228",
+                  "min": "15",
+                  "max": "19"
+                },
+                {
+                  "hash": "explicit.stat_691932474",
+                  "min": "16",
+                  "max": "20"
+                }
+              ]
+            },
+            {
+              "name": "of the Brawler",
+              "tier": "S2",
+              "level": 20,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_791928121",
+                  "min": "31",
+                  "max": "40"
+                }
+              ]
+            },
+            {
+              "name": "Scorching",
+              "tier": "P6",
+              "level": 42,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "20",
+                  "max": "30"
+                },
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "31",
+                  "max": "46"
+                }
+              ]
+            },
+            {
+              "name": "of Infusion",
+              "tier": "S3",
+              "level": 23,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1368271171",
+                  "min": "6",
+                  "max": "9"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            },
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_1509134228",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_709508406",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_691932474",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_1368271171",
+              [
+                3
+              ]
+            ],
+            [
+              "explicit.stat_791928121",
+              [
+                1
+              ]
+            ]
+          ],
+          "rune": [
+            [
+              "rune.stat_3336890334",
+              null
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "341fa6b73b16b703b6fbf35450935545a0e036ca874aac047091e0e4f1537892",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-24T00:41:49Z",
+      "stash": {
+        "name": "팔기",
+        "x": 11,
+        "y": 0
+      },
+      "whisper": "@토트넘_핫스프 안녕하세요, 1 transmute(으)로 올려놓은 Dawn of the Hunt 리그의 복수의 칼날 철창날 창(을)를 구매하고 싶습니다 (보관함 탭 \"팔기\", 위치: 왼쪽 12, 상단 1)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6Ilx1ZDFhMFx1ZDJiOFx1YjExOF9cdWQ1NmJcdWMyYTRcdWQ1MDQiLCJsb2MiOiJrb19LUiIsInRvayI6Iml0ZW0iLCJzdWIiOiIzNDFmYTZiNzNiMTZiNzAzYjZmYmYzNTQ1MDkzNTU0NWEwZTAzNmNhODc0YWFjMDQ3MDkxZTBlNGYxNTM3ODkyIiwiZGF0IjoiNmJlYzE0ZDlmNzgwMjI5YWI5NGQyNzFhZjMyYTIwNDMiLCJpYXQiOjE3NDgxMjg2OTksImV4cCI6MTc0ODEyODk5OX0.MWE6NPN5pV2jyLNo45TEjQRNMXmbp-snTHnMi4lA2-A",
+      "account": {
+        "name": "gomdory77#3650",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "토트넘_핫스프",
+        "language": "ko_KR",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 1,
+        "currency": "transmute"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIwMiIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/08f2f8530e/1HSpear02.png",
+      "league": "Dawn of the Hunt",
+      "id": "341fa6b73b16b703b6fbf35450935545a0e036ca874aac047091e0e4f1537892",
+      "name": "Vengeance Edge",
+      "typeLine": "Ironhead Spear",
+      "baseType": "Ironhead Spear",
+      "rarity": "Rare",
+      "ilvl": 6,
+      "identified": true,
+      "note": "~price 1 transmute",
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[Physical] Damage",
+          "values": [
+            [
+              "8-17",
+              1
+            ]
+          ],
+          "displayMode": 0,
+          "type": 9
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "5.00%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.71",
+              1
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "5",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "11",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "explicitMods": [
+        "Adds 1 to 4 [Physical|Physical] Damage",
+        "+11 to [Accuracy|Accuracy] Rating",
+        "7% increased [Attack] Speed",
+        "Gain 2 Mana per Enemy Killed"
+      ],
+      "frameType": 2,
+      "extended": {
+        "dps": 25.65,
+        "pdps": 25.65,
+        "edps": 0,
+        "dps_aug": true,
+        "pdps_aug": true,
+        "mods": {
+          "explicit": [
+            {
+              "name": "of Absorption",
+              "tier": "S1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1368271171",
+                  "min": "2",
+                  "max": "3"
+                }
+              ]
+            },
+            {
+              "name": "Glinting",
+              "tier": "P1",
+              "level": 2,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1940865751",
+                  "min": "1",
+                  "max": "2"
+                },
+                {
+                  "hash": "explicit.stat_1940865751",
+                  "min": "4",
+                  "max": "5"
+                }
+              ]
+            },
+            {
+              "name": "of Skill",
+              "tier": "S1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_210067635",
+                  "min": "5",
+                  "max": "7"
+                }
+              ]
+            },
+            {
+              "name": "Precise",
+              "tier": "P1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_691932474",
+                  "min": "11",
+                  "max": "32"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_1940865751",
+              [
+                1
+              ]
+            ],
+            [
+              "explicit.stat_691932474",
+              [
+                3
+              ]
+            ],
+            [
+              "explicit.stat_210067635",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_1368271171",
+              [
+                0
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "5e0602c026a1ce4a50f0bd1e42ce8a09eb49ea8332919dff9fc5981ff6736dbd",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-18T22:45:52Z",
+      "stash": {
+        "name": "~price 3 aug",
+        "x": 1,
+        "y": 7
+      },
+      "whisper": "@KaladinsSister Hi, I would like to buy your Skull Edge Swift Spear listed for 3 aug in Dawn of the Hunt (stash tab \"~price 3 aug\"; position: left 2, top 8)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6IkthbGFkaW5zU2lzdGVyIiwibG9jIjoiZW5fVVMiLCJ0b2siOiJpdGVtIiwic3ViIjoiNWUwNjAyYzAyNmExY2U0YTUwZjBiZDFlNDJjZThhMDllYjQ5ZWE4MzMyOTE5ZGZmOWZjNTk4MWZmNjczNmRiZCIsImRhdCI6IjA1MWNmYjQ2OTM1OTc1ZDEyMDRkZmQyYzQxNjExMjIwIiwiaWF0IjoxNzQ4MTI4Njk5LCJleHAiOjE3NDgxMjg5OTl9.MK1vQ4jJ1yGW3SKjOsMz7GydcwyT5orY77wygDzS_uk",
+      "account": {
+        "name": "Coxicus311#1307",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "KaladinsSister",
+        "language": "en_US",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 3,
+        "currency": "aug"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIwNSIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/b176f54004/1HSpear05.png",
+      "league": "Dawn of the Hunt",
+      "id": "5e0602c026a1ce4a50f0bd1e42ce8a09eb49ea8332919dff9fc5981ff6736dbd",
+      "name": "Skull Edge",
+      "typeLine": "Swift Spear",
+      "baseType": "Swift Spear",
+      "rarity": "Rare",
+      "ilvl": 53,
+      "identified": true,
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[Physical] Damage",
+          "values": [
+            [
+              "28-53",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 9
+        },
+        {
+          "name": "Cold Damage",
+          "values": [
+            [
+              "6-10",
+              5
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "5.00%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.81",
+              1
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "51",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Strength|Str]",
+          "values": [
+            [
+              "36",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 63
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "91",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "implicitMods": [
+        "28% increased [Projectile|Projectile] Speed with this Weapon"
+      ],
+      "explicitMods": [
+        "Adds 6 to 10 [Cold|Cold] Damage",
+        "13% increased [Attack] Speed",
+        "[LifeLeech|Leeches] 6.88% of [Physical|Physical] Damage as Life",
+        "14% increased [Stun|Stun] Duration"
+      ],
+      "frameType": 2,
+      "extended": {
+        "dps": 103.17,
+        "pdps": 88.69,
+        "edps": 14.48,
+        "dps_aug": true,
+        "pdps_aug": true,
+        "mods": {
+          "explicit": [
+            {
+              "name": "of Dazing",
+              "tier": "S2",
+              "level": 18,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_748522257",
+                  "min": "14",
+                  "max": "16"
+                }
+              ]
+            },
+            {
+              "name": "of the Locust",
+              "tier": "S2",
+              "level": 38,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_55876295",
+                  "min": "6",
+                  "max": "6.9"
+                }
+              ]
+            },
+            {
+              "name": "Icy",
+              "tier": "P3",
+              "level": 19,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1037193709",
+                  "min": "6",
+                  "max": "9"
+                },
+                {
+                  "hash": "explicit.stat_1037193709",
+                  "min": "10",
+                  "max": "15"
+                }
+              ]
+            },
+            {
+              "name": "of Mastery",
+              "tier": "S3",
+              "level": 22,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_210067635",
+                  "min": "11",
+                  "max": "13"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            },
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "implicit.stat_535217483",
+                  "min": "25",
+                  "max": "35"
+                }
+              ]
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_1037193709",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_210067635",
+              [
+                3
+              ]
+            ],
+            [
+              "explicit.stat_55876295",
+              [
+                1
+              ]
+            ],
+            [
+              "explicit.stat_748522257",
+              [
+                0
+              ]
+            ]
+          ],
+          "implicit": [
+            [
+              "implicit.stat_535217483",
+              [
+                1
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "ebbd7b1e92da1ee1d1d73e404eb6994e736e7d5e4edd2111ac2adafcbe8a632d",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-04-13T16:18:22Z",
+      "stash": {
+        "name": "Priced",
+        "x": 2,
+        "y": 4
+      },
+      "whisper": "@Monqu Hi, I would like to buy your Vortex Edge Hardwood Spear listed for 3 aug in Dawn of the Hunt (stash tab \"Priced\"; position: left 3, top 5)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6Ik1vbnF1IiwibG9jIjoiZW5fVVMiLCJ0b2siOiJpdGVtIiwic3ViIjoiZWJiZDdiMWU5MmRhMWVlMWQxZDczZTQwNGViNjk5NGU3MzZlN2Q1ZTRlZGQyMTExYWMyYWRhZmNiZThhNjMyZCIsImRhdCI6ImNhOTBjZTEzNGFkY2IyMGNkZDAyZGQ3MTRkZjA3YzAyIiwiaWF0IjoxNzQ4MTI4Njk5LCJleHAiOjE3NDgxMjg5OTl9.SiToDo2cJZbyPN63jLrgwT7NOQxmv7Plp1Oc_OCohXU",
+      "account": {
+        "name": "mike0117#7614",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "Monqu",
+        "language": "en_US",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 3,
+        "currency": "aug"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIwMSIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/84a2d1da16/1HSpear01.png",
+      "league": "Dawn of the Hunt",
+      "id": "ebbd7b1e92da1ee1d1d73e404eb6994e736e7d5e4edd2111ac2adafcbe8a632d",
+      "sockets": [
+        {
+          "group": 0,
+          "type": "rune"
+        }
+      ],
+      "name": "Vortex Edge",
+      "typeLine": "Hardwood Spear",
+      "baseType": "Hardwood Spear",
+      "rarity": "Rare",
+      "ilvl": 10,
+      "identified": true,
+      "note": "~price 3 aug",
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[Physical] Damage",
+          "values": [
+            [
+              "5-9",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 9
+        },
+        {
+          "name": "[ElementalDamage|Elemental] Damage",
+          "values": [
+            [
+              "2-4",
+              4
+            ],
+            [
+              "1-4",
+              6
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "5.00%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.60",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "6",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "explicitMods": [
+        "Adds 2 to 4 [Fire|Fire] Damage",
+        "Adds 1 to 4 [Lightning|Lightning] Damage",
+        "+13% to [CriticalDamageBonus|Critical Damage Bonus]",
+        "+7 to [Dexterity|Dexterity]",
+        "11% increased [Stun|Stun] Duration"
+      ],
+      "frameType": 2,
+      "socketedItems": [],
+      "extended": {
+        "dps": 22.4,
+        "pdps": 13.6,
+        "edps": 8.8,
+        "dps_aug": true,
+        "pdps_aug": true,
+        "mods": {
+          "explicit": [
+            {
+              "name": "of the Mongoose",
+              "tier": "S1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_3261801346",
+                  "min": "5",
+                  "max": "8"
+                }
+              ]
+            },
+            {
+              "name": "of Ire",
+              "tier": "S1",
+              "level": 8,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_2694482655",
+                  "min": "10",
+                  "max": "14"
+                }
+              ]
+            },
+            {
+              "name": "Humming",
+              "tier": "P1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_3336890334",
+                  "min": "1",
+                  "max": "1"
+                },
+                {
+                  "hash": "explicit.stat_3336890334",
+                  "min": "4",
+                  "max": "6"
+                }
+              ]
+            },
+            {
+              "name": "Heated",
+              "tier": "P1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "1",
+                  "max": "2"
+                },
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "3",
+                  "max": "5"
+                }
+              ]
+            },
+            {
+              "name": "of Impact",
+              "tier": "S1",
+              "level": 5,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_748522257",
+                  "min": "11",
+                  "max": "13"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_709508406",
+              [
+                3
+              ]
+            ],
+            [
+              "explicit.stat_3336890334",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_2694482655",
+              [
+                1
+              ]
+            ],
+            [
+              "explicit.stat_3261801346",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_748522257",
+              [
+                4
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "c24548bafac951e44c54b1a23568fdc37183cb1adfb0f47058c3acdcdcd2847d",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-18T22:45:52Z",
+      "stash": {
+        "name": "~price 3 aug",
+        "x": 0,
+        "y": 7
+      },
+      "whisper": "@KaladinsSister Hi, I would like to buy your Plague Edge Steelhead Spear listed for 3 aug in Dawn of the Hunt (stash tab \"~price 3 aug\"; position: left 1, top 8)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6IkthbGFkaW5zU2lzdGVyIiwibG9jIjoiZW5fVVMiLCJ0b2siOiJpdGVtIiwic3ViIjoiYzI0NTQ4YmFmYWM5NTFlNDRjNTRiMWEyMzU2OGZkYzM3MTgzY2IxYWRmYjBmNDcwNThjM2FjZGNkY2QyODQ3ZCIsImRhdCI6IjdmMDdhYTdhMGYxNWE4ZTFiODY3NDA1ODY5ZDk1MmRhIiwiaWF0IjoxNzQ4MTI4Njk5LCJleHAiOjE3NDgxMjg5OTl9.gxxzOqEorvH8F1X6-iZWm2mXm8TIVh90_Qg4VVYcSUk",
+      "account": {
+        "name": "Coxicus311#1307",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "KaladinsSister",
+        "language": "en_US",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 3,
+        "currency": "aug"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIwMiIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/08f2f8530e/1HSpear02.png",
+      "league": "Dawn of the Hunt",
+      "id": "c24548bafac951e44c54b1a23568fdc37183cb1adfb0f47058c3acdcdcd2847d",
+      "name": "Plague Edge",
+      "typeLine": "Steelhead Spear",
+      "baseType": "Steelhead Spear",
+      "rarity": "Rare",
+      "ilvl": 52,
+      "identified": true,
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[Physical] Damage",
+          "values": [
+            [
+              "27-50",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 9
+        },
+        {
+          "name": "Cold Damage",
+          "values": [
+            [
+              "22-31",
+              5
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "5.00%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.84",
+              1
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "45",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Strength|Str]",
+          "values": [
+            [
+              "33",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 63
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "81",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "explicitMods": [
+        "Adds 22 to 31 [Cold|Cold] Damage",
+        "+13% to [CriticalDamageBonus|Critical Damage Bonus]",
+        "15% increased [Attack] Speed",
+        "+3 to Level of all [Projectile] Skills"
+      ],
+      "frameType": 2,
+      "extended": {
+        "dps": 133.4,
+        "pdps": 84.64,
+        "edps": 48.76,
+        "dps_aug": true,
+        "pdps_aug": true,
+        "mods": {
+          "explicit": [
+            {
+              "name": "of Ire",
+              "tier": "S1",
+              "level": 8,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_2694482655",
+                  "min": "10",
+                  "max": "14"
+                }
+              ]
+            },
+            {
+              "name": "of the Sharpshooter",
+              "tier": "S3",
+              "level": 36,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1202301673",
+                  "min": "3",
+                  "max": "3"
+                }
+              ]
+            },
+            {
+              "name": "Frozen",
+              "tier": "P6",
+              "level": 43,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1037193709",
+                  "min": "16",
+                  "max": "25"
+                },
+                {
+                  "hash": "explicit.stat_1037193709",
+                  "min": "26",
+                  "max": "38"
+                }
+              ]
+            },
+            {
+              "name": "of Renown",
+              "tier": "S4",
+              "level": 30,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_210067635",
+                  "min": "14",
+                  "max": "16"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_1037193709",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_2694482655",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_210067635",
+              [
+                3
+              ]
+            ],
+            [
+              "explicit.stat_1202301673",
+              [
+                1
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "ebcb1d7277e617d8d615166a709629fcc4aa811df2f5fcbe8e9ea90c7380aced",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-24T09:33:29Z",
+      "stash": {
+        "name": "5",
+        "x": 9,
+        "y": 0
+      },
+      "whisper": "@MetricZaiD Hi, I would like to buy your Dusk Edge Hunting Spear listed for 5 transmute in Dawn of the Hunt (stash tab \"5\"; position: left 10, top 1)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6Ik1ldHJpY1phaUQiLCJsb2MiOiJlbl9VUyIsInRvayI6Iml0ZW0iLCJzdWIiOiJlYmNiMWQ3Mjc3ZTYxN2Q4ZDYxNTE2NmE3MDk2MjlmY2M0YWE4MTFkZjJmNWZjYmU4ZTllYTkwYzczODBhY2VkIiwiZGF0IjoiZWVkNjUyMTVmMDBmMTc5ZDhhZDk5YWFiODFhODE0MjEiLCJpYXQiOjE3NDgxMjg2OTksImV4cCI6MTc0ODEyODk5OX0.MPH1EegtkCJZY0z7XrMjBAbX7-v93mUyiZ0pyuxgYnw",
+      "account": {
+        "name": "MetricZaid96#5376",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "MetricZaiD",
+        "language": "en_US",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 5,
+        "currency": "transmute"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIwMyIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/d4c8557684/1HSpear03.png",
+      "league": "Dawn of the Hunt",
+      "id": "ebcb1d7277e617d8d615166a709629fcc4aa811df2f5fcbe8e9ea90c7380aced",
+      "name": "Dusk Edge",
+      "typeLine": "Hunting Spear",
+      "baseType": "Hunting Spear",
+      "rarity": "Rare",
+      "ilvl": 12,
+      "identified": true,
+      "note": "~price 5 transmute",
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[Physical] Damage",
+          "values": [
+            [
+              "10-18",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 9
+        },
+        {
+          "name": "Fire Damage",
+          "values": [
+            [
+              "2-5",
+              4
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "5.00%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.55",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "10",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Strength|Str]",
+          "values": [
+            [
+              "10",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 63
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "20",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "implicitMods": [
+        "23% chance to [Maim|Maim] on [HitDamage|Hit]"
+      ],
+      "explicitMods": [
+        "Adds 2 to 5 [Fire|Fire] Damage",
+        "+54 to [Accuracy|Accuracy] Rating",
+        "+1 to Level of all [Melee|Melee] Skills",
+        "+12 to [Strength|Strength]"
+      ],
+      "frameType": 2,
+      "extended": {
+        "dps": 31.78,
+        "pdps": 26.35,
+        "edps": 5.43,
+        "dps_aug": true,
+        "pdps_aug": true,
+        "mods": {
+          "explicit": [
+            {
+              "name": "of Combat",
+              "tier": "S1",
+              "level": 2,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_9187492",
+                  "min": "1",
+                  "max": "1"
+                }
+              ]
+            },
+            {
+              "name": "of the Wrestler",
+              "tier": "S2",
+              "level": 11,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_4080418644",
+                  "min": "9",
+                  "max": "12"
+                }
+              ]
+            },
+            {
+              "name": "Heated",
+              "tier": "P1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "1",
+                  "max": "2"
+                },
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "3",
+                  "max": "5"
+                }
+              ]
+            },
+            {
+              "name": "Reliable",
+              "tier": "P2",
+              "level": 12,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_691932474",
+                  "min": "33",
+                  "max": "60"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            },
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "implicit.stat_2763429652",
+                  "min": "15",
+                  "max": "25"
+                }
+              ]
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_709508406",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_691932474",
+              [
+                3
+              ]
+            ],
+            [
+              "explicit.stat_9187492",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_4080418644",
+              [
+                1
+              ]
+            ]
+          ],
+          "implicit": [
+            [
+              "implicit.stat_2763429652",
+              [
+                1
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "33e8fdcefc2fbdfefc49306ce406b30339801ed2534dde5fc25c7b124da5f90f",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-23T08:26:57Z",
+      "stash": {
+        "name": "~b/o 15 transmute",
+        "x": 11,
+        "y": 0
+      },
+      "whisper": "@bitich Hi, I would like to buy your Skull Edge Jagged Spear listed for 15 transmute in Dawn of the Hunt (stash tab \"~b/o 15 transmute\"; position: left 12, top 1)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6ImJpdGljaCIsImxvYyI6ImVuX1VTIiwidG9rIjoiaXRlbSIsInN1YiI6IjMzZThmZGNlZmMyZmJkZmVmYzQ5MzA2Y2U0MDZiMzAzMzk4MDFlZDI1MzRkZGU1ZmMyNWM3YjEyNGRhNWY5MGYiLCJkYXQiOiJjMjcyZjFlNTg0MjgwZDQ4NjExOGQ1YjYzODIyZDVmZSIsImlhdCI6MTc0ODEyODY5OSwiZXhwIjoxNzQ4MTI4OTk5fQ.bXK3lCaKqD55phN-3Jmu1Q_2d0lCxJyUuUBhO865C0U",
+      "account": {
+        "name": "lax0o7#1675",
+        "online": {
+          "league": "Dawn of the Hunt",
+          "status": "afk"
+        },
+        "lastCharacterName": "bitich",
+        "language": "en_US",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~b/o",
+        "amount": 15,
+        "currency": "transmute"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIwNyIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/9bda9719ba/1HSpear07.png",
+      "league": "Dawn of the Hunt",
+      "id": "33e8fdcefc2fbdfefc49306ce406b30339801ed2534dde5fc25c7b124da5f90f",
+      "name": "Skull Edge",
+      "typeLine": "Jagged Spear",
+      "baseType": "Jagged Spear",
+      "rarity": "Rare",
+      "ilvl": 60,
+      "identified": true,
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[Physical] Damage",
+          "values": [
+            [
+              "33-61",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 9
+        },
+        {
+          "name": "[ElementalDamage|Elemental] Damage",
+          "values": [
+            [
+              "4-10",
+              4
+            ],
+            [
+              "8-14",
+              5
+            ],
+            [
+              "1-21",
+              6
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "6.50%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.60",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "59",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Strength|Str]",
+          "values": [
+            [
+              "42",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 63
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "105",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "explicitMods": [
+        "Adds 4 to 10 [Fire|Fire] Damage",
+        "Adds 8 to 14 [Cold|Cold] Damage",
+        "Adds 1 to 21 [Lightning|Lightning] Damage",
+        "[LifeLeech|Leeches] 5.37% of [Physical|Physical] Damage as Life"
+      ],
+      "frameType": 2,
+      "extended": {
+        "dps": 136.8,
+        "pdps": 90.4,
+        "edps": 46.4,
+        "dps_aug": true,
+        "pdps_aug": true,
+        "mods": {
+          "explicit": [
+            {
+              "name": "Snapping",
+              "tier": "P3",
+              "level": 19,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_3336890334",
+                  "min": "1",
+                  "max": "1"
+                },
+                {
+                  "hash": "explicit.stat_3336890334",
+                  "min": "19",
+                  "max": "28"
+                }
+              ]
+            },
+            {
+              "name": "Icy",
+              "tier": "P3",
+              "level": 19,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1037193709",
+                  "min": "6",
+                  "max": "9"
+                },
+                {
+                  "hash": "explicit.stat_1037193709",
+                  "min": "10",
+                  "max": "15"
+                }
+              ]
+            },
+            {
+              "name": "Smouldering",
+              "tier": "P2",
+              "level": 11,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "4",
+                  "max": "6"
+                },
+                {
+                  "hash": "explicit.stat_709508406",
+                  "min": "7",
+                  "max": "10"
+                }
+              ]
+            },
+            {
+              "name": "of the Parasite",
+              "tier": "S1",
+              "level": 21,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_55876295",
+                  "min": "5",
+                  "max": "5.9"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_709508406",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_1037193709",
+              [
+                1
+              ]
+            ],
+            [
+              "explicit.stat_3336890334",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_55876295",
+              [
+                3
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "4d5cee4339a421abc11e411795de28eda9ad7f0aede548f480e4de2ce31a380e",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-14T00:47:02Z",
+      "stash": {
+        "name": "1-regal",
+        "x": 0,
+        "y": 5
+      },
+      "whisper": "@Korgoth_the_FleshEater Hi, I would like to buy your Loath Edge Sword Spear listed for 1 regal in Dawn of the Hunt (stash tab \"1-regal\"; position: left 1, top 6)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6IktvcmdvdGhfdGhlX0ZsZXNoRWF0ZXIiLCJsb2MiOiJlbl9VUyIsInRvayI6Iml0ZW0iLCJzdWIiOiI0ZDVjZWU0MzM5YTQyMWFiYzExZTQxMTc5NWRlMjhlZGE5YWQ3ZjBhZWRlNTQ4ZjQ4MGU0ZGUyY2UzMWEzODBlIiwiZGF0IjoiYTMyNGEzMzhjNjk3MzFmODlhZmNkNWFkYjc3NGMzODEiLCJpYXQiOjE3NDgxMjg2OTksImV4cCI6MTc0ODEyODk5OX0.2wTCqXfX1p4Gn8oWYTSLTbx5oYujNTbpYph_Dm8mz1E",
+      "account": {
+        "name": "FalkeN29#3106",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "Korgoth_the_FleshEater",
+        "language": "en_US",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 1,
+        "currency": "regal"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIxMSIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/63c4e7e781/1HSpear11.png",
+      "league": "Dawn of the Hunt",
+      "id": "4d5cee4339a421abc11e411795de28eda9ad7f0aede548f480e4de2ce31a380e",
+      "name": "Loath Edge",
+      "typeLine": "Sword Spear",
+      "baseType": "Sword Spear",
+      "rarity": "Rare",
+      "ilvl": 61,
+      "identified": true,
+      "note": "~price 1 regal",
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "[Physical] Damage",
+          "values": [
+            [
+              "53-103",
+              1
+            ]
+          ],
+          "displayMode": 0,
+          "type": 9
+        },
+        {
+          "name": "Cold Damage",
+          "values": [
+            [
+              "5-9",
+              5
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "5.00%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.90",
+              1
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "52",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Strength|Str]",
+          "values": [
+            [
+              "37",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 63
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "93",
+              0
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "explicitMods": [
+        "18% increased [Physical] Damage",
+        "Adds 15 to 31 [Physical|Physical] Damage",
+        "Adds 5 to 9 [Cold|Cold] Damage",
+        "+19 to [Accuracy|Accuracy] Rating",
+        "19% increased [Attack] Speed",
+        "Gain 13 Mana per Enemy Killed"
+      ],
+      "frameType": 2,
+      "extended": {
+        "dps": 190.95,
+        "pdps": 177.65,
+        "edps": 13.3,
+        "dps_aug": true,
+        "pdps_aug": true,
+        "mods": {
+          "explicit": [
+            {
+              "name": "Annealed",
+              "tier": "P6",
+              "level": 46,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1940865751",
+                  "min": "13",
+                  "max": "20"
+                },
+                {
+                  "hash": "explicit.stat_1940865751",
+                  "min": "23",
+                  "max": "35"
+                }
+              ]
+            },
+            {
+              "name": "Chilled",
+              "tier": "P2",
+              "level": 12,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1037193709",
+                  "min": "3",
+                  "max": "5"
+                },
+                {
+                  "hash": "explicit.stat_1037193709",
+                  "min": "6",
+                  "max": "9"
+                }
+              ]
+            },
+            {
+              "name": "Squire's",
+              "tier": "P1",
+              "level": 1,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1509134228",
+                  "min": "15",
+                  "max": "19"
+                },
+                {
+                  "hash": "explicit.stat_691932474",
+                  "min": "16",
+                  "max": "20"
+                }
+              ]
+            },
+            {
+              "name": "of Enveloping",
+              "tier": "S4",
+              "level": 34,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_1368271171",
+                  "min": "10",
+                  "max": "14"
+                }
+              ]
+            },
+            {
+              "name": "of Acclaim",
+              "tier": "S5",
+              "level": 37,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_210067635",
+                  "min": "17",
+                  "max": "19"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_1509134228",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_1940865751",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_1037193709",
+              [
+                1
+              ]
+            ],
+            [
+              "explicit.stat_691932474",
+              [
+                2
+              ]
+            ],
+            [
+              "explicit.stat_210067635",
+              [
+                4
+              ]
+            ],
+            [
+              "explicit.stat_1368271171",
+              [
+                3
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "aa834534c24b8886c0a89eb6a2f4a158b58399e4c41e5892119678c0bb9201a3",
+    "listing": {
+      "method": "psapi",
+      "indexed": "2025-05-09T15:26:44Z",
+      "stash": {
+        "name": "~price 1 regal",
+        "x": 8,
+        "y": 0
+      },
+      "whisper": "@NobleTyrant Hi, I would like to buy your Carrion Edge Striking Spear listed for 1 regal in Dawn of the Hunt (stash tab \"~price 1 regal\"; position: left 9, top 1)",
+      "whisper_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmY3YzFlZTYyNGE1Yzk4ZjU4NzQ1NDEzMmI2MDRkZSIsImlzcyI6InZxSmtiYkJIRSIsImF1ZCI6ImNkYmE2MjFiLTAwZDUtNGNkNC05MGEzLTIzZDQ3NjU0MDE3YyIsImRzdCI6Ik5vYmxlVHlyYW50IiwibG9jIjoiZW5fVVMiLCJ0b2siOiJpdGVtIiwic3ViIjoiYWE4MzQ1MzRjMjRiODg4NmMwYTg5ZWI2YTJmNGExNThiNTgzOTllNGM0MWU1ODkyMTE5Njc4YzBiYjkyMDFhMyIsImRhdCI6IjFkNDFlY2EzM2Y4ZDkwYjZjNTFmNmFlZmZkZWQyYzYzIiwiaWF0IjoxNzQ4MTI4Njk5LCJleHAiOjE3NDgxMjg5OTl9.Xaqgq6Hcd_ehqt_iDQdl-7scJvHDzlokKU-MdNagFYQ",
+      "account": {
+        "name": "Ebirc84#9553",
+        "online": {
+          "league": "Dawn of the Hunt"
+        },
+        "lastCharacterName": "NobleTyrant",
+        "language": "en_US",
+        "realm": "poe2"
+      },
+      "price": {
+        "type": "~price",
+        "amount": 1,
+        "currency": "regal"
+      }
+    },
+    "item": {
+      "realm": "poe2",
+      "verified": true,
+      "w": 1,
+      "h": 4,
+      "icon": "https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9PbmVIYW5kU3BlYXJzLzFIU3BlYXIxMiIsInciOjEsImgiOjQsInNjYWxlIjoxLCJyZWFsbSI6InBvZTIifV0/6a35a6cbad/1HSpear12.png",
+      "league": "Dawn of the Hunt",
+      "id": "aa834534c24b8886c0a89eb6a2f4a158b58399e4c41e5892119678c0bb9201a3",
+      "name": "Carrion Edge",
+      "typeLine": "Striking Spear",
+      "baseType": "Striking Spear",
+      "rarity": "Rare",
+      "ilvl": 57,
+      "identified": true,
+      "properties": [
+        {
+          "name": "[Spear]",
+          "values": [],
+          "displayMode": 0
+        },
+        {
+          "name": "Lightning Damage",
+          "values": [
+            [
+              "25-137",
+              6
+            ]
+          ],
+          "displayMode": 0,
+          "type": 10
+        },
+        {
+          "name": "[Critical|Critical Hit] Chance",
+          "values": [
+            [
+              "5.00%",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 12
+        },
+        {
+          "name": "Attacks per Second",
+          "values": [
+            [
+              "1.60",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 13
+        }
+      ],
+      "requirements": [
+        {
+          "name": "Level",
+          "values": [
+            [
+              "55",
+              0
+            ]
+          ],
+          "displayMode": 0,
+          "type": 62
+        },
+        {
+          "name": "[Strength|Str]",
+          "values": [
+            [
+              "27",
+              1
+            ]
+          ],
+          "displayMode": 1,
+          "type": 63
+        },
+        {
+          "name": "[Dexterity|Dex]",
+          "values": [
+            [
+              "68",
+              1
+            ]
+          ],
+          "displayMode": 1,
+          "type": 64
+        }
+      ],
+      "grantedSkills": [
+        {
+          "name": "Grants Skill",
+          "values": [
+            [
+              "Spear Throw",
+              25
+            ]
+          ],
+          "displayMode": 0,
+          "icon": "https://web.poecdn.com/gen/image/WzIxLDE0LHsiayI6IjJEQXJ0L1NraWxsSWNvbnMvSHVudHJlc3NJY2VTcGVhciIsInJlYWxtIjoicG9lMiJ9XQ/da079143ea/HuntressIceSpear.png"
+        }
+      ],
+      "explicitMods": [
+        "Adds 2 to 46 [Lightning|Lightning] Damage",
+        "30% reduced [Attributes|Attribute] Requirements",
+        "14% increased [Stun|Stun] Duration"
+      ],
+      "frameType": 2,
+      "extended": {
+        "dps": 129.6,
+        "pdps": 0,
+        "edps": 129.6,
+        "mods": {
+          "explicit": [
+            {
+              "name": "of the Skilled",
+              "tier": "S4",
+              "level": 52,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_3639275092",
+                  "min": "-30",
+                  "max": "-30"
+                }
+              ]
+            },
+            {
+              "name": "Crackling",
+              "tier": "P4",
+              "level": 31,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_3336890334",
+                  "min": "1",
+                  "max": "3"
+                },
+                {
+                  "hash": "explicit.stat_3336890334",
+                  "min": "33",
+                  "max": "47"
+                }
+              ]
+            },
+            {
+              "name": "of Dazing",
+              "tier": "S2",
+              "level": 18,
+              "magnitudes": [
+                {
+                  "hash": "explicit.stat_748522257",
+                  "min": "14",
+                  "max": "16"
+                }
+              ]
+            }
+          ],
+          "implicit": [
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            },
+            {
+              "name": "",
+              "tier": "",
+              "level": 1,
+              "magnitudes": null
+            }
+          ]
+        },
+        "hashes": {
+          "explicit": [
+            [
+              "explicit.stat_3336890334",
+              [
+                1
+              ]
+            ],
+            [
+              "explicit.stat_3639275092",
+              [
+                0
+              ]
+            ],
+            [
+              "explicit.stat_748522257",
+              [
+                2
+              ]
+            ]
+          ]
+        }
+      }
+    }
+  }
+]
