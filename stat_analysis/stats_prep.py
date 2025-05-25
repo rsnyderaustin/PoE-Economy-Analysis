@@ -25,7 +25,6 @@ class CorrelationAnalyzer:
     @staticmethod
     def determine_pair_column_weights(features: pd.DataFrame,
                                       prices,
-                                      derived_columns: dict,
                                       correlation_threshold: float) -> dict:
         mod_combinations = list(itertools.combinations(features.columns, 2))
 
@@ -301,7 +300,7 @@ class StatsPrep:
         return features_df, prices, log_prices
 
     @classmethod
-    def prep_dataframe(cls, df: pd.DataFrame, price_column: str, derived_columns: dict):
+    def prep_dataframe(cls, df: pd.DataFrame, price_column: str):
         features_df, prices, log_prices = cls._prep_dataframe(df,
                                                               price_column=price_column)
 
@@ -318,7 +317,6 @@ class StatsPrep:
         pair_column_weights = CorrelationAnalyzer.determine_pair_column_weights(
             features=features_df,
             prices=log_prices,
-            derived_columns=derived_columns,
             correlation_threshold=0.4
         )
         if not single_column_weights and not pair_column_weights:

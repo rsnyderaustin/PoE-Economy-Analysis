@@ -1,21 +1,26 @@
-
-import data_transforming
+from data_transforming import ListingsTransforming
+from file_management import FilesManager
 from instances_and_definitions import ModifiableListing
 
 
 class PricePredictor:
+    def __init__(self, files_manager: FilesManager):
+        self._files_manager = files_manager
 
-    def __init__(self, predict_mode):
-        self.predict_model = predict_mode
+        self._loaded_models = {}
 
-    def predict_prices(self, listings: list[ModifiableListing]) -> list:
-        listings_df = data_transforming.ListingsTransforming.to_price_predict_df(listings=listings)
+    def predict(self, listing: ModifiableListing) -> float:
+        df = ListingsTransforming.to_price_predict_df(listings=[listing])
 
-        listings_df = listings_df.drop(columns=['exalts'])
+        if df.empty:
+            raise ValueError("Listing transformation failed; resulting dataframe is empty.")
 
-        listings_df = listings_df[self.predict_model.feature_names]
-        dmatrix = xgb.DMatrix(listings_df, enable_categorical=True)
-        predicts = self.predict_model.predict(dmatrix)
+        if listing.item_atype in self._loaded_models:
+            model = self._loaded_models[listing.item_atype]
+        else:
+            model = self._files_manager.load_price_predict_model(listing.item_atype)
 
-        return list(predicts)
+        features = df.drop(columns=["exalts"], errors="ignore")  # drop target/label if present
 
+        prediction = model.predict(features)
+        return float(prediction[0])

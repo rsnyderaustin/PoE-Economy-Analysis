@@ -1,1 +1,1 @@
-from .trainer import RlTrainer
+from .training_pipeline import CraftingModelPipeline

@@ -22,8 +22,8 @@ class DataPath(Enum):
 
 
 class ModelPath(Enum):
-    PRICE_PREDICT_MODEL = Path.cwd() / 'file_management/files/price_predict_model.json'
-    CRAFTING_MODEL = Path.cwd() / 'file_management/files/crafting_model.pt'
+    PRICE_PREDICT_MODELS_DIRECTORY = Path.cwd() / 'file_management/price_predict_models'
+    CRAFTING_MODELS_DIRECTORY = Path.cwd() / 'file_management/crafting_models'
 
 
 class SetEncoder(json.JSONEncoder):
