@@ -37,7 +37,7 @@ class PricePredictModelPipeline:
 
         table_name = env_loader.get_env("PSQL_TRAINING_TABLE")
         raw_data = self.psql_manager.fetch_table_data(table_name)
-        model_df = ListingsTransforming.to_price_predict_df(raw_data)
+        model_df = ListingsTransforming.to_price_predict_df(rows=raw_data)
 
         for atype, atype_df in model_df.groupby('atype'):
             atype_df = StatsPrep.prep_dataframe(df=atype_df, price_column='exalts')

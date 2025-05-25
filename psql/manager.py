@@ -41,17 +41,17 @@ class PostgreSqlManager:
 
         new_cols = set(new_data.keys())
         missing_col_names = set(col for col in new_cols if col not in table_col_names)
-
         missing_col_data = {k: v for k, v in new_data.items() if k in missing_col_names}
         missing_col_dtypes = utils.determine_col_dtypes(raw_data=missing_col_data)
 
-        with self.engine.begin() as conn:
-            logging.info(f"Adding missing col names: {missing_col_names}")
-            for col, dtype in missing_col_dtypes.items():
-                alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
-                conn.execute(alter_stmt)
+        if missing_col_names:
+            with self.engine.begin() as conn:
+                logging.info(f"Adding missing col names: {missing_col_names}")
+                for col, dtype in missing_col_dtypes.items():
+                    alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
+                    conn.execute(alter_stmt)
 
-        self.inspector = inspect(self.engine)
+            self.inspector = inspect(self.engine)
 
     def _count_table_rows(self, table_name: str):
         with self.connection.begin():
@@ -86,17 +86,13 @@ class PostgreSqlManager:
     def fetch_table_data(self, table_name: str):
         with self.engine.connect() as conn:
             # Select * from your table
-            result = conn.execute(text(f'SELECT * FROM {table_name}'))
+            result = list(conn.execute(text(f'SELECT * FROM {table_name}')).mappings())
 
-            # Get column names from result metadata
-            columns = result.keys()
+            cols = list(result[0].keys())
+            data_dict = {col: [] for col in cols}
 
-            # Initialize dict with empty lists
-            data_dict = {col: [] for col in columns}
-
-            # Iterate over all rows
             for row in result:
-                for col in columns:
+                for col in cols:
                     data_dict[col].append(row[col])
 
             return data_dict

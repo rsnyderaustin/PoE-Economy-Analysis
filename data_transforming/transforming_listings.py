@@ -45,6 +45,11 @@ class CalculatorRegistry:
     def fetch_calculators(cls, item_category: ItemCategory) -> list[ListingFeatureCalculator]:
         return cls._calculators[item_category] if item_category in cls._calculators else []
 
+    @classmethod
+    def input_columns(cls) -> set[str]:
+        return {input_col for calc in cls._calculators for input_col in calc.input_columns}
+
+
 
 @CalculatorRegistry.register
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
@@ -162,18 +167,16 @@ class ListingsTransforming:
             dtype = cls._select_col_types[col]
             df[col] = df[col].astype(dtype)
 
-        abnormal_type_cols = [col for col in df.columns
-                              if col not in cls._select_col_types
-                              and df[col].dtype not in ['int64', 'float64', 'bool', 'category']]
-        for col in abnormal_type_cols:
-            df[col] = df[col].astype('float64')
-
         df = df.select_dtypes(include=['int64', 'float64', 'bool', 'category'])
 
         return df
 
 
 class _PricePredictTransformer:
+    _invalid_price_predict_cols = {
+        'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'open_prefixes', 'open_suffixes',
+        'atype', 'category', 'corrupted', 'identified'
+    }
 
     def __init__(self, listing: ModifiableListing):
         self.listing = listing
@@ -280,11 +283,20 @@ class _PricePredictTransformer:
         self.flattened_data.update(skills_dict)
         return self
 
-    def clean_columns(self):
+    def clean_columns(self, remove_calculation_local_mods=True):
         # Some columns have just one letter - not sure why but need to find out
         cols_to_remove = [col for col in self.flattened_data if len(col) == 1]
         for col in cols_to_remove:
             logging.error(f"Found 1-length attribute name {cols_to_remove} for listing: "
-                          f"\n{pprint.pprint(self.listing.__dict__)}")
+                          f"\n{pprint.pprint(self.flattened_data)}\nRemoving the extra column")
             self.flattened_data.pop(col)
+
+        for col in self.__class__._invalid_price_predict_cols:
+            self.flattened_data.pop(col, None)
+
+        if remove_calculation_local_mods:
+            calc_cols = self.calculator_registry.input_columns()
+            for col in calc_cols:
+                self.flattened_data.pop(col, None)
+
         return self

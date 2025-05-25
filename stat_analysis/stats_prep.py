@@ -30,7 +30,7 @@ class CorrelationAnalyzer:
 
         # Step 1: Build initial dictionary of DataFrames filtered by nonzero indices
         filtered_dfs = {
-            (mod1, mod2): utils.get_nonzero_dataframe(features, [mod1, mod2])
+            (mod1, mod2): utils.filter_out_empty_rows(features[[mod1, mod2]])
             for mod1, mod2 in mod_combinations
         }
 
@@ -95,19 +95,6 @@ class StatsPrep:
                 continue
 
             if non_modes_percent < non_mode_percent_threshold:
-                invalid_cols.add(col)
-                continue
-
-        valid_cols = [col for col in features_df.columns if col not in invalid_cols]
-
-        for col in valid_cols:
-            percent_null = non_null_counts[col] / len(features_df)
-            if percent_null < non_null_percent_threshold:
-                invalid_cols.add(col)
-                continue
-
-            percent_non_mode = non_mode_counts[col] / len(features_df)
-            if percent_non_mode < non_mode_percent_threshold:
                 invalid_cols.add(col)
                 continue
 

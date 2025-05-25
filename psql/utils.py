@@ -31,8 +31,6 @@ def python_dtype_to_postgres(dtype) -> str:
 
 
 def determine_col_dtypes(raw_data: dict):
-    logging.info("Determining column dtypes")
-
     col_dtypes = dict()
     for col, value in raw_data.items():
         if isinstance(value, Iterable) and len(value) > 0:
