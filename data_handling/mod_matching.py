@@ -107,8 +107,7 @@ class ModMatcher:
         for each hybrid mod text, we just determine which Poecd hybrid mod is the best fit
         """
         for sub_mod in item_mod._sub_mods:
-            mod_to_parent_dict = (atype_manager.hybrid_parts_to_parent_affixed_dict[item_mod.affix_type_e]
-                                  if item_mod.affix_type_e else atype_manager.hybrid_parts_to_parent_dict)
+            mod_to_parent_dict = atype_manager.fetch_hybrid_parts_to_parent(item_mod.affix_type_e)
             hybrid_mod_texts = list(mod_to_parent_dict.keys())
 
             matches = rapidfuzz.process.extract(sub_mod.sanitized_mod_text,
@@ -140,7 +139,7 @@ class ModMatcher:
         if item_mod.affix_type_e:
             poecd_mod_texts = list(atype_manager._mods_affixed_dict[item_mod.affix_type_e].keys())
         else:
-            poecd_mod_texts = list(atype_manager.mods_dict.keys())
+            poecd_mod_texts = atype_manager.mod_texts
 
         mod_text = item_mod._sub_mods[0].sanitized_mod_text
 
@@ -162,6 +161,7 @@ class ModMatcher:
             item_mod = copy.deepcopy(item_mod)
             for sub_mod in item_mod._sub_mods:
                 sub_mod.sanitized_mod_text = self._transform_text(sub_mod.sanitized_mod_text)
+
         if item_mod.is_hybrid:
             match = self._attempt_hybrid_match(item_mod, min_score)
         else:

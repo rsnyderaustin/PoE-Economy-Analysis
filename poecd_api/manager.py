@@ -62,7 +62,10 @@ class _PoecdSourceStore:
 
 
 class PoecdDataManager:
-    def __init__(self, refresh_data: bool, files_manager: FilesManager = None, data_puller: PoecdDataPuller = None):
+    def __init__(self,
+                 refresh_data: bool,
+                 files_manager: FilesManager = None,
+                 data_puller: PoecdDataPuller = None):
         self.files_manager = files_manager or FilesManager()
         self.data_puller = data_puller or PoecdDataPuller()
 
@@ -73,7 +76,10 @@ class PoecdDataManager:
 
     def _refresh_and_fix_data(self):
         bases_data = self.data_puller.pull_data(PoecdEndpoint.BASES)
+        bases_data = shared_utils.sanitize_dict_texts(bases_data)
+
         stats_data = self.data_puller.pull_data(PoecdEndpoint.STATS)
+        stats_data = shared_utils.sanitize_dict_texts(stats_data)
 
         self._fix_arrow_mods(bases_data, stats_data)
 

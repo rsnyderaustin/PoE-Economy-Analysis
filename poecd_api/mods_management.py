@@ -27,7 +27,7 @@ class PoecdMod:
         ilvl = tier_data['ilvl']
         self.ilvl_to_mod_tier[ilvl] = tier_data
 
-    def fetch_weighting(self, ilvl: str):
+    def fetch_weighting(self, ilvl: int):
         return self.ilvl_to_mod_tier[ilvl]['weighting']
 
 
@@ -45,6 +45,12 @@ class HybridModAnalyzer:
             mod.mod_id: len(mod.mod_text.split(','))
             for mod in mods
         }
+
+    def fetch_hybrid_to_parent_dict(self, affix_type: ModAffixType = None):
+        if affix_type:
+            return self.hybrid_parts_to_parent_affixed_dict[affix_type]
+        else:
+            return self.hybrid_parts_to_parent_dict
 
     def _create_hybrid_to_parent_dict(self, affix_type: ModAffixType = None) -> dict:
         hybrid_part_to_parent_id = dict()
@@ -87,11 +93,18 @@ class AtypeModsManager:
 
         self.hybrid_mod_analyzer = HybridModAnalyzer(mods=mods)
 
+    @property
+    def mod_texts(self) -> list[str]:
+        return list(self.mod_text_to_id.keys())
+
     def fetch_mod(self, mod_text: str, affix_type: ModAffixType):
         return self._mods_affixed_dict[affix_type][mod_text]
 
     def fetch_mod_by_id(self, mod_id: str):
         return self._mod_id_to_mod[mod_id]
+
+    def fetch_hybrid_parts_to_parent(self, affix_type: ModAffixType = None) -> dict:
+        return self.hybrid_mod_analyzer.fetch_hybrid_to_parent_dict(affix_type)
 
 
 class GlobalPoecdAtypeModsManager:
@@ -110,5 +123,10 @@ class GlobalPoecdAtypeModsManager:
     
     def fetch_mod(self, atype: str, mod_text: str = None, affix_type: ModAffixType = None, mod_id: str = None):
         atype_manager = self._atypes_managers_by_name[atype]
-        mod = atype_manager.fetch_mod(mod_text, affix_type if mod_text and affix_type else atype_manager.fetch_mod_by_id(mod_id))
+
+        if mod_text and affix_type:
+            mod = atype_manager.fetch_mod(mod_text, affix_type)
+        else:
+            mod = atype_manager.fetch_mod_by_id(mod_id)
+
         return mod
