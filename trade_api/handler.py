@@ -99,6 +99,8 @@ class FilterSplitter:
 
         return None
 
+def _key_response(listing_id, date_fetched: str):
+    return f"listing_{listing_id}_fetched_{date_fetched}"
 
 class TradeApiHandler:
 
@@ -126,7 +128,8 @@ class TradeApiHandler:
             for responses, response_results_count in self._process_query(query):
                 responses = [shared_utils.sanitize_dict_texts(response) for response in responses]
                 keyed_responses = {
-                    (response['id'], response['listing']['indexed']): response
+                    _key_response(listing_id=response['id'],
+                                  date_fetched=response['listing']['indexed']): response
                     for response in responses
                 }
                 self.raw_listings.update(keyed_responses)
