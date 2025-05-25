@@ -30,31 +30,36 @@ class ListingFeatureCalculator(ABC):
         if not hasattr(cls, 'applicable_item_categories'):
             raise TypeError(f"{cls.__name__} must define 'applicable_item_categories'.")
 
+    def __hash__(self):
+        return hash(str(self.__class__))
+
 
 class CalculatorRegistry:
-    _calculators = dict()
+    _item_category_to_calculators = dict()
 
     @classmethod
     def register(cls, calculator: type[ListingFeatureCalculator]):
         for category in calculator.applicable_item_categories:
-            if category not in cls._calculators:
-                cls._calculators[category] = list()
+            if category not in cls._item_category_to_calculators:
+                cls._item_category_to_calculators[category] = list()
 
-            cls._calculators[category].append(calculator)
+            cls._item_category_to_calculators[category].append(calculator)
 
         return calculator
 
     @classmethod
     def fetch_calculators(cls, item_category: ItemCategory) -> list[ListingFeatureCalculator]:
-        return cls._calculators[item_category] if item_category in cls._calculators else []
+        return cls._item_category_to_calculators[item_category] if item_category in cls._item_category_to_calculators else []
 
     @classmethod
     def input_columns(cls) -> set[str]:
-        return {input_col for calc in cls._calculators for input_col in calc.input_columns}
+        calcs = {calc for item_category, calcs in cls._item_category_to_calculators.items() for calc in calcs}
+        return {input_col for calc in calcs for input_col in calc.input_columns}
 
     @classmethod
     def calculated_columns(cls) -> set[str]:
-        return {calc_col for calc in cls._calculators for calc_col in calc.calculated_columns}
+        calcs = {calc for item_category, calcs in cls._item_category_to_calculators.items() for calc in calcs}
+        return {calc_col for calc in calcs for calc_col in calc.calculated_columns}
 
 
 @CalculatorRegistry.register
@@ -163,10 +168,11 @@ class ListingsTransforming:
 
         return compiled_data
 
-    @staticmethod
-    def _fetch_mod_columns(df) -> set[str]:
+    @classmethod
+    def _determine_valid_price_predict_columns(cls, df) -> set[str]:
         mod_cols = {col for col in df.columns if col.startswith('mod_')}
-        return mod_cols
+        valid_cols = {*cls._price_predict_specific_cols, *mod_cols}
+        return valid_cols
 
     @classmethod
     def to_price_predict_df(cls, listings: list[ModifiableListing] = None, rows: dict = None) -> pd.DataFrame:
@@ -181,7 +187,7 @@ class ListingsTransforming:
 
         df = pd.DataFrame(rows)
 
-        cols = {*cls._price_predict_specific_cols, *cls._fetch_mod_columns(df)}
+        cols = cls._determine_valid_price_predict_columns(df)
         removed_cols = {col for col in df.columns if col not in cols}
         logging.info(f"Columns removed from PricePredict DataFrame:\n{removed_cols}")
 
@@ -306,20 +312,12 @@ class _PricePredictTransformer:
         self.flattened_data.update(skills_dict)
         return self
 
-    def clean_columns(self, remove_calculation_local_mods=True):
+    def clean_columns(self):
         # Some columns have just one letter - not sure why but need to find out
         cols_to_remove = [col for col in self.flattened_data if len(col) == 1]
         for col in cols_to_remove:
             logging.error(f"Found 1-length attribute name {cols_to_remove} for listing: "
                           f"\n{pprint.pprint(self.flattened_data)}\nRemoving the extra column")
             self.flattened_data.pop(col)
-
-        for col in self.__class__._invalid_price_predict_cols:
-            self.flattened_data.pop(col, None)
-
-        if remove_calculation_local_mods:
-            calc_cols = self.calculator_registry.input_columns()
-            for col in calc_cols:
-                self.flattened_data.pop(col, None)
 
         return self
