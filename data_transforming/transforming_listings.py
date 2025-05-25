@@ -233,7 +233,7 @@ class _PricePredictTransformer:
         return self
 
     def insert_currency_info(self):
-        self.flattened_data['currency'] = self.listing.currency
+        self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
         exalts_price = shared_utils.CurrencyConverter().convert_to_exalts(
@@ -250,7 +250,7 @@ class _PricePredictTransformer:
         self.flattened_data['atype'] = self.listing.item_atype
         self.flattened_data['ilvl'] = self.listing.ilvl
         self.flattened_data['category'] = self.listing.item_category.value
-        self.flattened_data['rarity'] = self.listing.rarity
+        self.flattened_data['rarity'] = self.listing.rarity.value
         self.flattened_data['corrupted'] = self.listing.corrupted
         self.flattened_data['identified'] = self.listing.identified
         return self

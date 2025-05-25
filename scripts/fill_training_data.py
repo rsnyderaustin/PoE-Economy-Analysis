@@ -10,7 +10,7 @@ fm = FilesManager()
 responses = fm.file_data[DataPath.RAW_LISTINGS]
 
 tdp = TrainingDataPopulator(refresh_poecd_source=True,
-                            testing=True,
+                            testing=False,
                             files_manager=fm)
 
 tdp.fill_training_data(responses)
