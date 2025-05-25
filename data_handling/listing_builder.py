@@ -63,6 +63,7 @@ class _ModResolver:
         self.file_item_mods = self.files_manager.file_data[DataPath.MODS] or dict()
 
         self.current_rp = None
+        self.current_atype = None
 
     def _create_sub_mods(self, current_mod: ItemMod, mod_magnitudes: list) -> list[SubMod]:
         # Sub-mods within a hybrid mod that share a magnitude represent a range of values
@@ -135,8 +136,7 @@ class _ModResolver:
         :return: All mods from the item data
         """
         self.current_rp = rp
-
-        atype = ATypeClassifier.classify(rp)
+        self.current_atype = ATypeClassifier.classify(rp)
 
         mods = []
 
@@ -148,7 +148,7 @@ class _ModResolver:
         for mod_class_e, mod_data in mod_datas:
             mod_ids = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
             affix_type = utils.determine_mod_affix_type(mod_data)
-            mod_id = generate_mod_id(atype=atype, mod_ids=mod_ids, affix_type=affix_type)
+            mod_id = generate_mod_id(atype=self.current_atype, mod_ids=mod_ids, affix_type=affix_type)
 
             if mod_id in self.file_item_mods:
                 mods.append(self.file_item_mods[mod_id])
