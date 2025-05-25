@@ -37,7 +37,7 @@ class TrainingDataPopulator:
             data=row_data
         )
 
-    def fill_training_data(self, api_item_responses: list[dict]):
+    def fill_training_data(self, api_item_responses: list[dict]=None):
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
 

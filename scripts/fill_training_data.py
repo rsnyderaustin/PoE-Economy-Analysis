@@ -13,4 +13,4 @@ tdp = TrainingDataPopulator(refresh_poecd_source=True,
                             testing=False,
                             files_manager=fm)
 
-tdp.fill_training_data(responses)
+tdp.fill_training_data()
