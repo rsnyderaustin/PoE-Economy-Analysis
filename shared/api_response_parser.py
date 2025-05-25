@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from .item_enums import ItemCategory
@@ -69,13 +70,20 @@ class ApiResponseParser:
                 # Elemental damage is a hybrid of the different elemental damage types
                 for ele_value in raw_property['values']:
                     value = shared_utils.extract_values_from_text(ele_value[0])
+                    if isinstance(value, Iterable):
+                        value = sum(value) / len(value)
+
                     elemental_type = self.__class__._elemental_id_map[ele_value[1]]
                     properties[elemental_type] = value
 
                 continue
+
             property_value_str = raw_property['values'][0][0]
-            property_values = shared_utils.extract_values_from_text(property_value_str)
-            properties[property_name] = property_values
+            value = shared_utils.extract_values_from_text(property_value_str)
+            if isinstance(value, Iterable):
+                value = sum(value) / len(value)
+
+            properties[property_name] = value
 
         return properties
 
@@ -144,7 +152,7 @@ class ApiResponseParser:
     @property
     def price(self) -> Price:
         return Price(
-            currency=self.listing_data['price']['currency'],
+            currency=Currency(self.listing_data['price']['currency']),
             amount=self.listing_data['price']['amount']
         )
 

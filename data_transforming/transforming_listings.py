@@ -2,6 +2,7 @@ import logging
 import pprint
 from datetime import datetime
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 
 import pandas as pd
 
@@ -59,10 +60,12 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
         max_multiplier = 1.20
 
         # Calculate the base damage and then the 20% quality damage
-        base_damage = listing.item_properties[LocalMod.PHYSICAL_DAMAGE] / current_multiplier
+        phys_damage = getattr(listing, LocalMod.PHYSICAL_DAMAGE.value, 0)
+        base_damage = phys_damage / current_multiplier
         max_quality_damage = base_damage * max_multiplier
 
-        max_quality_pdps = max_quality_damage * listing.item_properties[LocalMod.ATTACKS_PER_SECOND]
+        attack_speed = getattr(listing, LocalMod.ATTACKS_PER_SECOND.value, 0)
+        max_quality_pdps = max_quality_damage * attack_speed
 
         return {DerivedMod.MAX_QUALITY_PDPS: max_quality_pdps}
 
@@ -78,10 +81,10 @@ class ElementalDpsCalculator(ListingFeatureCalculator):
         if listing.item_category not in cls.applicable_item_categories:
             raise TypeError(f"Listing with item category {listing.item_category} called {cls.__name__}")
 
-        cold_damage = listing.item_properties[LocalMod.COLD_DAMAGE]
-        fire_damage = listing.item_properties[LocalMod.FIRE_DAMAGE]
-        lightning_damage = listing.item_properties[LocalMod.LIGHTNING_DAMAGE]
-        attacks_per_second = listing.item_properties[LocalMod.ATTACKS_PER_SECOND]
+        cold_damage = getattr(listing, LocalMod.COLD_DAMAGE.value, 0)
+        fire_damage = getattr(listing, LocalMod.FIRE_DAMAGE.value, 0)
+        lightning_damage = getattr(listing, LocalMod.LIGHTNING_DAMAGE.value, 0)
+        attacks_per_second = getattr(listing, LocalMod.ATTACKS_PER_SECOND.value, 0)
 
         return {
             DerivedMod.COLD_DPS: cold_damage * attacks_per_second,
@@ -107,7 +110,7 @@ class ListingsTransforming:
         :param listings:
         :return: Listings flattened into rows - used for database storage
         """
-        listings_data = dict()
+        compiled_data = dict()
         for row, listing in enumerate(listings):
             flattened_data = (
                 _PricePredictTransformer(listing)
@@ -121,20 +124,25 @@ class ListingsTransforming:
                 .clean_columns()
                 .flattened_data
             )
-            missing_cols = [col for col in flattened_data.keys() if col not in listings_data]
 
             # Fill in the previously missing columns with Nones up to all the rows before this loop
-            listings_data.update(
+            cols_missing_from_compiled = [col for col in flattened_data if col not in compiled_data]
+            compiled_data.update(
                 {
-                    missing_col: [] if row == 0 else [None] * (row - 1)
-                    for missing_col in missing_cols
+                    missing_col: [] if row == 0 else [None] * row
+                    for missing_col in cols_missing_from_compiled
                 }
             )
 
-            for k, v in flattened_data.items():
-                listings_data[k].append(v)
+            # Append None to any existing column that was not in this listing
+            cols_missing_from_listing = [col for col in compiled_data if col not in flattened_data]
+            for col in cols_missing_from_listing:
+                compiled_data[col].append(None)
 
-        return listings_data
+            for k, v in flattened_data.items():
+                compiled_data[k].append(v)
+
+        return compiled_data
 
     @classmethod
     def to_price_predict_df(cls, listings: list[ModifiableListing] = None, rows: dict = None) -> pd.DataFrame:
@@ -177,26 +185,29 @@ class _PricePredictTransformer:
         self.derived_columns = dict()
 
     def _determine_date_fetched(self):
-        return datetime.strptime(self.listing.date_fetched, "%m-%d-%Y")
+        return datetime.strptime(self.listing.date_fetched, "%Y-%m-%dT%H:%M:%SZ")
 
     def insert_listing_properties(self):
         flattened_properties = dict()
-        for property_name, property_values in self.listing.item_properties.items():
-            flattened_properties[property_name] = 0
-            for v in property_values:
-                if isinstance(v, int) or isinstance(v, float):
-                    flattened_properties[property_name] += v
-                elif len(v) == 2:
-                    flattened_properties[property_name] += ((v[0] + v[1]) / 2)
-                elif len(v) == 1:
-                    flattened_properties[property_name] += v[0]
-                else:
-                    raise ValueError(f"Property value {property_values} has unexpected structure.")
+        for property_name, property_value in self.listing.item_properties.items():
+            if isinstance(property_value, Iterable):
+                flattened_properties[property_name] = 0
+                for v in property_value:
+                    if isinstance(v, int) or isinstance(v, float):
+                        flattened_properties[property_name] += v
+                    elif len(v) == 2:
+                        flattened_properties[property_name] += ((v[0] + v[1]) / 2)
+                    elif len(v) == 1:
+                        flattened_properties[property_name] += v[0]
+                    else:
+                        raise ValueError(f"Property value {property_value} has unexpected structure.")
+            else:
+                flattened_properties[property_name] = property_value
 
         self.flattened_data.update(flattened_properties)
         return self
 
-    def apply_calculators(self, delete_input_columns: bool = True):
+    def apply_calculators(self, delete_input_columns=True):
         calculators = self.calculator_registry.fetch_calculators(self.listing.item_category)
         derived_col_values = {
             col_e.value: val
@@ -208,7 +219,7 @@ class _PricePredictTransformer:
         if delete_input_columns:
             input_cols = set(col for calc in calculators for col in calc.input_columns)
             for col_e in input_cols:
-                del self.flattened_data[col_e.value]
+                self.flattened_data.pop(col_e.value, None)
 
         return self
 
@@ -225,7 +236,7 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        exalts_price = shared_utils.CurrencyConverter.convert_to_exalts(
+        exalts_price = shared_utils.CurrencyConverter().convert_to_exalts(
             currency=self.listing.currency,
             currency_amount=self.listing.currency_amount,
             relevant_date=self._determine_date_fetched()

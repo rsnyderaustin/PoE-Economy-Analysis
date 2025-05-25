@@ -8,21 +8,27 @@ import pytz
 
 import file_management
 from file_management import DataPath
+from .trade_enums import Currency
 from .item_enums import ItemCategory
 
 
 def extract_values_from_text(text) -> int | float | tuple | None:
-    raw_numbers = re.findall(r'-?\d+\.\d+|-?\d+', text)
-    if len(raw_numbers) == 0:
+    raw_numbers = re.findall(r'(?<!\S)-?\d+\.\d+|(?<!\S)-?\d+', text)
+
+    if '-' in text and not re.search(r'\s-\d', text):  # crude filter for range-style hyphen
+        parts = re.split(r'\s*-\s*', text)
+        raw_numbers = []
+        for part in parts:
+            match = re.search(r'\d+(\.\d+)?', part)
+            if match:
+                raw_numbers.append(match.group())
+
+    if not raw_numbers:
         return None
     elif len(raw_numbers) == 1:
         num = raw_numbers[0]
-        if '.' in num:
-            return float(num)
-        else:
-            return int(num)
+        return float(num) if '.' in num else int(num)
 
-    # If any number contains a '.', we treat all as float
     if any('.' in num for num in raw_numbers):
         return tuple(float(num) for num in raw_numbers)
     else:
@@ -91,12 +97,12 @@ class CurrencyConverter:
     _initialized = None
 
     def __new__(cls):
-        if not hasattr(cls, '_instance'):
+        if cls._instance is None:
             cls._instance = super(CurrencyConverter, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
-        if getattr(self, '_initialized', False):
+        if self._initialized:
             return
 
         files_manager = file_management.FilesManager()
@@ -118,12 +124,12 @@ class CurrencyConverter:
 
         conversions_dict[date][currency] = conversion_rate
 
-    def convert_to_exalts(self, currency: str, currency_amount: int | float, relevant_date: datetime):
-        if currency == 'exalted':
+    def convert_to_exalts(self, currency: Currency, currency_amount: int | float, relevant_date: datetime):
+        if currency == Currency.EXALTED_ORB:
             return currency_amount
 
         most_recent_date = min(self.conversions_dict.keys(), key=lambda d: abs(d - relevant_date))
-        exchange_rate = self.conversions_dict[most_recent_date][currency]
+        exchange_rate = self.conversions_dict[most_recent_date][currency.value]
 
         return currency_amount * exchange_rate
 

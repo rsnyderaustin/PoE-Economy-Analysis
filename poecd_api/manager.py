@@ -5,60 +5,19 @@ from file_management import FilesManager, DataPath
 from .atype_manager_factory import AtypeManagerFactory
 from .mods_management import GlobalPoecdAtypeModsManager
 from .data_pull import PoecdDataPuller, PoecdEndpoint
+from .internal_source_store import PoecdSourceStore
 
 
-class _PoecdSourceStore:
-    def __init__(self, bases_data, stats_data):
-        self.bases_data = bases_data
-        self.stats_data = stats_data
-
-        self._mod_id_to_text = bases_data['mod']
-        self._mod_id_to_affix_type = self._build_mod_id_to_affix_type()
-        self._atype_id_to_atype_name = bases_data['base']
-        self.valid_atype_ids = set(self._atype_id_to_atype_name.keys())
-
-        self._mod_id_to_mod_types = self._build_mod_id_to_mod_types()
-
-    def _build_mod_id_to_affix_type(self) -> dict:
-        return {
-            mod_data_dict['id_modifier']: mod_data_dict['affix']
-            for mod_data_dict in self.stats_data['modifiers']['seq']
-        }
-
-    @staticmethod
-    def _determine_mod_types(mtypes_string: str) -> list:
-        if not mtypes_string:
-            return []
-        parsed = [part for part in mtypes_string.split('|') if part]
-        return parsed
-
-    def _build_mod_id_to_mod_types(self) -> dict:
-        mod_type_id_to_mod_type = {
-            mod_type_dict['id_mtype']: mod_type_dict['name_mtype']
-            for mod_type_dict in self.stats_data['mtypes']['seq']
-        }
-
-        mod_id_to_mod_type_ids = {
-            mod_data['id_modifier']: self._determine_mod_types(mod_data['mtypes'])
-            for mod_data in self.stats_data['modifiers']['seq']
-        }
-
-        return {
-            mod_id: [mod_type_id_to_mod_type[mod_type_id] for mod_type_id in mod_type_ids]
-            for mod_id, mod_type_ids in mod_id_to_mod_type_ids.items()
-        }
-
-    def fetch_mod_text(self, mod_id) -> str | None:
-        return self._mod_id_to_text.get(mod_id, None)
-
-    def fetch_affix_type(self, mod_id) -> str | None:
-        return self._mod_id_to_affix_type.get(mod_id, None)
-
-    def fetch_atype_name(self, atype_id) -> str | None:
-        return self._atype_id_to_atype_name.get(atype_id, None)
-
-    def fetch_mod_types(self, mod_id) -> str | None:
-        return self._mod_id_to_mod_types.get(mod_id, None)
+def _convert_str_ints(obj):
+    if isinstance(obj, dict):
+        return {k: _convert_str_ints(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_convert_str_ints(elem) for elem in obj]
+    elif isinstance(obj, str):
+        # Fast and safe check for int-convertible strings
+        if obj.isdigit() or (obj.startswith('-') and obj[1:].isdigit()):
+            return int(obj)
+    return obj
 
 
 class PoecdDataManager:
@@ -86,8 +45,8 @@ class PoecdDataManager:
         self.files_manager.file_data[DataPath.POECD_BASES] = bases_data
         self.files_manager.file_data[DataPath.POECD_STATS] = stats_data
 
-    def _load_source_store_from_files(self) -> _PoecdSourceStore:
-        return _PoecdSourceStore(
+    def _load_source_store_from_files(self) -> PoecdSourceStore:
+        return PoecdSourceStore(
             bases_data=self.files_manager.file_data[DataPath.POECD_BASES],
             stats_data=self.files_manager.file_data[DataPath.POECD_STATS]
         )

@@ -121,7 +121,7 @@ class ModMatcher:
                 poecd_mod_ids = {
                     mod_id
                     for mod_id in poecd_mod_ids
-                    if atype_manager.num_hybrid_parts_dict[mod_id] == number_of_parts
+                    if atype_manager.determine_number_of_hybrid_parts(mod_id) == number_of_parts
                 }
 
                 if not poecd_mod_ids:

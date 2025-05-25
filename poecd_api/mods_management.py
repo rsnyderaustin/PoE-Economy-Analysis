@@ -36,21 +36,24 @@ class HybridModAnalyzer:
     def __init__(self, mods: set[PoecdMod]):
         self._mods = mods
         # This is useful for when we are matching mods to the Trade API data
-        self.hybrid_parts_to_parent_dict = self._create_hybrid_to_parent_dict()
-        self.hybrid_parts_to_parent_affixed_dict = {
+        self._hybrid_parts_to_parent_dict = self._create_hybrid_to_parent_dict()
+        self._hybrid_parts_to_parent_affixed_dict = {
             ModAffixType.PREFIX: self._create_hybrid_to_parent_dict(affix_type=ModAffixType.PREFIX),
             ModAffixType.SUFFIX: self._create_hybrid_to_parent_dict(affix_type=ModAffixType.SUFFIX)
         }
-        self.num_hybrid_parts_dict = {
+        self._num_hybrid_parts_dict = {
             mod.mod_id: len(mod.mod_text.split(','))
             for mod in mods
         }
 
     def fetch_hybrid_to_parent_dict(self, affix_type: ModAffixType = None):
         if affix_type:
-            return self.hybrid_parts_to_parent_affixed_dict[affix_type]
+            return self._hybrid_parts_to_parent_affixed_dict[affix_type]
         else:
-            return self.hybrid_parts_to_parent_dict
+            return self._hybrid_parts_to_parent_dict
+
+    def determine_number_of_hybrid_parts(self, mod_id: int):
+        return self._num_hybrid_parts_dict[mod_id]
 
     def _create_hybrid_to_parent_dict(self, affix_type: ModAffixType = None) -> dict:
         hybrid_part_to_parent_id = dict()
@@ -91,7 +94,7 @@ class AtypeModsManager:
         self.mod_id_to_text = {mod.mod_id: mod.mod_text for mod in mods}
         self.mod_text_to_id = {v: k for k, v in self.mod_id_to_text.items()}
 
-        self.hybrid_mod_analyzer = HybridModAnalyzer(mods=mods)
+        self._hybrid_mod_analyzer = HybridModAnalyzer(mods=mods)
 
     @property
     def mod_texts(self) -> list[str]:
@@ -100,11 +103,14 @@ class AtypeModsManager:
     def fetch_mod(self, mod_text: str, affix_type: ModAffixType):
         return self._mods_affixed_dict[affix_type][mod_text]
 
-    def fetch_mod_by_id(self, mod_id: str):
+    def fetch_mod_by_id(self, mod_id: int):
         return self._mod_id_to_mod[mod_id]
 
     def fetch_hybrid_parts_to_parent(self, affix_type: ModAffixType = None) -> dict:
-        return self.hybrid_mod_analyzer.fetch_hybrid_to_parent_dict(affix_type)
+        return self._hybrid_mod_analyzer.fetch_hybrid_to_parent_dict(affix_type)
+
+    def determine_number_of_hybrid_parts(self, mod_id: int):
+        return self._hybrid_mod_analyzer.determine_number_of_hybrid_parts(mod_id)
 
 
 class GlobalPoecdAtypeModsManager:

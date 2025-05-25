@@ -40,7 +40,7 @@ class FilesManager:
         else:
             return file_size > 0
 
-    def save_data(self, paths: list[io_utils.DataPath | io_utils.ModelPath] = None):
+    def save_data(self, paths: list[io_utils.DataPath] = None):
         if not paths:
             data_paths = [path_e.value for path_e in io_utils.DataPath]
             model_paths = [path_e.value for path_e in io_utils.ModelPath]

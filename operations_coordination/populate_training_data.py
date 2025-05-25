@@ -1,20 +1,29 @@
 import random
 
-import poecd_api
+from poecd_api import PoecdDataManager
 import psql
 import trade_api
 from data_handling import ListingBuilder
 from data_transforming import ListingsTransforming
+from file_management import FilesManager, DataPath
 from shared import env_loading
 from trade_api.query import QueryPresets
 
 
 class TrainingDataPopulator:
 
-    def __init__(self, refresh_poecd_source: bool, testing=False):
+    def __init__(self, files_manager: FilesManager, refresh_poecd_source: bool, testing=False):
         self.trade_api_handler = trade_api.TradeApiHandler()
 
-        global_atypes_manager = poecd_api.PoecdDataManager(refresh_data=refresh_poecd_source).build_global_mods_manager()
+        if refresh_poecd_source or not files_manager.file_data[DataPath.GLOBAL_POECD_MANAGER]:
+            global_atypes_manager = PoecdDataManager(refresh_data=refresh_poecd_source).build_global_mods_manager()
+            files_manager.file_data[DataPath.GLOBAL_POECD_MANAGER] = global_atypes_manager
+            files_manager.save_data([DataPath.GLOBAL_POECD_MANAGER])
+
+        global_atypes_manager = files_manager.file_data[DataPath.GLOBAL_POECD_MANAGER]
+        if not global_atypes_manager:
+            global_atypes_manager = PoecdDataManager(refresh_data=refresh_poecd_source).build_global_mods_manager()
+
         self.listing_builder = ListingBuilder(global_atypes_manager)
 
         self.env_loader = env_loading.EnvLoader()

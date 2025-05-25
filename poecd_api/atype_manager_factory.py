@@ -2,16 +2,17 @@
 from shared import shared_utils
 from shared.item_enums import ModAffixType
 from .mods_management import PoecdMod, AtypeModsManager
+from .internal_source_store import PoecdSourceStore
 
 
 class AtypeManagerFactory:
 
-    def __init__(self, source_store):
+    def __init__(self, source_store: PoecdSourceStore):
         self.source_store = source_store
 
     def _create_tiers_data(self):
         socketer_mod_ids = {
-            mod['id_modifier'] for mod in self.source_store.stats_data['modifiers']['seq']
+            int(mod['id_modifier']) for mod in self.source_store.stats_data['modifiers']['seq']
             if mod['affix'] == 'socket'
         }
 

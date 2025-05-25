@@ -117,7 +117,7 @@ class ModifiableListing:
                  fractured_mods: list[ItemMod],
                  explicit_mods: list[ItemMod],
                  item_skills: list[ItemSkill],
-                 item_properties: dict = None
+                 item_properties: dict
                  ):
         self.account_name = account_name
         self.listing_id = listing_id
@@ -139,8 +139,7 @@ class ModifiableListing:
         self.item_skills = item_skills
         self.fractured_mods = fractured_mods
         self.explicit_mods = explicit_mods
-
-        self.item_properties = item_properties or {}
+        self.item_properties = item_properties
 
         self.maximum_quality = self._determine_max_quality()
 
@@ -183,14 +182,14 @@ class ModifiableListing:
 
     @property
     def quality(self):
-        return self.item_properties['Quality']
+        return getattr(self.item_properties, 'quality', 0)
 
     @quality.setter
     def quality(self, new_quality):
-        self.item_properties['Quality'] = new_quality
+        self.item_properties['quality'] = new_quality
 
     def set_quality(self, new_quality: int):
-        self.item_properties['Quality'] = new_quality
+        self.item_properties['quality'] = new_quality
 
     @property
     def prefixes(self):

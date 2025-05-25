@@ -46,7 +46,8 @@ class ListingBuilder:
             enchant_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.ENCHANT],
             fractured_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.FRACTURED],
             explicit_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.EXPLICIT],
-            item_skills=_SkillsFactory.create_skills(rp)
+            item_skills=_SkillsFactory.create_skills(rp),
+            item_properties=rp.item_properties
         )
 
         return listing
@@ -111,6 +112,10 @@ class _ModResolver:
         )
 
         new_mod.insert_sub_mods(sub_mods)
+
+        # Only explicit mods and fractured mods require weighting and mod types
+        if new_mod.mod_class_e not in (ModClass.EXPLICIT, ModClass.FRACTURED):
+            return new_mod
 
         matched_poecd_mod_id = self.mod_matcher.match_mod(new_mod)
 
