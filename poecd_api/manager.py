@@ -1,14 +1,13 @@
 import logging
 
 from shared import shared_utils
-from .attribute_finder import PoecdAttributeFinder
 from file_management import FilesManager, DataPath
 from .atype_manager_factory import AtypeManagerFactory
-from .mods_management import GlobalAtypesManager
+from .mods_management import GlobalPoecdAtypeModsManager
 from .data_pull import PoecdDataPuller, PoecdEndpoint
 
 
-class PoecdSourceStore:
+class _PoecdSourceStore:
     def __init__(self, bases_data, stats_data):
         self.bases_data = bases_data
         self.stats_data = stats_data
@@ -81,8 +80,8 @@ class PoecdDataManager:
         self.files_manager.file_data[DataPath.POECD_BASES] = bases_data
         self.files_manager.file_data[DataPath.POECD_STATS] = stats_data
 
-    def _load_source_store_from_files(self) -> PoecdSourceStore:
-        return PoecdSourceStore(
+    def _load_source_store_from_files(self) -> _PoecdSourceStore:
+        return _PoecdSourceStore(
             bases_data=self.files_manager.file_data[DataPath.POECD_BASES],
             stats_data=self.files_manager.file_data[DataPath.POECD_STATS]
         )
@@ -110,9 +109,9 @@ class PoecdDataManager:
         stats_data['basemods']['20'] = [m for m in stats_data['basemods']['20'] if m != '5161']
         stats_data['modbases'].pop('5161', None)
 
-    def build_attributes_finder(self) -> PoecdAttributeFinder:
+    def build_global_mods_manager(self) -> GlobalPoecdAtypeModsManager:
         atype_managers = AtypeManagerFactory(self.source_store).build_mods_managers()
-        global_manager = GlobalAtypesManager(atype_managers)
-        return PoecdAttributeFinder(global_manager)
+        global_manager = GlobalPoecdAtypeModsManager(atype_managers)
+        return global_manager
 
 

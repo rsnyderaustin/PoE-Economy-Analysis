@@ -1,16 +1,19 @@
 import logging
+import pprint
 
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
+from poecd_api import GlobalPoecdAtypeModsManager
 from shared import ATypeClassifier, shared_utils, ModClass, ApiResponseParser
 from . import utils
-from poecd_api.attribute_finder import PoecdAttributeFinder
+from poecd_api.mods_management import GlobalPoecdAtypeModsManager
+from .mod_matching import ModMatcher
 
 
 class ListingBuilder:
 
-    def __init__(self, poecd_attribute_finder: PoecdAttributeFinder):
-        self._mod_resolver = _ModResolver(poecd_attribute_finder)
+    def __init__(self, global_atypes_manager: GlobalPoecdAtypeModsManager):
+        self._mod_resolver = _ModResolver(global_atypes_manager)
 
     def build_listing(self, api_item_response: dict):
         rp = ApiResponseParser(api_item_response)
@@ -51,8 +54,9 @@ class ListingBuilder:
 
 class _ModResolver:
 
-    def __init__(self, poecd_attribute_finder: PoecdAttributeFinder):
-        self.poecd_attribute_finder = poecd_attribute_finder
+    def __init__(self, global_poecd_mods_manager: GlobalPoecdAtypeModsManager):
+        self._global_poecd_mods_manager = global_poecd_mods_manager
+        self.mod_matcher = ModMatcher(global_poecd_mods_manager)
 
         files_manager = FilesManager()
         self.file_item_mods = files_manager.file_data[DataPath.MODS] or dict()
@@ -108,10 +112,15 @@ class _ModResolver:
 
         new_mod.insert_sub_mods(sub_mods)
 
-        poecd_attributes = self.poecd_attribute_finder.get_poecd_mod_attributes(item_mod=new_mod)
-        if poecd_attributes:  # returns None if
-            new_mod.weighting = poecd_attributes.weighting
-            new_mod.mod_types = poecd_attributes.mod_types
+        matched_poecd_mod_id = self.mod_matcher.match_mod(new_mod)
+
+        if not matched_poecd_mod_id:
+            raise RuntimeError(f"Was not able to match item mod:\n{pprint.pprint(new_mod)}")
+
+        poecd_mod = self._global_poecd_mods_manager.fetch_mod(atype=new_mod.atype,
+                                                              mod_id=matched_poecd_mod_id)
+        new_mod.weighting = poecd_mod.fetch_weighting(ilvl=int(mod_data['level']))
+        new_mod.mod_types = poecd_mod.mod_types
 
         return new_mod
 

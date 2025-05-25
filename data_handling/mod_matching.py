@@ -4,7 +4,7 @@ import re
 import rapidfuzz
 
 from instances_and_definitions import ItemMod
-from poecd_api.mods_management import GlobalAtypesManager
+from poecd_api.mods_management import GlobalPoecdAtypeModsManager
 
 
 class _MatchScoreTracker:
@@ -65,7 +65,7 @@ def transform_text(text: str, transform_dict: dict) -> str:
 
 class ModMatcher:
 
-    def __init__(self, global_atypes_manager: GlobalAtypesManager):
+    def __init__(self, global_atypes_manager: GlobalPoecdAtypeModsManager):
         self.mod_transformations = {
             '# additional': 'an additional',
             'an additional': '# additional',
@@ -97,7 +97,7 @@ class ModMatcher:
 
     def _attempt_hybrid_match(self, item_mod: ItemMod, min_score: float) -> str | None:
         atype_manager = self._global_atypes_manager.fetch_atype_manager(atype_name=item_mod.atype)
-        hybrid_scores_tracker = MatchScoreTracker()
+        hybrid_scores_tracker = _MatchScoreTracker()
 
         number_of_parts = len(item_mod._sub_mods)
 

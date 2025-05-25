@@ -63,7 +63,7 @@ class HybridModAnalyzer:
         return hybrid_part_to_parent_id
 
 
-class PoecdAtypeManager:
+class AtypeModsManager:
 
     def __init__(self,
                  atype_id: str,
@@ -94,9 +94,9 @@ class PoecdAtypeManager:
         return self._mod_id_to_mod[mod_id]
 
 
-class GlobalAtypesManager:
+class GlobalPoecdAtypeModsManager:
 
-    def __init__(self, atype_managers: list[PoecdAtypeManager]):
+    def __init__(self, atype_managers: list[AtypeModsManager]):
         self._atypes_managers_by_id = {am.atype_id: am for am in atype_managers}
         self._atypes_managers_by_name = {am.atype_name: am for am in atype_managers}
 
@@ -107,4 +107,8 @@ class GlobalAtypesManager:
             return self._atypes_managers_by_name[atype_name]
         else:
             raise ValueError(f"Did receive an argument for function {__name__}")
-
+    
+    def fetch_mod(self, atype: str, mod_text: str = None, affix_type: ModAffixType = None, mod_id: str = None):
+        atype_manager = self._atypes_managers_by_name[atype]
+        mod = atype_manager.fetch_mod(mod_text, affix_type if mod_text and affix_type else atype_manager.fetch_mod_by_id(mod_id))
+        return mod

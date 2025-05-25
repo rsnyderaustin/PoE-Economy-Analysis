@@ -1,2 +1,2 @@
-from .mods_management import GlobalAtypesManager
+from .mods_management import GlobalPoecdAtypeModsManager
 from .manager import PoecdDataManager

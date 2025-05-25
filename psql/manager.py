@@ -8,13 +8,18 @@ from . import utils
 
 
 class PostgreSqlManager:
-    def __new__(cls):
+    def __new__(cls, *args, **kwargs):
         if not hasattr(cls, '_instance'):
             cls._instance = super(PostgreSqlManager, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self, skip_sql=False):
         if getattr(self, '_initialized', False):
+            return
+        self._initialized = True
+
+        if skip_sql:
+            print("Skipping SQL initialization.")
             return
 
         e = EnvLoader()
@@ -30,7 +35,6 @@ class PostgreSqlManager:
         self.connection = self.engine.connect()
         self.inspector = inspect(self.engine)
 
-        self._initialized = True
 
     def _add_missing_columns(self, table_name: str, new_data: dict):
         table_col_names = self._fetch_column_names(table_name)

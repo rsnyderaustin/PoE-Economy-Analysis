@@ -1,7 +1,7 @@
 
 from shared import shared_utils
 from shared.item_enums import ModAffixType
-from .mods_management import PoecdMod, PoecdAtypeManager
+from .mods_management import PoecdMod, AtypeModsManager
 
 
 class AtypeManagerFactory:
@@ -50,9 +50,9 @@ class AtypeManagerFactory:
             atype_id_to_mods[mod.atype_id].add(mod)
 
         atypes_managers = [
-            PoecdAtypeManager(atype_id=atype_id,
-                              atype_name=self.source_store.fetch_atype_name(atype_id=atype_id),
-                              mods=atype_id_to_mods[atype_id])
+            AtypeModsManager(atype_id=atype_id,
+                             atype_name=self.source_store.fetch_atype_name(atype_id=atype_id),
+                             mods=atype_id_to_mods[atype_id])
             for atype_id in atype_ids
         ]
         return atypes_managers
@@ -72,7 +72,7 @@ class AtypeManagerFactory:
             mod = mods_dict[(atype_id, mod_id)]
             mod.add_tier(tier_data=tier_data)
 
-    def build_mods_managers(self) -> list[PoecdAtypeManager]:
+    def build_mods_managers(self) -> list[AtypeModsManager]:
 
         tiers_data = self._create_tiers_data()
 

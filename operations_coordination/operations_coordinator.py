@@ -31,22 +31,12 @@ class OperationsCoordinator:
         self.trade_api_handler = trade_api.TradeApiHandler()
         self.files_manager = FilesManager()
 
-        att_finder = poecd_api.PoecdDataManager(refresh_data=refresh_poecd_source).build_attributes_finder()
-        self.listing_builder = ListingBuilder(att_finder)
+        global_atypes_manager = poecd_api.PoecdDataManager(refresh_data=refresh_poecd_source).build_global_mods_manager()
+        self.listing_builder = ListingBuilder(global_atypes_manager)
 
         self.env_loader = env_loading.EnvLoader()
         self.psql_manager = psql.PostgreSqlManager()
         logging.info("Finished initializing ProgramManager.")
-
-    def fill_training_data(self):
-        training_queries = query.QueryPresets().training_fills
-        random.shuffle(training_queries)
-
-        for api_item_responses in self.trade_api_handler.process_queries(training_queries):
-            listings = [self.listing_builder.build_listing(api_r) for api_r in api_item_responses]
-            row_data = ListingsTransforming.to_flat_rows(listings)
-            self.psql_manager.insert_data(table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
-                                          data=row_data)
 
     def find_underpriced_items(self):
         training_queries = query.QueryPresets().training_fills

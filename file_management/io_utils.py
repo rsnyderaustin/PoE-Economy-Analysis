@@ -61,7 +61,7 @@ def write_to_file(file_path: Path, data):
 
 
 def _ensure_brackets_in_json(file_path: Path):
-    if file_path.read_text().strip() == "":
+    if file_path.read_text(encoding="utf-8").strip() == "":
         with open(file_path, 'w') as f:
             json.dump({}, f, indent=4)
 
@@ -76,7 +76,7 @@ def load_data_files() -> dict:
         if path.exists:
             if path.suffix == '.json':
                 _ensure_brackets_in_json(file_path=path)
-                with open(path, 'r') as file:
+                with open(path, encoding='utf-8') as file:
                     file_data[key] = json.load(file)
             elif path.suffix == '.csv':
                 file_data[key] = pd.read_csv(path)
