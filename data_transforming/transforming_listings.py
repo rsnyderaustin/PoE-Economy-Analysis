@@ -14,6 +14,7 @@ from shared.item_enums import LocalMod, DerivedMod, ItemCategory
 class ListingFeatureCalculator(ABC):
     applicable_item_categories = []
     input_columns = set()
+    calculated_columns = set()
 
     @classmethod
     @abstractmethod
@@ -24,6 +25,8 @@ class ListingFeatureCalculator(ABC):
         super().__init_subclass__(**kwargs)
         if not hasattr(cls, 'input_columns'):
             raise TypeError(f"{cls.__name__} must define 'input_columns'.")
+        if not hasattr(cls, 'calculated_columns'):
+            raise TypeError(f"{cls.__name__} must define 'calculated_columns'.")
         if not hasattr(cls, 'applicable_item_categories'):
             raise TypeError(f"{cls.__name__} must define 'applicable_item_categories'.")
 
@@ -33,11 +36,11 @@ class CalculatorRegistry:
 
     @classmethod
     def register(cls, calculator: type[ListingFeatureCalculator]):
-        for cat in calculator.applicable_item_categories:
-            if cat not in cls._calculators:
-                cls._calculators[cat] = list()
+        for category in calculator.applicable_item_categories:
+            if category not in cls._calculators:
+                cls._calculators[category] = list()
 
-            cls._calculators[cat].append(calculator)
+            cls._calculators[category].append(calculator)
 
         return calculator
 
@@ -49,12 +52,16 @@ class CalculatorRegistry:
     def input_columns(cls) -> set[str]:
         return {input_col for calc in cls._calculators for input_col in calc.input_columns}
 
+    @classmethod
+    def calculated_columns(cls) -> set[str]:
+        return {calc_col for calc in cls._calculators for calc_col in calc.calculated_columns}
 
 
 @CalculatorRegistry.register
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
+    calculated_columns = {DerivedMod.MAX_QUALITY_PDPS.value}
 
     @classmethod
     def calculate(cls, listing: ModifiableListing):
@@ -80,6 +87,7 @@ class ElementalDpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
+    calculated_columns = {DerivedMod.COLD_DPS, DerivedMod.FIRE_DPS, DerivedMod.LIGHTNING_DPS, DerivedMod.ELEMENTAL_DPS}
 
     @classmethod
     def calculate(cls, listing: ModifiableListing):
@@ -106,6 +114,12 @@ class ListingsTransforming:
         'rarity': 'category',
         'identified': bool,
         'corrupted': bool
+    }
+
+    _price_predict_specific_cols = {
+        'minutes_since_league_start',
+        'atype',
+        *CalculatorRegistry.calculated_columns()
     }
 
     @staticmethod
@@ -139,7 +153,7 @@ class ListingsTransforming:
                 }
             )
 
-            # Append None to any existing column that was not in this listing
+            # Append None to any existing column that was not in this specific listing
             cols_missing_from_listing = [col for col in compiled_data if col not in flattened_data]
             for col in cols_missing_from_listing:
                 compiled_data[col].append(None)
@@ -148,6 +162,11 @@ class ListingsTransforming:
                 compiled_data[k].append(v)
 
         return compiled_data
+
+    @staticmethod
+    def _fetch_mod_columns(df) -> set[str]:
+        mod_cols = {col for col in df.columns if col.startswith('mod_')}
+        return mod_cols
 
     @classmethod
     def to_price_predict_df(cls, listings: list[ModifiableListing] = None, rows: dict = None) -> pd.DataFrame:
@@ -162,10 +181,15 @@ class ListingsTransforming:
 
         df = pd.DataFrame(rows)
 
-        select_dtype_cols = [col for col in cls._select_col_types if col in df.columns]
-        for col in select_dtype_cols:
-            dtype = cls._select_col_types[col]
-            df[col] = df[col].astype(dtype)
+        cols = {*cls._price_predict_specific_cols, *cls._fetch_mod_columns(df)}
+        removed_cols = {col for col in df.columns if col not in cols}
+        logging.info(f"Columns removed from PricePredict DataFrame:\n{removed_cols}")
+
+        df = df[cols]
+
+        for col, dtype in cls._select_col_types.items():
+            if col in df.columns:
+                df[col] = df[col].astype(dtype)
 
         df = df.select_dtypes(include=['int64', 'float64', 'bool', 'category'])
 
@@ -173,10 +197,7 @@ class ListingsTransforming:
 
 
 class _PricePredictTransformer:
-    _invalid_price_predict_cols = {
-        'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'open_prefixes', 'open_suffixes',
-        'atype', 'category', 'corrupted', 'identified'
-    }
+    _non_mod_cols = {'minutes_since_league_start', 'atype'}
 
     def __init__(self, listing: ModifiableListing):
         self.listing = listing
@@ -263,16 +284,18 @@ class _PricePredictTransformer:
 
         summed_sub_mods = {}
         for sub_mod in sub_mods:
+            # We add the 'mod_' prefix here so that we can identify which columns are mod columns in the future
+            mod_text = f"mod_{sub_mod.sanitized_mod_text}"
             if sub_mod.actual_values:
                 avg_value = sum(sub_mod.actual_values) / len(sub_mod.actual_values)
                 if sub_mod.mod_id not in summed_sub_mods:
-                    summed_sub_mods[sub_mod.sanitized_mod_text] = avg_value
+                    summed_sub_mods[mod_text] = avg_value
                 else:
-                    summed_sub_mods[sub_mod.sanitized_mod_text] += avg_value
+                    summed_sub_mods[mod_text] += avg_value
             else:
                 # If there is no value then it's just a static property (ex: "You cannot be poisoned"), and so
                 # we assign it a 1 to indicate to the model that it's an active mod
-                summed_sub_mods[sub_mod.sanitized_mod_text] = 1
+                summed_sub_mods[mod_text] = 1
 
         self.flattened_data.update(summed_sub_mods)
         return self

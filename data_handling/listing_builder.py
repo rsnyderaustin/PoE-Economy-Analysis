@@ -59,8 +59,8 @@ class _ModResolver:
         self._global_poecd_mods_manager = global_poecd_mods_manager
         self.mod_matcher = ModMatcher(global_poecd_mods_manager)
 
-        files_manager = FilesManager()
-        self.file_item_mods = files_manager.file_data[DataPath.MODS] or dict()
+        self.files_manager = FilesManager()
+        self.file_item_mods = self.files_manager.file_data[DataPath.MODS] or dict()
 
         self.current_rp = None
 
@@ -135,7 +135,8 @@ class _ModResolver:
         :return: All mods from the item data
         """
         self.current_rp = rp
-        self.current_atype = ATypeClassifier.classify(rp)
+
+        atype = ATypeClassifier.classify(rp)
 
         mods = []
 
@@ -147,7 +148,7 @@ class _ModResolver:
         for mod_class_e, mod_data in mod_datas:
             mod_ids = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
             affix_type = utils.determine_mod_affix_type(mod_data)
-            mod_id = generate_mod_id(atype=self.current_atype, mod_ids=mod_ids, affix_type=affix_type)
+            mod_id = generate_mod_id(atype=atype, mod_ids=mod_ids, affix_type=affix_type)
 
             if mod_id in self.file_item_mods:
                 mods.append(self.file_item_mods[mod_id])
@@ -158,6 +159,8 @@ class _ModResolver:
                                             mod_class=mod_class_e)
             self.file_item_mods[new_mod.mod_id] = new_mod  # Add the new mod to our mod JSON file
             mods.append(new_mod)
+
+        self.files_manager.save_data([DataPath.MODS])
 
         return mods
 
