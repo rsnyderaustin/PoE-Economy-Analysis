@@ -8,13 +8,6 @@ import requests
 from shared import PathProcessor
 
 
-def _normalize_data(bases_data: dict):
-    bases_data['base'] = {
-        k: ('Quarterstaff' if v == 'Warstaff' else v)
-        for k, v in bases_data['base'].items()
-    }
-
-
 class PoecdEndpoint(Enum):
     BASES = '/lang/poec_lang.us.json?v=1744834998'
     STATS = '/main/poec_data.json?v=1744834989'
@@ -81,9 +74,6 @@ class PoecdDataPuller:
         content = response.content.decode('utf-8')
         content = re.sub(r'^[^{]*', '', content)
         json_data = json.loads(content)
-
-        if endpoint == PoecdEndpoint.BASES:
-            _normalize_data(json_data)
 
         return json_data
 

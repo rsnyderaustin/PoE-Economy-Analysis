@@ -20,6 +20,20 @@ def _convert_str_ints(obj):
     return obj
 
 
+def _normalize_bases_data(bases_data: dict):
+    bases_data['base'] = {
+        k: ('Quarterstaff' if v == 'Warstaff' else v)
+        for k, v in bases_data['base'].items()
+    }
+
+    bases_data['mod'] = {
+        mod_id: shared_utils.sanitize_mod_text(mod_text)
+        for mod_id, mod_text in bases_data['mod'].items()
+    }
+
+    return bases_data
+
+
 class PoecdDataManager:
     def __init__(self,
                  refresh_data: bool,
@@ -36,6 +50,7 @@ class PoecdDataManager:
     def _refresh_and_fix_data(self):
         bases_data = self.data_puller.pull_data(PoecdEndpoint.BASES)
         bases_data = shared_utils.sanitize_dict_texts(bases_data)
+        bases_data = _normalize_bases_data(bases_data)
 
         stats_data = self.data_puller.pull_data(PoecdEndpoint.STATS)
         stats_data = shared_utils.sanitize_dict_texts(stats_data)

@@ -12,7 +12,7 @@ from .trade_enums import Currency
 from .item_enums import ItemCategory
 
 
-def extract_values_from_text(text) -> int | float | tuple | None:
+def extract_values_from_text(text) -> tuple | None:
     raw_numbers = re.findall(r'[+-]?\d+(?:\.\d+)?', text)
 
     if '-' in text and not re.search(r'\s-\d', text):  # crude filter for range-style hyphen
@@ -27,7 +27,7 @@ def extract_values_from_text(text) -> int | float | tuple | None:
         return None
     elif len(raw_numbers) == 1:
         num = raw_numbers[0]
-        return float(num) if '.' in num else int(num)
+        return (float(num),) if '.' in num else (int(num),)
 
     if any('.' in num for num in raw_numbers):
         return tuple(float(num) for num in raw_numbers)
@@ -58,7 +58,11 @@ def sanitize_dict_texts(d: dict):
 
 
 def sanitize_mod_text(mod_text: str):
-    result = re.sub(r'\d+\.\d+|\d+', 'n', mod_text)
+    result = re.sub(r'[+-]?\d+(?:\.\d+)?', 'n', mod_text)
+
+    # Poecd API has mod text like '+#', so we account for that here
+    result = re.sub(r'[+-]', '', result)
+
     result = re.sub('%', 'p', result)
 
     brackets_pattern = r'\[(.*?)\]'
