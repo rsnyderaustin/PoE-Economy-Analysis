@@ -13,7 +13,7 @@ from .item_enums import ItemCategory
 
 
 def extract_values_from_text(text) -> int | float | tuple | None:
-    raw_numbers = re.findall(r'(?<!\S)-?\d+\.\d+|(?<!\S)-?\d+', text)
+    raw_numbers = re.findall(r'[+-]?\d+(?:\.\d+)?', text)
 
     if '-' in text and not re.search(r'\s-\d', text):  # crude filter for range-style hyphen
         parts = re.split(r'\s*-\s*', text)
@@ -58,7 +58,8 @@ def sanitize_dict_texts(d: dict):
 
 
 def sanitize_mod_text(mod_text: str):
-    result = re.sub(r'\d+', '#', mod_text)
+    result = re.sub(r'\d+\.\d+|\d+', 'n', mod_text)
+    result = re.sub('%', 'p', result)
 
     brackets_pattern = r'\[(.*?)\]'
     result = re.sub(brackets_pattern, _extract_from_brackets, result)

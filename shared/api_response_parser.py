@@ -103,8 +103,10 @@ class ApiResponseParser:
             mod_id_display_order = [mod_hash[0] for mod_hash in hashes_list]
             mod_text_display_order = self.item_data[mod_class_e.value]
 
+            # Note: we do not sanitize mod text here because it is required when resolving the mod in the future to
+            # get its actual values
             mod_id_to_text = {
-                mod_id: shared_utils.sanitize_mod_text(mod_text)
+                mod_id: mod_text
                 for mod_id, mod_text in zip(mod_id_display_order, mod_text_display_order)
             }
             id_to_text_dict[mod_class_e] = mod_id_to_text
