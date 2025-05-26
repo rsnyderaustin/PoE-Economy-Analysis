@@ -73,7 +73,7 @@ class QueryPresets:
         for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
             ilvl_filter = trade_api.MetaFilter(
                 filter_type_enum=trade_enums.TypeFilters.ITEM_LEVEL,
-                filter_value=(71, 82)
+                filter_value=(71, 100)
             )
 
             category_filter = trade_api.MetaFilter(
