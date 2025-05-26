@@ -186,6 +186,7 @@ class ListingsTransforming:
             rows = cls.to_flat_rows(listings)
 
         df = pd.DataFrame(rows)
+        df = df.drop_duplicates()
 
         cols = cls._determine_valid_price_predict_columns(df)
         removed_cols = {col for col in df.columns if col not in cols}

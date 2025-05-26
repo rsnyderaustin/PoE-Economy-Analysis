@@ -83,7 +83,7 @@ class QueryPresets:
 
             days_since_listed_filter = trade_api.MetaFilter(
                 filter_type_enum=trade_enums.TradeFilters.LISTED,
-                filter_value=trade_enums.ListedSince.UP_TO_3_HOURS
+                filter_value=trade_enums.ListedSince.UP_TO_1_HOUR
             )
 
             price_filter = trade_api.MetaFilter(
