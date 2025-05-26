@@ -1,2 +1,4 @@
 .env*
-file_management/files/raw_listings.json
+file_management/files/
+file_management/crafting_models/
+file_management/price_predict_models/
