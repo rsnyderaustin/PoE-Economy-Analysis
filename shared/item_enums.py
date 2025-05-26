@@ -12,6 +12,7 @@ class DerivedMod(Enum):
     COLD_DPS = 'cold_dps'
     LIGHTNING_DPS = 'lightning_dps'
     ELEMENTAL_DPS = 'elemental_dps'
+    CHAOS_DPS = 'chaos_dps'
 
 
 class LocalMod(Enum):
@@ -21,6 +22,7 @@ class LocalMod(Enum):
     COLD_DAMAGE = 'cold_damage'
     FIRE_DAMAGE = 'fire_damage'
     LIGHTNING_DAMAGE = 'lightning_damage'
+    CHAOS_DAMAGE = 'chaos_damage'
     QUALITY = 'quality'
 
     # Added Damage

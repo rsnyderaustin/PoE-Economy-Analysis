@@ -74,40 +74,43 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
             raise TypeError(f"Listing with item category {listing.item_category} called {cls.__name__}")
 
         current_multiplier = 1 + (listing.quality / 100)
-        max_multiplier = 1.20
+        max_multiplier = 1 + (listing.max_quality / 100)
 
         # Calculate the base damage and then the 20% quality damage
-        phys_damage = getattr(listing, LocalMod.PHYSICAL_DAMAGE.value, 0)
+        phys_damage = listing.item_properties.get(LocalMod.PHYSICAL_DAMAGE.value, 0)
         base_damage = phys_damage / current_multiplier
         max_quality_damage = base_damage * max_multiplier
 
-        attack_speed = getattr(listing, LocalMod.ATTACKS_PER_SECOND.value, 0)
+        attack_speed = listing.item_properties.get(LocalMod.ATTACKS_PER_SECOND.value, 0)
         max_quality_pdps = max_quality_damage * attack_speed
 
         return {DerivedMod.MAX_QUALITY_PDPS: max_quality_pdps}
 
 
 @CalculatorRegistry.register
-class ElementalDpsCalculator(ListingFeatureCalculator):
+class NonPhysicalDpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
-    input_columns = {LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
+    input_columns = {LocalMod.CHAOS_DAMAGE, LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
-    calculated_columns = {DerivedMod.COLD_DPS, DerivedMod.FIRE_DPS, DerivedMod.LIGHTNING_DPS, DerivedMod.ELEMENTAL_DPS}
+    calculated_columns = {DerivedMod.CHAOS_DPS, DerivedMod.COLD_DPS, DerivedMod.FIRE_DPS, DerivedMod.LIGHTNING_DPS,
+                          DerivedMod.ELEMENTAL_DPS}
 
     @classmethod
     def calculate(cls, listing: ModifiableListing):
         if listing.item_category not in cls.applicable_item_categories:
             raise TypeError(f"Listing with item category {listing.item_category} called {cls.__name__}")
 
-        cold_damage = getattr(listing, LocalMod.COLD_DAMAGE.value, 0)
-        fire_damage = getattr(listing, LocalMod.FIRE_DAMAGE.value, 0)
-        lightning_damage = getattr(listing, LocalMod.LIGHTNING_DAMAGE.value, 0)
-        attacks_per_second = getattr(listing, LocalMod.ATTACKS_PER_SECOND.value, 0)
+        cold_damage = listing.item_properties.get(LocalMod.COLD_DAMAGE.value, 0)
+        fire_damage = listing.item_properties.get(LocalMod.FIRE_DAMAGE.value, 0)
+        lightning_damage = listing.item_properties.get(LocalMod.LIGHTNING_DAMAGE.value, 0)
+        chaos_damage = listing.item_properties.get(LocalMod.CHAOS_DAMAGE.value, 0)
+        attacks_per_second = listing.item_properties.get(LocalMod.ATTACKS_PER_SECOND.value, 0)
 
         return {
             DerivedMod.COLD_DPS: cold_damage * attacks_per_second,
             DerivedMod.FIRE_DPS: fire_damage * attacks_per_second,
             DerivedMod.LIGHTNING_DPS: lightning_damage * attacks_per_second,
+            DerivedMod.CHAOS_DPS: chaos_damage * attacks_per_second,
             DerivedMod.ELEMENTAL_DPS: (cold_damage + fire_damage + lightning_damage) * attacks_per_second
         }
 
@@ -314,6 +317,10 @@ class _PricePredictTransformer:
         return self
 
     def clean_columns(self):
+        for col, value in self.flattened_data.items():
+            if isinstance(value, float):
+                self.flattened_data[col] = round(value, 2)
+
         # Some columns have just one letter - not sure why but need to find out
         cols_to_remove = [col for col in self.flattened_data if len(col) == 1]
         for col in cols_to_remove:

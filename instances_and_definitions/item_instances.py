@@ -141,8 +141,6 @@ class ModifiableListing:
         self.explicit_mods = explicit_mods
         self.item_properties = item_properties
 
-        self.maximum_quality = self._determine_max_quality()
-
         self._mod_class_to_attribute = {
             ModClass.IMPLICIT: self.implicit_mods,
             ModClass.ENCHANT: self.enchant_mods,
@@ -187,6 +185,10 @@ class ModifiableListing:
     @quality.setter
     def quality(self, new_quality):
         self.item_properties['quality'] = new_quality
+
+    @property
+    def max_quality(self):
+        return self._determine_max_quality()
 
     def set_quality(self, new_quality: int):
         self.item_properties['quality'] = new_quality

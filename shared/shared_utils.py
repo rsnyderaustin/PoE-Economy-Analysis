@@ -59,6 +59,8 @@ def sanitize_dict_texts(d: dict):
 
 def sanitize_mod_text(mod_text: str):
     result = re.sub(r'\d+', '#', mod_text)
+    result = re.sub('#', 'n', result)
+    result = re.sub('%', 'p', result)
 
     brackets_pattern = r'\[(.*?)\]'
     result = re.sub(brackets_pattern, _extract_from_brackets, result)
