@@ -35,7 +35,6 @@ class PostgreSqlManager:
         self.connection = self.engine.connect()
         self.inspector = inspect(self.engine)
 
-
     def _add_missing_columns(self, table_name: str, new_data: dict):
         table_col_names = self._fetch_column_names(table_name)
 
@@ -93,6 +92,29 @@ class PostgreSqlManager:
 
             for row in result:
                 for col in cols:
+                    data_dict[col].append(row[col])
+
+            return data_dict
+
+    def fetch_columns_data(self, table_name: str, columns: list[str]) -> dict:
+        if not columns:
+            raise ValueError("No columns specified")
+
+            # Very basic sanitization: quote identifiers
+        quoted_columns = ', '.join(f'"{col}"' for col in columns)
+        quoted_table = f'"{table_name}"'
+
+        query = text(f'SELECT {quoted_columns} FROM {quoted_table}')
+
+        with self.engine.connect() as conn:
+            result = list(conn.execute(query).mappings())
+
+            if not result:
+                return {col: [] for col in columns}
+
+            data_dict = {col: [] for col in columns}
+            for row in result:
+                for col in columns:
                     data_dict[col].append(row[col])
 
             return data_dict

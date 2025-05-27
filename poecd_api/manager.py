@@ -42,13 +42,17 @@ class PoecdDataManager:
 
         self._fix_arrow_mods(bases_data, stats_data)
 
-        self.files_manager.file_data[DataPath.POECD_BASES] = bases_data
-        self.files_manager.file_data[DataPath.POECD_STATS] = stats_data
+        self.files_manager.cache_data(DataPath.POECD_BASES, bases_data)
+        self.files_manager.save_data(paths=[DataPath.POECD_BASES])
+
+        self.files_manager.cache_data(DataPath.POECD_STATS, stats_data)
+        self.files_manager.save_data(paths=[DataPath.POECD_STATS])
+
 
     def _load_source_store_from_files(self) -> PoecdSourceStore:
         return PoecdSourceStore(
-            bases_data=self.files_manager.file_data[DataPath.POECD_BASES],
-            stats_data=self.files_manager.file_data[DataPath.POECD_STATS]
+            bases_data=self.files_manager.fetch_data(DataPath.POECD_BASES, missing_ok=False),
+            stats_data=self.files_manager.fetch_data(DataPath.POECD_STATS, missing_ok=False)
         )
 
     def _fix_arrow_mods(self, bases_data: dict, stats_data: dict):

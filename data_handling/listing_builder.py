@@ -15,8 +15,7 @@ class ListingBuilder:
     def __init__(self, global_atypes_manager: GlobalPoecdAtypeModsManager):
         self._mod_resolver = _ModResolver(global_atypes_manager)
 
-    def build_listing(self, api_item_response: dict):
-        rp = ApiResponseParser(api_item_response)
+    def build_listing(self, rp: ApiResponseParser):
         minutes_since_listed = utils.determine_minutes_since(
             relevant_date=rp.date_fetched
         )
@@ -60,7 +59,7 @@ class _ModResolver:
         self.mod_matcher = ModMatcher(global_poecd_mods_manager)
 
         self.files_manager = FilesManager()
-        self.file_item_mods = self.files_manager.file_data[DataPath.MODS] or dict()
+        self.file_item_mods = self.files_manager.fetch_data(data_path_e=DataPath.MODS, default=dict())
 
         self.current_rp = None
         self.current_atype = None

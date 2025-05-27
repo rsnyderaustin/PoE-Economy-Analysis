@@ -15,14 +15,12 @@ class TrainingDataPopulator:
     def __init__(self, files_manager: FilesManager, refresh_poecd_source: bool, testing=False):
         self.trade_api_handler = trade_api.TradeApiHandler()
 
-        if refresh_poecd_source or not files_manager.file_data[DataPath.GLOBAL_POECD_MANAGER]:
+        if refresh_poecd_source or not files_manager.fetch_data(DataPath.GLOBAL_POECD_MANAGER, None):
             global_atypes_manager = PoecdDataManager(refresh_data=refresh_poecd_source).build_global_mods_manager()
-            files_manager.file_data[DataPath.GLOBAL_POECD_MANAGER] = global_atypes_manager
-            files_manager.save_data([DataPath.GLOBAL_POECD_MANAGER])
+            files_manager.cache_data(path=DataPath.GLOBAL_POECD_MANAGER, data=global_atypes_manager)
+            files_manager.save_data(paths=[DataPath.GLOBAL_POECD_MANAGER])
 
-        global_atypes_manager = files_manager.file_data[DataPath.GLOBAL_POECD_MANAGER]
-        if not global_atypes_manager:
-            global_atypes_manager = PoecdDataManager(refresh_data=refresh_poecd_source).build_global_mods_manager()
+        global_atypes_manager = files_manager.fetch_data(DataPath.GLOBAL_POECD_MANAGER, missing_ok=False)
 
         self.listing_builder = ListingBuilder(global_atypes_manager)
 
@@ -45,5 +43,5 @@ class TrainingDataPopulator:
             self._process_and_insert(api_item_responses)
             return
 
-        for api_item_responses in self.trade_api_handler.process_queries(training_queries):
+        for api_item_responses in self.trade_api_handler.generate_responses_from_queries(training_queries):
             self._process_and_insert(api_item_responses)

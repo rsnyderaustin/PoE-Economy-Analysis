@@ -106,8 +106,8 @@ class CurrencyConverter:
             return
 
         files_manager = file_management.FilesManager()
+        conversions_df = files_manager.fetch_data(data_path_e=DataPath.CURRENCY_CONVERSIONS, missing_ok=False)
 
-        conversions_df = files_manager.file_data[DataPath.CURRENCY_CONVERSIONS]
         self.conversions_dict = dict()
         conversions_df.apply(self._apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
 

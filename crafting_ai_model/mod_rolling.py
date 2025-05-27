@@ -29,9 +29,9 @@ class ModsFetcher:
 
     def __init__(self):
         files_manager = FilesManager()
-        mods = files_manager.file_data[DataPath.MODS]
+        mods = files_manager.fetch_data(data_path_e=DataPath.MODS, default={})
 
-        self.mods_dict = _mods_into_dict(mods)
+        self.mods_dict = _mods_into_dict(list(mods.values))
 
     def fetch_mod_tiers(self,
                         atype: str,

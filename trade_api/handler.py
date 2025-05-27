@@ -4,13 +4,37 @@ from copy import deepcopy
 from datetime import datetime
 
 from file_management import FilesManager, DataPath
-from shared import shared_utils
+from psql import PostgreSqlManager
+from shared import shared_utils, ApiResponseParser
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
 
 
-class FilterSplitter:
+class _ListingImportGatekeeper:
+
+    def __init__(self, psql_manager: PostgreSqlManager):
+        dates_and_ids = psql_manager.fetch_columns_data(table_name='listings',
+                                                        columns=['date_fetched', 'listing_id'])
+        self.keys = {
+            (listing_id, date_fetched) for listing_id, date_fetched in zip(dates_and_ids['listing_id'], dates_and_ids['date_fetched'])
+        }
+
+    def listing_is_valid(self, listing_id: str, date_fetched: datetime, register_if_valid=True) -> bool:
+        is_valid = (listing_id, date_fetched) not in self.keys
+        if not is_valid:
+            return False
+
+        if register_if_valid:
+            self.register_listing(listing_id=listing_id, date_fetched=date_fetched)
+
+        return True
+
+    def register_listing(self, listing_id: str, date_fetched: datetime):
+        self.keys.add((listing_id, date_fetched))
+
+
+class _FilterSplitter:
 
     @staticmethod
     def _split_range_into_parts(value_range: tuple, num_parts: int) -> list[tuple]:
@@ -99,20 +123,24 @@ class FilterSplitter:
 
         return None
 
+
 def _key_response(listing_id, date_fetched: str):
     return f"listing_{listing_id}_fetched_{date_fetched}"
 
+
 class TradeApiHandler:
 
-    def __init__(self):
+    def __init__(self, psql_manager: PostgreSqlManager):
         self.fetcher = TradeItemsFetcher()
+        self._listing_gatekeeper = _ListingImportGatekeeper(psql_manager=psql_manager)
 
         self.files_manager = FilesManager()
-        self.raw_listings = self.files_manager.file_data[DataPath.RAW_LISTINGS]
+        self.raw_listings = self.files_manager.fetch_data(DataPath.RAW_LISTINGS, default=[])
 
         self.split_threshold = 175
 
         self.total_valid_responses = 0
+        self.total_responses = 0
 
         self.program_start = datetime.now()
 
@@ -120,24 +148,22 @@ class TradeApiHandler:
         minutes_since_start = round((datetime.now() - self.program_start).seconds / 60, 1)
         logging.info(f"Total valid responses in {minutes_since_start} minutes: {self.total_valid_responses}")
 
-    def process_queries(self, queries: list[Query]):
+    def generate_responses_from_queries(self, queries: list[Query]):
         for i, query in enumerate(queries):
             logging.info(f"Processing query {i + 1} of {len(queries)} queries.")
-            valid_query_responses = 0
-            total_query_responses = 0
             for responses, response_results_count in self._process_query(query):
                 responses = [shared_utils.sanitize_dict_texts(response) for response in responses]
-                keyed_responses = {
-                    _key_response(listing_id=response['id'],
-                                  date_fetched=response['listing']['indexed']): response
-                    for response in responses
-                }
-                self.raw_listings.update(keyed_responses)
+                response_parsers = [ApiResponseParser(response) for response in responses]
+                valid_responses = [rp for rp in response_parsers
+                                   if self._listing_gatekeeper.listing_is_valid(listing_id=rp.listing_id,
+                                                                                date_fetched=rp.date_fetched)]
+                self.raw_listings.extend([rp.api_d for rp in valid_responses])
 
-                self.total_valid_responses += len(responses)
-                valid_query_responses += len(responses)
-                total_query_responses += response_results_count
-                yield responses
+                logging.info(f"{len(valid_responses)} valid query responses out of {len(responses)}.")
+                self.total_valid_responses += len(valid_responses)
+                self.total_responses += len(responses)
+
+                yield valid_responses
 
             self._log_responses_progress()
             self.files_manager.save_data(paths=[DataPath.RAW_LISTINGS])
@@ -159,17 +185,17 @@ class TradeApiHandler:
 
         for i in list(range(len(query.meta_filters))):
             query_copy = deepcopy(query)
-            filter_splits = FilterSplitter.split_filter(n_items=response_results_count, meta_filter=query.meta_filters[i])
+            filter_splits = _FilterSplitter.split_filter(n_items=response_results_count, meta_filter=query.meta_filters[i])
             if not filter_splits:  # Skip if we weren't able to split this filter up into parts
                 continue
 
+            # For each split portion of the metafilter, insert the split portion into the copied query and fetch those results
             for new_filter in filter_splits:
                 query_copy.meta_filters[i] = new_filter
                 query_dict = query_construction.create_trade_query(query=query_copy)
                 responses, response_results_count = self.fetcher.fetch_items_response(query_dict)
 
                 if not responses:
-                    return
+                    continue
 
                 yield responses, response_results_count
-

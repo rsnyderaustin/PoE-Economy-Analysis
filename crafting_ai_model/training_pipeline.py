@@ -32,8 +32,8 @@ class CraftingModelPipeline:
     def run(self):
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
-        for api_item_responses in self._trade_api_handler.process_queries(training_queries):
-            listings = [self._listing_builder.build_listing(api_r) for api_r in api_item_responses]
+        for api_response_parsers in self._trade_api_handler.generate_responses_from_queries(training_queries):
+            listings = [self._listing_builder.build_listing(rp) for rp in api_response_parsers]
 
             if not listings:
                 continue
