@@ -1,14 +1,16 @@
-import logging
+import pprint
 import random
 from abc import abstractmethod, ABC
 
-import shared
 from crafting_ai_model.mod_rolling import ModRoller
 from instances_and_definitions import ModifiableListing
-from shared import item_enums, ItemCategoryGroups
-from shared.item_enums import ItemCategory
-from shared.trade_enums import Rarity, ModClass
+from shared import ItemCategoryGroups, LogsHandler, LogFile
+from shared.enums.item_enums import ItemCategory
+from shared.enums.trade_enums import Rarity, ModClass
 from . import utils
+
+
+craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
 
 
 class Outcome:
@@ -127,6 +129,9 @@ class BlacksmithsWhetstone(CurrencyEngine):
             return Outcome()
 
         item_quality = listing.quality if listing.quality else 0
+        if item_quality == listing.maximum_quality:
+            craft_log.info(f"Blacksmiths Whetstone: Item at max quality ({item_quality})")
+            return Outcome()
 
         if listing.rarity == Rarity.NORMAL:
             quality_increase = 5
@@ -135,13 +140,11 @@ class BlacksmithsWhetstone(CurrencyEngine):
         elif listing.rarity in (Rarity.RARE, Rarity.UNIQUE):
             quality_increase = 1
         else:
-            logging.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
-            return Outcome()
-
-        if item_quality == listing.maximum_quality:
+            craft_log.info(f"{cls.__name__} not applicable to item with rarity {listing.rarity}.")
             return Outcome()
 
         listing.quality = min(listing.maximum_quality, item_quality + quality_increase)
+        craft_log.info(f"Blacksmiths Whetstone: Item quality {item_quality} -> {listing.quality}")
         return Outcome(new_listing=listing)
 
 
@@ -151,15 +154,19 @@ class ChaosOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            craft_log.info(f"Chaos Orb: Item category {listing.item_category} invalid.")
             return Outcome()
 
         if listing.rarity != Rarity.RARE:
+            craft_log.info(f"Chaos Orb: Item rarity {listing.rarity} invalid.")
             return Outcome()
 
         if listing.corrupted:
+            craft_log.info("Chaos Orb: Corrupted item is invalid.")
             return Outcome()
 
         removed_mod = listing.removable_mods[random.randint(0, len(listing.removable_mods))]
+        craft_log.info(f"Chaos Orb: Removed existing mod {pprint.pprint(removed_mod)}")
 
         # Remove the mod
         mods_of_removed_mod_class = listing.fetch_mods(removed_mod.mod_class_e)
@@ -170,6 +177,7 @@ class ChaosOrb(CurrencyEngine):
 
         new_mod = mod_roller.roll_new_modifier(listing=listing,
                                                mod_class=ModClass.EXPLICIT)
+        craft_log.info(f"Chaos Orb: Rolled new mod {pprint.pprint(new_mod)}")
         listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
         return Outcome(new_listing=listing)
@@ -181,16 +189,21 @@ class DivineOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            craft_log.info(f"Divine Orb: Invalid item category {listing.item_category}")
             return Outcome()
 
         if listing.rarity == Rarity.NORMAL:
+            craft_log.info(f"Divine Orb: Invalid rarity {listing.rarity}")
             return Outcome()
 
         if listing.corrupted:
+            craft_log.info("Divine Orb: Corrupted item is invalid.")
             return Outcome()
 
         mods_to_reroll = [*listing.implicit_mods, *listing.enchant_mods, *listing.explicit_mods]
-        sub_mods_to_reroll = [sub_mod for mod in mods_to_reroll for sub_mod in mod._sub_mods]
+        sub_mods_to_reroll = [sub_mod for mod in mods_to_reroll for sub_mod in mod.sub_mods]
+        values_log = {sub_mod.values_ranges: sub_mod.actual_values for sub_mod in sub_mods_to_reroll}
+        craft_log.info(f"Divine Orb:\nOld mod values {pprint.pprint(values_log)}")
         for sub_mod in sub_mods_to_reroll:
             if not sub_mod.values_ranges:
                 continue
@@ -216,6 +229,9 @@ class DivineOrb(CurrencyEngine):
 
             sub_mod.actual_values = new_actual_values
 
+        values_log = {sub_mod.values_ranges: sub_mod.actual_values for sub_mod in sub_mods_to_reroll}
+        craft_log.info(f"Divine Orb:\nNew mod values {pprint.pprint(values_log)}")
+
         return Outcome(new_listing=listing)
 
 
@@ -225,19 +241,24 @@ class ExaltedOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            craft_log.info(f"Exalted Orb: Invalid item category {listing.item_category}")
             return Outcome()
 
         if listing.rarity != Rarity.RARE:
+            craft_log.info(f"Exalted Orb: Invalid rarity {listing.rarity}")
             return Outcome()
 
         if listing.corrupted:
+            craft_log.info("Exalted Orb: Corrupted item is invalid.")
             return Outcome()
 
         if not listing.open_prefixes and not listing.open_suffixes:
+            craft_log.info("Exalted Orb: Invalid due to no open prefixes or suffixes")
             return Outcome()
 
         new_mod = mod_roller.roll_new_modifier(listing=listing,
                                                mod_class=ModClass.EXPLICIT)
+        craft_log.info(f"Exalted Orb: Item rolled new mod {pprint.pprint(new_mod)}")
         listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
 
         return Outcome(new_listing=listing)
@@ -249,15 +270,19 @@ class FracturingOrb(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+            craft_log.info(f"Fracturing Orb: Invalid item category {listing.item_category}")
             return Outcome()
 
         if listing.corrupted:
+            craft_log.info(f"Fracturing Orb: Corrupted item is invalid")
             return Outcome()
 
         if listing.rarity != Rarity.RARE:
+            craft_log.info(f"Fracturing Orb: Invalid item rarity {listing.item_rarity}")
             return Outcome()
 
         if listing.fractured_mods:  # You cannot fracture mods on an item that already has fractured mods
+            craft_log.info(f"Fracturing Orb: Item is invalid due to presence of existing fractured mods.")
             return Outcome()
 
         fractured_mod = listing.removable_mods[random.randint(0, len(listing.removable_mods))]
@@ -276,15 +301,19 @@ class GemcuttersPrism(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category not in [ItemCategory.SKILL_GEM, ItemCategory.META_GEM]:
+            craft_log.info(f"Gemcutters Prism: Item category {listing.item_category} is invalid.")
             return Outcome()
 
         if listing.corrupted:
+            craft_log.info("Gemcutters Prism: Corrupted item is invalid.")
             return Outcome()
 
         if listing.quality == listing.maximum_quality:
+            craft_log.info(f"Gemcutters Prism: Item is invalid. Already at maximum quality ({listing.quality}")
             return Outcome()
 
         new_quality = min(listing.quality + 5, listing.maximum_quality)
+        craft_log.info(f"Gemcutters Prism: Item quality increased from {listing.quality} to {new_quality}")
         listing.quality = new_quality
 
         return Outcome(new_listing=listing)
@@ -296,15 +325,19 @@ class GlassblowersBauble(CurrencyEngine):
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category not in ItemCategoryGroups.fetch_flask_categories():
+            craft_log.info(f"Glassblowers Bauble: Invalid item category {listing.item_category}")
             return Outcome()
 
         if listing.corrupted:
+            craft_log.info(f"Glassblowers Bauble: Corrupted item is invalid.")
             return Outcome()
 
         if listing.quality == listing.maximum_quality:
+            craft_log.info(f"Glassblowers Bauble: Item is invalid. Already at maximum quality ({listing.quality})")
             return Outcome()
 
         listing.quality += 1
+        craft_log.info(f"Glassblowers Bauble: Quality increased from {listing.quality - 1} to {listing.quality}")
 
         return Outcome(new_listing=listing)
 

@@ -3,7 +3,7 @@ import random
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ModifiableListing, ItemMod
 from shared import ModClass
-from shared.item_enums import ModAffixType
+from shared.enums import ModAffixType
 
 
 def _mods_into_dict(mods: list[ItemMod]):

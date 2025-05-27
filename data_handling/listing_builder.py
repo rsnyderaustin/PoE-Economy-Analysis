@@ -3,8 +3,7 @@ import pprint
 
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
-from poecd_api import GlobalPoecdAtypeModsManager
-from shared import ATypeClassifier, shared_utils, ModClass, ApiResponseParser
+from shared import ATypeClassifier, ModClass, ApiResponseParser, shared_utils
 from . import utils
 from poecd_api.mods_management import GlobalPoecdAtypeModsManager
 from .mod_matching import ModMatcher

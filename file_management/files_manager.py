@@ -72,7 +72,7 @@ class FilesManager:
         if not path.exists():
             if not missing_ok:
                 raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
-            
+
             logging.info(f"Path '{str(path)}' does not exist. Creating with default {default}")
             self._create_file(path)
             return default

@@ -311,18 +311,15 @@ class StatsPrep:
 
         valid_columns = list(single_column_weights.keys()) + list(pair_column_weights.keys())
 
-        logging.info("Combining column pairs into their product.")
         tr_features = cls._pair_columns(features_df=features_df.copy(),
                                         columns=valid_columns)
 
-        logging.info("Normalizing data.")
         norm_features = cls._normalize_data(features_df=tr_features.copy())
 
         """igs = dict(zip(norm_features.columns, mutual_info_regression(norm_features, prices)))
         igs = {col: ig for col, ig in igs.items() if ig >= 0.10}
         norm_features = norm_features[list(igs.keys())]"""
 
-        logging.info("Weighting data.")
         single_column_weights = {utils.normalize_column_name(col): weight for col, weight in single_column_weights.items()}
         pair_column_weights = {utils.normalize_column_name(col): weight for col, weight in pair_column_weights.items()}
         norm_features = cls._weight_data(features_df=norm_features,

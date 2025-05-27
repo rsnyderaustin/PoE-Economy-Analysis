@@ -1,15 +1,12 @@
 import pprint
 import re
-from collections import Counter
 from datetime import datetime
 
 import pandas as pd
-import pytz
 
 import file_management
 from file_management import DataPath
-from .trade_enums import Currency
-from .item_enums import ItemCategory
+from shared.enums.trade_enums import Currency
 
 
 def extract_values_from_text(text) -> int | float | tuple | None:
@@ -65,31 +62,6 @@ def sanitize_mod_text(mod_text: str):
 
     result = result.replace(' ', '_').lower()
     return result
-
-
-def today_date() -> str:
-    central_tz = pytz.timezone("America/Chicago")
-    central_now = datetime.now(central_tz)
-
-    # Format as MM/DD/YYYY
-    formatted_date = central_now.strftime("%m-%d-%Y")
-    return formatted_date
-
-
-def determine_central_date(timestamp_str):
-    utc_time = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%SZ")
-    utc_time = utc_time.replace(tzinfo=pytz.utc)
-
-    # Define the Central Time zone
-    central_tz = pytz.timezone('US/Central')
-
-    # Convert the UTC time to Central Time
-    central_time = utc_time.astimezone(central_tz)
-
-    # Get only the date in Central Time
-    central_date = central_time.date()
-
-    return central_date
 
 
 class CurrencyConverter:

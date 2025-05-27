@@ -1,6 +1,6 @@
 
-from .api_response_parser import ApiResponseParser
-from .item_enums import ItemCategory
+from data_handling.api_response_parser import ApiResponseParser
+from shared.enums import ItemCategory
 
 
 class ATypeClassifier:
@@ -36,6 +36,7 @@ class ATypeClassifier:
 
         if dex_requirement:
             if int_requirement:
+
                 return f"{cat.value}_(dex/int)"
 
             if str_requirement:

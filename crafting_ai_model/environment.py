@@ -204,7 +204,7 @@ class ObservationSpace:
             affix_key = self._create_affix_key(mod_class=mod.mod_class_e, mod_i=mod_i)
             self._space[affix_key] = mod.affix_type_e.value
 
-        mod_values = [actual_value for sub_mod in mod._sub_mods for actual_value in sub_mod.actual_values]
+        mod_values = [actual_value for sub_mod in mod.sub_mods for actual_value in sub_mod.actual_values]
 
         if len(mod_values) > self.max_values[mod.mod_class_e]:
             raise ValueError(f"Too many values in mod {mod.mod_id} for slot {mod_i}")
@@ -231,7 +231,7 @@ class CraftingEnvironment(gym.Env):
         self.exalts_budget = exalts_budget
 
         self.original_state = copy.deepcopy(listing)
-        self.original_price = price_predictor.predict_prices(listings=[listing])[0]
+        self.original_price = price_predictor.predict(listing=listing)
 
         self.listing = listing
         self.current_price = self.original_price

@@ -120,9 +120,6 @@ class RequestThrottler:
         self.current_account_limits[func_name] = account_limits
         self.current_ip_limits[func_name] = ip_limits
 
-        if func_name in self.request_deques:
-            logging.error(f"set_limits called for func_name {func_name}, which already exists in the dict.")
-
         self.request_deques[func_name] = []
 
         for limit, state in list(zip([*account_limits, *ip_limits], [*account_state, *ip_state])):
@@ -207,7 +204,6 @@ class RequestThrottler:
 
         if self._check_if_limits_have_changed(func_name=func_name,
                                               response_headers=response.headers):
-            logging.info(f"Limits have changed for func '{func_name}'. Resetting limits.")
             self.set_limits(func_name=func_name,
                             response_headers=response.headers)
 

@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import pytz
 from dateutil.parser import isoparse
 
-from shared.item_enums import ModAffixType
+from shared.enums import ModAffixType
 
 _dt = datetime(2025, 4, 4, 12, 0, 0)
 _pacific = pytz.timezone('US/Pacific')
@@ -48,7 +48,7 @@ def determine_mod_tier(mod_dict: dict) -> int | None:
         if mod_tier_match:
             mod_tier = mod_tier_match.group()
         else:
-            logging.error(f"Did not find a tier number for item tier {mod_dict['tier']}")
+            logging.info(f"Did not find a tier number for item tier {mod_dict['tier']}")
             mod_tier = None
     return int(mod_tier) if mod_tier else None
 

@@ -6,7 +6,7 @@ class ModAffixType(Enum):
     SUFFIX = 'suffix'
 
 
-class DerivedMod(Enum):
+class CalculatedMod(Enum):
     MAX_QUALITY_PDPS = 'max_quality_pdps'
     FIRE_DPS = 'fire_dps'
     COLD_DPS = 'cold_dps'

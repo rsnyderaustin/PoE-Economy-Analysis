@@ -5,7 +5,7 @@ from datetime import datetime
 
 from file_management import FilesManager, DataPath
 from psql import PostgreSqlManager
-from shared import shared_utils, ApiResponseParser
+from shared import ApiResponseParser, shared_utils
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
@@ -91,15 +91,12 @@ class _FilterSplitter:
 
         if filter_range[0] == filter_range[1]:
             return
-        logging.info(f"Original {meta_filter.filter_type} value: {filter_range}")
 
         # Can only split as many whole numbers are within the range
         num_parts = min(math.floor(n_items / 100), (filter_range[1] + 1 - filter_range[0]))
 
         ranges = cls._split_range_into_parts(filter_range, num_parts=num_parts)
-        logging.info(f"\tFor query response with {n_items} responses:"
-                     f"\t\tOriginal {meta_filter.filter_type} value: {filter_range}"
-                     f"\t\tSplit {meta_filter.filter_type} into {ranges}")
+        logging.info(f"{n_items} responses split {meta_filter.filter_type} from {filter_range} into {ranges}")
 
         filters = []
         for value_range in ranges:

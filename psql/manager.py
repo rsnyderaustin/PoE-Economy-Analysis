@@ -45,7 +45,7 @@ class PostgreSqlManager:
 
         if missing_col_names:
             with self.engine.begin() as conn:
-                logging.info(f"Adding missing col names: {missing_col_names}")
+                logging.info(f"Adding missing '{table_name}' col names: {missing_col_names}")
                 for col, dtype in missing_col_dtypes.items():
                     alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
                     conn.execute(alter_stmt)
@@ -77,10 +77,10 @@ class PostgreSqlManager:
         # When inserting into psql via SqlAlchemy, the data has to be a list of dicts
         formatted_data = utils.format_data_into_rows(data)
 
-        logging.info(f"{table_name} rows before insertion: {self._count_table_rows(table_name)}")
+        rows_before = self._count_table_rows(table_name)
         with self.engine.begin() as conn:
             conn.execute(insert_stmt, formatted_data)
-        logging.info(f"{table_name} rows after insertion: {self._count_table_rows(table_name)}")
+        logging.info(f"{table_name} PSQL rows {rows_before} -> {self._count_table_rows(table_name)}")
 
     def fetch_table_data(self, table_name: str):
         with self.engine.connect() as conn:

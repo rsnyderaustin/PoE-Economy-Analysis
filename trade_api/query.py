@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from enum import Enum
 
 import trade_api
-from shared import trade_enums, item_enums, ItemCategoryGroups, WhichCategoryType
+from shared import ItemCategoryGroups, WhichCategoryType
+from shared.enums import trade_enums
 
 
 class MetaFilter:

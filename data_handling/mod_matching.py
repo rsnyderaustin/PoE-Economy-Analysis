@@ -99,14 +99,14 @@ class ModMatcher:
         atype_manager = self._global_atypes_manager.fetch_atype_manager(atype_name=item_mod.atype)
         hybrid_scores_tracker = _MatchScoreTracker()
 
-        number_of_parts = len(item_mod._sub_mods)
+        number_of_parts = len(item_mod.sub_mods)
 
         """
         So this whole block works by matching individual PoE Trade hybrid mod (SubMod) texts to the possible
         hybrid Poecd mod texts of the corresponding AType. After we've found the best matches
         for each hybrid mod text, we just determine which Poecd hybrid mod is the best fit
         """
-        for sub_mod in item_mod._sub_mods:
+        for sub_mod in item_mod.sub_mods:
             mod_to_parent_dict = atype_manager.fetch_hybrid_parts_to_parent(item_mod.affix_type_e)
             hybrid_mod_texts = list(mod_to_parent_dict.keys())
 
@@ -141,7 +141,7 @@ class ModMatcher:
         else:
             poecd_mod_texts = atype_manager.mod_texts
 
-        mod_text = item_mod._sub_mods[0].sanitized_mod_text
+        mod_text = item_mod.sub_mods[0].sanitized_mod_text
 
         result = rapidfuzz.process.extractOne(mod_text,
                                               poecd_mod_texts,
@@ -159,7 +159,7 @@ class ModMatcher:
     def _attempt_match(self, item_mod: ItemMod, min_score: float, attempt_to_transform: bool = False) -> str | None:
         if attempt_to_transform:
             item_mod = copy.deepcopy(item_mod)
-            for sub_mod in item_mod._sub_mods:
+            for sub_mod in item_mod.sub_mods:
                 sub_mod.sanitized_mod_text = self._transform_text(sub_mod.sanitized_mod_text)
 
         if item_mod.is_hybrid:

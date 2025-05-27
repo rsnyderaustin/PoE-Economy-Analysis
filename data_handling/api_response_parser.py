@@ -1,10 +1,12 @@
+
+from datetime import datetime
 import logging
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from .item_enums import ItemCategory
-from .trade_enums import ModClass, Currency, Rarity
-from . import shared_utils
+from shared.enums import ItemCategory
+from shared.enums.trade_enums import ModClass, Currency, Rarity
+from shared import shared_utils
 
 
 @dataclass
@@ -115,11 +117,11 @@ class ApiResponseParser:
         return self._mod_id_to_text[mod_class] if mod_class in self._mod_id_to_text else dict()
 
     @property
-    def item_data(self):
+    def item_data(self) -> dict:
         return self.api_d['item']
 
     @property
-    def listing_data(self):
+    def listing_data(self) -> dict:
         return self.api_d['listing']
 
     @property
@@ -127,11 +129,11 @@ class ApiResponseParser:
         return self.item_data['grantedSkills'] if 'grantedSkills' in self.item_data else dict()
 
     @property
-    def date_fetched(self):
-        return self.listing_data['indexed']
+    def date_fetched(self) -> datetime:
+        return datetime.strptime(self.listing_data['indexed'], "%Y-%m-%dT%H:%M:%SZ")
 
     @property
-    def listing_id(self):
+    def listing_id(self) -> str:
         return self.api_d['id']
 
     @property
@@ -146,7 +148,7 @@ class ApiResponseParser:
         return mods_data[abbrev_class] if abbrev_class in mods_data else dict()
 
     @property
-    def account_name(self):
+    def account_name(self) -> str:
         return self.listing_data['account']['name']
 
     @property
@@ -157,11 +159,11 @@ class ApiResponseParser:
         )
 
     @property
-    def item_name(self):
+    def item_name(self) -> str:
         return self.item_data['name']
 
     @property
-    def item_btype(self):
+    def item_btype(self) -> str:
         return self.item_data['baseType']
 
     @property
@@ -170,16 +172,16 @@ class ApiResponseParser:
         return Rarity(rarity_str)
 
     @property
-    def item_ilvl(self):
+    def item_ilvl(self) -> int:
         return int(self.item_data['ilvl'])
 
     @property
     def is_identified(self) -> bool:
-        return 'identified' in self.item_data
+        return 'identified' in self.item_data and self.item_data['identified'] is True
 
     @property
-    def is_corrupted(self):
-        return 'corrupted' in self.item_data
+    def is_corrupted(self) -> bool:
+        return 'corrupted' in self.item_data and self.item_data['corrupted'] is True
 
     @property
     def item_category(self) -> ItemCategory:

@@ -1,6 +1,6 @@
 
-from shared import item_enums, trade_enums, ItemCategoryGroups
-from shared.item_enums import ItemCategory
+from shared import ItemCategoryGroups
+from shared.enums import ItemCategory
 
 
 def determine_max_sockets(item_category: ItemCategory):

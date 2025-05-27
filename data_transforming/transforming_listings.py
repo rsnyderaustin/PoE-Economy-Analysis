@@ -1,14 +1,13 @@
 import logging
 import pprint
-from datetime import datetime
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
 import pandas as pd
 
 from instances_and_definitions import ModifiableListing
-from shared import shared_utils, item_enums, ItemCategoryGroups
-from shared.item_enums import LocalMod, DerivedMod, ItemCategory
+from shared import ItemCategoryGroups, shared_utils
+from shared.enums import LocalMod, CalculatedMod, ItemCategory
 
 
 class ListingFeatureCalculator(ABC):
@@ -66,7 +65,7 @@ class CalculatorRegistry:
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
-    calculated_columns = {DerivedMod.MAX_QUALITY_PDPS.value}
+    calculated_columns = {CalculatedMod.MAX_QUALITY_PDPS.value}
 
     @classmethod
     def calculate(cls, listing: ModifiableListing):
@@ -84,7 +83,7 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
         attack_speed = getattr(listing, LocalMod.ATTACKS_PER_SECOND.value, 0)
         max_quality_pdps = max_quality_damage * attack_speed
 
-        return {DerivedMod.MAX_QUALITY_PDPS: max_quality_pdps}
+        return {CalculatedMod.MAX_QUALITY_PDPS: max_quality_pdps}
 
 
 @CalculatorRegistry.register
@@ -92,7 +91,7 @@ class ElementalDpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
-    calculated_columns = {DerivedMod.COLD_DPS, DerivedMod.FIRE_DPS, DerivedMod.LIGHTNING_DPS, DerivedMod.ELEMENTAL_DPS}
+    calculated_columns = {CalculatedMod.COLD_DPS, CalculatedMod.FIRE_DPS, CalculatedMod.LIGHTNING_DPS, CalculatedMod.ELEMENTAL_DPS}
 
     @classmethod
     def calculate(cls, listing: ModifiableListing):
@@ -105,10 +104,10 @@ class ElementalDpsCalculator(ListingFeatureCalculator):
         attacks_per_second = getattr(listing, LocalMod.ATTACKS_PER_SECOND.value, 0)
 
         return {
-            DerivedMod.COLD_DPS: cold_damage * attacks_per_second,
-            DerivedMod.FIRE_DPS: fire_damage * attacks_per_second,
-            DerivedMod.LIGHTNING_DPS: lightning_damage * attacks_per_second,
-            DerivedMod.ELEMENTAL_DPS: (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+            CalculatedMod.COLD_DPS: cold_damage * attacks_per_second,
+            CalculatedMod.FIRE_DPS: fire_damage * attacks_per_second,
+            CalculatedMod.LIGHTNING_DPS: lightning_damage * attacks_per_second,
+            CalculatedMod.ELEMENTAL_DPS: (cold_damage + fire_damage + lightning_damage) * attacks_per_second
         }
 
 
@@ -215,9 +214,6 @@ class _PricePredictTransformer:
         # Derived columns like pdps/edps shouldn't be compared to their source columns in analyses like stats.
         self.derived_columns = dict()
 
-    def _determine_date_fetched(self):
-        return datetime.strptime(self.listing.date_fetched, "%Y-%m-%dT%H:%M:%SZ")
-
     def insert_listing_properties(self):
         flattened_properties = dict()
         for property_name, property_value in self.listing.item_properties.items():
@@ -287,7 +283,7 @@ class _PricePredictTransformer:
         return self
 
     def insert_sub_mod_values(self):
-        sub_mods = [sub_mod for mod in self.listing.mods for sub_mod in mod._sub_mods]
+        sub_mods = [sub_mod for mod in self.listing.mods for sub_mod in mod.sub_mods]
 
         summed_sub_mods = {}
         for sub_mod in sub_mods:

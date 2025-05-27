@@ -1,6 +1,5 @@
-
 from shared import shared_utils
-from shared.item_enums import ModAffixType
+from shared.enums import ModAffixType
 from .mods_management import PoecdMod, AtypeModsManager
 from .internal_source_store import PoecdSourceStore
 

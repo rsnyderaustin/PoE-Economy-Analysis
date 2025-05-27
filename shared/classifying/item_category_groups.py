@@ -1,6 +1,6 @@
 from enum import Enum
-from .item_enums import ItemCategory
-from .trade_enums import TradeItemCategory
+from shared.enums import ItemCategory
+from shared.enums.trade_enums import TradeItemCategory
 
 
 class WhichCategoryType(Enum):
