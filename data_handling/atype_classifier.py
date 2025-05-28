@@ -1,6 +1,6 @@
 
 from data_handling.api_response_parser import ApiResponseParser
-from shared.enums import ItemCategory
+from shared.enums.item_enums import ItemCategory
 
 
 class ATypeClassifier:

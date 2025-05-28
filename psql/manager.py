@@ -1,3 +1,4 @@
+
 import logging
 
 import sqlalchemy
@@ -19,10 +20,11 @@ class PostgreSqlManager:
 
     def __init__(self, skip_sql=False):
         cls = self.__class__
-        if not cls._initialized:
+        if cls._initialized:
             return
-
         cls._initialized = True
+
+        self.skip_sql = skip_sql
 
         if skip_sql:
             print("Skipping SQL initialization.")

@@ -8,12 +8,17 @@ from file_management import FilesManager, DataPath
 from poecd_api import PoecdDataManager
 from shared import env_loading
 from trade_api.query import QueryPresets
+import psql
 
 
 class TrainingDataPopulator:
 
-    def __init__(self, files_manager: FilesManager, refresh_poecd_source: bool, testing=False):
-        self.trade_api_handler = trade_api.TradeApiHandler()
+    def __init__(self,
+                 files_manager: FilesManager,
+                 refresh_poecd_source: bool,
+                 psql_manager: psql.PostgreSqlManager):
+        self.trade_api_handler = trade_api.TradeApiHandler(psql_manager=psql_manager)
+        self.psql_manager = psql_manager
 
         if refresh_poecd_source or not files_manager.fetch_data(DataPath.GLOBAL_POECD_MANAGER, None):
             global_atypes_manager = PoecdDataManager(refresh_data=refresh_poecd_source).build_global_mods_manager()
@@ -25,7 +30,6 @@ class TrainingDataPopulator:
         self.listing_builder = ListingBuilder(global_atypes_manager)
 
         self.env_loader = env_loading.EnvLoader()
-        self.psql_manager = psql.PostgreSqlManager(skip_sql=testing)
 
     def _process_and_insert(self, responses):
         listings = [self.listing_builder.build_listing(api_r) for api_r in responses]

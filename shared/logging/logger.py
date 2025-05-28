@@ -60,12 +60,16 @@ class LogsHandler:
             return
         self._initialized = True
 
-        self._logs = dict()
+        self._logs = self._create_loggers()
 
-    def create_loggers(self):
+    @staticmethod
+    def _create_loggers():
+        logs = dict()
         for log_e in LogFile:
             log = Logger(log_name=log_e)
-            self._logs[log_e] = log.get_logger()
+            logs[log_e] = log.get_logger()
+
+        return logs
 
     def fetch_log(self, log_e: LogFile):
         return self._logs[log_e]

@@ -2,7 +2,7 @@ import datetime
 import re
 from typing import Iterable
 
-from shared.enums import ModAffixType, ItemCategory
+from shared.enums.item_enums import ModAffixType, ItemCategory
 from shared.enums.trade_enums import ModClass, Rarity, Currency
 
 

@@ -4,10 +4,12 @@ from datetime import datetime
 
 from file_management import FilesManager, DataPath
 from psql import PostgreSqlManager
-from shared import ApiResponseParser, shared_utils, LogsHandler, LogFile
+from shared import shared_utils
+from shared.logging import LogsHandler, LogFile
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
+from data_handling import ApiResponseParser
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
@@ -15,6 +17,10 @@ api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 class _ListingImportGatekeeper:
 
     def __init__(self, psql_manager: PostgreSqlManager):
+        if psql_manager.skip_sql:
+            self.keys = set()
+            return
+
         dates_and_ids = psql_manager.fetch_columns_data(table_name='listings',
                                                         columns=['date_fetched', 'listing_id'])
         self.keys = {

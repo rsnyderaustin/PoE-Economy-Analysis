@@ -1,3 +1,2 @@
-from classifying.atype_classifier import ATypeClassifier
-from shared.classifying.item_category_groups import ItemCategoryGroups, WhichCategoryType
+from .enums.item_category_groups import ItemCategoryGroups, WhichCategoryType
 from .env_loading import env_loader

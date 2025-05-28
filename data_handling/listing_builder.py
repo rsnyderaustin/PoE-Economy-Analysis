@@ -5,7 +5,9 @@ import re
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
 from poecd_api.mods_management import GlobalPoecdAtypeModsManager
-from shared import shared_utils, LogFile, LogsHandler, ATypeClassifier
+from shared import shared_utils
+from .atype_classifier import ATypeClassifier
+from shared.logging import LogFile, LogsHandler
 from shared.enums.item_enums import ModAffixType
 from shared.enums.trade_enums import ModClass
 from . import utils
@@ -13,6 +15,7 @@ from .api_response_parser import ApiResponseParser
 from .mod_matching import ModMatcher
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
+
 
 class ListingBuilder:
 

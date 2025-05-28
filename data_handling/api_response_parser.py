@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from shared import shared_utils
+from shared.enums.item_enums import ItemCategory
 from shared.enums.trade_enums import ModClass, Currency, Rarity
 from shared.logging import LogsHandler, LogFile
 

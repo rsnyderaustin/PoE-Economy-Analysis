@@ -1,6 +1,6 @@
 from enum import Enum
 
-from shared.enums import ItemCategory
+from shared.enums.item_enums import ItemCategory
 from shared.enums.trade_enums import TradeItemCategory
 
 
