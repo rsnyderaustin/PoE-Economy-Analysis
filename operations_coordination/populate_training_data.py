@@ -1,11 +1,11 @@
 import random
 
-from poecd_api import PoecdDataManager
 import psql
 import trade_api
 from data_handling import ListingBuilder
 from data_transforming import ListingsTransforming
 from file_management import FilesManager, DataPath
+from poecd_api import PoecdDataManager
 from shared import env_loading
 from trade_api.query import QueryPresets
 

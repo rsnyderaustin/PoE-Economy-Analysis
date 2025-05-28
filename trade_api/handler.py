@@ -1,4 +1,3 @@
-import logging
 import math
 from copy import deepcopy
 from datetime import datetime
@@ -9,7 +8,6 @@ from shared import ApiResponseParser, shared_utils, LogsHandler, LogFile
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
-
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 

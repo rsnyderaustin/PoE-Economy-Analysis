@@ -3,15 +3,14 @@ import random
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 
-from file_management import FilesManager, ModelPath
+from data_handling import ListingBuilder
+from file_management import FilesManager
 from instances_and_definitions import ModifiableListing
 from price_predict_ai_model import PricePredictor
+from shared.logging import LogsHandler, LogFile, log_errors
 from trade_api import TradeApiHandler
 from trade_api.query import QueryPresets
 from .environment import CraftingEnvironment
-from data_handling import ListingBuilder
-from shared.logging import LogsHandler, LogFile, log_errors
-
 
 craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
 

@@ -2,8 +2,6 @@ import logging
 import re
 from datetime import datetime, date
 
-import pandas as pd
-
 import file_management
 from file_management import DataPath
 from shared.enums.trade_enums import Currency

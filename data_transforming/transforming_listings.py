@@ -2,7 +2,6 @@ import logging
 import pprint
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-import xgboost as xgb
 
 import pandas as pd
 
@@ -10,7 +9,6 @@ from instances_and_definitions import ModifiableListing
 from shared import ItemCategoryGroups, shared_utils
 from shared.enums.item_enums import ItemCategory, LocalMod, CalculatedMod
 from shared.logging import LogsHandler, LogFile, log_errors
-
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)

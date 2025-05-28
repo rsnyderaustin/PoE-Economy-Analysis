@@ -1,6 +1,6 @@
 import pandas as pd
-from matplotlib import pyplot as plt
 import seaborn as sns
+from matplotlib import pyplot as plt
 
 
 def _apply_log_outliers(row):

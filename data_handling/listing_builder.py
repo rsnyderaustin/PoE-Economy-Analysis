@@ -4,11 +4,11 @@ import re
 
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
+from poecd_api.mods_management import GlobalPoecdAtypeModsManager
 from shared import shared_utils, LogFile, LogsHandler, ATypeClassifier
 from shared.enums.item_enums import ModAffixType
 from shared.enums.trade_enums import ModClass
 from . import utils
-from poecd_api.mods_management import GlobalPoecdAtypeModsManager
 from .api_response_parser import ApiResponseParser
 from .mod_matching import ModMatcher
 

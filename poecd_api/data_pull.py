@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 
 import requests
 
+
 def _normalize_data(bases_data: dict):
     bases_data['base'] = {
         k: ('Quarterstaff' if v == 'Warstaff' else v)

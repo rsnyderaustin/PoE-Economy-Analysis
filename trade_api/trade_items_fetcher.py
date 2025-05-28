@@ -7,7 +7,6 @@ from shared import env_loader
 from shared.logging import LogsHandler, LogFile, log_errors
 from trade_api.request_throttler import RequestThrottler
 
-
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 

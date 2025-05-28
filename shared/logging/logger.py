@@ -1,4 +1,3 @@
-import functools
 import logging
 from abc import ABC
 from enum import Enum

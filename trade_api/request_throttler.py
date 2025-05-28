@@ -1,9 +1,7 @@
-import logging
 import time
-
 from collections import deque
-from shared.logging import LogFile, LogsHandler, log_errors
 
+from shared.logging import LogFile, LogsHandler, log_errors
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 

@@ -7,11 +7,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from shared.logging import log_errors
 import pandas as pd
-from stable_baselines3 import PPO
 import xgboost as xgb
+from stable_baselines3 import PPO
 
+from shared.logging import log_errors
 from . import io_utils
 
 

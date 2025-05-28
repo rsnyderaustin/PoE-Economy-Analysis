@@ -1,20 +1,17 @@
-import logging
-import matplotlib.pyplot as plt
+import numpy as np
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import xgboost as xgb
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
 from data_transforming import ListingsTransforming
-from file_management import FilesManager, ModelPath
+from file_management import FilesManager
 from price_predict_ai_model import visuals
-from shared import env_loader
 from psql import PostgreSqlManager
+from shared import env_loader
+from shared.logging import LogFile, LogsHandler
 from stat_analysis.stats_prep import StatsPrep
-from shared.logging import LogFile, LogsHandler, log_errors
-
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 

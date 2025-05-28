@@ -4,7 +4,6 @@ from typing import Iterable
 
 from shared.logging import LogFile, LogsHandler, log_errors
 
-
 psql_log = LogsHandler().fetch_log(log_e=LogFile.PSQL)
 def python_dtype_to_postgres(dtype) -> str:
     """

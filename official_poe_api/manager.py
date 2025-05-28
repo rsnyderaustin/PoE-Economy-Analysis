@@ -1,6 +1,5 @@
 
 import json
-import logging
 from enum import Enum
 from pathlib import Path
 
@@ -8,7 +7,6 @@ import requests
 
 from shared import PathProcessor, shared_utils
 from shared.logging import LogsHandler, LogFile
-
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
