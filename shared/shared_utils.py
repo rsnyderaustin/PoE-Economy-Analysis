@@ -1,5 +1,4 @@
-import functools
-import pprint
+import logging
 import re
 from datetime import datetime, date
 
@@ -88,21 +87,27 @@ class CurrencyConverter:
 
     @staticmethod
     def _apply_create_conversions_dict(row, conversions_dict: dict):
-        date = datetime.strptime(row['Date'], '%Y-%m-%d')
-        currency = row['Currency']
-        conversion_rate = row['ExaltPerCurrency']
+        observation_date = datetime.strptime(row['date'], '%Y-%m-%d')
+        currency = row['currency']
+        conversion_rate = row['div_per_currency']
 
         if date not in conversions_dict:
-            conversions_dict[date] = dict()
+            conversions_dict[observation_date] = dict()
 
-        conversions_dict[date][currency] = conversion_rate
+        conversions_dict[observation_date][currency] = conversion_rate
 
-    def convert_to_exalts(self, currency: Currency, currency_amount: int | float, relevant_date: date):
-        if currency == Currency.EXALTED_ORB:
+    def convert_to_divs(self, currency: Currency, currency_amount: int | float, relevant_date: date):
+        if currency == Currency.DIVINE_ORB:
             return currency_amount
 
-        most_recent_date = min(self.conversions_dict.keys(), key=lambda d: abs(d - relevant_date))
-        exchange_rate = self.conversions_dict[most_recent_date][currency.value]
+        closest_date = min(self.conversions_dict.keys(), key=lambda d: abs(d - relevant_date))
+
+        days_between = (closest_date - relevant_date).days
+        if days_between >= 3:
+            logging.error(f"Date between relevant date and closest currency price observation dates in "
+                          f"CurrencyConverter.convert_to_divs is {days_between}.")
+
+        exchange_rate = self.conversions_dict[closest_date][currency.value]
 
         return currency_amount * exchange_rate
 

@@ -2,6 +2,7 @@ import logging
 import pprint
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
+import xgboost as xgb
 
 import pandas as pd
 
@@ -182,13 +183,31 @@ class ListingsTransforming:
         valid_cols = {*cls._price_predict_specific_cols, *mod_cols}
         return valid_cols
 
+    @log_errors(price_predict_log)
+    @staticmethod
+    def _fill_out_features_columns(features_df: pd.DataFrame, model):
+        cols_missing_from_model = [col for col in features_df.columns if col not in model.features]
+        if cols_missing_from_model:
+            raise ValueError(f"Columns {cols_missing_from_model} in this listing but not in model. Model training data is "
+                             f"therefore incomplete.")
+
+        # Ensure all model-required columns exist in features
+        cols_missing_from_listing = [col for col in model.features if col not in features_df.columns]
+        for col in cols_missing_from_listing:
+            features_df[col] = None  # fill in with 0 indicating the mod is not present
+
     @classmethod
-    def to_price_predict_df(cls, listings: list[ModifiableListing] = None, rows: dict = None) -> pd.DataFrame:
+    def to_price_predict_df(cls,
+                            listings: list[ModifiableListing] = None,
+                            rows: dict[str: list] = None,
+                            existing_model = None) -> pd.DataFrame:
         """
 
-        :param listings:
-        :param rows:
-        :return: Listings or rows data formatted into a DataFrame for the Price Predict AI model
+        :param listings: Listings to format into a DataFrame for the PricePredict model.
+        :param rows: Rows must be provided if listings are not. Expected format: {column name : column values}
+        :param existing_model: If using this method to predict from an existing PricePredict model, that model should be provided
+            here. The model is used in this function to format the columns so that you can just feed the DataFrame output straight into the model.
+        :return: Data formatted into a DataFrame for the PricePredict model
         """
         if not rows:
             rows = cls.to_flat_rows(listings)
@@ -208,6 +227,12 @@ class ListingsTransforming:
                 df[col] = df[col].astype(dtype)
 
         df = df.select_dtypes(include=['int64', 'float64', 'bool', 'category'])
+
+        if existing_model:
+            features_df = df.drop(columns=['divs'])
+            cls._fill_out_features_columns(features_df=features_df,
+                                           model=existing_model)
+            df = pd.concat([features_df, df['divs']])
 
         return df
 
@@ -277,12 +302,12 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        exalts_price = shared_utils.CurrencyConverter().convert_to_exalts(
+        divs_price = shared_utils.CurrencyConverter().convert_to_divs(
             currency=self.listing.currency,
             currency_amount=self.listing.currency_amount,
             relevant_date=self.listing.date_fetched()
         )
-        self.flattened_data['exalts'] = exalts_price
+        self.flattened_data['divs'] = divs_price
         return self
 
     def insert_item_base_info(self):

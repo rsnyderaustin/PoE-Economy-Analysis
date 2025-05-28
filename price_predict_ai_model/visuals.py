@@ -5,11 +5,11 @@ import seaborn as sns
 
 def _apply_log_outliers(row):
     non_null_dict = {col: val for col, val in row.items()
-                     if pd.notna(val) and val > 0.0 and col not in ['Predicted Price', 'exalts']}
+                     if pd.notna(val) and val > 0.0 and col not in ['Predicted Price', 'divs']}
 
     print(f"\n\n")
     print(f"Predicted Price: {row['Predicted Price']}"
-          f"\nActual Price: {row['exalts']}"
+          f"\nActual Price: {row['divs']}"
           f"\n\tAttributes and values:")
 
     for k, v in non_null_dict.items():
@@ -24,7 +24,7 @@ def plot_correlation_matrix(df: pd.DataFrame):
     corr_df = df.select_dtypes(include=['int64', 'float64'])
     plt.figure(figsize=(18, 8))
     corr_matrix = corr_df.corr()
-    sns.heatmap(corr_matrix[['exalts']].sort_values(by='exalts', ascending=False), annot=True, cmap='coolwarm')
+    sns.heatmap(corr_matrix[['divs']].sort_values(by='divs', ascending=False), annot=True, cmap='coolwarm')
     plt.show()
 
 
@@ -53,8 +53,8 @@ def plot_actual_vs_predicted(atype, test_predictions, test_targets):
     plt.figure(figsize=(8, 5))
     plt.scatter(test_predictions, test_targets, alpha=0.5)
     plt.plot([min_predict_axis, max_predict_axis], [min_target_axis, max_target_axis], color='red', linestyle='--')
-    plt.xlabel("Predicted Price (Exalts)")
-    plt.ylabel("Actual Prices (Exalts)")
+    plt.xlabel("Predicted Price (Divs)")
+    plt.ylabel("Actual Prices (Divs)")
 
     plt.title(f"Actual vs. Predicted Prices for {atype}")
     plt.grid(True)
@@ -68,9 +68,9 @@ def print_outliers(test_target_df: pd.DataFrame,
     training_df['Predicted Price'] = test_predictions
 
     # Add a column for the absolute error
-    training_df['Absolute Error'] = (training_df['Predicted Price'] - training_df['exalts']).abs()
+    training_df['Absolute Error'] = (training_df['Predicted Price'] - training_df['divs']).abs()
 
-    under_priced_df = training_df[training_df['exalts'] - training_df['Predicted Price'] < 0]
+    under_priced_df = training_df[training_df['divs'] - training_df['Predicted Price'] < 0]
 
     # Sort the dataframe by the absolute error in descending order
     outliers_df = under_priced_df.sort_values(by='Absolute Error', ascending=False).head(3)

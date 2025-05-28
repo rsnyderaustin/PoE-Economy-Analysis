@@ -17,21 +17,20 @@ from .currency_engines import *
 from .currency_engines import CurrencyEngine
 from .mod_rolling import ModRoller
 
-
 craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
 
 
 def log_action(action: str, done: bool, original_price: float, predicted_price: float, message: str,
                cost: float = None, reward: float = None, listing_data: dict = None):
     craft_log.info(f"\n---- New Action ----"
-                 f"\nAction: {action}"
-                 f"\nDone crafting: {done}"
-                 f"\nAction cost: {cost}"
-                 f"\nOriginal price: {original_price}"
-                 f"\nPredicted price: {predicted_price}"
-                 f"\nAction reward: {reward}"
-                 f"\nMessage: {message}"
-                 f"\nListing data (Optional): {pprint.pprint(listing_data)}")
+                   f"\nAction: {action}"
+                   f"\nDone crafting: {done}"
+                   f"\nAction cost: {cost}"
+                   f"\nOriginal price: {original_price}"
+                   f"\nPredicted price: {predicted_price}"
+                   f"\nAction reward: {reward}"
+                   f"\nMessage: {message}"
+                   f"\nListing data (Optional): {pprint.pprint(listing_data)}")
 
 
 @dataclass
@@ -228,11 +227,11 @@ class ObservationSpace:
         }
         self._space.update(attributes)
 
-    def add_currency_cost(self, currency: Currency, exalts_price: float):
+    def add_currency_cost(self, currency: Currency, divs_price: float):
         if currency.value in self._space:
-            craft_log.error(f"Overwriting currency {currency} in ObservationSpace from {self._space[currency.value]} to {exalts_price} exalts.")
+            craft_log.error(f"Overwriting currency {currency} in ObservationSpace from {self._space[currency.value]} to {divs_price} divs.")
 
-        self._space[currency.value] = exalts_price
+        self._space[currency.value] = divs_price
 
     def get(self) -> np.ndarray:
         return np.array(list(self._space.values()), dtype=np.float32)
@@ -240,10 +239,10 @@ class ObservationSpace:
 
 class CraftingEnvironment(gym.Env):
 
-    def __init__(self, listing: ModifiableListing, price_predictor: PricePredictor, exalts_budget):
+    def __init__(self, listing: ModifiableListing, price_predictor: PricePredictor, divs_budget):
         super(CraftingEnvironment, self).__init__()
 
-        self.exalts_budget = exalts_budget
+        self.divs_budget = divs_budget
 
         self.original_state = copy.deepcopy(listing)
         self.original_price = price_predictor.predict(listing=listing)
@@ -274,7 +273,7 @@ class CraftingEnvironment(gym.Env):
             16: 'STOP'
         }
 
-        self.total_exalts_spent = 0
+        self.total_divs_spent = 0
 
     def _create_observation_space(self) -> np.ndarray:
         o = ObservationSpace()
@@ -291,7 +290,7 @@ class CraftingEnvironment(gym.Env):
 
     def _handle_stop_action(self) -> tuple:
         revenue = self.current_price
-        cost = self.original_price + self.total_exalts_spent
+        cost = self.original_price + self.total_divs_spent
         percent_profit = (revenue - cost) / cost
         done = True
         log_action(action='STOP', done=done, cost=None, original_price=self.current_price,
@@ -309,21 +308,21 @@ class CraftingEnvironment(gym.Env):
         done = False
         currency = action
 
-        # I believe it's correct to use today's date for establishing currency costs in this model since we really just care about
-        # what
-        currency_cost = CurrencyConverter().convert_to_exalts(currency=currency.currency_class,
-                                                              currency_amount=1,
-                                                              relevant_date=date.today())
+        # Relevant date is the listing fetch date because everything concerning crafting an item is centered around the context
+        # of that item at the time of posting
+        currency_cost = CurrencyConverter().convert_to_divs(currency=currency.currency_class,
+                                                            currency_amount=1,
+                                                            relevant_date=self.listing.date_fetched)
 
         # Return a small negative reward if we went over budget
-        if self.total_exalts_spent + currency_cost > self.exalts_budget:
+        if self.total_divs_spent + currency_cost > self.divs_budget:
             reward = -1
             done = True
             log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                        predicted_price=self.current_price, reward=reward, message="Exceeded budget.")
             return self._create_observation_space(), reward, done, {}
 
-        self.total_exalts_spent += currency_cost
+        self.total_divs_spent += currency_cost
 
         outcome = currency.apply(mod_roller=self.mod_roller,
                                  listing=self.listing)
@@ -340,7 +339,7 @@ class CraftingEnvironment(gym.Env):
         predicted_price = self.price_predictor.predict(listing=self.listing)
 
         reward = self._determine_reward(revenue=predicted_price,
-                                        cost=self.original_price + self.total_exalts_spent)
+                                        cost=self.original_price + self.total_divs_spent)
 
         log_action(action=str(currency), done=done, cost=currency_cost, original_price=self.current_price,
                    predicted_price=self.current_price, reward=reward, message=f"Successfully applied {currency}")
@@ -357,6 +356,6 @@ class CraftingEnvironment(gym.Env):
     def reset(self, *, seed: int = None, options: dict = None) -> tuple:
         self.listing = copy.deepcopy(self.original_state)
         self.current_price = self.original_price
-        self.total_exalts_spent = 0
+        self.total_divs_spent = 0
 
         return self._create_observation_space(), {}

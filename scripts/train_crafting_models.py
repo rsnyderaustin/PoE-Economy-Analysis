@@ -15,6 +15,6 @@ listing_builder = ListingBuilder(global_atypes_manager)
 crafting_pipeline = CraftingModelPipeline(files_manager=files_manager,
                                           trade_api_handler=trade_api_handler,
                                           listing_builder=listing_builder,
-                                          training_exalts_budget=200)
+                                          training_divs_budget=100)
 crafting_pipeline.run()
 

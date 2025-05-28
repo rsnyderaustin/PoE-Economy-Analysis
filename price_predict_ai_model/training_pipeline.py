@@ -44,7 +44,7 @@ class PricePredictModelPipeline:
         model_df = ListingsTransforming.to_price_predict_df(rows=raw_data)
 
         for atype, atype_df in model_df.groupby('atype'):
-            atype_df = StatsPrep.prep_dataframe(df=atype_df, price_column='exalts')
+            atype_df = StatsPrep.prep_dataframe(df=atype_df, price_column='divs')
 
             if atype_df is None:
                 continue
@@ -52,7 +52,7 @@ class PricePredictModelPipeline:
             model = self._train_model(
                 df=atype_df,
                 atype=str(atype),
-                price_column='exalts'
+                price_column='divs'
             )
 
             self.files_manager.save_price_predict_model(atype=str(atype), model=model)

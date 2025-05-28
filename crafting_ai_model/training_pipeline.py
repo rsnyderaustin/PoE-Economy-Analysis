@@ -22,13 +22,13 @@ class CraftingModelPipeline:
                  files_manager: FilesManager,
                  trade_api_handler: TradeApiHandler,
                  listing_builder: ListingBuilder,
-                 training_exalts_budget: int,
+                 training_divs_budget: int,
                  total_timesteps: int = 10000):
         self._files_manager = files_manager
         self._trade_api_handler = trade_api_handler
         self._listing_builder = listing_builder
 
-        self._exalts_budget = training_exalts_budget
+        self._divs_budget = training_divs_budget
         self._total_timesteps = total_timesteps
 
         self._loaded_models = dict()
@@ -54,7 +54,7 @@ class CraftingModelPipeline:
         price_predictor = PricePredictor(price_predict_model)
 
         env = CraftingEnvironment(listing=listing,
-                                  exalts_budget=self._exalts_budget,
+                                  divs_budget=self._divs_budget,
                                   price_predictor=price_predictor)
 
         check_env(env)
