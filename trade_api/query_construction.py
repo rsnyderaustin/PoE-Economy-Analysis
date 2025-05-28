@@ -1,4 +1,4 @@
-from shared.trade_enums import (StatSearchType)
+from shared.enums.trade_enums import (StatSearchType)
 from .query import MetaFilter, StatsFiltersGroup, Query
 
 
@@ -65,9 +65,6 @@ def _handle_stats_query(stats_dict, stats_filters_groups: list[StatsFiltersGroup
     # Each StatsFiltersGroup is a group with a type such as AND, IF, WEIGHTED_SUMV2, etc that possibly
     # holds individual mod filters
     for i, stats_filters_group in enumerate(stats_filters_groups):
-        if stats_filters_group.filter_type not in StatSearchType:
-            raise ValueError(f"FilterType {stats_filters_group.filter_type} not one of acceptable "
-                             f"FilterTypes {StatSearchType}.")
 
         stats_dict['type'] = stats_filters_group.filter_type.value
 

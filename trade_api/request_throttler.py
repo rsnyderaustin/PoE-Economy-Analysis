@@ -1,7 +1,9 @@
-import logging
 import time
-
 from collections import deque
+
+from shared.logging import LogFile, LogsHandler, log_errors
+
+api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 
 def _parse_rate_string(rate_limit_str):
@@ -74,31 +76,31 @@ class RequestThrottler:
     def _fetch_limits_and_state(response_headers: dict):
         if 'X-Rate-Limit-Account' in response_headers:
             account_limit = response_headers['X-Rate-Limit-Account']
-            # logging.info(f"API account limit: {account_limit}")
+            # api_log.info(f"API account limit: {account_limit}")
         else:
             account_limit = '100:5:60'
-            # logging.info(f"No account limit. Defaulting to {account_limit}")
+            # api_log.info(f"No account limit. Defaulting to {account_limit}")
 
         if 'x-rate-limit-account-state' in response_headers:
             account_state = response_headers['x-rate-limit-account-state']
-            # logging.info(f"API account state: {account_state}")
+            # api_log.info(f"API account state: {account_state}")
         else:
             account_state = '0:5:60'
-            # logging.info(f"No account state. Defaulting to {account_state}")
+            # api_log.info(f"No account state. Defaulting to {account_state}")
 
         if 'X-Rate-Limit-Ip' in response_headers:
             ip_limit = response_headers['X-Rate-Limit-Ip']
-            # logging.info(f"API IP limit: {ip_limit}")
+            # api_log.info(f"API IP limit: {ip_limit}")
         else:
             ip_limit = '8:10:60,15:60:120,60:300:1800'
-            # logging.info(f"No IP limit. Defaulting to {ip_limit}")
+            # api_log.info(f"No IP limit. Defaulting to {ip_limit}")
 
         if 'x-rate-limit-ip-state' in response_headers:
             ip_state = response_headers['x-rate-limit-ip-state']
-            # logging.info(f"API IP state: {ip_state}")
+            # api_log.info(f"API IP state: {ip_state}")
         else:
             ip_state = '5:10:0,30:60:0,100:300:0'
-            # logging.info(f"No IP state. Defaulting to {ip_state}")
+            # api_log.info(f"No IP state. Defaulting to {ip_state}")
 
         account_limits = _parse_rate_string(account_limit)
         account_state = _parse_rate_string(account_state)
@@ -111,7 +113,7 @@ class RequestThrottler:
     def set_limits(self, func_name: str, response_headers: dict):
         account_limits, account_state, ip_limits, ip_state = self._fetch_limits_and_state(response_headers)
 
-        logging.info(f"Setting new limits."
+        api_log.info(f"Setting new limits."
                      f"\n\tAccount limits: {account_limits}"
                      f"\n\tAccount state: {account_state}"
                      f"\n\tIP limits: {ip_limits}"
@@ -119,9 +121,6 @@ class RequestThrottler:
 
         self.current_account_limits[func_name] = account_limits
         self.current_ip_limits[func_name] = ip_limits
-
-        if func_name in self.request_deques:
-            logging.error(f"set_limits called for func_name {func_name}, which already exists in the dict.")
 
         self.request_deques[func_name] = []
 
@@ -142,12 +141,12 @@ class RequestThrottler:
 
         limits_changed = False
         if account_limits != self.current_account_limits[func_name]:
-            logging.info(f"Previous account limit for {func_name}: {self.current_account_limits[func_name]}"
+            api_log.info(f"Previous account limit for {func_name}: {self.current_account_limits[func_name]}"
                          f"\n\tNew account limit for {func_name}: {account_limits}")
             limits_changed = True
 
         if ip_limits != self.current_ip_limits[func_name]:
-            logging.info(f"Previous IP limit for {func_name}: {self.current_ip_limits[func_name]}"
+            api_log.info(f"Previous IP limit for {func_name}: {self.current_ip_limits[func_name]}"
                          f"\n\tNew IP limit for {func_name}: {ip_limits}")
             limits_changed = True
 
@@ -164,7 +163,7 @@ class RequestThrottler:
         )
 
         if not can_request:
-            # logging.info(f"Waiting to send {func_name} request...")
+            # api_log.info(f"Waiting to send {func_name} request...")
             x=0
 
         while not can_request:
@@ -183,6 +182,7 @@ class RequestThrottler:
         for request_deque in self.request_deques[func_name]:
             request_deque.register_request(now=now)
 
+    @log_errors(api_log)
     def send_request(self, request_func, *args, **kwargs):
         func_name = request_func.__name__
         if func_name not in self.request_deques:
@@ -207,7 +207,6 @@ class RequestThrottler:
 
         if self._check_if_limits_have_changed(func_name=func_name,
                                               response_headers=response.headers):
-            logging.info(f"Limits have changed for func '{func_name}'. Resetting limits.")
             self.set_limits(func_name=func_name,
                             response_headers=response.headers)
 

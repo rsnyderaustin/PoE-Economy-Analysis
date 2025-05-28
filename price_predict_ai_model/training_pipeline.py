@@ -1,18 +1,19 @@
-import logging
-import matplotlib.pyplot as plt
+import numpy as np
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import xgboost as xgb
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
 from data_transforming import ListingsTransforming
-from file_management import FilesManager, ModelPath
+from file_management import FilesManager
 from price_predict_ai_model import visuals
-from shared import env_loader
 from psql import PostgreSqlManager
+from shared import env_loader
+from shared.logging import LogFile, LogsHandler
 from stat_analysis.stats_prep import StatsPrep
+
+price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
 
 class PricePredictModelPipeline:
@@ -40,7 +41,7 @@ class PricePredictModelPipeline:
         model_df = ListingsTransforming.to_price_predict_df(rows=raw_data)
 
         for atype, atype_df in model_df.groupby('atype'):
-            atype_df = StatsPrep.prep_dataframe(df=atype_df, price_column='exalts')
+            atype_df = StatsPrep.prep_dataframe(df=atype_df, price_column='divs')
 
             if atype_df is None:
                 continue
@@ -48,7 +49,7 @@ class PricePredictModelPipeline:
             model = self._train_model(
                 df=atype_df,
                 atype=str(atype),
-                price_column='exalts'
+                price_column='divs'
             )
 
             self.files_manager.save_price_predict_model(atype=str(atype), model=model)
@@ -120,7 +121,7 @@ class PricePredictModelPipeline:
         test_results_df.sort_values(by='error')
 
         mse = mean_squared_error(test_y, test_predictions)
-        logging.info(f"Atype {atype} MSE: {mse}")
+        price_predict_log.info(f"Atype {atype} MSE: {mse}")
 
         if self.should_plot_visuals:
             visuals.plot_feature_importance(model=self.model, atype=atype)

@@ -1,6 +1,3 @@
-import pandas as pd
-
-
 def normalize_column_name(col: str | tuple) -> str:
     return f"{col[0]}_{col[1]}" if isinstance(col, tuple) else col
 

@@ -1,3 +1,4 @@
+
 import logging
 
 import sqlalchemy
@@ -8,15 +9,22 @@ from . import utils
 
 
 class PostgreSqlManager:
+    _instance = None
+    _initialized = False
+
     def __new__(cls, *args, **kwargs):
-        if not hasattr(cls, '_instance'):
+        if not cls._instance:
             cls._instance = super(PostgreSqlManager, cls).__new__(cls)
+
         return cls._instance
 
     def __init__(self, skip_sql=False):
-        if getattr(self, '_initialized', False):
+        cls = self.__class__
+        if cls._initialized:
             return
-        self._initialized = True
+        cls._initialized = True
+
+        self.skip_sql = skip_sql
 
         if skip_sql:
             print("Skipping SQL initialization.")
@@ -35,7 +43,6 @@ class PostgreSqlManager:
         self.connection = self.engine.connect()
         self.inspector = inspect(self.engine)
 
-
     def _add_missing_columns(self, table_name: str, new_data: dict):
         table_col_names = self._fetch_column_names(table_name)
 
@@ -46,7 +53,7 @@ class PostgreSqlManager:
 
         if missing_col_names:
             with self.engine.begin() as conn:
-                logging.info(f"Adding missing col names: {missing_col_names}")
+                psql_log.info(f"Adding missing '{table_name}' col names: {missing_col_names}")
                 for col, dtype in missing_col_dtypes.items():
                     alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
                     conn.execute(alter_stmt)
@@ -78,10 +85,10 @@ class PostgreSqlManager:
         # When inserting into psql via SqlAlchemy, the data has to be a list of dicts
         formatted_data = utils.format_data_into_rows(data)
 
-        logging.info(f"{table_name} rows before insertion: {self._count_table_rows(table_name)}")
+        rows_before = self._count_table_rows(table_name)
         with self.engine.begin() as conn:
             conn.execute(insert_stmt, formatted_data)
-        logging.info(f"{table_name} rows after insertion: {self._count_table_rows(table_name)}")
+        logging.info(f"{table_name} PSQL rows {rows_before} -> {self._count_table_rows(table_name)}")
 
     def fetch_table_data(self, table_name: str):
         with self.engine.connect() as conn:
@@ -93,6 +100,29 @@ class PostgreSqlManager:
 
             for row in result:
                 for col in cols:
+                    data_dict[col].append(row[col])
+
+            return data_dict
+
+    def fetch_columns_data(self, table_name: str, columns: list[str]) -> dict:
+        if not columns:
+            raise ValueError("No columns specified")
+
+            # Very basic sanitization: quote identifiers
+        quoted_columns = ', '.join(f'"{col}"' for col in columns)
+        quoted_table = f'"{table_name}"'
+
+        query = text(f'SELECT {quoted_columns} FROM {quoted_table}')
+
+        with self.engine.connect() as conn:
+            result = list(conn.execute(query).mappings())
+
+            if not result:
+                return {col: [] for col in columns}
+
+            data_dict = {col: [] for col in columns}
+            for row in result:
+                for col in columns:
                     data_dict[col].append(row[col])
 
             return data_dict

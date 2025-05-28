@@ -1,14 +1,17 @@
 import logging
 import pprint
-from datetime import datetime
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
 import pandas as pd
 
 from instances_and_definitions import ModifiableListing
-from shared import shared_utils, item_enums, ItemCategoryGroups
-from shared.item_enums import LocalMod, DerivedMod, ItemCategory
+from shared import ItemCategoryGroups, shared_utils
+from shared.enums.item_enums import ItemCategory, LocalMod, CalculatedMod
+from shared.logging import LogsHandler, LogFile, log_errors
+
+parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
+price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
 
 class ListingFeatureCalculator(ABC):
@@ -21,6 +24,7 @@ class ListingFeatureCalculator(ABC):
     def calculate(cls, listing: ModifiableListing) -> dict:
         pass
 
+    @log_errors(logging.getLogger())
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         if not hasattr(cls, 'input_columns'):
@@ -66,12 +70,14 @@ class CalculatorRegistry:
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
-    calculated_columns = {DerivedMod.MAX_QUALITY_PDPS.value}
+    calculated_columns = {CalculatedMod.MAX_QUALITY_PDPS.value}
 
     @classmethod
     def calculate(cls, listing: ModifiableListing):
         if listing.item_category not in cls.applicable_item_categories:
-            raise TypeError(f"Listing with item category {listing.item_category} called {cls.__name__}")
+            msg = f"Listing with item category {listing.item_category} called {cls.__name__}"
+            logging.error(msg)
+            raise TypeError(msg)
 
         current_multiplier = 1 + (listing.quality / 100)
         max_multiplier = 1 + (listing.max_quality / 100)
@@ -84,7 +90,7 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
         attack_speed = listing.item_properties.get(LocalMod.ATTACKS_PER_SECOND.value, 0)
         max_quality_pdps = max_quality_damage * attack_speed
 
-        return {DerivedMod.MAX_QUALITY_PDPS: max_quality_pdps}
+        return {CalculatedMod.MAX_QUALITY_PDPS: max_quality_pdps}
 
 
 @CalculatorRegistry.register
@@ -92,9 +98,9 @@ class NonPhysicalDpsCalculator(ListingFeatureCalculator):
     applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.CHAOS_DAMAGE, LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
-    calculated_columns = {DerivedMod.CHAOS_DPS, DerivedMod.COLD_DPS, DerivedMod.FIRE_DPS, DerivedMod.LIGHTNING_DPS,
-                          DerivedMod.ELEMENTAL_DPS}
+    calculated_columns = {CalculatedMod.COLD_DPS, CalculatedMod.FIRE_DPS, CalculatedMod.LIGHTNING_DPS, CalculatedMod.ELEMENTAL_DPS}
 
+    @log_errors(parse_log)
     @classmethod
     def calculate(cls, listing: ModifiableListing):
         if listing.item_category not in cls.applicable_item_categories:
@@ -107,11 +113,10 @@ class NonPhysicalDpsCalculator(ListingFeatureCalculator):
         attacks_per_second = listing.item_properties.get(LocalMod.ATTACKS_PER_SECOND.value, 0)
 
         return {
-            DerivedMod.COLD_DPS: cold_damage * attacks_per_second,
-            DerivedMod.FIRE_DPS: fire_damage * attacks_per_second,
-            DerivedMod.LIGHTNING_DPS: lightning_damage * attacks_per_second,
-            DerivedMod.CHAOS_DPS: chaos_damage * attacks_per_second,
-            DerivedMod.ELEMENTAL_DPS: (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+            CalculatedMod.COLD_DPS: cold_damage * attacks_per_second,
+            CalculatedMod.FIRE_DPS: fire_damage * attacks_per_second,
+            CalculatedMod.LIGHTNING_DPS: lightning_damage * attacks_per_second,
+            CalculatedMod.ELEMENTAL_DPS: (cold_damage + fire_damage + lightning_damage) * attacks_per_second
         }
 
 
@@ -177,13 +182,31 @@ class ListingsTransforming:
         valid_cols = {*cls._price_predict_specific_cols, *mod_cols}
         return valid_cols
 
+    @log_errors(price_predict_log)
+    @staticmethod
+    def _fill_out_features_columns(features_df: pd.DataFrame, model):
+        cols_missing_from_model = [col for col in features_df.columns if col not in model.features]
+        if cols_missing_from_model:
+            raise ValueError(f"Columns {cols_missing_from_model} in this listing but not in model. Model training data is "
+                             f"therefore incomplete.")
+
+        # Ensure all model-required columns exist in features
+        cols_missing_from_listing = [col for col in model.features if col not in features_df.columns]
+        for col in cols_missing_from_listing:
+            features_df[col] = None  # fill in with 0 indicating the mod is not present
+
     @classmethod
-    def to_price_predict_df(cls, listings: list[ModifiableListing] = None, rows: dict = None) -> pd.DataFrame:
+    def to_price_predict_df(cls,
+                            listings: list[ModifiableListing] = None,
+                            rows: dict[str: list] = None,
+                            existing_model = None) -> pd.DataFrame:
         """
 
-        :param listings:
-        :param rows:
-        :return: Listings or rows data formatted into a DataFrame for the Price Predict AI model
+        :param listings: Listings to format into a DataFrame for the PricePredict model.
+        :param rows: Rows must be provided if listings are not. Expected format: {column name : column values}
+        :param existing_model: If using this method to predict from an existing PricePredict model, that model should be provided
+            here. The model is used in this function to format the columns so that you can just feed the DataFrame output straight into the model.
+        :return: Data formatted into a DataFrame for the PricePredict model
         """
         if not rows:
             rows = cls.to_flat_rows(listings)
@@ -193,7 +216,8 @@ class ListingsTransforming:
 
         cols = cls._determine_valid_price_predict_columns(df)
         removed_cols = {col for col in df.columns if col not in cols}
-        logging.info(f"Columns removed from PricePredict DataFrame:\n{removed_cols}")
+
+        price_predict_log.info(f"Columns removed from PricePredict DataFrame:\n{removed_cols}")
 
         df = df[cols]
 
@@ -203,6 +227,12 @@ class ListingsTransforming:
 
         df = df.select_dtypes(include=['int64', 'float64', 'bool', 'category'])
 
+        if existing_model:
+            features_df = df.drop(columns=['divs'])
+            cls._fill_out_features_columns(features_df=features_df,
+                                           model=existing_model)
+            df = pd.concat([features_df, df['divs']])
+
         return df
 
 
@@ -211,6 +241,8 @@ class _PricePredictTransformer:
 
     def __init__(self, listing: ModifiableListing):
         self.listing = listing
+        parse_log.info(f"NEW LISTING DATA\n{pprint.pprint(listing)}")
+
         self.flattened_data = dict()
 
         self.calculator_registry = CalculatorRegistry()
@@ -218,9 +250,7 @@ class _PricePredictTransformer:
         # Derived columns like pdps/edps shouldn't be compared to their source columns in analyses like stats.
         self.derived_columns = dict()
 
-    def _determine_date_fetched(self):
-        return datetime.strptime(self.listing.date_fetched, "%Y-%m-%dT%H:%M:%SZ")
-
+    @log_errors(parse_log)
     def insert_listing_properties(self):
         flattened_properties = dict()
         for property_name, property_value in self.listing.item_properties.items():
@@ -248,6 +278,7 @@ class _PricePredictTransformer:
             for calc in calculators
             for col_e, val in calc.calculate(self.listing).items()
         }
+        parse_log.info(f"Listing calculations:\n{pprint.pprint(derived_col_values)}\n")
         self.flattened_data.update(derived_col_values)
 
         if delete_input_columns:
@@ -259,7 +290,7 @@ class _PricePredictTransformer:
 
     def insert_metadata(self):
         metadata = {
-            'date_fetched': self._determine_date_fetched(),
+            'date_fetched': self.listing.date_fetched,
             'minutes_since_listed': self.listing.minutes_since_listed,
             'minutes_since_league_start': self.listing.minutes_since_league_start
         }
@@ -270,12 +301,12 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        exalts_price = shared_utils.CurrencyConverter().convert_to_exalts(
+        divs_price = shared_utils.CurrencyConverter().convert_to_divs(
             currency=self.listing.currency,
             currency_amount=self.listing.currency_amount,
-            relevant_date=self._determine_date_fetched()
+            relevant_date=self.listing.date_fetched()
         )
-        self.flattened_data['exalts'] = exalts_price
+        self.flattened_data['divs'] = divs_price
         return self
 
     def insert_item_base_info(self):
@@ -290,7 +321,7 @@ class _PricePredictTransformer:
         return self
 
     def insert_sub_mod_values(self):
-        sub_mods = [sub_mod for mod in self.listing.mods for sub_mod in mod._sub_mods]
+        sub_mods = [sub_mod for mod in self.listing.mods for sub_mod in mod.sub_mods]
 
         summed_sub_mods = {}
         for sub_mod in sub_mods:
@@ -307,12 +338,14 @@ class _PricePredictTransformer:
                 # we assign it a 1 to indicate to the model that it's an active mod
                 summed_sub_mods[mod_text] = 1
 
+        parse_log.info(f"Summed sub-mods:\n{pprint.pprint(summed_sub_mods)}\n")
         self.flattened_data.update(summed_sub_mods)
         return self
 
     def insert_skills(self):
         skills_dict = {item_skill.name: item_skill.level for item_skill in self.listing.item_skills}
         skills_dict = {skill_name: lvl for skill_name, lvl in skills_dict.items()}
+        parse_log.info(f"Skills:\n{pprint.pprint(skills_dict)}")
         self.flattened_data.update(skills_dict)
         return self
 
@@ -324,8 +357,8 @@ class _PricePredictTransformer:
         # Some columns have just one letter - not sure why but need to find out
         cols_to_remove = [col for col in self.flattened_data if len(col) == 1]
         for col in cols_to_remove:
-            logging.error(f"Found 1-length attribute name {cols_to_remove} for listing: "
-                          f"\n{pprint.pprint(self.flattened_data)}\nRemoving the extra column")
+            parse_log.error(f"Found 1-length attribute name {cols_to_remove} for listing: "
+                            f"\n{pprint.pprint(self.flattened_data)}\nRemoving the extra column")
             self.flattened_data.pop(col)
 
         return self

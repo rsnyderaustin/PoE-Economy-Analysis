@@ -1,13 +1,14 @@
 import itertools
-import logging
-from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 
+from shared.logging import LogFile, LogsHandler
 from . import utils
+
+stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
 
 
 class CorrelationAnalyzer:
@@ -52,7 +53,7 @@ class CorrelationAnalyzer:
             pair_corr = product_df.corrwith(prices)
             corr_val = pair_corr[(mod1, mod2)]
             if corr_val >= correlation_threshold:
-                logging.info(f"Valid column correlation {(mod1, mod2)}: {corr_val}")
+                stats_log.info(f"Valid column correlation {(mod1, mod2)}: {corr_val}")
                 valid_pairs_weights[(mod1, mod2)] = corr_val
 
         return valid_pairs_weights
@@ -311,18 +312,15 @@ class StatsPrep:
 
         valid_columns = list(single_column_weights.keys()) + list(pair_column_weights.keys())
 
-        logging.info("Combining column pairs into their product.")
         tr_features = cls._pair_columns(features_df=features_df.copy(),
                                         columns=valid_columns)
 
-        logging.info("Normalizing data.")
         norm_features = cls._normalize_data(features_df=tr_features.copy())
 
         """igs = dict(zip(norm_features.columns, mutual_info_regression(norm_features, prices)))
         igs = {col: ig for col, ig in igs.items() if ig >= 0.10}
         norm_features = norm_features[list(igs.keys())]"""
 
-        logging.info("Weighting data.")
         single_column_weights = {utils.normalize_column_name(col): weight for col, weight in single_column_weights.items()}
         pair_column_weights = {utils.normalize_column_name(col): weight for col, weight in pair_column_weights.items()}
         norm_features = cls._weight_data(features_df=norm_features,
@@ -336,7 +334,7 @@ class StatsPrep:
                         y=plot[f"log_{price_column}"])
         plt.show()"""
 
-        logging.info("Determining correct prices and isolated indices via NearestNeighbor.")
+        stats_log.info("Determining correct prices and isolated indices via NearestNeighbor.")
         # We pass in prices instead of log_prices here on purpose to KNN
         new_prices, out_of_range_indices = cls._normalize_prices_via_nearest_neighbor(
             features_df=norm_features.copy(),

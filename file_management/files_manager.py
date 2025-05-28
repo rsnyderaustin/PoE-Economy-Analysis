@@ -1,9 +1,42 @@
+import json
+import logging
 import os
-from stable_baselines3 import PPO
-import xgboost as xgb
+import pickle
+import tempfile
+from enum import Enum
+from pathlib import Path
+from typing import Any
 
+import pandas as pd
+import xgboost as xgb
+from stable_baselines3 import PPO
+
+from shared.logging import log_errors
 from . import io_utils
-from .io_utils import DataPath, ModelPath
+
+
+class DataPath(Enum):
+    MODS = Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
+    CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/dynamic_files/currency_prices.csv'
+    MARKET_SCAN = Path.cwd() / 'file_management/dynamic_files/market_scan.json'
+    POECD_BASES = Path.cwd() / 'file_management/dynamic_files/poecd_bases.json'
+    POECD_STATS = Path.cwd() / 'file_management/dynamic_files/poecd_stats.json'
+    OFFICIAL_STATIC = Path.cwd() / 'file_management/dynamic_files/official_static.json'
+    OFFICIAL_STATS = Path.cwd() / 'file_management/dynamic_files/official_stats.json'
+    RAW_LISTINGS = Path.cwd() / 'file_management/dynamic_files/raw_listings.json'
+    GLOBAL_POECD_MANAGER = Path.cwd() / 'file_management/dynamic_files/global_poecd_manager.pkl'
+
+
+class ModelPath(Enum):
+    PRICE_PREDICT_MODELS_DIRECTORY = Path.cwd() / 'file_management/price_predict_models'
+    CRAFTING_MODELS_DIRECTORY = Path.cwd() / 'file_management/crafting_models'
+
+
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, set):
+            return list(obj)
+        return super().default(obj)
 
 
 class FilesManager:
@@ -18,37 +51,87 @@ class FilesManager:
     def __init__(self):
         if getattr(self, '_initialized', None):
             return
-
-        self.file_data = io_utils.load_data_files()
-
         self._initialized = True
 
-    def _get_path_data(self, path_e: io_utils.DataPath):
-        if isinstance(path_e, io_utils.DataPath):
-            return self.file_data[path_e]
-        else:
-            raise TypeError(f"Received unexpected type {type(path_e)}")
+        self._file_data = dict()
 
-    def has_data(self, path_e: io_utils.DataPath):
-        if isinstance(path_e, ModelPath):
-            raise TypeError(f"Type {ModelPath.__class__} not supported. Use model-specific functions in FilesManager.")
+    @staticmethod
+    def _create_file(path: Path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch(exist_ok=False)
 
-        file_size = os.path.getsize(path_e.value)
+    @log_errors(logging.getLogger())
+    def fetch_data(self, data_path_e: io_utils.DataPath, default: Any = None, missing_ok=True):
+        if data_path_e in self._file_data:
+            return self._file_data[data_path_e]
 
-        if path_e.value.suffix == '.json':
-            return file_size >= 2
-        else:
-            return file_size > 0
+        path = data_path_e.value
 
-    def save_data(self, paths: list[io_utils.DataPath] = None):
-        if not paths:
-            data_paths = [path_e.value for path_e in io_utils.DataPath]
-            model_paths = [path_e.value for path_e in io_utils.ModelPath]
-            paths = [*data_paths, *model_paths]
+        supported_types = {'.json', '.csv', '.pkl'}
+        if path.suffix not in supported_types:
+            raise ValueError(f"Unsupported file type {path.suffix}")
 
+        if not path.exists():
+            if not missing_ok:
+                raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
+
+            logging.info(f"Path '{str(path)}' does not exist. Creating with default {default}")
+            self._create_file(path)
+            return default
+
+        if path.suffix == '.json':
+            with open(path, encoding='utf-8') as file:
+                try:
+                    data = json.load(file)
+                    return data
+                except json.decoder.JSONDecodeError:
+                    logging.warning(f"Failed to decode JSON from {path}. Returning default {default}")
+                    return default
+        elif path.suffix == '.csv':
+            return pd.read_csv(path)
+        elif path.suffix == '.pkl':
+            try:
+                with open(path, 'rb') as file:
+                    return pickle.load(file)
+            except EOFError:
+                return default
+
+    @staticmethod
+    def _write_to_file(file_path: Path, data):
+        if file_path.suffix not in {'.json', '.csv', '.pkl'}:
+            raise ValueError(f"Unsupported file type {file_path.suffix}")
+
+            # Write to a temp file in the same directory
+        with tempfile.NamedTemporaryFile(mode='wb' if file_path.suffix == '.pkl' else 'w',
+                                         dir=file_path.parent,
+                                         delete=False,
+                                         suffix=file_path.suffix,
+                                         encoding='utf-8' if file_path.suffix in {'.json', '.csv'} else None) as tmp:
+            tmp_path = Path(tmp.name)
+
+            if file_path.suffix == '.json':
+                json.dump(data, tmp, indent=2, cls=SetEncoder)
+            elif file_path.suffix == '.csv':
+                # pandas to_csv wants a file path or file-like object
+                tmp.close()
+                data.to_csv(tmp_path, index=False)
+            elif file_path.suffix == '.pkl':
+                pickle.dump(data, tmp)
+
+            # Atomic move
+        os.replace(tmp_path, file_path)
+
+    def cache_data(self, path: DataPath, data: Any):
+        self._file_data[path] = data
+
+    def save_data(self, paths: list[io_utils.DataPath]):
         for path_e in paths:
-            io_utils.write_to_file(data=self._get_path_data(path_e),
-                                   file_path=path_e.value)
+            path = path_e.value
+            if not path.exists():
+                self._create_file(path)
+
+            self._write_to_file(data=self._file_data[path_e],
+                                file_path=path_e.value)
 
     @staticmethod
     def save_price_predict_model(atype: str, model: xgb.Booster):

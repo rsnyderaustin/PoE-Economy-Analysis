@@ -5,7 +5,7 @@ from sklearn.decomposition import PCA
 
 
 def plot_correlations(df: pd.DataFrame, atype: str):
-    df = df.drop(columns=['exalts'], errors='ignore')
+    df = df.drop(columns=['divs'], errors='ignore')
     corr = df.corr()
     plt.figure(figsize=(8, 6))
     plt.title(f'{atype}')
@@ -43,7 +43,7 @@ def plot_pca(features_df: pd.DataFrame, price_column: str):
     plt.title("Clusters of Mod Combinations (Excluding Price) Based on PCA Components")
     plt.xlabel("PCA Component 1")
     plt.ylabel("PCA Component 2")
-    plt.legend(title='exalts')
+    plt.legend(title='divs')
     plt.show()
 
 

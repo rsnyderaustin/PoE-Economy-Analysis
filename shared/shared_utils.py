@@ -1,15 +1,10 @@
-import pprint
+import logging
 import re
-from collections import Counter
-from datetime import datetime
-
-import pandas as pd
-import pytz
+from datetime import datetime, date
 
 import file_management
 from file_management import DataPath
-from .trade_enums import Currency
-from .item_enums import ItemCategory
+from shared.enums.trade_enums import Currency
 
 
 def extract_values_from_text(text) -> int | float | tuple | None:
@@ -69,31 +64,6 @@ def sanitize_mod_text(mod_text: str):
     return result
 
 
-def today_date() -> str:
-    central_tz = pytz.timezone("America/Chicago")
-    central_now = datetime.now(central_tz)
-
-    # Format as MM/DD/YYYY
-    formatted_date = central_now.strftime("%m-%d-%Y")
-    return formatted_date
-
-
-def determine_central_date(timestamp_str):
-    utc_time = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%SZ")
-    utc_time = utc_time.replace(tzinfo=pytz.utc)
-
-    # Define the Central Time zone
-    central_tz = pytz.timezone('US/Central')
-
-    # Convert the UTC time to Central Time
-    central_time = utc_time.astimezone(central_tz)
-
-    # Get only the date in Central Time
-    central_date = central_time.date()
-
-    return central_date
-
-
 class CurrencyConverter:
     _instance = None
     _initialized = None
@@ -108,8 +78,8 @@ class CurrencyConverter:
             return
 
         files_manager = file_management.FilesManager()
+        conversions_df = files_manager.fetch_data(data_path_e=DataPath.CURRENCY_CONVERSIONS, missing_ok=False)
 
-        conversions_df = files_manager.file_data[DataPath.CURRENCY_CONVERSIONS]
         self.conversions_dict = dict()
         conversions_df.apply(self._apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
 
@@ -117,32 +87,30 @@ class CurrencyConverter:
 
     @staticmethod
     def _apply_create_conversions_dict(row, conversions_dict: dict):
-        date = datetime.strptime(row['Date'], '%Y-%m-%d')
-        currency = row['Currency']
-        conversion_rate = row['ExaltPerCurrency']
+        observation_date = datetime.strptime(row['date'], '%Y-%m-%d')
+        currency = row['currency']
+        conversion_rate = row['div_per_currency']
 
         if date not in conversions_dict:
-            conversions_dict[date] = dict()
+            conversions_dict[observation_date] = dict()
 
-        conversions_dict[date][currency] = conversion_rate
+        conversions_dict[observation_date][currency] = conversion_rate
 
-    def convert_to_exalts(self, currency: Currency, currency_amount: int | float, relevant_date: datetime):
-        if currency == Currency.EXALTED_ORB:
+    def convert_to_divs(self, currency: Currency, currency_amount: int | float, relevant_date: date):
+        if currency == Currency.DIVINE_ORB:
             return currency_amount
 
-        most_recent_date = min(self.conversions_dict.keys(), key=lambda d: abs(d - relevant_date))
-        exchange_rate = self.conversions_dict[most_recent_date][currency.value]
+        closest_date = min(self.conversions_dict.keys(), key=lambda d: abs(d - relevant_date))
+
+        days_between = (closest_date - relevant_date).days
+        if days_between >= 3:
+            logging.error(f"Date between relevant date and closest currency price observation dates in "
+                          f"CurrencyConverter.convert_to_divs is {days_between}.")
+
+        exchange_rate = self.conversions_dict[closest_date][currency.value]
 
         return currency_amount * exchange_rate
 
 
-def log_dict(dict_, only_real_values: bool = True):
-    print("\n\n")
-    if only_real_values:
-        dict_ = {
-            col: val
-            for col, val in dict_.items() if val and not pd.isna(val)
-        }
-    pprint.pprint(dict_)
 
 

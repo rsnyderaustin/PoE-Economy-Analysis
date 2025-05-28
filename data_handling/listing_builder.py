@@ -1,13 +1,20 @@
-import logging
+
 import pprint
+import re
 
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
-from poecd_api import GlobalPoecdAtypeModsManager
-from shared import ATypeClassifier, shared_utils, ModClass, ApiResponseParser
-from . import utils
 from poecd_api.mods_management import GlobalPoecdAtypeModsManager
+from shared import shared_utils
+from .atype_classifier import ATypeClassifier
+from shared.logging import LogFile, LogsHandler
+from shared.enums.item_enums import ModAffixType
+from shared.enums.trade_enums import ModClass
+from . import utils
+from .api_response_parser import ApiResponseParser
 from .mod_matching import ModMatcher
+
+parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
 
 class ListingBuilder:
@@ -15,8 +22,7 @@ class ListingBuilder:
     def __init__(self, global_atypes_manager: GlobalPoecdAtypeModsManager):
         self._mod_resolver = _ModResolver(global_atypes_manager)
 
-    def build_listing(self, api_item_response: dict):
-        rp = ApiResponseParser(api_item_response)
+    def build_listing(self, rp: ApiResponseParser):
         minutes_since_listed = utils.determine_minutes_since(
             relevant_date=rp.date_fetched
         )
@@ -60,7 +66,7 @@ class _ModResolver:
         self.mod_matcher = ModMatcher(global_poecd_mods_manager)
 
         self.files_manager = FilesManager()
-        self.file_item_mods = self.files_manager.file_data[DataPath.MODS] or dict()
+        self.file_item_mods = self.files_manager.fetch_data(data_path_e=DataPath.MODS, default=dict())
 
         self.current_rp = None
         self.current_atype = None
@@ -96,13 +102,41 @@ class _ModResolver:
 
         return sub_mods
 
-    def _create_item_mod(self, mod_data: dict, mod_class: ModClass):
+    @staticmethod
+    def _determine_mod_affix_type(mod_dict: dict) -> ModAffixType | None:
+        mod_affix = None
+        if mod_dict['tier']:
+            first_letter = mod_dict['tier'][0]
+            if first_letter == 's':
+                mod_affix = ModAffixType.SUFFIX
+            elif first_letter == 'p':
+                mod_affix = ModAffixType.PREFIX
+            else:
+                parse_log.error(f"Did not recognize first character as an affix type for mod tier {mod_dict['tier']}.")
+                return None
+
+        return mod_affix
+
+    @staticmethod
+    def _determine_mod_tier(mod_dict: dict) -> int | None:
+        mod_tier = None
+        if mod_dict['tier']:
+            mod_tier_match = re.search(r'\d+', mod_dict['tier'])
+            if mod_tier_match:
+                mod_tier = mod_tier_match.group()
+            else:
+                parse_log.info(f"Did not find a tier number for mod tier {mod_dict['tier']}")
+                return None
+
+        return int(mod_tier) if mod_tier else None
+
+    def _create_item_mod(self, mod_data: dict, mod_class: ModClass, affix_type: ModAffixType):
         new_mod = ItemMod(
             atype=self.current_atype,
             mod_class_e=mod_class,
             mod_name=mod_data['name'],
-            affix_type_e=utils.determine_mod_affix_type(mod_data),
-            mod_tier=utils.determine_mod_tier(mod_data),
+            affix_type_e=affix_type,
+            mod_tier=self._determine_mod_tier(mod_data),
             mod_ilvl=int(mod_data['level'])
         )
         magnitudes = mod_data['magnitudes']
@@ -121,7 +155,8 @@ class _ModResolver:
         matched_poecd_mod_id = self.mod_matcher.match_mod(new_mod)
 
         if not matched_poecd_mod_id:
-            raise RuntimeError(f"Was not able to match item mod:\n{pprint.pprint(new_mod)}")
+            parse_log.error(f"Was not able to match item mod:\n{pprint.pprint(new_mod)}")
+            return new_mod
 
         poecd_mod = self._global_poecd_mods_manager.fetch_mod(atype=new_mod.atype,
                                                               mod_id=matched_poecd_mod_id)
@@ -147,16 +182,17 @@ class _ModResolver:
         ]
         for mod_class_e, mod_data in mod_datas:
             mod_ids = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
-            affix_type = utils.determine_mod_affix_type(mod_data)
+            affix_type = self._determine_mod_affix_type(mod_data)
             mod_id = generate_mod_id(atype=self.current_atype, mod_ids=mod_ids, affix_type=affix_type)
 
             if mod_id in self.file_item_mods:
                 mods.append(self.file_item_mods[mod_id])
                 continue
 
-            logging.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
+            parse_log.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
             new_mod = self._create_item_mod(mod_data=mod_data,
-                                            mod_class=mod_class_e)
+                                            mod_class=mod_class_e,
+                                            affix_type=affix_type)
             self.file_item_mods[new_mod.mod_id] = new_mod  # Add the new mod to our mod JSON file
             mods.append(new_mod)
 

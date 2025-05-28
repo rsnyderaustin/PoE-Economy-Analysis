@@ -3,7 +3,7 @@ import random
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ModifiableListing, ItemMod
 from shared import ModClass
-from shared.item_enums import ModAffixType
+from shared.enums import ModAffixType
 
 
 def _mods_into_dict(mods: list[ItemMod]):
@@ -29,9 +29,9 @@ class ModsFetcher:
 
     def __init__(self):
         files_manager = FilesManager()
-        mods = files_manager.file_data[DataPath.MODS]
+        mods = files_manager.fetch_data(data_path_e=DataPath.MODS, default={})
 
-        self.mods_dict = _mods_into_dict(mods)
+        self.mods_dict = _mods_into_dict(list(mods.values))
 
     def fetch_mod_tiers(self,
                         atype: str,

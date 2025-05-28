@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from enum import Enum
 
 import trade_api
-from shared import trade_enums, item_enums, ItemCategoryGroups, WhichCategoryType
+from shared import ItemCategoryGroups, WhichCategoryType
+from shared.enums import trade_enums
 
 
 class MetaFilter:
@@ -60,7 +61,8 @@ class QueryPresets:
         item_categories = ItemCategoryGroups.fetch_martial_weapon_categories(which_type=WhichCategoryType.TRADE)
         currencies = [
             trade_enums.Currency.EXALTED_ORB,
-            trade_enums.Currency.DIVINE_ORB
+            trade_enums.Currency.DIVINE_ORB,
+            trade_enums.Currency.CHAOS_ORB
         ]
 
         currency_amounts = [(1, 1)]
