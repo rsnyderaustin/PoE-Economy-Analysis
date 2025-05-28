@@ -60,3 +60,4 @@ class ItemCategory(Enum):
     SKILL_GEM = 'skill_gem'
     META_GEM = 'meta_gem'
     SUPPORT_GEM = 'support_gem'
+    JEWEL = 'jewel'
