@@ -1,11 +1,14 @@
 
-import logging
 from datetime import datetime
 
 import requests
 
 from shared import env_loader
+from shared.logging import LogsHandler, LogFile, log_errors
 from trade_api.request_throttler import RequestThrottler
+
+
+api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 
 def chunk_list(items: list, chunk_size: int = 10):
@@ -39,6 +42,7 @@ class TradeItemsFetcher:
     items_fetched = 0
     class_start = datetime.now()
 
+    @log_errors(api_log)
     @classmethod
     def _post_for_search_id(cls, query):
         response = cls.request_throttler.send_request(
@@ -52,6 +56,7 @@ class TradeItemsFetcher:
 
         return json_data
 
+    @log_errors(api_log)
     @classmethod
     def _get_with_item_ids(cls, post_response, item_ids) -> list:
         chunked_list = chunk_list(items=item_ids, chunk_size=10)
@@ -78,7 +83,6 @@ class TradeItemsFetcher:
                 cookies=cookies
             )
             response.raise_for_status()
-            # logging.info("GET -> items.")
             json_data = response.json()
             result = json_data['result']
             response_items.extend(result)

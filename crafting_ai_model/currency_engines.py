@@ -4,9 +4,10 @@ from abc import abstractmethod, ABC
 
 from crafting_ai_model.mod_rolling import ModRoller
 from instances_and_definitions import ModifiableListing
-from shared import ItemCategoryGroups, LogsHandler, LogFile
+from shared import ItemCategoryGroups
+from shared.logging import LogsHandler, LogFile, log_errors
 from shared.enums.item_enums import ItemCategory
-from shared.enums.trade_enums import Rarity, ModClass
+from shared.enums.trade_enums import Rarity, ModClass, Currency
 from . import utils
 
 
@@ -21,24 +22,23 @@ class Outcome:
 
 
 class CurrencyEngine(ABC):
-    item_id = None
+    currency_class = None
 
+    @log_errors(craft_log)
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not hasattr(cls, 'item_id') or cls.item_id is None:
-            raise ValueError(f"Class {cls.__name__} must define 'item_id'")
+        if not hasattr(cls, 'currency_class') or cls.currency_class is None:
+            raise ValueError(f"Class {cls.__name__} must define 'currency_class'")
 
     @abstractmethod
     def apply(self, mod_roller: ModRoller, listing: ModifiableListing) -> Outcome:
         pass
 
-    def __str__(self):
-        return self.__class__.item_id
-
 
 class ArcanistsEtcher(CurrencyEngine):
-    item_id = 'etcher'
+    currency_class = Currency.ARCANISTS_ETCHER
 
+    @log_errors(craft_log)
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category not in ItemCategoryGroups.fetch_non_martial_weapon_categories():
@@ -71,8 +71,9 @@ class ArcanistsEtcher(CurrencyEngine):
 
 
 class ArmourersScrap(CurrencyEngine):
-    item_id = 'scrap'
+    currency_class = Currency.ARMOURERS_SCRAP
 
+    @log_errors(craft_log)
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category not in ItemCategoryGroups.fetch_armour_categories():
@@ -105,8 +106,7 @@ class ArmourersScrap(CurrencyEngine):
 
 
 class ArtificersOrb(CurrencyEngine):
-
-    item_id = 'artificers'
+    currency_class = Currency.ARTIFICERS_ORB
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -128,7 +128,7 @@ class ArtificersOrb(CurrencyEngine):
 
 
 class BlacksmithsWhetstone(CurrencyEngine):
-    item_id = 'whetstone'
+    currency_class = Currency.BLACKSMITHS_WHETSTONE
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -162,7 +162,7 @@ class BlacksmithsWhetstone(CurrencyEngine):
 
 
 class ChaosOrb(CurrencyEngine):
-    item_id = 'chaos'
+    currency_class = Currency.CHAOS_ORB
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -197,8 +197,9 @@ class ChaosOrb(CurrencyEngine):
 
 
 class DivineOrb(CurrencyEngine):
-    item_id = 'divine'
+    currency_class = Currency.DIVINE_ORB
 
+    @log_errors(craft_log)
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
@@ -250,7 +251,7 @@ class DivineOrb(CurrencyEngine):
 
 
 class ExaltedOrb(CurrencyEngine):
-    item_id = 'exalt'
+    currency_class = Currency.EXALTED_ORB
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -279,7 +280,7 @@ class ExaltedOrb(CurrencyEngine):
 
 
 class FracturingOrb(CurrencyEngine):
-    item_id = 'fracturing-orb'
+    currency_class = Currency.FRACTURING_ORB
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -311,7 +312,7 @@ class FracturingOrb(CurrencyEngine):
 
 
 class GemcuttersPrism(CurrencyEngine):
-    item_id = 'gcp'
+    currency_class = Currency.GEMCUTTERS_PRISM
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -335,7 +336,7 @@ class GemcuttersPrism(CurrencyEngine):
 
 
 class GlassblowersBauble(CurrencyEngine):
-    item_id = 'bauble'
+    currency_class = Currency.GLASSBLOWERS_BAUBLE
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -359,7 +360,7 @@ class GlassblowersBauble(CurrencyEngine):
 
 
 class OrbOfAlchemy(CurrencyEngine):
-    item_id = 'alch'
+    currency_class = Currency.ORB_OF_ALCHEMY
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -391,7 +392,7 @@ class OrbOfAlchemy(CurrencyEngine):
 
 
 class OrbOfAnnulment(CurrencyEngine):
-    item_id = 'annul'
+    currency_class = Currency.ORB_OF_ANNULMENT
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -425,7 +426,7 @@ class OrbOfAnnulment(CurrencyEngine):
 
 
 class OrbOfAugmentation(CurrencyEngine):
-    item_id = 'aug'
+    currency_class = Currency.ORB_OF_AUGMENTATION
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -454,7 +455,7 @@ class OrbOfAugmentation(CurrencyEngine):
 
 
 class OrbOfTransmutation(CurrencyEngine):
-    item_id = 'transmute'
+    currency_class = Currency.TRANSMUTATION_SHARD
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -487,7 +488,7 @@ class OrbOfTransmutation(CurrencyEngine):
 
 
 class RegalOrb(CurrencyEngine):
-    item_id = 'regal'
+    currency_class = Currency.REGAL_ORB
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
@@ -510,7 +511,7 @@ class RegalOrb(CurrencyEngine):
 
 
 class ScrollOfWisdom(CurrencyEngine):
-    item_id = 'wisdom'
+    currency_class = Currency.SCROLL_OF_WISDOM
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):

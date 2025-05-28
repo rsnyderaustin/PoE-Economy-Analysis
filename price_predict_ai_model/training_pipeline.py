@@ -13,6 +13,10 @@ from price_predict_ai_model import visuals
 from shared import env_loader
 from psql import PostgreSqlManager
 from stat_analysis.stats_prep import StatsPrep
+from shared.logging import LogFile, LogsHandler, log_errors
+
+
+price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
 
 class PricePredictModelPipeline:
@@ -120,7 +124,7 @@ class PricePredictModelPipeline:
         test_results_df.sort_values(by='error')
 
         mse = mean_squared_error(test_y, test_predictions)
-        logging.info(f"Atype {atype} MSE: {mse}")
+        price_predict_log.info(f"Atype {atype} MSE: {mse}")
 
         if self.should_plot_visuals:
             visuals.plot_feature_importance(model=self.model, atype=atype)

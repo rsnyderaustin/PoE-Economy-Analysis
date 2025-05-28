@@ -1,8 +1,16 @@
-
+import functools
 import logging
 from abc import ABC
 from enum import Enum
 from pathlib import Path
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    filename=Path.cwd() / 'shared/logging/logs/all_logs.log',
+    filemode='a',
+    format='%(asctime)s - %(levelname)s - %(message)s\n'
+)
 
 
 class LogFile(Enum):
@@ -11,23 +19,28 @@ class LogFile(Enum):
     CRAFTING_MODEL = Path.cwd() / 'shared/logging/logs/crafting_model.log'
     STATS_PREP = Path.cwd() / 'shared/logging/logs/stats_prep.log'
     EXTERNAL_APIS = Path.cwd() / 'shared/logging/logs/external_apis.log'
-    OTHER = Path.cwd() / 'shared/logging/logs/other.log'
+    PSQL = Path.cwd() / 'shared/logging/logs/psql.log'
+    PRICE_PREDICT_MODEL = Path.cwd() / 'shared/logging/logs/price_predict_model.log'
 
 
 class Logger(ABC):
 
-    def __init__(self, log_name: LogFile, formatter: logging.Formatter = None):
-        self._log_name = log_name
-        self._file_path = log_name.value
-        self._formatter = formatter or logging.Formatter('%(asctime)s - %(message)s')
+    def __init__(self, log_name: LogFile | str, file_path: Path = None, formatter: logging.Formatter = None):
+        logger_name = log_name if isinstance(log_name, str) else log_name.name
+        file_path = Path(file_path or log_name.value if isinstance(log_name, LogFile) else f'logs/{logger_name}.log')
+        file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        self._logger = logging.getLogger(str(self._log_name))
-        self._logger.setLevel(logging.DEBUG)
+        formatter = formatter or logging.Formatter('%(asctime)s - %(levelname)s - %(message)s\n')
 
-        file_handler = logging.FileHandler(self._file_path)
-        file_handler.setFormatter(self._formatter)
+        self._logger = logging.getLogger(logger_name)
+        self._logger.setLevel(logging.INFO)
+        self._logger.propagate = True
 
-        self._logger.addHandler(file_handler)
+        # Only add handlers once
+        if not self._logger.handlers:
+            file_handler = logging.FileHandler(file_path)
+            file_handler.setFormatter(formatter)
+            self._logger.addHandler(file_handler)
 
     def get_logger(self) -> logging.Logger:
         return self._logger

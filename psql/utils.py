@@ -1,8 +1,11 @@
-import logging
+
 import re
 from typing import Iterable
 
+from shared.logging import LogFile, LogsHandler, log_errors
 
+
+psql_log = LogsHandler().fetch_log(log_e=LogFile.PSQL)
 def python_dtype_to_postgres(dtype) -> str:
     """
     Convert a Python/numpy/pandas dtype to a PostgreSQL column type.
@@ -30,6 +33,7 @@ def python_dtype_to_postgres(dtype) -> str:
         return 'TEXT'
 
 
+@log_errors(psql_log)
 def determine_col_dtypes(raw_data: dict):
     col_dtypes = dict()
     for col, value in raw_data.items():
@@ -44,7 +48,7 @@ def determine_col_dtypes(raw_data: dict):
             raise ValueError(f"Column '{col}' is empty or not iterable. Defaulting to 'NoneType'")
 
         psql_dtype = python_dtype_to_postgres(dtype)
-        logging.info(f"Raw dtype {dtype} converted to PSQL dtype {psql_dtype}")
+        psql_log.info(f"Raw dtype {dtype} converted to PSQL dtype {psql_dtype}")
         col_dtypes[col] = psql_dtype
 
     return col_dtypes
@@ -71,7 +75,7 @@ def format_data_into_rows(data: dict) -> list:
 
     return formatted_data
 
-
+@log_errors(psql_log)
 def validate_dict_lists(data: dict):
     vtypes = [type(v) for v in data.values()]
     if not all(isinstance(v, list) for v in data.values()):

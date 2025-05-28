@@ -1,11 +1,14 @@
-import logging
 
 from shared import shared_utils
+from shared.logging import LogsHandler, LogFile
 from file_management import FilesManager, DataPath
 from .atype_manager_factory import AtypeManagerFactory
 from .mods_management import GlobalPoecdAtypeModsManager
 from .data_pull import PoecdDataPuller, PoecdEndpoint
 from .internal_source_store import PoecdSourceStore
+
+
+api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 
 def _convert_str_ints(obj):
@@ -48,7 +51,6 @@ class PoecdDataManager:
         self.files_manager.cache_data(DataPath.POECD_STATS, stats_data)
         self.files_manager.save_data(paths=[DataPath.POECD_STATS])
 
-
     def _load_source_store_from_files(self) -> PoecdSourceStore:
         return PoecdSourceStore(
             bases_data=self.files_manager.fetch_data(DataPath.POECD_BASES, missing_ok=False),
@@ -61,7 +63,7 @@ class PoecdDataManager:
         """
         mod = bases_data.get('mod', {})
         if mod.get('5162') != "Bow Attacks fire # additional Arrows" or mod.get('5161') != "Bow Attacks fire an additional Arrow":
-            logging.error("Arrow mod fix skipped: expected format not found.")
+            api_log.error("Arrow mod fix skipped: expected format not found.")
             return
 
         # Remove old mod

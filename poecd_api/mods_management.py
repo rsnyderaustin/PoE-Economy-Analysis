@@ -1,4 +1,4 @@
-from shared.enums import ModAffixType
+from shared.enums.item_enums import ModAffixType
 
 
 class PoecdMod:

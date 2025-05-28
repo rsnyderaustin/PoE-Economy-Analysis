@@ -3,20 +3,27 @@ import logging
 import sqlalchemy
 from sqlalchemy import text, inspect
 
+from shared.logging import LogsHandler, LogFile
 from shared.env_loading import EnvLoader
 from . import utils
 
 
 class PostgreSqlManager:
+    _instance = None
+    _initialized = False
+
     def __new__(cls, *args, **kwargs):
-        if not hasattr(cls, '_instance'):
+        if not cls._instance:
             cls._instance = super(PostgreSqlManager, cls).__new__(cls)
+
         return cls._instance
 
     def __init__(self, skip_sql=False):
-        if getattr(self, '_initialized', False):
+        cls = self.__class__
+        if not cls._initialized:
             return
-        self._initialized = True
+
+        cls._initialized = True
 
         if skip_sql:
             print("Skipping SQL initialization.")
@@ -45,7 +52,7 @@ class PostgreSqlManager:
 
         if missing_col_names:
             with self.engine.begin() as conn:
-                logging.info(f"Adding missing '{table_name}' col names: {missing_col_names}")
+                psql_log.info(f"Adding missing '{table_name}' col names: {missing_col_names}")
                 for col, dtype in missing_col_dtypes.items():
                     alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
                     conn.execute(alter_stmt)

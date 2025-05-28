@@ -4,9 +4,12 @@ import logging
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from shared.enums import ItemCategory
 from shared.enums.trade_enums import ModClass, Currency, Rarity
 from shared import shared_utils
+from shared.logging import LogsHandler, LogFile
+
+
+parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
 
 @dataclass
@@ -59,7 +62,7 @@ class ApiResponseParser:
         properties = dict()
 
         if 'properties' not in self.item_data:
-            logging.info(f"No item properties found for item '{self.item_name}'.")
+            parse_log.info(f"No item properties found for item '{self.item_name}'.")
             return dict()
 
         # The first property is the item category

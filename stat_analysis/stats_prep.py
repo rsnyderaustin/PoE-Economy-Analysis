@@ -7,7 +7,11 @@ import pandas as pd
 from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 
+from shared.logging import LogFile, LogsHandler
 from . import utils
+
+
+stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
 
 
 class CorrelationAnalyzer:
@@ -52,7 +56,7 @@ class CorrelationAnalyzer:
             pair_corr = product_df.corrwith(prices)
             corr_val = pair_corr[(mod1, mod2)]
             if corr_val >= correlation_threshold:
-                logging.info(f"Valid column correlation {(mod1, mod2)}: {corr_val}")
+                stats_log.info(f"Valid column correlation {(mod1, mod2)}: {corr_val}")
                 valid_pairs_weights[(mod1, mod2)] = corr_val
 
         return valid_pairs_weights
@@ -333,7 +337,7 @@ class StatsPrep:
                         y=plot[f"log_{price_column}"])
         plt.show()"""
 
-        logging.info("Determining correct prices and isolated indices via NearestNeighbor.")
+        stats_log.info("Determining correct prices and isolated indices via NearestNeighbor.")
         # We pass in prices instead of log_prices here on purpose to KNN
         new_prices, out_of_range_indices = cls._normalize_prices_via_nearest_neighbor(
             features_df=norm_features.copy(),

@@ -2,11 +2,10 @@
 import json
 import re
 from enum import Enum
+from pathlib import Path
+from urllib.parse import urljoin
 
 import requests
-
-from shared import PathProcessor
-
 
 def _normalize_data(bases_data: dict):
     bases_data['base'] = {
@@ -28,21 +27,8 @@ class PoecdDataPuller:
 
         self.source_url = 'https://www.craftofexile.com/json/poe2/'
 
-        self.bases_input_url = (
-            PathProcessor(
-                path=self.source_url
-            )
-            .attach_url_endpoint(endpoint=PoecdEndpoint.BASES.value)
-            .path
-        )
-
-        self.mods_input_url = (
-            PathProcessor(
-                path=self.source_url
-            )
-            .attach_url_endpoint(endpoint=PoecdEndpoint.STATS.value)
-            .path
-        )
+        self.bases_input_url = Path(urljoin(self.source_url, PoecdEndpoint.BASES.value))
+        self.mods_input_url = Path(urljoin(self.source_url, PoecdEndpoint.STATS.value))
 
         self.cookies = {
             'PHPSESSID': '7p4qt447dai0mudpdmqhg763n9',
@@ -73,7 +59,7 @@ class PoecdDataPuller:
     def pull_data(self, endpoint: PoecdEndpoint):
 
         import_url = self.mods_input_url if endpoint == PoecdEndpoint.STATS else self.bases_input_url
-        response = requests.get(url=import_url,
+        response = requests.get(url=str(import_url),
                                 headers=self.headers,
                                 cookies=self.cookies)
         response.raise_for_status()

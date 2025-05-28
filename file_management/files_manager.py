@@ -7,6 +7,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from shared.logging import log_errors
 import pandas as pd
 from stable_baselines3 import PPO
 import xgboost as xgb
@@ -59,6 +60,7 @@ class FilesManager:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.touch(exist_ok=False)
 
+    @log_errors(logging.getLogger())
     def fetch_data(self, data_path_e: io_utils.DataPath, default: Any = None, missing_ok=True):
         if data_path_e in self._file_data:
             return self._file_data[data_path_e]

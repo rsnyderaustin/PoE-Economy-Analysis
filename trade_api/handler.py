@@ -5,10 +5,13 @@ from datetime import datetime
 
 from file_management import FilesManager, DataPath
 from psql import PostgreSqlManager
-from shared import ApiResponseParser, shared_utils
+from shared import ApiResponseParser, shared_utils, LogsHandler, LogFile
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
+
+
+api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 
 class _ListingImportGatekeeper:
@@ -96,7 +99,7 @@ class _FilterSplitter:
         num_parts = min(math.floor(n_items / 100), (filter_range[1] + 1 - filter_range[0]))
 
         ranges = cls._split_range_into_parts(filter_range, num_parts=num_parts)
-        logging.info(f"{n_items} responses split {meta_filter.filter_type} from {filter_range} into {ranges}")
+        api_log.info(f"{n_items} responses split {meta_filter.filter_type} from {filter_range} into {ranges}")
 
         filters = []
         for value_range in ranges:
@@ -143,11 +146,11 @@ class TradeApiHandler:
 
     def _log_responses_progress(self):
         minutes_since_start = round((datetime.now() - self.program_start).seconds / 60, 1)
-        logging.info(f"Total valid responses in {minutes_since_start} minutes: {self.total_valid_responses}")
+        api_log.info(f"Total valid responses in {minutes_since_start} minutes: {self.total_valid_responses}")
 
     def generate_responses_from_queries(self, queries: list[Query]):
         for i, query in enumerate(queries):
-            logging.info(f"Processing query {i + 1} of {len(queries)} queries.")
+            api_log.info(f"Processing query {i + 1} of {len(queries)} queries.")
             for responses, response_results_count in self._process_query(query):
                 responses = [shared_utils.sanitize_dict_texts(response) for response in responses]
                 response_parsers = [ApiResponseParser(response) for response in responses]
@@ -156,7 +159,7 @@ class TradeApiHandler:
                                                                                 date_fetched=rp.date_fetched)]
                 self.raw_listings.extend([rp.api_d for rp in valid_responses])
 
-                logging.info(f"{len(valid_responses)} valid query responses out of {len(responses)}.")
+                api_log.info(f"{len(valid_responses)} valid query responses out of {len(responses)}.")
                 self.total_valid_responses += len(valid_responses)
                 self.total_responses += len(responses)
 
@@ -177,7 +180,7 @@ class TradeApiHandler:
 
         # If we didn't fetch a ton of raw responses then just end the query
         if response_results_count < self.split_threshold:
-            logging.info(f"Only fetched {len(responses)} from initial query. Will not split. Returning.")
+            api_log.info(f"Only fetched {len(responses)} from initial query. Will not split. Returning.")
             return
 
         for i in list(range(len(query.meta_filters))):

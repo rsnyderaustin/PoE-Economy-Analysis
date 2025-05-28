@@ -1,6 +1,7 @@
+import functools
 import pprint
 import re
-from datetime import datetime
+from datetime import datetime, date
 
 import pandas as pd
 
@@ -96,7 +97,7 @@ class CurrencyConverter:
 
         conversions_dict[date][currency] = conversion_rate
 
-    def convert_to_exalts(self, currency: Currency, currency_amount: int | float, relevant_date: datetime):
+    def convert_to_exalts(self, currency: Currency, currency_amount: int | float, relevant_date: date):
         if currency == Currency.EXALTED_ORB:
             return currency_amount
 
@@ -106,13 +107,5 @@ class CurrencyConverter:
         return currency_amount * exchange_rate
 
 
-def log_dict(dict_, only_real_values: bool = True):
-    print("\n\n")
-    if only_real_values:
-        dict_ = {
-            col: val
-            for col, val in dict_.items() if val and not pd.isna(val)
-        }
-    pprint.pprint(dict_)
 
 

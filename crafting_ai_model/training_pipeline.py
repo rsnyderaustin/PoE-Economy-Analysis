@@ -10,6 +10,10 @@ from trade_api import TradeApiHandler
 from trade_api.query import QueryPresets
 from .environment import CraftingEnvironment
 from data_handling import ListingBuilder
+from shared.logging import LogsHandler, LogFile, log_errors
+
+
+craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
 
 
 class CraftingModelPipeline:
@@ -41,6 +45,7 @@ class CraftingModelPipeline:
             for listing in listings:
                 self._train_crafting_model(listing=listing)
 
+    @log_errors(craft_log)
     def _train_crafting_model(self, listing: ModifiableListing):
         price_predict_model = self._files_manager.load_price_predict_model(atype=listing.item_atype)
         if not price_predict_model:

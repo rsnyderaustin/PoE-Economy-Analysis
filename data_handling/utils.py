@@ -1,11 +1,9 @@
 import logging
-import re
 from datetime import datetime, timezone
 
+from shared.logging import log_errors
 import pytz
 from dateutil.parser import isoparse
-
-from shared.enums import ModAffixType
 
 _dt = datetime(2025, 4, 4, 12, 0, 0)
 _pacific = pytz.timezone('US/Pacific')
@@ -25,34 +23,7 @@ def determine_minutes_since(relevant_date: str | datetime, later_date: str | dat
     minutes_diff = (later_date - relevant_date).total_seconds() / 60
     return round(minutes_diff, 2)
 
-
-def determine_mod_affix_type(mod_dict: dict) -> ModAffixType:
-    mod_affix = None
-    if mod_dict['tier']:
-        first_letter = mod_dict['tier'][0]
-        if first_letter == 's':
-            mod_affix = ModAffixType.SUFFIX
-        elif first_letter == 'p':
-            mod_affix = ModAffixType.PREFIX
-        else:
-            raise ValueError(f"Did not recognize first character as an affix type for "
-                             f"item tier {mod_dict['tier']}")
-
-    return mod_affix
-
-
-def determine_mod_tier(mod_dict: dict) -> int | None:
-    mod_tier = None
-    if mod_dict['tier']:
-        mod_tier_match = re.search(r'\d+', mod_dict['tier'])
-        if mod_tier_match:
-            mod_tier = mod_tier_match.group()
-        else:
-            logging.info(f"Did not find a tier number for item tier {mod_dict['tier']}")
-            mod_tier = None
-    return int(mod_tier) if mod_tier else None
-
-
+@log_errors(logging.getLogger())
 def convert_string_into_number(s):
     try:
         int_val = int(s)

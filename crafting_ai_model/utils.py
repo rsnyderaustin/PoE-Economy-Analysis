@@ -1,8 +1,13 @@
 
 from shared import ItemCategoryGroups
-from shared.enums import ItemCategory
+from shared.enums.item_enums import ItemCategory
+from shared.logging import LogsHandler, LogFile, log_errors
 
 
+craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
+
+
+@log_errors(craft_log)
 def determine_max_sockets(item_category: ItemCategory):
     if item_category not in ItemCategoryGroups.fetch_socketable_item_categories():
         return 0

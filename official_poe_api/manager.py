@@ -7,6 +7,10 @@ from pathlib import Path
 import requests
 
 from shared import PathProcessor, shared_utils
+from shared.logging import LogsHandler, LogFile
+
+
+api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 
 class Endpoint(Enum):
@@ -66,15 +70,14 @@ class OfficialApiManager:
 
         self.acceptable_endpoints = ['static', 'stats']
 
-
     def _load_api_data(self, api_url):
-        logging.info(f"Loading stat modifiers from PoE API at url {api_url}")
+        api_log.info(f"Loading stat modifiers from PoE API at url {api_url}")
         headers = self.headers
         headers['Referer'] = api_url
         response = requests.get(url=api_url,
                                 headers=headers)
         response.raise_for_status()
-        logging.info("\tSuccessfully loaded stat modifiers from PoE API.")
+        api_log.info("\tSuccessfully loaded stat modifiers from PoE API.")
 
         json_data = response.json()
         return json_data

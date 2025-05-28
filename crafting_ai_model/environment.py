@@ -1,6 +1,8 @@
 import copy
+import functools
 import pprint
 from dataclasses import dataclass
+from datetime import date
 from typing import Any
 
 import gymnasium as gym
@@ -8,15 +10,20 @@ import numpy as np
 
 from instances_and_definitions import ItemMod, ItemSkill, ModifiableListing
 from price_predict_ai_model import PricePredictor
-from shared import ModClass
+from shared import shared_utils
+from shared.logging import LogsHandler, LogFile, log_errors
+from shared.shared_utils import CurrencyConverter
 from .currency_engines import *
 from .currency_engines import CurrencyEngine
 from .mod_rolling import ModRoller
 
 
+craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
+
+
 def log_action(action: str, done: bool, original_price: float, predicted_price: float, message: str,
                cost: float = None, reward: float = None, listing_data: dict = None):
-    logging.info(f"\n---- New Action ----"
+    craft_log.info(f"\n---- New Action ----"
                  f"\nAction: {action}"
                  f"\nDone crafting: {done}"
                  f"\nAction cost: {cost}"
@@ -179,9 +186,10 @@ class ObservationSpace:
 
         return shape
 
+    @log_errors(craft_log)
     def add_skill(self, skill: ItemSkill):
         if self.num_skills + 1 > self.max_skills:
-            raise ValueError(f"Reached past the skills limit of {self.max_skills}.")
+            raise ValueError(f"ObservationSpace reached past the skills limit of {self.max_skills}.")
 
         skill_i = self.num_skills
         name_key = self._create_skill_name_key(skill_i)
@@ -190,6 +198,7 @@ class ObservationSpace:
         level_key = self._create_skill_level_key(skill_i)
         self._space[level_key] = skill.level
 
+    @log_errors(craft_log)
     def add_mod(self, mod: ItemMod):
         num_mods = self.num_mods[mod.mod_class_e]
 
@@ -218,6 +227,12 @@ class ObservationSpace:
             att: getattr(listing, att) for att in self.__class__.listing_attributes
         }
         self._space.update(attributes)
+
+    def add_currency_cost(self, currency: Currency, exalts_price: float):
+        if currency.value in self._space:
+            craft_log.error(f"Overwriting currency {currency} in ObservationSpace from {self._space[currency.value]} to {exalts_price} exalts.")
+
+        self._space[currency.value] = exalts_price
 
     def get(self) -> np.ndarray:
         return np.array(list(self._space.values()), dtype=np.float32)
@@ -293,8 +308,12 @@ class CraftingEnvironment(gym.Env):
     def _handle_currency_engine_action(self, action: CurrencyEngine) -> tuple:
         done = False
         currency = action
-        currency_cost = shared.currency_converter.convert_to_exalts(currency=str(currency),
-                                                                    currency_amount=1)
+
+        # I believe it's correct to use today's date for establishing currency costs in this model since we really just care about
+        # what
+        currency_cost = CurrencyConverter().convert_to_exalts(currency=currency.currency_class,
+                                                              currency_amount=1,
+                                                              relevant_date=date.today())
 
         # Return a small negative reward if we went over budget
         if self.total_exalts_spent + currency_cost > self.exalts_budget:
@@ -318,7 +337,7 @@ class CraftingEnvironment(gym.Env):
 
         self.listing = outcome.new_listing
 
-        predicted_price = self.price_predictor.predict_prices(listings=[self.listing])[0]
+        predicted_price = self.price_predictor.predict(listing=self.listing)
 
         reward = self._determine_reward(revenue=predicted_price,
                                         cost=self.original_price + self.total_exalts_spent)
@@ -335,7 +354,9 @@ class CraftingEnvironment(gym.Env):
         elif isinstance(action, CurrencyEngine):
             return self._handle_currency_engine_action(action)
 
-    def reset(self):
+    def reset(self, *, seed: int = None, options: dict = None) -> tuple:
         self.listing = copy.deepcopy(self.original_state)
         self.current_price = self.original_price
         self.total_exalts_spent = 0
+
+        return self._create_observation_space(), {}
