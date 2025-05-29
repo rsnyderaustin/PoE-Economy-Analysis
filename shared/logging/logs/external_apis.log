@@ -196,3 +196,33 @@ TypeError: 'classmethod' object is not callable
 
 2025-05-28 19:41:18,934 - INFO - 50 valid query responses out of 50.
 
+2025-05-28 21:22:33,905 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 21:22:34,150 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-28 21:22:34,295 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 21:22:59,166 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 21:22:59,414 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-28 21:22:59,559 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 21:22:59,563 - INFO - 7 valid query responses out of 7.
+

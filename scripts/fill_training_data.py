@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 
 fm = FilesManager()
 responses = fm.fetch_data(data_path_e=DataPath.RAW_LISTINGS, default=[])
-psql_manager = psql.PostgreSqlManager(skip_sql=True)
+psql_manager = psql.PostgreSqlManager(skip_sql=False)
 
 tdp = TrainingDataPopulator(refresh_poecd_source=False,
                             files_manager=fm,

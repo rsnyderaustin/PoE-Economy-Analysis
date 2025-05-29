@@ -5,7 +5,11 @@ import sqlalchemy
 from sqlalchemy import text, inspect
 
 from shared.env_loading import EnvLoader
+from shared.logging import LogsHandler, LogFile
 from . import utils
+
+
+psql_log = LogsHandler().fetch_log(LogFile.PSQL)
 
 
 class PostgreSqlManager:
@@ -33,10 +37,10 @@ class PostgreSqlManager:
         e = EnvLoader()
         user = e.get_env("PSQL_USERNAME")
         passw = e.get_env("PSQL_PASSWORD")
-        host = e.get_env("PSQL_HOST")
+        port = e.get_env("PSQL_PORT")
         db_n = e.get_env("PSQL_DATABASE")
         ip = e.get_env("PSQL_IP")
-        db_url = f"postgresql+psycopg2://{user}:{passw}@{ip}:{host}/{db_n}"
+        db_url = f"postgresql+psycopg2://{user}:{passw}@{ip}:{port}/{db_n}"
         print(db_url)
 
         self.engine = sqlalchemy.create_engine(db_url)
