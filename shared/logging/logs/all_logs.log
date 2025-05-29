@@ -852,3 +852,37 @@ None
 None
 
 
+2025-05-29 08:30:04,492 - INFO - Path 'C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json' does not exist. Creating with default []
+
+2025-05-29 08:30:04,493 - INFO - Path 'C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\file_management\dynamic_files\global_poecd_manager.pkl' does not exist. Creating with default None
+
+2025-05-29 08:30:04,588 - INFO - Path 'C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\file_management\dynamic_files\item_mods.pkl' does not exist. Creating with default {}
+
+2025-05-29 08:30:04,595 - INFO - Processing query 1 of 144 queries.
+
+2025-05-29 08:30:04,655 - ERROR - Exception in send_request: 403 Client Error: Forbidden for url: https://www.pathofexile.com/api/trade2/search/poe2/Dawn%20of%20the%20Hunt
+Traceback (most recent call last):
+  File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\trade_api\request_throttler.py", line 190, in send_request
+    response.raise_for_status()
+  File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 403 Client Error: Forbidden for url: https://www.pathofexile.com/api/trade2/search/poe2/Dawn%20of%20the%20Hunt
+2025-05-29 08:30:04,669 - ERROR - Exception in _post_for_search_id: 403 Client Error: Forbidden for url: https://www.pathofexile.com/api/trade2/search/poe2/Dawn%20of%20the%20Hunt
+Traceback (most recent call last):
+  File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\trade_api\trade_items_fetcher.py", line 47, in _post_for_search_id
+    response = cls.request_throttler.send_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\trade_api\request_throttler.py", line 190, in send_request
+    response.raise_for_status()
+  File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 403 Client Error: Forbidden for url: https://www.pathofexile.com/api/trade2/search/poe2/Dawn%20of%20the%20Hunt
