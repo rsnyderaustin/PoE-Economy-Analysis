@@ -86,4 +86,6 @@ class AType(Enum):
     META_GEM = 'meta_gem'
     SUPPORT_GEM = 'support_gem'
     JEWEL = 'jewel'
+    AMULET = 'amulet'
+    RING = 'ring'
 

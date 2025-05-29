@@ -10,8 +10,61 @@ from shared import shared_utils
 from shared.enums.item_enums import AType
 
 _atype_paths = {
-    AType.ONE_HANDED_MACE: 'https://poe2db.tw/us/One_Hand_Maces#ModifiersCalc'
+    AType.ONE_HANDED_MACE: 'https://poe2db.tw/us/One_Hand_Maces#ModifiersCalc',
+    AType.SCEPTRE: 'https://poe2db.tw/us/Sceptres#ModifiersCalc',
+    AType.SPEAR: 'https://poe2db.tw/us/Spears#ModifiersCalc',
+    AType.BOW: 'https://poe2db.tw/us/Bows#ModifiersCalc',
+    AType.STAFF: 'https://poe2db.tw/us/Staves#ModifiersCalc',
+    AType.TWO_HANDED_MACE: 'https://poe2db.tw/us/Two_Hand_Maces#ModifiersCalc',
+    AType.QUARTERSTAFF: 'https://poe2db.tw/us/Quarterstaves#ModifiersCalc',
+    AType.CROSSBOW: 'https://poe2db.tw/us/Crossbows#ModifiersCalc',
+    AType.AMULET: 'https://poe2db.tw/us/Amulets#ModifiersCalc',
+    AType.WAND: 'https://poe2db.tw/us/Wands#ModifiersCalc',
+    AType.HELMET_INT: 'https://poe2db.tw/us/Helmets_int#ModifiersCalc',
+    AType.HELMET_STR: 'https://poe2db.tw/us/Helmets_str#ModifiersCalc',
+    AType.HELMET_DEX: 'https://poe2db.tw/us/Helmets_dex#ModifiersCalc',
+    AType.HELMET_STR_DEX: 'https://poe2db.tw/us/Helmets_str_dex#ModifiersCalc',
+    AType.HELMET_STR_INT: 'https://poe2db.tw/us/Helmets_str_int#ModifiersCalc',
+    AType.HELMET_DEX_INT: 'https://poe2db.tw/us/Helmets_dex_int#ModifiersCalc',
+    AType.GLOVE_INT: 'https://poe2db.tw/us/Gloves_int#ModifiersCalc',
+    AType.GLOVE_STR: 'https://poe2db.tw/us/Gloves_str#ModifiersCalc',
+    AType.GLOVE_DEX: 'https://poe2db.tw/us/Gloves_dex#ModifiersCalc',
+    AType.GLOVE_STR_DEX: 'https://poe2db.tw/us/Gloves_str_dex#ModifiersCalc',
+    AType.GLOVE_STR_INT: 'https://poe2db.tw/us/Gloves_str_int#ModifiersCalc',
+    AType.GLOVE_DEX_INT: 'https://poe2db.tw/us/Gloves_dex_int#ModifiersCalc',
+    AType.BOOT_INT: 'https://poe2db.tw/us/Boots_int#ModifiersCalc',
+    AType.BOOT_STR: 'https://poe2db.tw/us/Boots_str#ModifiersCalc',
+    AType.BOOT_DEX: 'https://poe2db.tw/us/Boots_dex#ModifiersCalc',
+    AType.BOOT_STR_DEX: 'https://poe2db.tw/us/Boots_str_dex#ModifiersCalc',
+    AType.BOOT_STR_INT: 'https://poe2db.tw/us/Boots_str_int#ModifiersCalc',
+    AType.BOOT_DEX_INT: 'https://poe2db.tw/us/Boots_dex_int#ModifiersCalc',
+
+    AType.BODY_ARMOUR_STR: 'https://poe2db.tw/us/Body_Armours_str#ModifiersCalc',
+    AType.BODY_ARMOUR_DEX: 'https://poe2db.tw/us/Body_Armours_dex#ModifiersCalc',
+    AType.BODY_ARMOUR_INT: 'https://poe2db.tw/us/Body_Armours_int#ModifiersCalc',
+    AType.BODY_ARMOUR_STR_DEX: 'https://poe2db.tw/us/Body_Armours_str_dex#ModifiersCalc',
+    AType.BODY_ARMOUR_STR_INT: 'https://poe2db.tw/us/Body_Armours_str_int#ModifiersCalc',
+    AType.BODY_ARMOUR_DEX_INT: 'https://poe2db.tw/us/Body_Armours_dex_int#ModifiersCalc',
+    AType.BODY_ARMOUR_STR_DEX_INT: 'https://poe2db.tw/us/Body_Armours_str_dex_int#ModifiersCalc',
+
+    AType.SHIELD_STR: 'https://poe2db.tw/us/Shields_str#ModifiersCalc',
+    AType.BUCKLER: 'https://poe2db.tw/us/Shields_dex#ModifiersCalc',
+    AType.SHIELD_INT: 'https://poe2db.tw/us/Shields_int#ModifiersCalc',
+    AType.SHIELD_STR_DEX: 'https://poe2db.tw/us/Shields_str_dex#ModifiersCalc',
+    AType.SHIELD_STR_INT: 'https://poe2db.tw/us/Shields_str_int#ModifiersCalc',
+    AType.SHIELD_DEX_INT: 'https://poe2db.tw/us/Shields_dex_int#ModifiersCalc',
+    FOCUS = 'focus'
+    QUIVER = 'quiver'
+    LIFE_FLASK = 'life_flask'
+    MANA_FLASK = 'mana_flask'
+    SKILL_GEM = 'skill_gem'
+    META_GEM = 'meta_gem'
+    SUPPORT_GEM = 'support_gem'
+    JEWEL = 'jewel'
+    AMULET = 'amulet'
+    RING = 'ring'
 }
+
 
 class Poe2DbScraper:
     _instance = None
@@ -35,9 +88,6 @@ class Poe2DbScraper:
         options.add_argument("--no-sandbox")  # Optional: good for Linux servers
         options.add_argument("--window-size=1920,1080")  # Optional: ensures consistent layout
         self.driver = webdriver.Chrome(options=options)
-
-
-
 
     @staticmethod
     def _determine_mod_types(mod_data):
