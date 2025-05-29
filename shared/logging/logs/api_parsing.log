@@ -221,3 +221,109 @@ None
 None
 
 
+2025-05-29 07:34:47,909 - INFO - Could not find mod with ID ('bow', 'implicit.stat_1028592286', None). Creating and caching.
+
+2025-05-29 07:34:47,910 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,913 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,914 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,914 - INFO - Could not find mod with ID ('bow', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,914 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,914 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'implicit.stat_3885405204', None). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,918 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,918 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,919 - INFO - Could not find mod with ID ('bow', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,919 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,920 - INFO - Could not find mod with ID ('bow', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,920 - INFO - Could not find mod with ID ('bow', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,921 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,922 - INFO - Could not find mod with ID ('bow', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,923 - INFO - Could not find mod with ID ('bow', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,926 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1202301673', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,935 - INFO - NEW LISTING DATA
+None
+
+2025-05-29 07:34:47,935 - INFO - Listing calculations:
+None
+
+
+2025-05-29 07:39:54,720 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,722 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,723 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,723 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,725 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,725 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,725 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,725 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,726 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,726 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,726 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,727 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,727 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,728 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,728 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,730 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_1541903247', None). Creating and caching.
+
+2025-05-29 07:39:54,730 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,730 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,731 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_3675300253', None). Creating and caching.
+
+2025-05-29 07:39:54,731 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,732 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,733 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,735 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,735 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_791928121', None). Creating and caching.
+
+2025-05-29 07:39:54,741 - INFO - NEW LISTING DATA
+None
+
+2025-05-29 07:39:54,741 - INFO - Listing calculations:
+None
+
+

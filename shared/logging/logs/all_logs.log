@@ -641,3 +641,214 @@ FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Anal
 
 2025-05-28 21:22:59,563 - INFO - 7 valid query responses out of 7.
 
+2025-05-29 07:17:00,392 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:23:17,547 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:23:45,189 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:26:07,618 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:26:21,714 - INFO - Processing query 1 of 144 queries.
+
+2025-05-29 07:26:22,159 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-29 07:26:22,456 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-29 07:26:31,174 - INFO - 100 valid query responses out of 100.
+
+2025-05-29 07:29:27,773 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:29:28,099 - INFO - Processing query 1 of 144 queries.
+
+2025-05-29 07:29:28,532 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-29 07:29:28,851 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-29 07:29:28,854 - INFO - 3 valid query responses out of 3.
+
+2025-05-29 07:29:57,806 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:33:53,767 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:33:54,111 - INFO - Processing query 1 of 144 queries.
+
+2025-05-29 07:33:54,524 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (2, 300, 0)]
+
+2025-05-29 07:33:54,526 - INFO - Total valid responses in 0.0 minutes: 0
+
+2025-05-29 07:33:54,530 - INFO - Processing query 2 of 144 queries.
+
+2025-05-29 07:34:40,616 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:34:40,991 - INFO - Processing query 1 of 144 queries.
+
+2025-05-29 07:34:41,518 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-29 07:34:41,520 - INFO - Total valid responses in 0.0 minutes: 0
+
+2025-05-29 07:34:41,522 - INFO - Processing query 2 of 144 queries.
+
+2025-05-29 07:34:47,303 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-29 07:34:47,909 - INFO - 21 valid query responses out of 21.
+
+2025-05-29 07:34:47,909 - INFO - Could not find mod with ID ('bow', 'implicit.stat_1028592286', None). Creating and caching.
+
+2025-05-29 07:34:47,910 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,913 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,914 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,914 - INFO - Could not find mod with ID ('bow', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,914 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,914 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'implicit.stat_3885405204', None). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,917 - INFO - Could not find mod with ID ('bow', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,918 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,918 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,919 - INFO - Could not find mod with ID ('bow', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,919 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,920 - INFO - Could not find mod with ID ('bow', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,920 - INFO - Could not find mod with ID ('bow', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,921 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,922 - INFO - Could not find mod with ID ('bow', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:34:47,923 - INFO - Could not find mod with ID ('bow', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,926 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1202301673', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:34:47,935 - INFO - NEW LISTING DATA
+None
+
+2025-05-29 07:34:47,935 - INFO - Listing calculations:
+None
+
+
+2025-05-29 07:34:47,935 - ERROR - Exception in fetch_data: File at path /Users/austinsnyder/GitHub/PoE-Economy-Analysis/file_management/dynamic_files/currency_prices.csv from enum DataPath.CURRENCY_CONVERSIONS not found.
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/file_management/files_manager.py", line 74, in fetch_data
+    raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
+FileNotFoundError: File at path /Users/austinsnyder/GitHub/PoE-Economy-Analysis/file_management/dynamic_files/currency_prices.csv from enum DataPath.CURRENCY_CONVERSIONS not found.
+2025-05-29 07:39:53,044 - INFO - ['listing_id'] missing from Psql table 'listings'. Will return empty lists for those columns specifically.
+
+2025-05-29 07:39:53,414 - INFO - Processing query 1 of 144 queries.
+
+2025-05-29 07:39:53,847 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-29 07:39:54,327 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-29 07:39:54,720 - INFO - 20 valid query responses out of 20.
+
+2025-05-29 07:39:54,720 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,722 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,723 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,723 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,725 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,725 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,725 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,725 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,726 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,726 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,726 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,727 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,727 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,728 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,728 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,730 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_1541903247', None). Creating and caching.
+
+2025-05-29 07:39:54,730 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,730 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,731 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_3675300253', None). Creating and caching.
+
+2025-05-29 07:39:54,731 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,732 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-29 07:39:54,733 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,735 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-29 07:39:54,735 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_791928121', None). Creating and caching.
+
+2025-05-29 07:39:54,741 - INFO - NEW LISTING DATA
+None
+
+2025-05-29 07:39:54,741 - INFO - Listing calculations:
+None
+
+

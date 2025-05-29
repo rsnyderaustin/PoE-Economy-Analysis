@@ -16,7 +16,7 @@ from shared.logging import log_errors
 
 class DataPath(Enum):
     MODS = Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
-    CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/dynamic_files/currency_prices.csv'
+    CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/static_files/currency_prices.csv'
     POECD_BASES = Path.cwd() / 'file_management/static_files/poecd_bases.json'
     POECD_STATS = Path.cwd() / 'file_management/static_files/poecd_stats.json'
     OFFICIAL_STATIC = Path.cwd() / 'file_management/static_files/official_static.json'
@@ -92,18 +92,15 @@ class FilesManager:
             self._file_data[data_path_e] = data
             return data
         elif path.suffix == '.pkl':
-            try:
-                with open(path, 'rb') as file:
-                    data = pickle.load(file)
-                    self._file_data[data_path_e] = data
-                    return data
-            except EOFError:
-                if missing_ok:
-                    self._write_to_file(file_path=path, data=default)
-                    self._file_data[data_path_e] = default
-                    return default
-                else:
-                    raise
+            with open(path, 'rb') as file:
+                data = pickle.load(file)
+
+                if not data and not missing_ok:
+                    raise RuntimeError(f"No data found for path {data_path_e} and missing_ok is False.")
+
+                data = data if data else default  # If the pkl is empty then it returns None, but we want our default
+                self._file_data[data_path_e] = data
+                return data
 
     @staticmethod
     def _write_to_file(file_path: Path, data):

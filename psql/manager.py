@@ -112,8 +112,21 @@ class PostgreSqlManager:
         if not columns:
             raise ValueError("No columns specified")
 
-            # Very basic sanitization: quote identifiers
-        quoted_columns = ', '.join(f'"{col}"' for col in columns)
+        cols_dict = {col: [] for col in columns}
+
+        table_cols = self._fetch_column_names(table_name)
+        missing_cols = [col for col in columns if col not in table_cols]
+        present_cols = [col for col in columns if col in table_cols]
+        if missing_cols:
+            if not present_cols:
+                psql_log.info(f"None of {missing_cols} are in Psql table '{table_name}. Returning all empty columns.")
+                return cols_dict
+
+            psql_log.info(f"{missing_cols} missing from Psql table '{table_name}'. "
+                          f"Will return empty lists for those columns specifically.")
+
+        # Very basic sanitization: quote identifiers
+        quoted_columns = ', '.join(f'"{col}"' for col in present_cols)
         quoted_table = f'"{table_name}"'
 
         query = text(f'SELECT {quoted_columns} FROM {quoted_table}')
@@ -122,11 +135,10 @@ class PostgreSqlManager:
             result = list(conn.execute(query).mappings())
 
             if not result:
-                return {col: [] for col in columns}
+                return cols_dict
 
-            data_dict = {col: [] for col in columns}
             for row in result:
-                for col in columns:
-                    data_dict[col].append(row[col])
+                for col in present_cols:
+                    cols_dict[col].append(row[col])
 
-            return data_dict
+            return cols_dict
