@@ -1,0 +1,198 @@
+2025-05-28 18:26:43,569 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:26:43,569 - ERROR - Exception in _post_for_search_id: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 18:29:37,385 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:29:37,386 - ERROR - Exception in _post_for_search_id: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 18:33:21,055 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:33:21,056 - ERROR - Exception in _post_for_search_id: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 18:33:32,138 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:33:32,138 - ERROR - Exception in _post_for_search_id: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 18:34:19,478 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:34:19,675 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-28 18:34:19,808 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 18:34:20,424 - INFO - 36 valid query responses out of 36.
+
+2025-05-28 18:38:28,455 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:38:28,691 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-28 18:38:28,836 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 18:39:07,513 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:39:07,806 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (3, 300, 0)]
+
+2025-05-28 18:39:07,806 - INFO - Total valid responses in 0.0 minutes: 0
+
+2025-05-28 19:28:57,042 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:28:57,227 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-28 19:28:57,381 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:29:13,942 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:29:14,113 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-28 19:29:14,276 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:30:28,072 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:30:28,262 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-28 19:30:28,481 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:31:16,324 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:31:16,619 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (4, 300, 0)]
+
+2025-05-28 19:31:16,859 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:31:24,279 - INFO - 19 valid query responses out of 19.
+
+2025-05-28 19:32:50,719 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:32:50,898 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (5, 300, 0)]
+
+2025-05-28 19:32:51,053 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:32:51,647 - INFO - 31 valid query responses out of 31.
+
+2025-05-28 19:38:26,410 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:38:26,692 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-28 19:38:26,842 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:38:27,170 - INFO - 17 valid query responses out of 17.
+
+2025-05-28 19:38:47,583 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:38:47,772 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-28 19:38:47,931 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:38:48,139 - INFO - 13 valid query responses out of 13.
+
+2025-05-28 19:41:17,173 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:41:17,461 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-28 19:41:17,461 - INFO - Total valid responses in 0.0 minutes: 0
+
+2025-05-28 19:41:17,462 - INFO - Processing query 2 of 144 queries.
+
+2025-05-28 19:41:17,980 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:41:18,934 - INFO - 50 valid query responses out of 50.
+

@@ -132,7 +132,8 @@ class ApiResponseParser:
 
     @property
     def date_fetched(self) -> datetime:
-        return datetime.strptime(self.listing_data['indexed'], "%Y-%m-%dT%H:%M:%SZ")
+        formatted_date = self.listing_data['indexed'].lower().replace("z", "+00:00")
+        return datetime.fromisoformat(formatted_date)
 
     @property
     def listing_id(self) -> str:

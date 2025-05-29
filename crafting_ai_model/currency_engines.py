@@ -37,8 +37,8 @@ class CurrencyEngine(ABC):
 class ArcanistsEtcher(CurrencyEngine):
     currency_class = Currency.ARCANISTS_ETCHER
 
-    @log_errors(craft_log)
     @classmethod
+    @log_errors(craft_log)
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category not in ItemCategoryGroups.fetch_non_martial_weapon_categories():
             craft_log.info(f"Arcanists Etcher: Invalid item category {listing.item_category}")
@@ -198,8 +198,8 @@ class ChaosOrb(CurrencyEngine):
 class DivineOrb(CurrencyEngine):
     currency_class = Currency.DIVINE_ORB
 
-    @log_errors(craft_log)
     @classmethod
+    @log_errors(craft_log)
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
         if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
             craft_log.info(f"Divine Orb: Invalid item category {listing.item_category}")

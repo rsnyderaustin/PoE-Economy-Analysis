@@ -100,8 +100,8 @@ class NonPhysicalDpsCalculator(ListingFeatureCalculator):
                      LocalMod.ATTACKS_PER_SECOND}
     calculated_columns = {CalculatedMod.COLD_DPS, CalculatedMod.FIRE_DPS, CalculatedMod.LIGHTNING_DPS, CalculatedMod.ELEMENTAL_DPS}
 
-    @log_errors(parse_log)
     @classmethod
+    @log_errors(parse_log)
     def calculate(cls, listing: ModifiableListing):
         if listing.item_category not in cls.applicable_item_categories:
             raise TypeError(f"Listing with item category {listing.item_category} called {cls.__name__}")
@@ -182,8 +182,8 @@ class ListingsTransforming:
         valid_cols = {*cls._price_predict_specific_cols, *mod_cols}
         return valid_cols
 
-    @log_errors(price_predict_log)
     @staticmethod
+    @log_errors(price_predict_log)
     def _fill_out_features_columns(features_df: pd.DataFrame, model):
         cols_missing_from_model = [col for col in features_df.columns if col not in model.features]
         if cols_missing_from_model:

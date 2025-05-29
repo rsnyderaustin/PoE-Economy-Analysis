@@ -1,4 +1,6 @@
 
+from shared import shared_utils
+
 def _convert_str_to_int(s):
     if isinstance(s, str) and (s.isdigit() or (s.startswith('-') and s[1:].isdigit())):
         return int(s)
@@ -21,7 +23,10 @@ def _numify_dict(obj):
 class PoecdSourceStore:
     def __init__(self, bases_data, stats_data):
         self.bases_data = _numify_dict(bases_data)
+        self.bases_data = shared_utils.sanitize_dict_texts(self.bases_data)
+
         self.stats_data = _numify_dict(stats_data)
+        self.stats_data = shared_utils.sanitize_dict_texts(self.stats_data)
 
         self._mod_id_to_text = self.bases_data['mod']
         self._mod_id_to_affix_type = self._build_mod_id_to_affix_type()

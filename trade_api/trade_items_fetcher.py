@@ -41,8 +41,8 @@ class TradeItemsFetcher:
     items_fetched = 0
     class_start = datetime.now()
 
-    @log_errors(api_log)
     @classmethod
+    @log_errors(api_log)
     def _post_for_search_id(cls, query):
         response = cls.request_throttler.send_request(
             request_func=requests.post,
@@ -55,8 +55,8 @@ class TradeItemsFetcher:
 
         return json_data
 
-    @log_errors(api_log)
     @classmethod
+    @log_errors(api_log)
     def _get_with_item_ids(cls, post_response, item_ids) -> list:
         chunked_list = chunk_list(items=item_ids, chunk_size=10)
 

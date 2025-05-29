@@ -1,0 +1,223 @@
+2025-05-28 19:31:24,280 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:32:51,648 - INFO - Could not find mod with ID ('bow', 'implicit.stat_3885405204', None). Creating and caching.
+
+2025-05-28 19:32:51,648 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,170 - INFO - Could not find mod with ID ('quarterstaff', 'implicit.stat_1702195217', None). Creating and caching.
+
+2025-05-28 19:38:27,171 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,176 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,176 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,177 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,178 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,178 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,180 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,180 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,180 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,180 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,181 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,184 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,184 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,185 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,185 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_210067635', None). Creating and caching.
+
+2025-05-28 19:38:27,185 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,187 - INFO - Could not find mod with ID ('quarterstaff', 'implicit.stat_548198834', None). Creating and caching.
+
+2025-05-28 19:38:27,189 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,189 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,191 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,192 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_3885634897', None). Creating and caching.
+
+2025-05-28 19:38:27,194 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,198 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,199 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,200 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,203 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,206 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_328541901', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,206 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,208 - INFO - NEW LISTING DATA
+None
+
+2025-05-28 19:38:27,208 - ERROR - Exception in calculate: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 19:38:48,140 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1967051901', None). Creating and caching.
+
+2025-05-28 19:38:48,140 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,143 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1980802737', None). Creating and caching.
+
+2025-05-28 19:38:48,143 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1202301673', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,144 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,144 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,144 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,144 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,146 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,146 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,148 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,148 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,150 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,152 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,153 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,155 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,155 - INFO - Could not find mod with ID ('crossbow', 'enchant.stat_387439868', None). Creating and caching.
+
+2025-05-28 19:38:48,156 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1967051901', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,158 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1803308202', None). Creating and caching.
+
+2025-05-28 19:38:48,163 - INFO - NEW LISTING DATA
+None
+
+2025-05-28 19:38:48,164 - ERROR - Exception in calculate: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 19:41:18,934 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_1541903247', None). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_1037193709', None). Creating and caching.
+
+2025-05-28 19:41:18,936 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_791928121', None). Creating and caching.
+
+2025-05-28 19:41:18,936 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,937 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,937 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,937 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,938 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,938 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,938 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,939 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_3675300253', None). Creating and caching.
+
+2025-05-28 19:41:18,939 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,939 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,940 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,940 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,940 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,940 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_210067635', None). Creating and caching.
+
+2025-05-28 19:41:18,942 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,943 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,943 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_1725749947', None). Creating and caching.
+
+2025-05-28 19:41:18,945 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,948 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,951 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,952 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,953 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,956 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_3336890334', None). Creating and caching.
+
+2025-05-28 19:41:18,957 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,959 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,960 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,964 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,968 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,969 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,970 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,972 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,974 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,975 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,981 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_1519615863', None). Creating and caching.
+
+2025-05-28 19:41:18,984 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_548198834', None). Creating and caching.
+
+2025-05-28 19:41:18,986 - INFO - NEW LISTING DATA
+None
+
+2025-05-28 19:41:18,987 - INFO - Listing calculations:
+None
+
+

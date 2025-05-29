@@ -80,3 +80,532 @@
 
 2025-05-28 15:52:40,992 - WARNING - Failed to decode JSON from C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\file_management\files\raw_listings.json. Returning default []
 
+2025-05-28 18:24:18,484 - INFO - Path 'C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json' does not exist. Creating with default []
+
+2025-05-28 18:24:18,485 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:24:18,485 - INFO - Path 'C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\global_poecd_manager.pkl' does not exist. Creating with default None
+
+2025-05-28 18:24:18,486 - ERROR - Exception in fetch_data: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poecd_bases.json from enum DataPath.POECD_BASES not found.
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\files_manager.py", line 76, in fetch_data
+    raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
+FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poecd_bases.json from enum DataPath.POECD_BASES not found.
+2025-05-28 18:25:05,647 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:25:05,647 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:25:05,648 - ERROR - Exception in fetch_data: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poecd_bases.json from enum DataPath.POECD_BASES not found.
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\files_manager.py", line 75, in fetch_data
+    raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
+FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poecd_bases.json from enum DataPath.POECD_BASES not found.
+2025-05-28 18:26:43,304 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:26:43,304 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:26:43,567 - INFO - Path 'C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\item_mods.pkl' does not exist. Creating with default {}
+
+2025-05-28 18:26:43,569 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:26:43,569 - ERROR - Exception in _post_for_search_id: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 18:29:31,227 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:29:37,285 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:29:37,285 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:29:37,385 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:29:37,386 - ERROR - Exception in _post_for_search_id: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 18:33:18,358 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:33:18,503 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:33:21,055 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:33:21,056 - ERROR - Exception in _post_for_search_id: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 18:33:32,004 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:33:32,004 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:33:32,138 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:33:32,138 - ERROR - Exception in _post_for_search_id: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 18:34:19,350 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:34:19,350 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:34:19,478 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:34:19,675 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-28 18:34:19,808 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 18:34:20,424 - INFO - 36 valid query responses out of 36.
+
+2025-05-28 18:38:28,336 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:38:28,336 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:38:28,455 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:38:28,691 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-28 18:38:28,836 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 18:39:07,396 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:39:07,396 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
+
+2025-05-28 18:39:07,513 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 18:39:07,806 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (3, 300, 0)]
+
+2025-05-28 18:39:07,806 - INFO - Total valid responses in 0.0 minutes: 0
+
+2025-05-28 19:25:55,178 - ERROR - Exception in fetch_data: Expecting value: line 1 column 1 (char 0)
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\files_manager.py", line 84, in fetch_data
+    data = json.load(file)  # This may fail, but if it does we want it to fail fast so don't catch the error
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\13198\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+2025-05-28 19:27:40,119 - ERROR - Exception in fetch_data: Expecting value: line 1 column 1 (char 0)
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\files_manager.py", line 84, in fetch_data
+    data = json.load(file)  # This may fail, but if it does we want it to fail fast so don't catch the error
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\13198\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+2025-05-28 19:28:57,042 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:28:57,227 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-28 19:28:57,381 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:29:13,942 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:29:14,113 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-28 19:29:14,276 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:30:28,072 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:30:28,262 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-28 19:30:28,481 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:31:16,324 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:31:16,619 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (4, 300, 0)]
+
+2025-05-28 19:31:16,859 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:31:24,279 - INFO - 19 valid query responses out of 19.
+
+2025-05-28 19:31:24,280 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:32:50,719 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:32:50,898 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (5, 300, 0)]
+
+2025-05-28 19:32:51,053 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:32:51,647 - INFO - 31 valid query responses out of 31.
+
+2025-05-28 19:32:51,648 - INFO - Could not find mod with ID ('bow', 'implicit.stat_3885405204', None). Creating and caching.
+
+2025-05-28 19:32:51,648 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:36:01,383 - INFO - Path 'C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\global_poecd_manager.pkl' does not exist. Creating with default None
+
+2025-05-28 19:38:26,410 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:38:26,692 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-28 19:38:26,842 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:38:27,170 - INFO - 17 valid query responses out of 17.
+
+2025-05-28 19:38:27,170 - INFO - Could not find mod with ID ('quarterstaff', 'implicit.stat_1702195217', None). Creating and caching.
+
+2025-05-28 19:38:27,171 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,176 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,176 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,177 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,178 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,178 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,180 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,180 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,180 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,180 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,181 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,184 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,184 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,185 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,185 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_210067635', None). Creating and caching.
+
+2025-05-28 19:38:27,185 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,187 - INFO - Could not find mod with ID ('quarterstaff', 'implicit.stat_548198834', None). Creating and caching.
+
+2025-05-28 19:38:27,189 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,189 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,191 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,192 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_3885634897', None). Creating and caching.
+
+2025-05-28 19:38:27,194 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,198 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,199 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,200 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,203 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,206 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_328541901', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:27,206 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:27,208 - INFO - NEW LISTING DATA
+None
+
+2025-05-28 19:38:27,208 - ERROR - Exception in calculate: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 19:38:47,583 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:38:47,772 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-28 19:38:47,931 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:38:48,139 - INFO - 13 valid query responses out of 13.
+
+2025-05-28 19:38:48,140 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1967051901', None). Creating and caching.
+
+2025-05-28 19:38:48,140 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,141 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,143 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1980802737', None). Creating and caching.
+
+2025-05-28 19:38:48,143 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1202301673', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,144 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,144 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,144 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,144 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,146 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,146 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,148 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,148 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,150 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,152 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:38:48,153 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,155 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,155 - INFO - Could not find mod with ID ('crossbow', 'enchant.stat_387439868', None). Creating and caching.
+
+2025-05-28 19:38:48,156 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1967051901', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:38:48,158 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1803308202', None). Creating and caching.
+
+2025-05-28 19:38:48,163 - INFO - NEW LISTING DATA
+None
+
+2025-05-28 19:38:48,164 - ERROR - Exception in calculate: 'classmethod' object is not callable
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'classmethod' object is not callable
+2025-05-28 19:41:17,173 - INFO - Processing query 1 of 144 queries.
+
+2025-05-28 19:41:17,461 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(5, 10, 60), (15, 60, 300), (30, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-28 19:41:17,461 - INFO - Total valid responses in 0.0 minutes: 0
+
+2025-05-28 19:41:17,462 - INFO - Processing query 2 of 144 queries.
+
+2025-05-28 19:41:17,980 - INFO - Setting new limits.
+	Account limits: [(100, 5, 60)]
+	Account state: [(0, 5, 60)]
+	IP limits: [(12, 4, 10), (16, 12, 300)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-28 19:41:18,934 - INFO - 50 valid query responses out of 50.
+
+2025-05-28 19:41:18,934 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_1541903247', None). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,935 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_1037193709', None). Creating and caching.
+
+2025-05-28 19:41:18,936 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_791928121', None). Creating and caching.
+
+2025-05-28 19:41:18,936 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,937 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,937 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,937 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,938 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,938 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,938 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,939 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_3675300253', None). Creating and caching.
+
+2025-05-28 19:41:18,939 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,939 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,940 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,940 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,940 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,940 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_210067635', None). Creating and caching.
+
+2025-05-28 19:41:18,942 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,943 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,943 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_1725749947', None). Creating and caching.
+
+2025-05-28 19:41:18,945 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,948 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,951 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,952 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,953 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,956 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_3336890334', None). Creating and caching.
+
+2025-05-28 19:41:18,957 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,959 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,960 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,964 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,968 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,969 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,970 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,972 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,974 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-28 19:41:18,975 - INFO - Could not find mod with ID ('two_hand_mace', 'fractured.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-28 19:41:18,981 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_1519615863', None). Creating and caching.
+
+2025-05-28 19:41:18,984 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_548198834', None). Creating and caching.
+
+2025-05-28 19:41:18,986 - INFO - NEW LISTING DATA
+None
+
+2025-05-28 19:41:18,987 - INFO - Listing calculations:
+None
+
+
+2025-05-28 19:41:18,987 - ERROR - Exception in fetch_data: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\currency_prices.csv from enum DataPath.CURRENCY_CONVERSIONS not found.
+Traceback (most recent call last):
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\files_manager.py", line 74, in fetch_data
+    raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
+FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\currency_prices.csv from enum DataPath.CURRENCY_CONVERSIONS not found.

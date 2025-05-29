@@ -12,17 +12,15 @@ import xgboost as xgb
 from stable_baselines3 import PPO
 
 from shared.logging import log_errors
-from . import io_utils
 
 
 class DataPath(Enum):
     MODS = Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
     CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/dynamic_files/currency_prices.csv'
-    MARKET_SCAN = Path.cwd() / 'file_management/dynamic_files/market_scan.json'
-    POECD_BASES = Path.cwd() / 'file_management/dynamic_files/poecd_bases.json'
-    POECD_STATS = Path.cwd() / 'file_management/dynamic_files/poecd_stats.json'
-    OFFICIAL_STATIC = Path.cwd() / 'file_management/dynamic_files/official_static.json'
-    OFFICIAL_STATS = Path.cwd() / 'file_management/dynamic_files/official_stats.json'
+    POECD_BASES = Path.cwd() / 'file_management/static_files/poecd_bases.json'
+    POECD_STATS = Path.cwd() / 'file_management/static_files/poecd_stats.json'
+    OFFICIAL_STATIC = Path.cwd() / 'file_management/static_files/official_static.json'
+    OFFICIAL_STATS = Path.cwd() / 'file_management/static_files/official_stats.json'
     RAW_LISTINGS = Path.cwd() / 'file_management/dynamic_files/raw_listings.json'
     GLOBAL_POECD_MANAGER = Path.cwd() / 'file_management/dynamic_files/global_poecd_manager.pkl'
 
@@ -61,7 +59,7 @@ class FilesManager:
         path.touch(exist_ok=False)
 
     @log_errors(logging.getLogger())
-    def fetch_data(self, data_path_e: io_utils.DataPath, default: Any = None, missing_ok=True):
+    def fetch_data(self, data_path_e: DataPath, default: Any = None, missing_ok=True):
         if data_path_e in self._file_data:
             return self._file_data[data_path_e]
 
@@ -77,24 +75,35 @@ class FilesManager:
 
             logging.info(f"Path '{str(path)}' does not exist. Creating with default {default}")
             self._create_file(path)
-            return default
+
+            # If the path doesn't exist then we write the default there and let the rest of the program load it as normal
+            self._write_to_file(file_path=path, data=default)
 
         if path.suffix == '.json':
             with open(path, encoding='utf-8') as file:
                 try:
                     data = json.load(file)
-                    return data
                 except json.decoder.JSONDecodeError:
-                    logging.warning(f"Failed to decode JSON from {path}. Returning default {default}")
-                    return default
+                    data = default
+                self._file_data[data_path_e] = data
+                return data
         elif path.suffix == '.csv':
-            return pd.read_csv(path)
+            data = pd.read_csv(path)
+            self._file_data[data_path_e] = data
+            return data
         elif path.suffix == '.pkl':
             try:
                 with open(path, 'rb') as file:
-                    return pickle.load(file)
+                    data = pickle.load(file)
+                    self._file_data[data_path_e] = data
+                    return data
             except EOFError:
-                return default
+                if missing_ok:
+                    self._write_to_file(file_path=path, data=default)
+                    self._file_data[data_path_e] = default
+                    return default
+                else:
+                    raise
 
     @staticmethod
     def _write_to_file(file_path: Path, data):
@@ -124,12 +133,14 @@ class FilesManager:
     def cache_data(self, path: DataPath, data: Any):
         self._file_data[path] = data
 
-    def save_data(self, paths: list[io_utils.DataPath]):
+    def save_data(self, paths: list[DataPath]):
         for path_e in paths:
             path = path_e.value
             if not path.exists():
                 self._create_file(path)
 
+            if path_e not in self._file_data:
+                raise ValueError(f"DataPath {path_e} has no data to save.")
             self._write_to_file(data=self._file_data[path_e],
                                 file_path=path_e.value)
 

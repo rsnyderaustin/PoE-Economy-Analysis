@@ -38,7 +38,8 @@ def _extract_from_brackets(match):
 def sanitize_text(text: str):
     brackets_pattern = r'\[(.*?)\]'
     result = re.sub(brackets_pattern, _extract_from_brackets, text)
-    return result.lower().replace(' ', '_')
+    result = result.lower().replace(' ', '_')
+    return result
 
 
 def sanitize_dict_texts(d: dict):

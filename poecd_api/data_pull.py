@@ -1,5 +1,4 @@
 
-import zstandard
 import json
 import re
 from enum import Enum
@@ -76,8 +75,6 @@ class PoecdDataPuller:
                                 cookies=self.cookies)
         response.raise_for_status()
 
-        dc = zstandard.ZstdDecompressor()
-        content = dc.decompress(response.content)
         content = response.content.decode('utf-8')
         content = re.sub(r'^[^{]*', '', content)
         json_data = json.loads(content)
