@@ -4,7 +4,7 @@ import re
 import rapidfuzz
 
 from instances_and_definitions import ItemMod
-from poecd_api.mods_management import GlobalPoecdAtypeModsManager
+from poecd_api.mods_management import Poe2DbModsManager
 
 
 class _MatchScoreTracker:
@@ -65,7 +65,7 @@ def transform_text(text: str, transform_dict: dict) -> str:
 
 class ModMatcher:
 
-    def __init__(self, global_atypes_manager: GlobalPoecdAtypeModsManager):
+    def __init__(self, global_atypes_manager: Poe2DbModsManager):
         self.mod_transformations = {
             '# additional': 'an additional',
             'an additional': '# additional',

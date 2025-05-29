@@ -5,15 +5,39 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
-from poecd_api.mods_management import PoeDbMod
+from poecd_api.mods_management import Poe2DbMod
 from shared import shared_utils
+from shared.enums.item_enums import AType
 
-
-class ItemUrls(Enum):
-    ONE_HANDED_MACES = 'https://poe2db.tw/us/One_Hand_Maces#ModifiersCalc'
-
+_atype_paths = {
+    AType.ONE_HANDED_MACE: 'https://poe2db.tw/us/One_Hand_Maces#ModifiersCalc'
+}
 
 class Poe2DbScraper:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = super(Poe2DbScraper, cls).__new__(cls)
+
+        return cls._instance
+
+    def __init__(self):
+        cls = self.__class__
+        if cls._initialized:
+            return
+        cls._initialized = True
+
+        options = Options()
+        options.add_argument("--headless")  # Run in headless mode
+        options.add_argument("--disable-gpu")  # Optional: needed for some environments
+        options.add_argument("--no-sandbox")  # Optional: good for Linux servers
+        options.add_argument("--window-size=1920,1080")  # Optional: ensures consistent layout
+        self.driver = webdriver.Chrome(options=options)
+
+
+
 
     @staticmethod
     def _determine_mod_types(mod_data):
@@ -24,7 +48,7 @@ class Poe2DbScraper:
         return mod_types
 
     @staticmethod
-    def _determine_mod_text(mod_data):
+    def _parse_mod_text(mod_data):
         texts = []
         values_ranges = []
         children = list(mod_data.children)[2:]  # Only items after the first 2 contain mod text
@@ -43,7 +67,7 @@ class Poe2DbScraper:
         return texts, values_ranges
 
 
-    def _parse_table_mods(self, table):
+    def _parse_table_mods(self, table, atype: AType):
         tbody = table.find('tbody')
         if not tbody:
             raise ValueError("No tbody found for this HTML table. Unexpected.")
@@ -55,33 +79,30 @@ class Poe2DbScraper:
             mod_ilvl = cells[1].get_text(strip=True)
 
             mod_data = cells[2]
-            print(f"Row data: {mod_data.prettify()}\n---")
             weight = float(mod_data.find('span', class_='badge rounded-pill bg-danger').get_text(strip=True))
             mod_types = self._determine_mod_types(mod_data)
-            sanitized_mod_text, mod_values = self._determine_mod_text(mod_data)
+            sanitized_mod_text, mod_values = self._parse_mod_text(mod_data)
 
             values = mod_data.find_all('span', class_='mod-value')
 
-            x=0
+            mod_id = Poe2DbMod.create_mod_id(mod_text=sanitized_mod_text, atype=atype)
+            new_mod = Poe2DbMod(
+                atype=atype,
+                mod_text=sanitized_mod_text,
+
+            )
 
     def scrape(self):
-        options = Options()
-        options.add_argument("--headless")  # Run in headless mode
-        options.add_argument("--disable-gpu")  # Optional: needed for some environments
-        options.add_argument("--no-sandbox")  # Optional: good for Linux servers
-        options.add_argument("--window-size=1920,1080")  # Optional: ensures consistent layout
-
-        for e in ItemUrls:
-            driver = webdriver.Chrome(options=options)
-            driver.get(e.value)
-            html = driver.page_source
+        for atype, url in _atype_paths.items():
+            self.driver.get(url)
+            html = self.driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
 
             tables = soup.find_all('table')
 
             popouts = soup.find_all('div')
-            popouts = [popout for popout in popouts if popout.get('id').startswith('tippy')]
+            ids = [popout.get('id') for popout in popouts if popout.get('id')]
 
             for table in tables:
-                self._parse_table_mods(table)
+                self._parse_table_mods(table=table, atype=atype)
 

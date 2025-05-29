@@ -4,7 +4,7 @@ import re
 
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
-from poecd_api.mods_management import GlobalPoecdAtypeModsManager
+from poecd_api.mods_management import Poe2DbModsManager
 from shared import shared_utils
 from .atype_classifier import ATypeClassifier
 from shared.logging import LogFile, LogsHandler
@@ -19,7 +19,7 @@ parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
 class ListingBuilder:
 
-    def __init__(self, global_atypes_manager: GlobalPoecdAtypeModsManager):
+    def __init__(self, global_atypes_manager: Poe2DbModsManager):
         self._mod_resolver = _ModResolver(global_atypes_manager)
 
     def build_listing(self, rp: ApiResponseParser):
@@ -60,7 +60,7 @@ class ListingBuilder:
 
 class _ModResolver:
 
-    def __init__(self, global_poecd_mods_manager: GlobalPoecdAtypeModsManager):
+    def __init__(self, global_poecd_mods_manager: Poe2DbModsManager):
         self._global_poecd_mods_manager = global_poecd_mods_manager
         self.mod_matcher = ModMatcher(global_poecd_mods_manager)
 

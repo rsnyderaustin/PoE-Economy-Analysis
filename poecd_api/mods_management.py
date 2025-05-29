@@ -1,37 +1,57 @@
-from shared.enums.item_enums import ModAffixType
+from dataclasses import dataclass
+
+from shared.enums.item_enums import ModAffixType, AType
 
 
-class PoeDbMod:
+@dataclass
+class PoeDbModTier:
+    ilvl: int
+    tier_name: str
+    value_ranges: list[tuple]
+    weighting: float
+
+
+class Poe2DbMod:
 
     def __init__(self,
-                 atype: str,
-                 mod_id: str,
-                 mod_text: str = None,
-                 mod_types: list[str] = None,
-                 affix_type: ModAffixType = None):
+                 atype: AType,
+                 affix_type: ModAffixType,
+                 mod_text: str,
+                 mod_types: list[str]):
         self.atype = atype
-        self.mod_id = mod_id
-        self.mod_text = mod_text
-
-        self.mod_types = mod_types or []
         self.affix_type = affix_type
+        self.mod_text = mod_text
+        self.mod_types = mod_types
 
         self.ilvl_to_mod_tier = dict()
 
-    def __hash__(self):
-        return hash(f"{self.mod_id}_{self.atype}_{self.affix_type.value}")
+    @property
+    def mod_id(self) -> tuple:
+        return self.create_mod_id(atype=self.atype, mod_text=self.mod_text)
 
-    def add_tier(self, tier_data):
-        ilvl = tier_data['ilvl']
-        self.ilvl_to_mod_tier[ilvl] = tier_data
+    @staticmethod
+    def create_mod_id(atype, mod_text):
+        return atype, mod_text
+
+    def __hash__(self):
+        return self.mod_id
+
+    def add_tier(self, ilvl: int, tier_name: str, value_ranges: list[tuple], weighting: float):
+        self.ilvl_to_mod_tier[ilvl] = PoeDbModTier(
+            ilvl=ilvl,
+            tier_name=tier_name,
+            value_ranges=value_ranges,
+            weighting=weighting
+        )
 
     def fetch_weighting(self, ilvl: int):
-        return self.ilvl_to_mod_tier[ilvl]['weighting']
+        mod_tier = self.ilvl_to_mod_tier[ilvl]
+        return mod_tier.weighting
 
 
 class HybridModAnalyzer:
 
-    def __init__(self, mods: set[PoeDbMod]):
+    def __init__(self, mods: set[Poe2DbMod]):
         self._mods = mods
         # This is useful for when we are matching mods to the Trade API data
         self._hybrid_parts_to_parent_dict = self._create_hybrid_to_parent_dict()
@@ -73,11 +93,9 @@ class HybridModAnalyzer:
 class AtypeModsManager:
 
     def __init__(self,
-                 atype_id: str,
-                 atype_name: str,
-                 mods: set[PoeDbMod]):
-        self.atype_id = atype_id
-        self.atype_name = atype_name
+                 atype: AType,
+                 mods: set[Poe2DbMod]):
+        self.atype = atype
         self.mods = mods
 
         self._mod_id_to_mod = {mod.mod_id: mod for mod in mods}
@@ -111,22 +129,16 @@ class AtypeModsManager:
         return self._hybrid_mod_analyzer.determine_number_of_hybrid_parts(mod_id)
 
 
-class GlobalPoecdAtypeModsManager:
+class Poe2DbModsManager:
 
     def __init__(self, atype_managers: list[AtypeModsManager]):
-        self._atypes_managers_by_id = {am.atype_id: am for am in atype_managers}
-        self._atypes_managers_by_name = {am.atype_name: am for am in atype_managers}
+        self._atypes_managers = {am.atype: am for am in atype_managers}
 
-    def fetch_atype_manager(self, atype_id: str = None, atype_name: str = None):
-        if atype_id:
-            return self._atypes_managers_by_id[atype_id]
-        elif atype_name:
-            return self._atypes_managers_by_name[atype_name]
-        else:
-            raise ValueError(f"Did receive an argument for function {__name__}")
+    def fetch_atype_manager(self, atype: AType = None):
+        return self._atypes_managers[atype]
     
-    def fetch_mod(self, atype: str, mod_text: str = None, affix_type: ModAffixType = None, mod_id: str = None):
-        atype_manager = self._atypes_managers_by_name[atype]
+    def fetch_mod(self, atype: AType, mod_text: str = None, affix_type: ModAffixType = None, mod_id: str = None):
+        atype_manager = self._atypes_managers[atype]
 
         if mod_text and affix_type:
             mod = atype_manager.fetch_mod(mod_text, affix_type)

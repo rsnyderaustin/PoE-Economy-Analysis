@@ -5,7 +5,7 @@ from shared.logging import LogsHandler, LogFile
 from .atype_manager_factory import AtypeManagerFactory
 from .data_pull import PoecdDataPuller, PoecdEndpoint
 from .internal_source_store import PoecdSourceStore
-from .mods_management import GlobalPoecdAtypeModsManager
+from .mods_management import Poe2DbModsManager
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
@@ -79,9 +79,9 @@ class PoecdDataManager:
         stats_data['basemods']['20'] = [m for m in stats_data['basemods']['20'] if m != '5161']
         stats_data['modbases'].pop('5161', None)
 
-    def build_global_mods_manager(self) -> GlobalPoecdAtypeModsManager:
+    def build_global_mods_manager(self) -> Poe2DbModsManager:
         atype_managers = AtypeManagerFactory(self.source_store).build_mods_managers()
-        global_manager = GlobalPoecdAtypeModsManager(atype_managers)
+        global_manager = Poe2DbModsManager(atype_managers)
         return global_manager
 
 
