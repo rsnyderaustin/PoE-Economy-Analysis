@@ -6,8 +6,8 @@ from collections.abc import Iterable
 import pandas as pd
 
 from instances_and_definitions import ModifiableListing
-from shared import ItemCategoryGroups, shared_utils
-from shared.enums.item_enums import ItemCategory, LocalMod, CalculatedMod
+from shared import ATypeGroups, shared_utils
+from shared.enums.item_enums import AType, LocalMod, CalculatedMod
 from shared.logging import LogsHandler, LogFile, log_errors
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
@@ -52,7 +52,7 @@ class CalculatorRegistry:
         return calculator
 
     @classmethod
-    def fetch_calculators(cls, item_category: ItemCategory) -> list[ListingFeatureCalculator]:
+    def fetch_calculators(cls, item_category: AType) -> list[ListingFeatureCalculator]:
         return cls._item_category_to_calculators[item_category] if item_category in cls._item_category_to_calculators else []
 
     @classmethod
@@ -68,7 +68,7 @@ class CalculatorRegistry:
 
 @CalculatorRegistry.register
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
-    applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
+    applicable_item_categories = ATypeGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
     calculated_columns = {CalculatedMod.MAX_QUALITY_PDPS.value}
 
@@ -95,7 +95,7 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
 
 @CalculatorRegistry.register
 class NonPhysicalDpsCalculator(ListingFeatureCalculator):
-    applicable_item_categories = ItemCategoryGroups.fetch_martial_weapon_categories()
+    applicable_item_categories = ATypeGroups.fetch_martial_weapon_categories()
     input_columns = {LocalMod.CHAOS_DAMAGE, LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
     calculated_columns = {CalculatedMod.COLD_DPS, CalculatedMod.FIRE_DPS, CalculatedMod.LIGHTNING_DPS, CalculatedMod.ELEMENTAL_DPS}

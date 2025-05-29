@@ -5,6 +5,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
+from poecd_api.mods_management import PoeDbMod
+from shared import shared_utils
+
 
 class ItemUrls(Enum):
     ONE_HANDED_MACES = 'https://poe2db.tw/us/One_Hand_Maces#ModifiersCalc'
@@ -24,15 +27,20 @@ class Poe2DbScraper:
     def _determine_mod_text(mod_data):
         texts = []
         values_ranges = []
-        for i, child in enumerate(list(mod_data.children)):
-            if i == 0:
+        children = list(mod_data.children)[2:]  # Only items after the first 2 contain mod text
+        for child in children:
+            text = child.get_text(strip=True)
+            if not text:
                 continue
 
-            text = child.get_text(strip=True)
             texts.append(text)
 
             if child.name == 'span' and 'mod-value' in child.get('class', []):
-                values_ranges.append(text)
+                values = shared_utils.extract_values_from_text(text)
+                values_ranges.extend(values)
+
+        texts = ' '.join(texts)
+        return texts, values_ranges
 
 
     def _parse_table_mods(self, table):
@@ -53,6 +61,7 @@ class Poe2DbScraper:
             sanitized_mod_text, mod_values = self._determine_mod_text(mod_data)
 
             values = mod_data.find_all('span', class_='mod-value')
+
             x=0
 
     def scrape(self):
@@ -69,6 +78,9 @@ class Poe2DbScraper:
             soup = BeautifulSoup(html, 'html.parser')
 
             tables = soup.find_all('table')
+
+            popouts = soup.find_all('div')
+            popouts = [popout for popout in popouts if popout.get('id').startswith('tippy')]
 
             for table in tables:
                 self._parse_table_mods(table)

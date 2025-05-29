@@ -1,6 +1,6 @@
 
-from shared import ItemCategoryGroups
-from shared.enums.item_enums import ItemCategory
+from shared import ATypeGroups
+from shared.enums.item_enums import AType
 from shared.logging import LogsHandler, LogFile, log_errors
 
 
@@ -8,29 +8,29 @@ craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
 
 
 @log_errors(craft_log)
-def determine_max_sockets(item_category: ItemCategory):
-    if item_category not in ItemCategoryGroups.fetch_socketable_item_categories():
+def determine_max_sockets(item_atype: AType):
+    if item_atype not in ATypeGroups.fetch_socketable_item_categories():
         return 0
     if item_category in [
-        ItemCategory.ONE_HANDED_MACE,
-        ItemCategory.SPEAR,
-        ItemCategory.WAND,
-        ItemCategory.SCEPTRE,
-        ItemCategory.HELMET,
-        ItemCategory.GLOVES,
-        ItemCategory.BOOTS,
-        ItemCategory.SHIELD,
-        ItemCategory.FOCUS,
-        ItemCategory.BUCKLER
+        AType.ONE_HANDED_MACE,
+        AType.SPEAR,
+        AType.WAND,
+        AType.SCEPTRE,
+        AType.HELMET,
+        AType.GLOVES,
+        AType.BOOTS,
+        AType.SHIELD,
+        AType.FOCUS,
+        AType.BUCKLER
     ]:
         return 1
     elif item_category in [
-        ItemCategory.TWO_HANDED_MACE,
-        ItemCategory.QUARTERSTAFF,
-        ItemCategory.BOW,
-        ItemCategory.CROSSBOW,
-        ItemCategory.STAFF,
-        ItemCategory.BODY_ARMOUR
+        AType.TWO_HANDED_MACE,
+        AType.QUARTERSTAFF,
+        AType.BOW,
+        AType.CROSSBOW,
+        AType.STAFF,
+        AType.BODY_ARMOUR
     ]:
         return 2
     else:

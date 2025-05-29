@@ -4,8 +4,8 @@ from abc import abstractmethod, ABC
 
 from crafting_ai_model.mod_rolling import ModRoller
 from instances_and_definitions import ModifiableListing
-from shared import ItemCategoryGroups
-from shared.enums.item_enums import ItemCategory
+from shared import ATypeGroups
+from shared.enums.item_enums import AType
 from shared.enums.trade_enums import Rarity, ModClass, Currency
 from shared.logging import LogsHandler, LogFile, log_errors
 from . import utils
@@ -40,7 +40,7 @@ class ArcanistsEtcher(CurrencyEngine):
     @classmethod
     @log_errors(craft_log)
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in ItemCategoryGroups.fetch_non_martial_weapon_categories():
+        if listing.item_category not in ATypeGroups.fetch_non_martial_weapon_categories():
             craft_log.info(f"Arcanists Etcher: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -75,7 +75,7 @@ class ArmourersScrap(CurrencyEngine):
     @log_errors(craft_log)
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in ItemCategoryGroups.fetch_armour_categories():
+        if listing.item_category not in ATypeGroups.fetch_armour_categories():
             craft_log.info(f"Armourers Scrap: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -109,7 +109,7 @@ class ArtificersOrb(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in ItemCategoryGroups.fetch_socketable_item_categories():
+        if listing.item_category not in ATypeGroups.fetch_socketable_item_categories():
             return Outcome()
 
         if listing.corrupted:
@@ -131,7 +131,7 @@ class BlacksmithsWhetstone(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in ItemCategoryGroups.fetch_martial_weapon_categories():
+        if listing.item_category not in ATypeGroups.fetch_martial_weapon_categories():
             craft_log.info(f"Blacksmiths Whetstone: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -165,7 +165,7 @@ class ChaosOrb(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+        if listing.item_category in (AType.SKILL_GEM, AType.META_GEM, AType.LIFE_FLASK, AType.MANA_FLASK):
             craft_log.info(f"Chaos Orb: Item category {listing.item_category} invalid.")
             return Outcome()
 
@@ -201,7 +201,7 @@ class DivineOrb(CurrencyEngine):
     @classmethod
     @log_errors(craft_log)
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+        if listing.item_category in (AType.SKILL_GEM, AType.META_GEM, AType.LIFE_FLASK, AType.MANA_FLASK):
             craft_log.info(f"Divine Orb: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -254,7 +254,7 @@ class ExaltedOrb(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+        if listing.item_category in (AType.SKILL_GEM, AType.META_GEM, AType.LIFE_FLASK, AType.MANA_FLASK):
             craft_log.info(f"Exalted Orb: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -283,7 +283,7 @@ class FracturingOrb(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+        if listing.item_category in (AType.SKILL_GEM, AType.META_GEM, AType.LIFE_FLASK, AType.MANA_FLASK):
             craft_log.info(f"Fracturing Orb: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -315,7 +315,7 @@ class GemcuttersPrism(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in [ItemCategory.SKILL_GEM, ItemCategory.META_GEM]:
+        if listing.item_category not in [AType.SKILL_GEM, AType.META_GEM]:
             craft_log.info(f"Gemcutters Prism: Item category {listing.item_category} is invalid.")
             return Outcome()
 
@@ -339,7 +339,7 @@ class GlassblowersBauble(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category not in ItemCategoryGroups.fetch_flask_categories():
+        if listing.item_category not in ATypeGroups.fetch_flask_categories():
             craft_log.info(f"Glassblowers Bauble: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -363,7 +363,7 @@ class OrbOfAlchemy(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK, ItemCategory.META_GEM, ItemCategory.SKILL_GEM):
+        if listing.item_category in (AType.LIFE_FLASK, AType.MANA_FLASK, AType.META_GEM, AType.SKILL_GEM):
             craft_log.info(f"Orb of Alchemy: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -377,7 +377,7 @@ class OrbOfAlchemy(CurrencyEngine):
 
         listing.rarity = Rarity.RARE
 
-        num_mods = random.randint(3, 4) if listing.item_category == ItemCategory.JEWEL else random.randint(4, 6)
+        num_mods = random.randint(3, 4) if listing.item_category == AType.JEWEL else random.randint(4, 6)
 
         for _ in list(range(num_mods)):
             new_mod = mod_roller.roll_new_modifier(listing=listing,
@@ -395,7 +395,7 @@ class OrbOfAnnulment(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
+        if listing.item_category in (AType.SKILL_GEM, AType.META_GEM):
             craft_log.info(f"Orb of Annulment: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -429,7 +429,7 @@ class OrbOfAugmentation(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
+        if listing.item_category in (AType.SKILL_GEM, AType.META_GEM):
             craft_log.info(f"Orb of Augmentation: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -458,7 +458,7 @@ class OrbOfTransmutation(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM):
+        if listing.item_category in (AType.SKILL_GEM, AType.META_GEM):
             craft_log.info(f"Orb of Transmutation: Invalid item category {listing.item_category}")
             return Outcome()
 
@@ -491,7 +491,7 @@ class RegalOrb(CurrencyEngine):
 
     @classmethod
     def apply(cls, mod_roller: ModRoller, listing: ModifiableListing):
-        if listing.item_category in (ItemCategory.SKILL_GEM, ItemCategory.META_GEM, ItemCategory.LIFE_FLASK, ItemCategory.MANA_FLASK):
+        if listing.item_category in (AType.SKILL_GEM, AType.META_GEM, AType.LIFE_FLASK, AType.MANA_FLASK):
             return Outcome()
 
         if listing.rarity != Rarity.MAGIC:

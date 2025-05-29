@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 import trade_api
-from shared import ItemCategoryGroups, WhichCategoryType
+from shared import ATypeGroups, WhichCategoryType
 from shared.enums import trade_enums
 
 
@@ -58,7 +58,7 @@ class QueryPresets:
     @property
     def training_fills(self) -> list[Query]:
         # item_categories = [*trade_enums.socketable_items, *trade_enums.martial_weapons]
-        item_categories = ItemCategoryGroups.fetch_martial_weapon_categories(which_type=WhichCategoryType.TRADE)
+        item_categories = ATypeGroups.fetch_martial_weapon_categories(which_type=WhichCategoryType.TRADE)
         currencies = [
             trade_enums.Currency.EXALTED_ORB,
             trade_enums.Currency.DIVINE_ORB,

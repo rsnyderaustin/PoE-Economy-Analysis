@@ -1,7 +1,7 @@
 from shared import shared_utils
 from shared.enums.item_enums import ModAffixType
 from .internal_source_store import PoecdSourceStore
-from .mods_management import PoecdMod, AtypeModsManager
+from .mods_management import PoeDbMod, AtypeModsManager
 
 
 class AtypeManagerFactory:
@@ -22,7 +22,7 @@ class AtypeManagerFactory:
 
         return tiers_data
 
-    def _create_mods(self, tiers_data) -> list[PoecdMod]:
+    def _create_mods(self, tiers_data) -> list[PoeDbMod]:
         mods = []
         inputs = [
             (mod_id, atype_id)
@@ -33,7 +33,7 @@ class AtypeManagerFactory:
             affix_type_str = self.source_store.fetch_affix_type(mod_id)
             affix_type = ModAffixType.PREFIX if affix_type_str == 'prefix' else ModAffixType.SUFFIX
             mod_text = shared_utils.sanitize_mod_text(self.source_store.fetch_mod_text(mod_id))
-            new_mod = PoecdMod(atype_id=atype_id,
+            new_mod = PoeDbMod(atype_id=atype_id,
                                atype_name=self.source_store.fetch_atype_name(atype_id),
                                mod_id=mod_id,
                                mod_text=mod_text,

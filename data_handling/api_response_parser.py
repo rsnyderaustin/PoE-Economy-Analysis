@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from shared import shared_utils
-from shared.enums.item_enums import ItemCategory
+from shared.enums.item_enums import AType
 from shared.enums.trade_enums import ModClass, Currency, Rarity
 from shared.logging import LogsHandler, LogFile
 
@@ -15,6 +15,51 @@ parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 class Price:
     currency: Currency
     amount: int
+
+
+class _ATypeClassifier:
+
+    _wand_btype_map = {
+        'volatile_wand': 'fire_wand',
+        'withered_wand': 'chaos_wand',
+        'bone_wand': 'physical_wand',
+        'frigid_wand': 'cold_wand',
+        'galvanic_wand': 'lightning_wand',
+    }
+
+    @classmethod
+    def classify(cls, item_category: str, item_btype: str, str_req: int, int_req: int, dex_req: int):
+        if item_btype in cls._wand_btype_map:
+            return cls._wand_btype_map[item_btype]
+
+        possible_atypes = [item_category]
+
+        if str_req and int_req and dex_req:
+            possible_atypes.append(f"{item_category}_(str/dex/int)")
+
+        if str_req and int_req:
+            possible_atypes.append(f"{item_category}_(str/int)")
+
+        if str_req and dex_req:
+            possible_atypes.append(f"{item_category}_(str/dex)")
+
+        if dex_req and int_req:
+            possible_atypes.append(f"{item_category}_(dex/int)")
+
+        if str_req:
+            possible_atypes.append(f"{item_category}_str")
+
+        if dex_req:
+            possible_atypes.append(f"{item_category}_dex")
+
+        if int_req:
+            possible_atypes.append(f"{item_category}_int")
+
+        for atype in possible_atypes:
+            try:
+                return AType(atype)
+            except ValueError:
+                pass
 
 
 class ApiResponseParser:
@@ -187,9 +232,9 @@ class ApiResponseParser:
         return 'corrupted' in self.item_data and self.item_data['corrupted'] is True
 
     @property
-    def item_category(self) -> ItemCategory:
-        category_str = self.item_data['properties'][0]['name']
-        return ItemCategory(category_str)
+    def item_atype(self) -> str:
+
+        return self.item_data['properties'][0]['name']
 
     @property
     def item_properties(self) -> dict:

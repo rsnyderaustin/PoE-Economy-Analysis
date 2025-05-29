@@ -1,17 +1,15 @@
 from shared.enums.item_enums import ModAffixType
 
 
-class PoecdMod:
+class PoeDbMod:
 
     def __init__(self,
-                 atype_id: str,
-                 atype_name: str,
-                 mod_id: int,
+                 atype: str,
+                 mod_id: str,
                  mod_text: str = None,
                  mod_types: list[str] = None,
                  affix_type: ModAffixType = None):
-        self.atype_id = atype_id
-        self.atype_name = atype_name
+        self.atype = atype
         self.mod_id = mod_id
         self.mod_text = mod_text
 
@@ -21,7 +19,7 @@ class PoecdMod:
         self.ilvl_to_mod_tier = dict()
 
     def __hash__(self):
-        return hash(f"{self.mod_id}_{self.atype_name}_{self.affix_type.value}")
+        return hash(f"{self.mod_id}_{self.atype}_{self.affix_type.value}")
 
     def add_tier(self, tier_data):
         ilvl = tier_data['ilvl']
@@ -33,7 +31,7 @@ class PoecdMod:
 
 class HybridModAnalyzer:
 
-    def __init__(self, mods: set[PoecdMod]):
+    def __init__(self, mods: set[PoeDbMod]):
         self._mods = mods
         # This is useful for when we are matching mods to the Trade API data
         self._hybrid_parts_to_parent_dict = self._create_hybrid_to_parent_dict()
@@ -77,7 +75,7 @@ class AtypeModsManager:
     def __init__(self,
                  atype_id: str,
                  atype_name: str,
-                 mods: set[PoecdMod]):
+                 mods: set[PoeDbMod]):
         self.atype_id = atype_id
         self.atype_name = atype_name
         self.mods = mods

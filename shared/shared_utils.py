@@ -7,28 +7,21 @@ from file_management import DataPath
 from shared.enums.trade_enums import Currency
 
 
-def extract_values_from_text(text) -> int | float | tuple | None:
-    raw_numbers = re.findall(r'(?<!\S)-?\d+\.\d+|(?<!\S)-?\d+', text)
+def extract_values_from_text(text) -> list:
+    matches = re.findall(r'-?\d+(?:\.\d+)?(?:\s*[–-]\s*-?\d+(?:\.\d+)?)?', text)
+    result = []
+    for match in matches:
+        clean = match.replace('–', '-').replace('−', '-').replace(' ', '')
 
-    if '-' in text and not re.search(r'\s-\d', text):  # crude filter for range-style hyphen
-        parts = re.split(r'\s*-\s*', text)
-        raw_numbers = []
-        for part in parts:
-            match = re.search(r'\d+(\.\d+)?', part)
-            if match:
-                raw_numbers.append(match.group())
-
-    if not raw_numbers:
-        return None
-    elif len(raw_numbers) == 1:
-        num = raw_numbers[0]
-        return float(num) if '.' in num else int(num)
-
-    if any('.' in num for num in raw_numbers):
-        return tuple(float(num) for num in raw_numbers)
-    else:
-        return tuple(int(num) for num in raw_numbers)
-
+        if '-' in clean[1:]:  # if there's a dash not at the start, it's a range
+            left_str, right_str = clean.split('-', 1)
+            left = float(left_str) if '.' in left_str else int(left_str)
+            right = float(right_str) if '.' in right_str else int(right_str)
+            result.append((left, right))
+        else:
+            val = float(clean) if '.' in clean else int(clean)
+            result.append(val)
+    return result
 
 def _extract_from_brackets(match):
     parts = match.group(1).split('|')

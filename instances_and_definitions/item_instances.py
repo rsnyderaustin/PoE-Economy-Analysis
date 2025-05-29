@@ -2,7 +2,7 @@ import datetime
 import re
 from typing import Iterable
 
-from shared.enums.item_enums import ModAffixType, ItemCategory
+from shared.enums.item_enums import ModAffixType, AType
 from shared.enums.trade_enums import ModClass, Rarity, Currency
 
 
@@ -10,8 +10,8 @@ class SubMod:
     def __init__(self,
                  mod_id: str,
                  sanitized_mod_text: str,
-                 actual_values: tuple[float] | tuple[int] = None,
-                 values_ranges: list[tuple[float | None, float | None]] | list[tuple[int | None, int | None]] = None):
+                 actual_values: list = None,
+                 values_ranges: list[tuple[float, float]] | list[tuple[int, int]] = None):
         self.mod_id = mod_id
         self.actual_values = actual_values
         self.sanitized_mod_text = sanitized_mod_text
@@ -108,7 +108,7 @@ class ModifiableListing:
                  item_name: str,
                  item_btype: str,  # Hunting Shoes, Lunar Amulet, etc
                  item_atype: str,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
-                 item_category: ItemCategory,
+                 item_category: AType,
                  rarity: Rarity,
                  ilvl: int,
                  identified: bool,
