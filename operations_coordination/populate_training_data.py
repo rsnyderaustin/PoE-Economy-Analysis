@@ -7,7 +7,6 @@ from data_transforming import ListingsTransforming
 from file_management import FilesManager, DataPath
 from shared import env_loading
 from trade_api.query import QueryPresets
-import psql
 
 
 class TrainingDataPopulator:

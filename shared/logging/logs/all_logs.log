@@ -84,28 +84,28 @@
 
 2025-05-28 18:24:18,485 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
 
-2025-05-28 18:24:18,485 - INFO - Path 'C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\global_poecd_manager.pkl' does not exist. Creating with default None
+2025-05-28 18:24:18,485 - INFO - Path 'C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\global_poe2db_manager.pkl' does not exist. Creating with default None
 
-2025-05-28 18:24:18,486 - ERROR - Exception in fetch_data: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poecd_bases.json from enum DataPath.POECD_BASES not found.
+2025-05-28 18:24:18,486 - ERROR - Exception in fetch_data: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poe2db_bases.json from enum DataPath.POECD_BASES not found.
 Traceback (most recent call last):
   File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
   File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\files_manager.py", line 76, in fetch_data
     raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
-FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poecd_bases.json from enum DataPath.POECD_BASES not found.
+FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poe2db_bases.json from enum DataPath.POECD_BASES not found.
 2025-05-28 18:25:05,647 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
 
 2025-05-28 18:25:05,647 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
 
-2025-05-28 18:25:05,648 - ERROR - Exception in fetch_data: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poecd_bases.json from enum DataPath.POECD_BASES not found.
+2025-05-28 18:25:05,648 - ERROR - Exception in fetch_data: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poe2db_bases.json from enum DataPath.POECD_BASES not found.
 Traceback (most recent call last):
   File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\shared\logging\logging_utils.py", line 9, in wrapper
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
   File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\files_manager.py", line 75, in fetch_data
     raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
-FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poecd_bases.json from enum DataPath.POECD_BASES not found.
+FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\poe2db_bases.json from enum DataPath.POECD_BASES not found.
 2025-05-28 18:26:43,304 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
 
 2025-05-28 18:26:43,304 - WARNING - Failed to decode JSON from C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json. Returning default []
@@ -330,7 +330,7 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 
 2025-05-28 19:32:51,648 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
 
-2025-05-28 19:36:01,383 - INFO - Path 'C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\global_poecd_manager.pkl' does not exist. Creating with default None
+2025-05-28 19:36:01,383 - INFO - Path 'C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\global_poe2db_manager.pkl' does not exist. Creating with default None
 
 2025-05-28 19:38:26,410 - INFO - Processing query 1 of 144 queries.
 
@@ -609,7 +609,7 @@ Traceback (most recent call last):
   File "C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\files_manager.py", line 74, in fetch_data
     raise FileNotFoundError(f"File at path {str(path)} from enum {data_path_e} not found.")
 FileNotFoundError: File at path C:\Users\13198\Downloads\Github\PoE-Economy-Analysis\file_management\dynamic_files\currency_prices.csv from enum DataPath.CURRENCY_CONVERSIONS not found.
-2025-05-28 21:22:33,746 - INFO - Path '/Users/austinsnyder/GitHub/PoE-Economy-Analysis/file_management/dynamic_files/global_poecd_manager.pkl' does not exist. Creating with default None
+2025-05-28 21:22:33,746 - INFO - Path '/Users/austinsnyder/GitHub/PoE-Economy-Analysis/file_management/dynamic_files/global_poe2db_manager.pkl' does not exist. Creating with default None
 
 2025-05-28 21:22:33,905 - INFO - Processing query 1 of 144 queries.
 
@@ -854,7 +854,7 @@ None
 
 2025-05-29 08:30:04,492 - INFO - Path 'C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\file_management\dynamic_files\raw_listings.json' does not exist. Creating with default []
 
-2025-05-29 08:30:04,493 - INFO - Path 'C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\file_management\dynamic_files\global_poecd_manager.pkl' does not exist. Creating with default None
+2025-05-29 08:30:04,493 - INFO - Path 'C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\file_management\dynamic_files\global_poe2db_manager.pkl' does not exist. Creating with default None
 
 2025-05-29 08:30:04,588 - INFO - Path 'C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\file_management\dynamic_files\item_mods.pkl' does not exist. Creating with default {}
 

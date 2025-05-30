@@ -21,7 +21,7 @@ class DataPath(Enum):
     OFFICIAL_STATIC = Path.cwd() / 'file_management/static_files/official_static.json'
     OFFICIAL_STATS = Path.cwd() / 'file_management/static_files/official_stats.json'
     RAW_LISTINGS = Path.cwd() / 'file_management/dynamic_files/raw_listings.json'
-    GLOBAL_POECD_MANAGER = Path.cwd() / 'file_management/dynamic_files/global_poecd_manager.pkl'
+    GLOBAL_POECD_MANAGER = Path.cwd() / 'file_management/dynamic_files/global_poe2db_manager.pkl'
 
 
 class ModelPath(Enum):

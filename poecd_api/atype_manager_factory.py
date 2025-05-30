@@ -1,7 +1,7 @@
+from poe2db_scrape.mods_management import Poe2DbMod, AtypeModsManager
 from shared import shared_utils
 from shared.enums.item_enums import ModAffixType
 from .internal_source_store import PoecdSourceStore
-from poe2db_scrape.mods_management import Poe2DbMod, AtypeModsManager
 
 
 class AtypeManagerFactory:

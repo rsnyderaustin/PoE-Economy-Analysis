@@ -8,7 +8,6 @@ from shared.env_loading import EnvLoader
 from shared.logging import LogsHandler, LogFile
 from . import utils
 
-
 psql_log = LogsHandler().fetch_log(LogFile.PSQL)
 
 

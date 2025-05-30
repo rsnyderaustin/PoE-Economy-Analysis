@@ -1,9 +1,9 @@
 
 import logging
 
-from file_management import FilesManager, DataPath
-from operations_coordination.populate_training_data import TrainingDataPopulator
 import psql
+from file_management import FilesManager
+from operations_coordination.populate_training_data import TrainingDataPopulator
 
 logging.basicConfig(level=logging.INFO)
 

@@ -1,5 +1,3 @@
-from enum import Enum
-
 from shared.enums.item_enums import AType
 from shared.enums.trade_enums import TradeItemCategory
 

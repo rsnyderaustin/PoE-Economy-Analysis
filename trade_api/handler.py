@@ -2,6 +2,7 @@ import math
 from copy import deepcopy
 from datetime import datetime
 
+from data_handling import ApiResponseParser
 from file_management import FilesManager, DataPath
 from psql import PostgreSqlManager
 from shared import shared_utils
@@ -9,7 +10,6 @@ from shared.logging import LogsHandler, LogFile
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher
-from data_handling import ApiResponseParser
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 

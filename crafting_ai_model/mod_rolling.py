@@ -70,7 +70,7 @@ class ModRoller:
         if getattr(cls, '_initialized', False):
             return
 
-        # Need to validate that we have all or nearly all of the mods represented in Poecd
+        # Need to validate that we have all or nearly all of the mods represented in poe2db
         self.mods_manager = ModsFetcher()
 
         cls._initialized = True

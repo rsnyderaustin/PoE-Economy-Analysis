@@ -6,9 +6,9 @@ from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
 from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared import shared_utils
-from shared.logging import LogFile, LogsHandler, log_errors
 from shared.enums.item_enums import ModAffixType
 from shared.enums.trade_enums import ModClass
+from shared.logging import LogFile, LogsHandler, log_errors
 from . import utils
 from .api_response_parser import ApiResponseParser
 from .mod_matching import ModMatcher
@@ -150,16 +150,16 @@ class _ModResolver:
         if new_mod.mod_class_e not in (ModClass.EXPLICIT, ModClass.FRACTURED):
             return new_mod
 
-        matched_poecd_mod_id = self.mod_matcher.match_mod(new_mod)
+        matched_poe2db_mod_id = self.mod_matcher.match_mod(new_mod)
 
-        if not matched_poecd_mod_id:
+        if not matched_poe2db_mod_id:
             parse_log.error(f"Was not able to match item mod:\n{pprint.pprint(new_mod)}")
             return new_mod
 
-        poecd_mod = self._poe2db_mods_manager.fetch_mod(atype=new_mod.atype,
-                                                        mod_id=matched_poecd_mod_id)
-        new_mod.weighting = poecd_mod.fetch_weighting(ilvl=int(mod_data['level']))
-        new_mod.mod_types = poecd_mod.mod_types
+        poe2db_mod = self._poe2db_mods_manager.fetch_mod(atype=new_mod.atype,
+                                                        mod_id=matched_poe2db_mod_id)
+        new_mod.weighting = poe2db_mod.fetch_weighting(ilvl=int(mod_data['level']))
+        new_mod.mod_types = poe2db_mod.mod_types
 
         return new_mod
 
