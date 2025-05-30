@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from shared.enums.item_enums import ModAffixType, AType
 
 
-def create_mod_id(atype, mod_text, affix_type):
-    return atype, mod_text, affix_type
+def create_mod_id(atype: AType, mod_text: str, affix_type: ModAffixType):
+    return atype.value, mod_text, affix_type.value
 
 
 @dataclass
@@ -84,7 +84,7 @@ class HybridModAnalyzer:
 
             hybrid_affix_dict[part].add(mod)
 
-    def fetch_hybrid_to_parent_dict(self, affix_type: ModAffixType = None):
+    def fetch_hybrid_part_to_parents(self, affix_type: ModAffixType = None):
         if affix_type:
             return self._hybrid_parts_to_parents_affixed[affix_type]
         else:
@@ -141,10 +141,10 @@ class AtypeModsManager:
         self._mods_affixed_dict[mod.affix_type][mod.mod_text] = mod
         self._hybrid_mod_analyzer.attempt_add_mod(mod)
 
-    def fetch_mod(self, mod_id):
-        if mod_id not in self._mod_id_to_mod:
-            return
+    def has_mod(self, mod_id):
+        return mod_id in self._mod_id_to_mod
 
+    def fetch_mod(self, mod_id):
         return self._mod_id_to_mod[mod_id]
 
     def fetch_mod_texts(self, affix_type: ModAffixType = None):
@@ -156,8 +156,8 @@ class AtypeModsManager:
     def fetch_mod_by_id(self, mod_id: int):
         return self._mod_id_to_mod[mod_id]
 
-    def fetch_hybrid_parts_to_parent(self, affix_type: ModAffixType = None) -> dict:
-        return self._hybrid_mod_analyzer.fetch_hybrid_to_parent_dict(affix_type)
+    def fetch_hybrid_part_to_parents(self, affix_type: ModAffixType = None) -> dict[str: set[Poe2DbMod]]:
+        return self._hybrid_mod_analyzer.fetch_hybrid_part_to_parents(affix_type)
 
     def determine_number_of_hybrid_parts(self, mod_id: int):
         return self._hybrid_mod_analyzer.determine_number_of_hybrid_parts(mod_id)

@@ -327,3 +327,482 @@ None
 None
 
 
+2025-05-30 17:22:29,086 - INFO - Could not find mod with ID ('spear', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 17:22:29,086 - ERROR - Exception in resolve_mods: 'spear'
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 196, in resolve_mods
+    new_mod = self._create_item_mod(mod_data=mod_data,
+                                    mod_class=mod_class_e,
+                                    affix_type=affix_type)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 153, in _create_item_mod
+    matched_poe2db_mod_id = self.mod_matcher.match_mod(new_mod)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 177, in match_mod
+    coe_mod_id_match = self._attempt_match(item_mod=item_mod, min_score=95.0)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 166, in _attempt_match
+    match = self._attempt_singleton_match(item_mod, min_score)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 138, in _attempt_singleton_match
+    atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/poe2db_scrape/mods_management.py", line 172, in fetch_atype_manager
+    return self._atypes_managers[atype]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'spear'
+2025-05-30 17:24:23,710 - INFO - Could not find mod with ID ('spear', 'implicit.stat_2763429652', None). Creating and caching.
+
+2025-05-30 17:24:23,711 - INFO - Could not find mod with ID ('spear', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 17:28:44,619 - ERROR - Exception in resolve_mods: 'dict' object has no attribute 'name'
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 173, in resolve_mods
+    self.current_atype = rp.item_atype
+                         ^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/api_response_parser.py", line 232, in item_atype
+    str_req=self.str_requirement,
+            ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/api_response_parser.py", line 243, in str_requirement
+    str_req = [req for req in requirements if req.name == '[Strength|Str]']
+                                              ^^^^^^^^
+AttributeError: 'dict' object has no attribute 'name'
+2025-05-30 17:29:32,889 - ERROR - Exception in resolve_mods: 'dict' object has no attribute 'name'
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 173, in resolve_mods
+    self.current_atype = rp.item_atype
+                         ^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/api_response_parser.py", line 232, in item_atype
+    str_req=self.str_requirement,
+            ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/api_response_parser.py", line 243, in str_requirement
+    str_req = [req for req in requirements if req.name == '[Strength|Str]']
+                                              ^^^^^^^^
+AttributeError: 'dict' object has no attribute 'name'
+2025-05-30 17:31:41,465 - ERROR - Exception in resolve_mods: 'dict' object has no attribute 'name'
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 173, in resolve_mods
+    self.current_atype = rp.item_atype
+                         ^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/api_response_parser.py", line 233, in item_atype
+    dex_req=self.dex_requirement,
+            ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/api_response_parser.py", line 255, in dex_requirement
+    dex_req = [req for req in requirements if req.name == '[Dexterity|Dex]']
+                                              ^^^^^^^^
+AttributeError: 'dict' object has no attribute 'name'
+2025-05-30 17:33:32,656 - ERROR - Exception in resolve_mods: int() argument must be a string, a bytes-like object or a real number, not 'list'
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 173, in resolve_mods
+    self.current_atype = rp.item_atype
+                         ^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/api_response_parser.py", line 233, in item_atype
+    dex_req=self.dex_requirement,
+            ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/api_response_parser.py", line 256, in dex_requirement
+    return int(dex_req[0]['values']) if dex_req else 0
+           ~~~^^^^^^^^^^^^^^^^^^^^^^
+TypeError: int() argument must be a string, a bytes-like object or a real number, not 'list'
+2025-05-30 17:35:10,783 - ERROR - Exception in resolve_mods: 'AType' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 185, in resolve_mods
+    mod_id = generate_mod_id(atype=self.current_atype, mod_ids=mod_ids, affix_type=affix_type)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/instances_and_definitions/item_instances.py", line 24, in generate_mod_id
+    atype = atype.lower().replace(' ', '_')
+            ^^^^^^^^^^^
+AttributeError: 'AType' object has no attribute 'lower'
+2025-05-30 17:35:50,073 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 17:35:50,076 - ERROR - Exception in resolve_mods: AtypeModsManager.fetch_mod() got an unexpected keyword argument 'mod_text'
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 196, in resolve_mods
+    new_mod = self._create_item_mod(mod_data=mod_data,
+                                    mod_class=mod_class_e,
+                                    affix_type=affix_type)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 153, in _create_item_mod
+    matched_poe2db_mod_id = self.mod_matcher.match_mod(new_mod)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 177, in match_mod
+    coe_mod_id_match = self._attempt_match(item_mod=item_mod, min_score=95.0)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 166, in _attempt_match
+    match = self._attempt_singleton_match(item_mod, min_score)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 152, in _attempt_singleton_match
+    mod = atype_manager.fetch_mod(mod_text=match,
+                                  affix_type=item_mod.affix_type_e)
+TypeError: AtypeModsManager.fetch_mod() got an unexpected keyword argument 'mod_text'
+2025-05-30 17:40:50,290 - INFO - Could not find mod with ID ('spear', 'implicit.stat_2763429652', None). Creating and caching.
+
+2025-05-30 17:40:50,291 - INFO - Could not find mod with ID ('spear', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 17:40:50,293 - ERROR - Exception in resolve_mods: 'NoneType' object has no attribute 'mod_id'
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 196, in resolve_mods
+    new_mod = self._create_item_mod(mod_data=mod_data,
+                                    mod_class=mod_class_e,
+                                    affix_type=affix_type)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/listing_builder.py", line 153, in _create_item_mod
+    matched_poe2db_mod_id = self.mod_matcher.match_mod(new_mod)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 179, in match_mod
+    coe_mod_id_match = self._attempt_match(item_mod=item_mod, min_score=95.0)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 168, in _attempt_match
+    match = self._attempt_singleton_match(item_mod, min_score)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/data_handling/mod_matching.py", line 157, in _attempt_singleton_match
+    return mod.mod_id
+           ^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'mod_id'
+2025-05-30 17:41:53,179 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 17:51:45,894 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 17:59:30,601 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:31:29,466 - INFO - Could not find mod with ID ('one_hand_mace', 'implicit.stat_1559935218', None). Creating and caching.
+
+2025-05-30 18:31:29,467 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:31:45,037 - INFO - Could not find mod with ID ('quarterstaff', 'implicit.stat_548198834', None). Creating and caching.
+
+2025-05-30 18:31:45,038 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:33:53,113 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,568 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_791928121', None). Creating and caching.
+
+2025-05-30 18:35:53,568 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,570 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,570 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,571 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,571 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,573 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,573 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,574 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,574 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,575 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_1541903247', None). Creating and caching.
+
+2025-05-30 18:35:53,575 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,575 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,575 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,576 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,577 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,577 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,577 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,577 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,577 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,579 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:35:53,580 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:35:53,582 - INFO - Could not find mod with ID ('two_hand_mace', 'implicit.stat_3675300253', None). Creating and caching.
+
+2025-05-30 18:35:53,583 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,584 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,586 - INFO - Could not find mod with ID ('two_hand_mace', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:35:53,586 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:35:53,594 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 18:38:42,534 - INFO - Could not find mod with ID ('bow', 'implicit.stat_3885405204', None). Creating and caching.
+
+2025-05-30 18:38:42,534 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:38:42,536 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,536 - INFO - Could not find mod with ID ('bow', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,537 - INFO - Could not find mod with ID ('bow', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,538 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:38:42,538 - INFO - Could not find mod with ID ('bow', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:38:42,544 - INFO - Could not find mod with ID ('bow', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:38:42,544 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1202301673', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,544 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,544 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:38:42,545 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:38:42,546 - INFO - Could not find mod with ID ('bow', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,546 - INFO - Could not find mod with ID ('bow', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,546 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:38:42,546 - INFO - Could not find mod with ID ('bow', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:38:42,546 - INFO - Could not find mod with ID ('bow', 'implicit.stat_1028592286', None). Creating and caching.
+
+2025-05-30 18:38:42,546 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,546 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:38:42,547 - INFO - Could not find mod with ID ('bow', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,548 - INFO - Could not find mod with ID ('bow', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,549 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,551 - INFO - Could not find mod with ID ('bow', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:38:42,551 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:38:42,555 - INFO - Could not find mod with ID ('bow', 'enchant.stat_2763429652', None). Creating and caching.
+
+2025-05-30 18:38:42,563 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 18:39:24,942 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1980802737', None). Creating and caching.
+
+2025-05-30 18:39:24,942 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,944 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:39:24,945 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,945 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,945 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:39:24,945 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:39:24,948 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,948 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:39:24,948 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:39:24,948 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:39:24,949 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1967051901', None). Creating and caching.
+
+2025-05-30 18:39:24,949 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,949 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,950 - INFO - Could not find mod with ID ('crossbow', 'implicit.stat_1803308202', None). Creating and caching.
+
+2025-05-30 18:39:24,950 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,951 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:39:24,951 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,952 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:39:24,953 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:39:24,953 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,953 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:39:24,954 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,957 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1202301673', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,958 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,960 - INFO - Could not find mod with ID ('crossbow', 'enchant.stat_3336890334', None). Creating and caching.
+
+2025-05-30 18:39:24,963 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:39:24,984 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 18:39:24,984 - INFO - Listing calculations:
+None
+
+
+2025-05-30 18:40:20,685 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,687 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:20,688 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:20,688 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:20,688 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,688 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,690 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,691 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,691 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:20,691 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,692 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,692 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_328541901', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,692 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:20,692 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,693 - INFO - Could not find mod with ID ('quarterstaff', 'implicit.stat_548198834', None). Creating and caching.
+
+2025-05-30 18:40:20,693 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:20,694 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,694 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,694 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:20,696 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:40:20,699 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,700 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:20,701 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,702 - INFO - Could not find mod with ID ('quarterstaff', 'implicit.stat_1702195217', None). Creating and caching.
+
+2025-05-30 18:40:20,702 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,705 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,706 - INFO - Could not find mod with ID ('quarterstaff', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,706 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:40:20,708 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_2223678961', None). Creating and caching.
+
+2025-05-30 18:40:20,715 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_3336890334', None). Creating and caching.
+
+2025-05-30 18:40:20,741 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_3885634897', None). Creating and caching.
+
+2025-05-30 18:40:20,746 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:20,749 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 18:40:20,749 - INFO - Listing calculations:
+None
+
+
+2025-05-30 18:40:59,878 - INFO - Could not find mod with ID ('spear', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,881 - INFO - Could not find mod with ID ('spear', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,881 - INFO - Could not find mod with ID ('spear', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,881 - INFO - Could not find mod with ID ('spear', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:59,885 - INFO - Could not find mod with ID ('spear', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,885 - INFO - Could not find mod with ID ('spear', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:59,885 - INFO - Could not find mod with ID ('spear', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:59,886 - INFO - Could not find mod with ID ('spear', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,886 - INFO - Could not find mod with ID ('spear', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,886 - INFO - Could not find mod with ID ('spear', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,886 - INFO - Could not find mod with ID ('spear', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:59,886 - INFO - Could not find mod with ID ('spear', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:59,887 - INFO - Could not find mod with ID ('spear', 'explicit.stat_3261801346', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,887 - INFO - Could not find mod with ID ('spear', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,888 - INFO - Could not find mod with ID ('spear', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,889 - INFO - Could not find mod with ID ('spear', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,889 - INFO - Could not find mod with ID ('spear', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:59,891 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:40:59,891 - INFO - Could not find mod with ID ('spear', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,892 - INFO - Could not find mod with ID ('spear', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,893 - INFO - Could not find mod with ID ('spear', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:59,895 - INFO - Could not find mod with ID ('spear', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 18:40:59,897 - INFO - Could not find mod with ID ('spear', 'implicit.stat_2763429652', None). Creating and caching.
+
+2025-05-30 18:40:59,898 - INFO - Could not find mod with ID ('spear', 'implicit.stat_535217483', None). Creating and caching.
+
+2025-05-30 18:40:59,900 - INFO - Could not find mod with ID ('spear', 'explicit.stat_1202301673', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,904 - INFO - Could not find mod with ID ('spear', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,906 - INFO - Could not find mod with ID ('spear', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 18:40:59,906 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 18:40:59,939 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 18:40:59,939 - INFO - Listing calculations:
+None
+
+
+2025-05-30 18:41:19,319 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 18:41:19,320 - INFO - Listing calculations:
+None
+
+
+2025-05-30 18:41:38,950 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 18:41:38,950 - INFO - Listing calculations:
+None
+
+

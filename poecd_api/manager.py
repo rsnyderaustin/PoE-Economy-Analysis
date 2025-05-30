@@ -1,6 +1,5 @@
 
 from file_management import FilesManager, DataPath
-from poe2db_scrape import Poe2DbScraper
 from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared.logging import LogsHandler, LogFile
 from .atype_manager_factory import AtypeManagerFactory
@@ -29,9 +28,6 @@ class PoecdDataManager:
                  data_puller: PoecdDataPuller = None):
         self.files_manager = files_manager
         self.data_puller = data_puller
-
-        if refresh_data:
-            self.poe2db_mods_manager = Poe2DbScraper().scrape()
 
         self.source_store = self._load_source_store_from_files()
 

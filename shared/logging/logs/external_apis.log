@@ -334,3 +334,637 @@ Traceback (most recent call last):
   File "C:\Users\austisnyder\Documents\GitHub\PoE-Economy-Analysis\.venv\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
     raise HTTPError(http_error_msg, response=self)
 requests.exceptions.HTTPError: 403 Client Error: Forbidden for url: https://www.pathofexile.com/api/trade2/search/poe2/Dawn%20of%20the%20Hunt
+2025-05-30 17:12:58,326 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:12:58,848 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-30 17:12:59,128 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:13:57,804 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:13:59,480 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (2, 300, 0)]
+
+2025-05-30 17:13:59,839 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:18:33,311 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:18:34,687 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-30 17:18:35,964 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:21:46,670 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:21:47,169 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (2, 300, 0)]
+
+2025-05-30 17:21:47,454 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:21:53,347 - INFO - 89 valid query responses out of 89.
+
+2025-05-30 17:22:28,386 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:22:28,795 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (3, 300, 0)]
+
+2025-05-30 17:22:29,077 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:22:29,085 - INFO - 6 valid query responses out of 6.
+
+2025-05-30 17:24:11,431 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:24:12,128 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-30 17:24:12,389 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:24:21,208 - INFO - 92 valid query responses out of 92.
+
+2025-05-30 17:28:43,856 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:28:44,344 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (2, 300, 0)]
+
+2025-05-30 17:28:44,608 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:28:44,619 - INFO - 10 valid query responses out of 10.
+
+2025-05-30 17:29:03,858 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:29:04,228 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-30 17:29:04,779 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:29:05,972 - INFO - 37 valid query responses out of 37.
+
+2025-05-30 17:29:42,091 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:29:43,910 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (3, 300, 0)]
+
+2025-05-30 17:29:44,165 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:29:45,144 - INFO - 32 valid query responses out of 32.
+
+2025-05-30 17:30:45,627 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:30:46,156 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (4, 300, 0)]
+
+2025-05-30 17:30:46,427 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:30:47,319 - INFO - 36 valid query responses out of 36.
+
+2025-05-30 17:31:22,922 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:31:23,529 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (5, 300, 0)]
+
+2025-05-30 17:31:23,924 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:31:28,469 - INFO - 43 valid query responses out of 43.
+
+2025-05-30 17:31:50,890 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:31:51,480 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (6, 300, 0)]
+
+2025-05-30 17:31:57,398 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:31:57,683 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(2, 10, 0), (3, 60, 0), (7, 300, 0)]
+
+2025-05-30 17:31:57,947 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:31:58,362 - INFO - 11 valid query responses out of 11.
+
+2025-05-30 17:33:15,272 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:33:15,884 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (7, 300, 0)]
+
+2025-05-30 17:33:16,195 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:33:16,719 - INFO - 17 valid query responses out of 17.
+
+2025-05-30 17:33:52,669 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:33:53,261 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (8, 300, 0)]
+
+2025-05-30 17:33:53,769 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:33:53,779 - INFO - 1 valid query responses out of 1.
+
+2025-05-30 17:35:09,406 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:35:10,262 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (6, 300, 0)]
+
+2025-05-30 17:35:10,775 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:35:10,782 - INFO - 3 valid query responses out of 3.
+
+2025-05-30 17:35:48,709 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:35:49,195 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (7, 300, 0)]
+
+2025-05-30 17:35:49,437 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:35:50,073 - INFO - 29 valid query responses out of 29.
+
+2025-05-30 17:40:48,336 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:40:50,026 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-30 17:40:50,278 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:40:50,290 - INFO - 6 valid query responses out of 6.
+
+2025-05-30 17:41:27,570 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:41:27,939 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-30 17:41:27,940 - INFO - Total valid responses in 0.0 minutes: 0
+
+2025-05-30 17:41:27,942 - INFO - Processing query 2 of 144 queries.
+
+2025-05-30 17:41:33,697 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:41:34,335 - INFO - 29 valid query responses out of 29.
+
+2025-05-30 17:51:44,148 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:51:44,763 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-30 17:51:45,010 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:51:45,893 - INFO - 31 valid query responses out of 31.
+
+2025-05-30 17:59:25,615 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 17:59:26,128 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-30 17:59:26,385 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 17:59:30,600 - INFO - 47 valid query responses out of 47.
+
+2025-05-30 18:31:28,833 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:31:29,198 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-30 18:31:29,457 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:31:29,466 - INFO - 3 valid query responses out of 3.
+
+2025-05-30 18:31:42,730 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:31:43,070 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-30 18:31:43,343 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:31:45,037 - INFO - 40 valid query responses out of 40.
+
+2025-05-30 18:35:51,845 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:35:52,289 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-30 18:35:52,534 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:35:53,568 - INFO - 35 valid query responses out of 35.
+
+2025-05-30 18:38:36,392 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:38:37,061 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (2, 300, 0)]
+
+2025-05-30 18:38:37,557 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:38:42,534 - INFO - 53 valid query responses out of 53.
+
+2025-05-30 18:39:18,376 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:39:19,191 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (3, 300, 0)]
+
+2025-05-30 18:39:19,671 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:39:24,940 - INFO - 53 valid query responses out of 53.
+
+2025-05-30 18:40:10,784 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:40:11,670 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (3, 300, 0)]
+
+2025-05-30 18:40:11,993 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:40:20,683 - INFO - 100 valid query responses out of 100.
+
+2025-05-30 18:40:49,457 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:40:50,305 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (4, 300, 0)]
+
+2025-05-30 18:40:50,918 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:40:59,877 - INFO - 94 valid query responses out of 94.
+
+2025-05-30 18:41:17,805 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:41:18,567 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (5, 300, 0)]
+
+2025-05-30 18:41:18,837 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:41:19,297 - INFO - 22 valid query responses out of 22.
+
+2025-05-30 18:41:38,067 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:41:38,482 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (3, 60, 0), (6, 300, 0)]
+
+2025-05-30 18:41:38,939 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 18:41:38,945 - INFO - 1 valid query responses out of 1.
+
+2025-05-30 18:43:46,549 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 18:43:46,589 - ERROR - Exception in send_request: HTTPSConnectionPool(host='www.pathofexile.com', port=443): Max retries exceeded with url: /api/trade2/search/poe2/Dawn%20of%20the%20Hunt (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)"))
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/util/connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='www.pathofexile.com', port=443): Max retries exceeded with url: /api/trade2/search/poe2/Dawn%20of%20the%20Hunt (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/trade_api/request_throttler.py", line 189, in send_request
+    response = request_func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.pathofexile.com', port=443): Max retries exceeded with url: /api/trade2/search/poe2/Dawn%20of%20the%20Hunt (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-05-30 18:43:46,595 - ERROR - Exception in _post_for_search_id: HTTPSConnectionPool(host='www.pathofexile.com', port=443): Max retries exceeded with url: /api/trade2/search/poe2/Dawn%20of%20the%20Hunt (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)"))
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/util/connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3_1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='www.pathofexile.com', port=443): Max retries exceeded with url: /api/trade2/search/poe2/Dawn%20of%20the%20Hunt (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/trade_api/trade_items_fetcher.py", line 47, in _post_for_search_id
+    response = cls.request_throttler.send_request(
+        request_func=requests.post,
+    ...<2 lines>...
+        json=query
+    )
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/shared/logging/logging_utils.py", line 9, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/trade_api/request_throttler.py", line 189, in send_request
+    response = request_func(*args, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.pathofexile.com', port=443): Max retries exceeded with url: /api/trade2/search/poe2/Dawn%20of%20the%20Hunt (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)"))

@@ -4,7 +4,7 @@ import re
 import rapidfuzz
 
 from instances_and_definitions import ItemMod
-from poe2db_scrape.mods_management import Poe2DbModsManager
+from poe2db_scrape.mods_management import Poe2DbModsManager, create_mod_id, Poe2DbMod
 
 
 class _MatchScoreTracker:
@@ -13,17 +13,18 @@ class _MatchScoreTracker:
         self._sub_mod_matches = dict()
         self._poe2db_mod_scores = dict()
 
-    def score_round(self, sub_mod_id, poe2db_mod_ids, score):
-        for poe2db_mod_id in poe2db_mod_ids:
+    def score_round(self, sub_mod_id, poe2db_mods: set[Poe2DbMod], score):
+        for poe2db_mod in poe2db_mods:
             if sub_mod_id not in self._sub_mod_matches:
                 self._sub_mod_matches[sub_mod_id] = set()
-            self._sub_mod_matches[sub_mod_id].add(poe2db_mod_id)
 
-            if poe2db_mod_id not in self._poe2db_mod_scores:
-                self._poe2db_mod_scores[poe2db_mod_id] = 0
-            self._poe2db_mod_scores[poe2db_mod_id] += score
+            self._sub_mod_matches[sub_mod_id].add(poe2db_mod)
 
-    def determine_winner(self) -> str | None:
+            if poe2db_mod not in self._poe2db_mod_scores:
+                self._poe2db_mod_scores[poe2db_mod] = 0
+            self._poe2db_mod_scores[poe2db_mod] += score
+
+    def determine_winner(self) -> Poe2DbMod | None:
         if not self._sub_mod_matches:
             return None  # No data to process
 
@@ -35,13 +36,13 @@ class _MatchScoreTracker:
         highest_score = -1
 
         winner_scores = {
-            mod_id: score_total
-            for mod_id, score_total in self._poe2db_mod_scores.items()
-            if mod_id in winners
+            mod: score_total
+            for mod, score_total in self._poe2db_mod_scores.items()
+            if mod in winners
         }
-        for winner_id, score_total in winner_scores.items():
+        for winner, score_total in winner_scores.items():
             if score_total > highest_score:
-                best_poe2db_mod = winner_id
+                best_poe2db_mod = winner
                 highest_score = score_total
 
         return best_poe2db_mod
@@ -95,7 +96,7 @@ class ModMatcher:
 
         return text
 
-    def _attempt_hybrid_match(self, item_mod: ItemMod, min_score: float) -> str | None:
+    def _attempt_hybrid_match(self, item_mod: ItemMod, min_score: float) -> Poe2DbMod | None:
         atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
         hybrid_scores_tracker = _MatchScoreTracker()
 
@@ -107,34 +108,34 @@ class ModMatcher:
         for each hybrid mod text, we just determine which poe2db hybrid mod is the best fit
         """
         for sub_mod in item_mod.sub_mods:
-            mod_to_parent_dict = atype_manager.fetch_hybrid_parts_to_parent(item_mod.affix_type_e)
-            hybrid_mod_texts = list(mod_to_parent_dict.keys())
+            mod_part_to_parent_dict = atype_manager.fetch_hybrid_part_to_parents(item_mod.affix_type_e)
+            hybrid_mod_texts = list(mod_part_to_parent_dict.keys())
 
             matches = rapidfuzz.process.extract(sub_mod.sanitized_mod_text,
                                                 hybrid_mod_texts,
                                                 score_cutoff=min_score)
 
             for match, score, idx in matches:
-                poe2db_mods = mod_to_parent_dict[match]
+                poe2db_mods = mod_part_to_parent_dict[match]
 
                 # The number of parts in the Mod text has to line up with the number of parts in the poe2db mod
-                poe2db_mods = {
-                    poe2db_mod.mod_id
+                valid_poe2db_mods = {
+                    poe2db_mod
                     for poe2db_mod in poe2db_mods
                     if atype_manager.determine_number_of_hybrid_parts(poe2db_mod) == number_of_parts
                 }
 
-                if not poe2db_mods:
+                if not valid_poe2db_mods:
                     continue
 
                 hybrid_scores_tracker.score_round(sub_mod_id=sub_mod.mod_id,
-                                                  poe2db_mod_ids=poe2db_mods,
+                                                  poe2db_mods=valid_poe2db_mods,
                                                   score=score)
 
-        poe2db_mod_id_match = hybrid_scores_tracker.determine_winner()
-        return poe2db_mod_id_match
+        poe2db_mod_match = hybrid_scores_tracker.determine_winner()
+        return poe2db_mod_match
 
-    def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float):
+    def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float) -> Poe2DbMod:
         atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
 
         poe2db_mod_texts = atype_manager.fetch_mod_texts(item_mod.affix_type_e)
@@ -149,10 +150,12 @@ class ModMatcher:
 
         match, score, idx = result
 
-        mod = atype_manager.fetch_mod(mod_text=match,
-                                      affix_type=item_mod.affix_type_e)
+        mod_id = create_mod_id(atype=atype_manager.atype,
+                               mod_text=match,
+                               affix_type=item_mod.affix_type_e)
+        mod = atype_manager.fetch_mod(mod_id)
 
-        return mod.mod_id
+        return mod
 
     def _attempt_match(self, item_mod: ItemMod, min_score: float, attempt_to_transform: bool = False) -> str | None:
         if attempt_to_transform:
@@ -161,31 +164,31 @@ class ModMatcher:
                 sub_mod.sanitized_mod_text = self._transform_text(sub_mod.sanitized_mod_text)
 
         if item_mod.is_hybrid:
-            match = self._attempt_hybrid_match(item_mod, min_score)
+            mod_match = self._attempt_hybrid_match(item_mod, min_score)
         else:
-            match = self._attempt_singleton_match(item_mod, min_score)
+            mod_match = self._attempt_singleton_match(item_mod, min_score)
 
-        return match
+        return mod_match
 
-    def match_mod(self, item_mod: ItemMod) -> str | None:
+    def match_mod(self, item_mod: ItemMod) -> Poe2DbMod | None:
         """
 
         :param item_mod:
         :return: The matching poe2db Mod ID.
         """
 
-        coe_mod_id_match = self._attempt_match(item_mod=item_mod, min_score=95.0)
-        if coe_mod_id_match:
-            return coe_mod_id_match
+        poe2db_mod_match = self._attempt_match(item_mod=item_mod, min_score=95.0)
+        if poe2db_mod_match:
+            return poe2db_mod_match
 
-        coe_mod_id_match = self._attempt_match(item_mod=item_mod, min_score=95.0, attempt_to_transform=True)
-        if coe_mod_id_match:
-            return coe_mod_id_match
+        poe2db_mod_match = self._attempt_match(item_mod=item_mod, min_score=95.0, attempt_to_transform=True)
+        if poe2db_mod_match:
+            return poe2db_mod_match
 
-        coe_mod_id_match = self._attempt_match(item_mod=item_mod, min_score=90.0)
-        if coe_mod_id_match:
-            return coe_mod_id_match
+        poe2db_mod_match = self._attempt_match(item_mod=item_mod, min_score=90.0)
+        if poe2db_mod_match:
+            return poe2db_mod_match
 
-        coe_mod_id_match = self._attempt_match(item_mod=item_mod, min_score=90.0, attempt_to_transform=True)
-        if coe_mod_id_match:
-            return coe_mod_id_match
+        poe2db_mod_match = self._attempt_match(item_mod=item_mod, min_score=90.0, attempt_to_transform=True)
+        if poe2db_mod_match:
+            return poe2db_mod_match

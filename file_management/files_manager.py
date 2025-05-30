@@ -17,11 +17,10 @@ from shared.logging import log_errors
 class DataPath(Enum):
     MODS = Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
     CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/static_files/currency_prices.csv'
-    POE2DB_MODS = Path.cwd() / 'file_management/static_files/poe2db_mods.pkl'
+    POE2DB_MODS_MANAGER = Path.cwd() / 'file_management/static_files/poe2db_mods_manager.pkl'
     OFFICIAL_STATIC = Path.cwd() / 'file_management/static_files/official_static.json'
     OFFICIAL_STATS = Path.cwd() / 'file_management/static_files/official_stats.json'
     RAW_LISTINGS = Path.cwd() / 'file_management/dynamic_files/raw_listings.json'
-    GLOBAL_POECD_MANAGER = Path.cwd() / 'file_management/dynamic_files/global_poe2db_manager.pkl'
 
 
 class ModelPath(Enum):

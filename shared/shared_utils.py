@@ -1,11 +1,21 @@
 import logging
 import re
 from datetime import datetime, date
+from typing import Iterable
+from zoneinfo import ZoneInfo
 
 import file_management
 from file_management import DataPath
 from shared.enums.trade_enums import Currency
 
+
+def extract_average_from_text(text) -> float:
+    values = extract_values_from_text(text)
+
+    values = [sum(value) / len(value) if isinstance(value, Iterable) else value for value in values]
+    avg_value = sum(values) / len(values)
+
+    return avg_value
 
 def extract_values_from_text(text) -> list:
     matches = re.findall(r'-?\d+(?:\.\d+)?(?:\s*[–-]\s*-?\d+(?:\.\d+)?)?', text)
@@ -56,7 +66,7 @@ def sanitize_mod_text(mod_text: str):
     )
     result = re.sub(r'\d+', '#', result)
 
-    result = result.replace('#', 'n').replace('%', '%p')
+    result = result.replace('#', 'n').replace('%', 'p')
 
     brackets_pattern = r'\[(.*?)\]'
     result = re.sub(brackets_pattern, _extract_from_brackets, result)
@@ -88,7 +98,8 @@ class CurrencyConverter:
 
     @staticmethod
     def _apply_create_conversions_dict(row, conversions_dict: dict):
-        observation_date = datetime.strptime(row['date'], '%Y-%m-%d')
+        # All manual currency price documentation is done in CST
+        observation_date = datetime.strptime(row['date'], '%Y-%m-%d').replace(tzinfo=ZoneInfo('America/Chicago'))
         currency = row['currency']
         conversion_rate = row['div_per_currency']
 

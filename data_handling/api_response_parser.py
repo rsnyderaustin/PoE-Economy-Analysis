@@ -1,4 +1,3 @@
-
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime
@@ -18,7 +17,6 @@ class Price:
 
 
 class _ATypeClassifier:
-
     _wand_btype_map = {
         'volatile_wand': 'fire_wand',
         'withered_wand': 'chaos_wand',
@@ -63,7 +61,6 @@ class _ATypeClassifier:
 
 
 class ApiResponseParser:
-
     _mod_class_to_abbrev = {
         ModClass.IMPLICIT: 'implicit',
         ModClass.ENCHANT: 'enchant',
@@ -94,10 +91,10 @@ class ApiResponseParser:
         mods_data['implicit'] = [
             mod for mod in mods_data['implicit']
             if not (
-               mod.get("name") == "" and
-               mod.get("tier") == "" and
-               mod.get("magnitudes") is None and
-               mod.get("level") == 1
+                    mod.get("name") == "" and
+                    mod.get("tier") == "" and
+                    mod.get("magnitudes") is None and
+                    mod.get("level") == 1
             )
         ]
         return response_data
@@ -118,19 +115,15 @@ class ApiResponseParser:
             if property_name == 'elemental_damage':
                 # Elemental damage is a hybrid of the different elemental damage types
                 for ele_value in raw_property['values']:
-                    value = shared_utils.extract_values_from_text(ele_value[0])
-                    if isinstance(value, Iterable):
-                        value = sum(value) / len(value)
-
                     elemental_type = self.__class__._elemental_id_map[ele_value[1]]
+                    value = shared_utils.extract_average_from_text(ele_value[0])
+
                     properties[elemental_type] = value
 
                 continue
 
             property_value_str = raw_property['values'][0][0]
-            value = shared_utils.extract_values_from_text(property_value_str)
-            if isinstance(value, Iterable):
-                value = sum(value) / len(value)
+            value = shared_utils.extract_average_from_text(property_value_str)
 
             properties[property_name] = value
 
@@ -232,9 +225,13 @@ class ApiResponseParser:
         return 'corrupted' in self.item_data and self.item_data['corrupted'] is True
 
     @property
-    def item_atype(self) -> str:
-
-        return self.item_data['properties'][0]['name']
+    def item_atype(self) -> AType:
+        item_category = self.item_data['properties'][0]['name']
+        return _ATypeClassifier.classify(item_category=item_category,
+                                         item_btype=self.item_btype,
+                                         str_req=self.str_requirement,
+                                         dex_req=self.dex_requirement,
+                                         int_req=self.int_requirement)
 
     @property
     def item_properties(self) -> dict:
@@ -243,20 +240,18 @@ class ApiResponseParser:
     @property
     def str_requirement(self) -> int:
         requirements = self.item_data['requirements']
-        str_req = [req for req in requirements if req.name == '[Strength|Str]']
-        return int(str_req[0]['values']) if str_req else 0
+        str_req = [req for req in requirements if req['name'] == 'str']
+
+        return int(str_req[0]['values'][0][0]) if str_req else 0
 
     @property
     def int_requirement(self) -> int:
         requirements = self.item_data['requirements']
-        int_req = [req for req in requirements if req.name == '[Intelligence|Int]']
-        return int(int_req[0]['values']) if int_req else 0
+        int_req = [req for req in requirements if req['name'] == 'int']
+        return int(int_req[0]['values'][0][0]) if int_req else 0
 
     @property
     def dex_requirement(self) -> int:
         requirements = self.item_data['requirements']
-        dex_req = [req for req in requirements if req.name == '[Dexterity|Dex]']
-        return int(dex_req[0]['values']) if dex_req else 0
-        
-
-
+        dex_req = [req for req in requirements if req['name'] == 'dex']
+        return int(dex_req[0]['values'][0][0]) if dex_req else 0

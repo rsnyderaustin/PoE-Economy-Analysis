@@ -18,10 +18,10 @@ class SubMod:
         self.values_ranges = values_ranges
 
 
-def generate_mod_id(atype: str,
+def generate_mod_id(atype: AType,
                     mod_ids: Iterable,
                     affix_type: ModAffixType = None):
-    atype = atype.lower().replace(' ', '_')
+    atype = atype.value.lower().replace(' ', '_')
     mod_ids = sorted(list(mod_ids))
 
     return atype, *mod_ids, affix_type
@@ -107,8 +107,7 @@ class ModifiableListing:
                  currency_amount: int,
                  item_name: str,
                  item_btype: str,  # Hunting Shoes, Lunar Amulet, etc
-                 item_atype: str,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
-                 item_category: AType,
+                 item_atype: AType,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
                  rarity: Rarity,
                  ilvl: int,
                  identified: bool,
@@ -129,7 +128,6 @@ class ModifiableListing:
         self.currency_amount = currency_amount
         self.item_name = item_name
         self.item_btype = item_btype
-        self.item_category = item_category
         self.item_atype = item_atype
         self.rarity = rarity
         self.ilvl = ilvl

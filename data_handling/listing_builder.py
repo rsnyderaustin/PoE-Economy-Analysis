@@ -150,16 +150,14 @@ class _ModResolver:
         if new_mod.mod_class_e not in (ModClass.EXPLICIT, ModClass.FRACTURED):
             return new_mod
 
-        matched_poe2db_mod_id = self.mod_matcher.match_mod(new_mod)
+        poe2db_mod_match = self.mod_matcher.match_mod(new_mod)
 
-        if not matched_poe2db_mod_id:
+        if not poe2db_mod_match:
             parse_log.error(f"Was not able to match item mod:\n{pprint.pprint(new_mod)}")
             return new_mod
 
-        poe2db_mod = self._poe2db_mods_manager.fetch_mod(atype=new_mod.atype,
-                                                        mod_id=matched_poe2db_mod_id)
-        new_mod.weighting = poe2db_mod.fetch_weighting(ilvl=int(mod_data['level']))
-        new_mod.mod_types = poe2db_mod.mod_types
+        new_mod.weighting = poe2db_mod_match.fetch_weighting(ilvl=int(mod_data['level']))
+        new_mod.mod_types = poe2db_mod_match.mod_types
 
         return new_mod
 

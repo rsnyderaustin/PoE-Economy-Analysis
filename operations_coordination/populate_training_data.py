@@ -18,7 +18,7 @@ class TrainingDataPopulator:
         self.psql_manager = psql_manager
 
         # Technically we don't need to have the Poe2Db mods manager if we have full coverage of all mods
-        poe2db_mods_manager = files_manager.fetch_data(DataPath.POE2DB_MODS, default=dict())
+        poe2db_mods_manager = files_manager.fetch_data(DataPath.POE2DB_MODS_MANAGER, default=dict())
         self.listing_builder = ListingBuilder(poe2db_mods_manager)
 
         self.env_loader = env_loading.EnvLoader()

@@ -6,7 +6,8 @@ from collections.abc import Iterable
 import pandas as pd
 
 from instances_and_definitions import ModifiableListing
-from shared import ATypeGroups, shared_utils
+from shared import shared_utils
+from shared.enums import ItemEnumGroups, WhichCategoryType
 from shared.enums.item_enums import AType, LocalMod, CalculatedMod
 from shared.logging import LogsHandler, LogFile, log_errors
 
@@ -15,7 +16,7 @@ price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
 
 class ListingFeatureCalculator(ABC):
-    applicable_item_categories = []
+    applicable_atypes = []
     input_columns = set()
     calculated_columns = set()
 
@@ -31,7 +32,7 @@ class ListingFeatureCalculator(ABC):
             raise TypeError(f"{cls.__name__} must define 'input_columns'.")
         if not hasattr(cls, 'calculated_columns'):
             raise TypeError(f"{cls.__name__} must define 'calculated_columns'.")
-        if not hasattr(cls, 'applicable_item_categories'):
+        if not hasattr(cls, 'applicable_atypes'):
             raise TypeError(f"{cls.__name__} must define 'applicable_item_categories'.")
 
     def __hash__(self):
@@ -39,43 +40,43 @@ class ListingFeatureCalculator(ABC):
 
 
 class CalculatorRegistry:
-    _item_category_to_calculators = dict()
+    _item_atype_to_calculators = dict()
 
     @classmethod
     def register(cls, calculator: type[ListingFeatureCalculator]):
-        for category in calculator.applicable_item_categories:
-            if category not in cls._item_category_to_calculators:
-                cls._item_category_to_calculators[category] = list()
+        for atype in calculator.applicable_atypes:
+            if atype not in cls._item_atype_to_calculators:
+                cls._item_atype_to_calculators[atype] = list()
 
-            cls._item_category_to_calculators[category].append(calculator)
+            cls._item_atype_to_calculators[atype].append(calculator)
 
         return calculator
 
     @classmethod
-    def fetch_calculators(cls, item_category: AType) -> list[ListingFeatureCalculator]:
-        return cls._item_category_to_calculators[item_category] if item_category in cls._item_category_to_calculators else []
+    def fetch_calculators(cls, item_atype: AType) -> list[ListingFeatureCalculator]:
+        return cls._item_atype_to_calculators[item_atype] if item_atype in cls._item_atype_to_calculators else []
 
     @classmethod
     def input_columns(cls) -> set[str]:
-        calcs = {calc for item_category, calcs in cls._item_category_to_calculators.items() for calc in calcs}
+        calcs = {calc for item_category, calcs in cls._item_atype_to_calculators.items() for calc in calcs}
         return {input_col for calc in calcs for input_col in calc.input_columns}
 
     @classmethod
     def calculated_columns(cls) -> set[str]:
-        calcs = {calc for item_category, calcs in cls._item_category_to_calculators.items() for calc in calcs}
+        calcs = {calc for item_category, calcs in cls._item_atype_to_calculators.items() for calc in calcs}
         return {calc_col for calc in calcs for calc_col in calc.calculated_columns}
 
 
 @CalculatorRegistry.register
 class MaxQualityPdpsCalculator(ListingFeatureCalculator):
-    applicable_item_categories = ATypeGroups.fetch_martial_weapon_categories()
+    applicable_atypes = ItemEnumGroups.fetch_martial_weapons(which=WhichCategoryType.ATYPE)
     input_columns = {LocalMod.QUALITY, LocalMod.PHYSICAL_DAMAGE, LocalMod.ATTACKS_PER_SECOND}
     calculated_columns = {CalculatedMod.MAX_QUALITY_PDPS.value}
 
     @classmethod
     def calculate(cls, listing: ModifiableListing):
-        if listing.item_category not in cls.applicable_item_categories:
-            msg = f"Listing with item category {listing.item_category} called {cls.__name__}"
+        if listing.item_atype not in cls.applicable_atypes:
+            msg = f"Listing with item category {listing.item_atype} called {cls.__name__}"
             logging.error(msg)
             raise TypeError(msg)
 
@@ -95,7 +96,7 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
 
 @CalculatorRegistry.register
 class NonPhysicalDpsCalculator(ListingFeatureCalculator):
-    applicable_item_categories = ATypeGroups.fetch_martial_weapon_categories()
+    applicable_atypes = ItemEnumGroups.fetch_martial_weapons(which=WhichCategoryType.ATYPE)
     input_columns = {LocalMod.CHAOS_DAMAGE, LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
     calculated_columns = {CalculatedMod.COLD_DPS, CalculatedMod.FIRE_DPS, CalculatedMod.LIGHTNING_DPS, CalculatedMod.ELEMENTAL_DPS}
@@ -103,8 +104,8 @@ class NonPhysicalDpsCalculator(ListingFeatureCalculator):
     @classmethod
     @log_errors(parse_log)
     def calculate(cls, listing: ModifiableListing):
-        if listing.item_category not in cls.applicable_item_categories:
-            raise TypeError(f"Listing with item category {listing.item_category} called {cls.__name__}")
+        if listing.item_atype not in cls.applicable_atypes:
+            raise TypeError(f"Listing with item category {listing.item_atype} called {cls.__name__}")
 
         cold_damage = listing.item_properties.get(LocalMod.COLD_DAMAGE.value, 0)
         fire_damage = listing.item_properties.get(LocalMod.FIRE_DAMAGE.value, 0)
@@ -272,7 +273,7 @@ class _PricePredictTransformer:
         return self
 
     def apply_calculators(self, delete_input_columns=True):
-        calculators = self.calculator_registry.fetch_calculators(self.listing.item_category)
+        calculators = self.calculator_registry.fetch_calculators(self.listing.item_atype)
         derived_col_values = {
             col_e.value: val
             for calc in calculators
@@ -304,7 +305,7 @@ class _PricePredictTransformer:
         divs_price = shared_utils.CurrencyConverter().convert_to_divs(
             currency=self.listing.currency,
             currency_amount=self.listing.currency_amount,
-            relevant_date=self.listing.date_fetched()
+            relevant_date=self.listing.date_fetched
         )
         self.flattened_data['divs'] = divs_price
         return self
@@ -312,9 +313,8 @@ class _PricePredictTransformer:
     def insert_item_base_info(self):
         self.flattened_data['open_prefixes'] = self.listing.open_prefixes
         self.flattened_data['open_suffixes'] = self.listing.open_suffixes
-        self.flattened_data['atype'] = self.listing.item_atype
+        self.flattened_data['atype'] = self.listing.item_atype.value
         self.flattened_data['ilvl'] = self.listing.ilvl
-        self.flattened_data['category'] = self.listing.item_category.value
         self.flattened_data['rarity'] = self.listing.rarity.value
         self.flattened_data['corrupted'] = self.listing.corrupted
         self.flattened_data['identified'] = self.listing.identified

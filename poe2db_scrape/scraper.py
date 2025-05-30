@@ -14,8 +14,7 @@ from .mods_management import AtypeModsManager, Poe2DbModsManager
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 _atype_paths = {
-    AType.ONE_HANDED_MACE: 'https://poe2db.tw/us/One_Hand_Maces#ModifiersCalc'
-                           """,
+    AType.ONE_HANDED_MACE: 'https://poe2db.tw/us/One_Hand_Maces#ModifiersCalc',
     AType.SCEPTRE: 'https://poe2db.tw/us/Sceptres#ModifiersCalc',
     AType.SPEAR: 'https://poe2db.tw/us/Spears#ModifiersCalc',
     AType.BOW: 'https://poe2db.tw/us/Bows#ModifiersCalc',
@@ -71,11 +70,12 @@ _atype_paths = {
     AType.SAPPHIRE: 'https://poe2db.tw/us/Sapphire#ModifiersCalc',
 
     AType.RING: 'https://poe2db.tw/us/Rings#ModifiersCalc',
-    AType.BELT: 'https://poe2db.tw/us/Belts#ModifiersCalc'"""
+    AType.BELT: 'https://poe2db.tw/us/Belts#ModifiersCalc'
 }
 
 
 class _Poe2DbHtmlParser:
+    _driver = None
 
     def __init__(self, url: str):
         options = Options()
@@ -84,8 +84,12 @@ class _Poe2DbHtmlParser:
         options.add_argument("--no-sandbox")  # Optional: good for Linux servers
         options.add_argument("--window-size=1920,1080")  # Optional: ensures consistent layout
 
-        self.driver = webdriver.Chrome(options=options)
-        time.sleep(0.5)
+        cls = self.__class__
+        if not cls._driver:
+            cls._driver = webdriver.Chrome(options=options)
+
+        # time.sleep(0.1)
+        self.driver = cls._driver
         self.driver.get(url)
         print(f"Successfully loaded {url} driver.")
 
@@ -152,7 +156,7 @@ class _Poe2DbHtmlParser:
 
         mod_text = ' '.join(text_list)
         mod_text = shared_utils.sanitize_mod_text(mod_text)
-        mod_text = mod_text.replace('n_p_', 'np')
+        mod_text = mod_text.replace('n_p_', 'np_')
 
         return mod_text, values_ranges
 
@@ -183,17 +187,16 @@ class Poe2DbScraper:
             for atype in _atype_paths.keys()
         }
 
-        self._parsers = {
-            atype: _Poe2DbHtmlParser(url=url)
-            for atype, url in _atype_paths.items()
-        }
-
     def _scrape_mods(self, atype: AType, affix_type: ModAffixType):
-        parser = self._parsers[atype]
+        parser = _Poe2DbHtmlParser(url=_atype_paths[atype])
         mods_manager = self._atypes_managers[atype]
 
-        prefix_mods = parser.fetch_affix_mods(affix_type=affix_type)
-        for mod in prefix_mods:
+        affix_mods = parser.fetch_affix_mods(affix_type=affix_type)
+        if not affix_mods:
+            api_log.info(f"No {affix_type} mods found for AType {atype}.")
+            return
+
+        for mod in affix_mods:
             mod_tiers = parser.fetch_mod_pop_out_tiers(mod)
             mod_types = parser.fetch_mod_types(mod)
 
@@ -207,9 +210,8 @@ class Poe2DbScraper:
                 mod_id = mods_management.create_mod_id(atype=atype,
                                                        affix_type=affix_type,
                                                        mod_text=mod_text)
-                mod = mods_manager.fetch_mod(mod_id)
 
-                if not mod:
+                if not mods_manager.has_mod(mod_id):
                     mod = Poe2DbMod(
                         atype=atype,
                         affix_type=affix_type,
