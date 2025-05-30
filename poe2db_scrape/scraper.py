@@ -5,8 +5,10 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-from .mods_management import AtypeModsManager
+from .mods_management import AtypeModsManager, Poe2DbModsManager
 from poe2db_scrape.mods_management import Poe2DbMod
 from shared import shared_utils
 from shared.enums.item_enums import AType
@@ -76,6 +78,110 @@ _atype_paths = {
 }
 
 
+class _ATypeHtmlParser:
+
+    def __init__(self, atype: AType, soup: BeautifulSoup):
+        self.atype = atype
+        self.soup = soup
+
+        self._affix_types = self._determine_mod_affix_types()
+
+    @staticmethod
+    def _parse_mod_text(mod_data):
+        print(f"Parsing mod data:\n{mod_data.prettify()}")
+        texts = []
+        values_ranges = []
+        children = list(mod_data.children)[2:]  # Only items after the first 2 contain mod text
+        for child in children:
+            # "float-end" spans are the tiers, ilvl, weights, etc of affix table mods
+            if child.name == 'span' and 'float-end' in child.get('class', []):
+                continue
+
+            text = child.get_text(strip=True)
+            if not text:
+                continue
+
+            texts.append(text)
+
+            if child.name == 'span' and 'mod-value' in child.get('class', []):
+                values = shared_utils.extract_values_from_text(text)
+                values_ranges.extend(values)
+
+        texts = ' '.join(texts)
+        texts = texts.replace('# %', '#%').replace('(#-#)', '# to #')
+        texts = shared_utils.sanitize_mod_text(texts)
+        print(f"Mod data parsed into:\n{texts}")
+        return texts, values_ranges
+
+    def _determine_mod_affix_types(self) -> dict:
+        affix_types = dict()
+        affix_tables = self.soup.find_all('div', class_='col-lg-6')
+        for affix_table in affix_tables:
+            affix_type = affix_table.find(text=True, recursive=True)
+            affix_type = shared_utils.sanitize_text(affix_type)
+
+            mod_table = affix_table.find('div', class_='identifynormal')
+            for mod in mod_table.find_all('div', class_='explicitMod'):
+                mod_text, _ = self._parse_mod_text(mod)
+                affix_types[mod_text] = affix_type
+
+        return affix_types
+
+    @staticmethod
+    def _determine_mod_types(mod_data):
+        print(f"Row data: {mod_data.prettify()}\n---")
+        spans = mod_data.find_all('span')
+        mod_type_spans = [span for span in spans if any(['crafting' in cls for cls in span.get('class', '')])]
+        mod_types = [span.get('data-tag') for span in mod_type_spans]
+        return mod_types
+
+    def parse_table_mods(self, table) -> set[Poe2DbMod]:
+        mods_dict = dict()
+
+        tbody = table.find('tbody')
+        if not tbody:
+            raise ValueError("No tbody found for this HTML table. Unexpected.")
+
+        print("Finding mod tiers.")
+        mod_tiers = tbody.find_all('tr')
+        for i, mod_tier in enumerate(mod_tiers):
+            print(f"Iterating through mod tier {i}")
+            cells = mod_tier.find_all('td')
+            tier_name = cells[0].get_text(strip=True)
+            mod_ilvl = cells[1].get_text(strip=True)
+
+            mod_data = cells[2]
+            weight = float(mod_data.find('span', class_='badge rounded-pill bg-danger').get_text(strip=True))
+
+            print("Determining mod types.")
+            mod_types = self._determine_mod_types(mod_data)
+
+            print("Parsing mod text")
+            mod_text, mod_values = self._parse_mod_text(mod_data)
+
+            mod_text = shared_utils.sanitize_mod_text(mod_text)
+            affix_type = self._affix_types[mod_text]
+
+            values = mod_data.find_all('span', class_='mod-value')
+
+            mod_id = Poe2DbMod.create_mod_id(atype=self.atype, mod_text=mod_text, affix_type=affix_type)
+            if mod_id not in mods_dict:
+                mod = Poe2DbMod(
+                    atype=self.atype,
+                    affix_type=affix_type,
+                    mod_text=mod_text,
+                    mod_types=mod_types
+                )
+                mods_dict[mod.mod_id] = mod
+            mod = mods_dict[mod_id]
+
+            mod.add_tier(ilvl=mod_ilvl,
+                         tier_name=tier_name,
+                         value_ranges=values,
+                         weighting=weight)
+
+        return set(mods_dict.values())
+
 class Poe2DbScraper:
     _instance = None
     _initialized = False
@@ -99,107 +205,27 @@ class Poe2DbScraper:
         options.add_argument("--window-size=1920,1080")  # Optional: ensures consistent layout
         self.driver = webdriver.Chrome(options=options)
 
-        self._atypes_managers = dict()
+        self._atypes_managers = {
+            atype: AtypeModsManager(atype=atype)
+            for atype in _atype_paths.keys()
+        }
 
-    def _determine_affix_type(self, pop_up_cell):
-        pop_up = pop_up_cell.find('i', class_='fas fa-info-circle')
-
-        # Hover the 'i' circle to generate the pop-up
-        ActionChains(self.driver).move_to_element(pop_up).perform()
-        time.sleep(1)
-
-        # Hovering creates a 'aria-describedBy' parameter on the 'i'. We use that value to find the pop-up HTML element
-        tooltip_id = pop_up.get_attribute("aria-describedby")
-        tooltip_element = self.driver.find_element(By.ID, tooltip_id)
-
-    @staticmethod
-    def _determine_mod_types(mod_data):
-        print(f"Row data: {mod_data.prettify()}\n---")
-        spans = mod_data.find_all('span')
-        mod_type_spans = [span for span in spans if any(['crafting' in cls for cls in span.get('class', '')])]
-        mod_types = [span.get('data-tag') for span in mod_type_spans]
-        return mod_types
-
-    @staticmethod
-    def _parse_mod_text(mod_data):
-        texts = []
-        values_ranges = []
-        children = list(mod_data.children)[2:]  # Only items after the first 2 contain mod text
-        for child in children:
-            text = child.get_text(strip=True)
-            if not text:
-                continue
-
-            texts.append(text)
-
-            if child.name == 'span' and 'mod-value' in child.get('class', []):
-                values = shared_utils.extract_values_from_text(text)
-                values_ranges.extend(values)
-
-        texts = ' '.join(texts)
-        return texts, values_ranges
-
-
-    def _parse_table_mods(self, table, atype: AType):
-        mods_manager = self._atypes_managers[atype]
-        tbody = table.find('tbody')
-        if not tbody:
-            raise ValueError("No tbody found for this HTML table. Unexpected.")
-
-        print("Finding mod tiers.")
-        mod_tiers = tbody.find_all('tr')
-        for i, mod_tier in enumerate(mod_tiers):
-            print(f"Iterating through mod tier {i}")
-            cells = mod_tier.find_all('td')
-            tier_name = cells[0].get_text(strip=True)
-            mod_ilvl = cells[1].get_text(strip=True)
-
-            mod_data = cells[2]
-            weight = float(mod_data.find('span', class_='badge rounded-pill bg-danger').get_text(strip=True))
-
-            print("Determining affix type.")
-            affix_type = self._determine_affix_type(pop_up_cell=cells[3])
-
-            print("Determining mod types.")
-            mod_types = self._determine_mod_types(mod_data)
-
-            print("Parsing mod text")
-            mod_text, mod_values = self._parse_mod_text(mod_data)
-
-            mod_text = shared_utils.sanitize_mod_text(mod_text)
-
-            values = mod_data.find_all('span', class_='mod-value')
-
-            mod_id = Poe2DbMod.create_mod_id(mod_text=mod_text, atype=atype, affix_type=affix_type)
-            mod = mods_manager.fetch_mod(mod_id)
-            if not mod:
-                mod = Poe2DbMod(
-                    atype=atype,
-                    affix_type=affix_type,
-                    mod_text=mod_text,
-                    mod_types=mod_types
-                )
-                mods_manager.add_mod(mod)
-
-            mod.add_tier(ilvl=mod_ilvl,
-                         tier_name=tier_name,
-                         value_ranges=values,
-                         weighting=weight)
-
-
-    def scrape(self):
+    def scrape(self) -> Poe2DbModsManager:
         for atype, url in _atype_paths.items():
+            mods_manager = self._atypes_managers[atype]
             self.driver.get(url)
             html = self.driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
 
-            self._atypes_managers[atype] = AtypeModsManager(atype=atype)
+            parser = _ATypeHtmlParser(atype=atype, soup=soup)
 
             tables = soup.find_all('table')
 
-            popouts = soup.find_all('div')
-            ids = [popout.get('id') for popout in popouts if popout.get('id')]
-
             for table in tables:
-                self._parse_table_mods(table=table, atype=atype)
+                mods = parser.parse_table_mods(table)
+                for mod in mods:
+                    mods_manager.add_mod(mod)
+
+        poe2db_mods_manager = Poe2DbModsManager(atype_managers=list(self._atypes_managers.values()))
+        return poe2db_mods_manager
 
