@@ -30,8 +30,8 @@ class Poe2DbMod:
         return self.create_mod_id(atype=self.atype, mod_text=self.mod_text)
 
     @staticmethod
-    def create_mod_id(atype, mod_text):
-        return atype, mod_text
+    def create_mod_id(atype, mod_text, affix_type):
+        return atype, mod_text, affix_type
 
     def __hash__(self):
         return self.mod_id
@@ -51,27 +51,47 @@ class Poe2DbMod:
 
 class HybridModAnalyzer:
 
-    def __init__(self, mods: set[Poe2DbMod]):
-        self._mods = mods
+    def __init__(self):
+        self._mods = set()
         # This is useful for when we are matching mods to the Trade API data
-        self._hybrid_parts_to_parent_dict = self._create_hybrid_to_parent_dict()
-        self._hybrid_parts_to_parent_affixed_dict = {
-            ModAffixType.PREFIX: self._create_hybrid_to_parent_dict(affix_type=ModAffixType.PREFIX),
-            ModAffixType.SUFFIX: self._create_hybrid_to_parent_dict(affix_type=ModAffixType.SUFFIX)
+        self._hybrid_parts_to_parents = dict()
+        self._hybrid_parts_to_parents_affixed = {
+            ModAffixType.PREFIX: dict(),
+            ModAffixType.SUFFIX: dict()
         }
-        self._num_hybrid_parts_dict = {
-            mod.mod_id: len(mod.mod_text.split(','))
-            for mod in mods
-        }
+        self._mod_hybrid_parts = dict()
+
+    def attempt_add_mod(self, mod: Poe2DbMod):
+        if ',' not in mod.mod_text:
+            return
+
+        self._mod_hybrid_parts[mod] = mod.mod_text.split(',')
+
+        hybrid_dict = self._hybrid_parts_to_parents
+        hybrid_affix_dict = self._hybrid_parts_to_parents_affixed[mod.affix_type]
+        hybrid_parts = [
+            part.strip()
+            for part in mod.mod_text.split(',')
+        ]
+        for part in hybrid_parts:
+            if part not in hybrid_dict:
+                hybrid_dict[part] = set()
+
+            hybrid_dict[part].add(mod)
+
+            if part not in hybrid_affix_dict:
+                hybrid_affix_dict[part] = set()
+
+            hybrid_affix_dict[part].add(mod)
 
     def fetch_hybrid_to_parent_dict(self, affix_type: ModAffixType = None):
         if affix_type:
-            return self._hybrid_parts_to_parent_affixed_dict[affix_type]
+            return self._hybrid_parts_to_parents_affixed[affix_type]
         else:
-            return self._hybrid_parts_to_parent_dict
+            return self._hybrid_parts_to_parents
 
-    def determine_number_of_hybrid_parts(self, mod_id: int):
-        return self._num_hybrid_parts_dict[mod_id]
+    def determine_number_of_hybrid_parts(self, mod: Poe2DbMod):
+        return self._mod_hybrid_parts[mod]
 
     def _create_hybrid_to_parent_dict(self, affix_type: ModAffixType = None) -> dict:
         hybrid_part_to_parent_id = dict()
@@ -93,31 +113,45 @@ class HybridModAnalyzer:
 class AtypeModsManager:
 
     def __init__(self,
-                 atype: AType,
-                 mods: set[Poe2DbMod]):
+                 atype: AType):
         self.atype = atype
-        self.mods = mods
+        self.mods = []
 
-        self._mod_id_to_mod = {mod.mod_id: mod for mod in mods}
-        self._mod_text_to_mod = {mod.mod_text: mod for mod in mods}
+        self._mod_id_to_mod = dict()
+        self._mod_text_to_mod = dict()
 
         self._mods_affixed_dict = {
-            ModAffixType.PREFIX: {mod.mod_text: mod for mod in mods if mod.affix_type == ModAffixType.PREFIX},
-            ModAffixType.SUFFIX: {mod.mod_text: mod for mod in mods if mod.affix_type == ModAffixType.SUFFIX}
+            ModAffixType.PREFIX: dict(),
+            ModAffixType.SUFFIX: dict()
         }
 
-        self.mod_id_to_affix_type = {mod.mod_id: mod.affix_type for mod in mods}
-        self.mod_id_to_text = {mod.mod_id: mod.mod_text for mod in mods}
-        self.mod_text_to_id = {v: k for k, v in self.mod_id_to_text.items()}
-
-        self._hybrid_mod_analyzer = HybridModAnalyzer(mods=mods)
+        self._hybrid_mod_analyzer = HybridModAnalyzer()
 
     @property
     def mod_texts(self) -> list[str]:
-        return list(self.mod_text_to_id.keys())
+        return list(self._mod_text_to_mod.keys())
 
-    def fetch_mod(self, mod_text: str, affix_type: ModAffixType):
-        return self._mods_affixed_dict[affix_type][mod_text]
+    def add_mod(self, mod: Poe2DbMod):
+        if mod.mod_id in self._mod_id_to_mod:
+            return
+
+        self.mods.append(mod)
+        self._mod_id_to_mod[mod.mod_id] = mod
+        self._mod_text_to_mod[mod.mod_text] = mod
+        self._mods_affixed_dict[mod.affix_type][mod.mod_text] = mod
+        self._hybrid_mod_analyzer.attempt_add_mod(mod)
+
+    def fetch_mod(self, mod_id):
+        if mod_id not in self._mod_id_to_mod:
+            return
+
+        return self._mod_id_to_mod[mod_id]
+
+    def fetch_mod_texts(self, affix_type: ModAffixType = None):
+        if affix_type:
+            return list(self._mods_affixed_dict[affix_type].keys())
+
+        return list(self._mod_text_to_mod.keys())
 
     def fetch_mod_by_id(self, mod_id: int):
         return self._mod_id_to_mod[mod_id]

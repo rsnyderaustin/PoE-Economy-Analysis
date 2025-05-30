@@ -30,7 +30,7 @@ def generate_mod_id(atype: str,
 class ItemMod:
 
     def __init__(self,
-                 atype: str,
+                 atype: AType,
                  mod_class_e: ModClass,
                  mod_name: str,
                  affix_type_e: ModAffixType,

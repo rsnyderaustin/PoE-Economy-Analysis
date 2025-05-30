@@ -1,6 +1,4 @@
-import re
 import time
-from enum import Enum
 
 from selenium import webdriver
 from selenium.webdriver import ActionChains
@@ -8,9 +6,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
-from poecd_api.mods_management import Poe2DbMod
+from .mods_management import AtypeModsManager
+from poe2db_scrape.mods_management import Poe2DbMod
 from shared import shared_utils
 from shared.enums.item_enums import AType
+from shared.logging import LogsHandler, LogFile
+
+
+api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 _atype_paths = {
     AType.ONE_HANDED_MACE: 'https://poe2db.tw/us/One_Hand_Maces#ModifiersCalc',
@@ -96,12 +99,17 @@ class Poe2DbScraper:
         options.add_argument("--window-size=1920,1080")  # Optional: ensures consistent layout
         self.driver = webdriver.Chrome(options=options)
 
-    def _determine_affix_type(self, mod_data):
-        info_icon = mod_data.find('i', class_='fas fa-info-circle')
-        info_icon = mod_data.find_element(By.CSS_SELECTOR, "i[data-hover*='LocalAddedPhysicalDamage1']")
-        ActionChains(self.driver).move_to_element(info_icon).perform()
+        self._atypes_managers = dict()
+
+    def _determine_affix_type(self, pop_up_cell):
+        pop_up = pop_up_cell.find('i', class_='fas fa-info-circle')
+
+        # Hover the 'i' circle to generate the pop-up
+        ActionChains(self.driver).move_to_element(pop_up).perform()
         time.sleep(1)
-        tooltip_id = info_icon.get_attribute("aria-describedby")
+
+        # Hovering creates a 'aria-describedBy' parameter on the 'i'. We use that value to find the pop-up HTML element
+        tooltip_id = pop_up.get_attribute("aria-describedby")
         tooltip_element = self.driver.find_element(By.ID, tooltip_id)
 
     @staticmethod
@@ -133,37 +141,59 @@ class Poe2DbScraper:
 
 
     def _parse_table_mods(self, table, atype: AType):
+        mods_manager = self._atypes_managers[atype]
         tbody = table.find('tbody')
         if not tbody:
             raise ValueError("No tbody found for this HTML table. Unexpected.")
 
+        print("Finding mod tiers.")
         mod_tiers = tbody.find_all('tr')
-        for mod_tier in mod_tiers:
+        for i, mod_tier in enumerate(mod_tiers):
+            print(f"Iterating through mod tier {i}")
             cells = mod_tier.find_all('td')
-            mod_name = cells[0].get_text(strip=True)
+            tier_name = cells[0].get_text(strip=True)
             mod_ilvl = cells[1].get_text(strip=True)
 
             mod_data = cells[2]
-            pop_up_element = cells[3].find('i', class_='fas fa-info-circle')
             weight = float(mod_data.find('span', class_='badge rounded-pill bg-danger').get_text(strip=True))
-            affix_type = self._determine_affix_type(cells[3])
+
+            print("Determining affix type.")
+            affix_type = self._determine_affix_type(pop_up_cell=cells[3])
+
+            print("Determining mod types.")
             mod_types = self._determine_mod_types(mod_data)
-            sanitized_mod_text, mod_values = self._parse_mod_text(mod_data)
+
+            print("Parsing mod text")
+            mod_text, mod_values = self._parse_mod_text(mod_data)
+
+            mod_text = shared_utils.sanitize_mod_text(mod_text)
 
             values = mod_data.find_all('span', class_='mod-value')
 
-            mod_id = Poe2DbMod.create_mod_id(mod_text=sanitized_mod_text, atype=atype)
-            new_mod = Poe2DbMod(
-                atype=atype,
-                mod_text=sanitized_mod_text,
+            mod_id = Poe2DbMod.create_mod_id(mod_text=mod_text, atype=atype, affix_type=affix_type)
+            mod = mods_manager.fetch_mod(mod_id)
+            if not mod:
+                mod = Poe2DbMod(
+                    atype=atype,
+                    affix_type=affix_type,
+                    mod_text=mod_text,
+                    mod_types=mod_types
+                )
+                mods_manager.add_mod(mod)
 
-            )
+            mod.add_tier(ilvl=mod_ilvl,
+                         tier_name=tier_name,
+                         value_ranges=values,
+                         weighting=weight)
+
 
     def scrape(self):
         for atype, url in _atype_paths.items():
             self.driver.get(url)
             html = self.driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
+
+            self._atypes_managers[atype] = AtypeModsManager(atype=atype)
 
             tables = soup.find_all('table')
 

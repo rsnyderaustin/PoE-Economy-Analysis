@@ -4,7 +4,7 @@ import re
 import rapidfuzz
 
 from instances_and_definitions import ItemMod
-from poecd_api.mods_management import Poe2DbModsManager
+from poe2db_scrape.mods_management import Poe2DbModsManager
 
 
 class _MatchScoreTracker:
@@ -65,7 +65,7 @@ def transform_text(text: str, transform_dict: dict) -> str:
 
 class ModMatcher:
 
-    def __init__(self, global_atypes_manager: Poe2DbModsManager):
+    def __init__(self, poe2db_mods_manager: Poe2DbModsManager):
         self.mod_transformations = {
             '# additional': 'an additional',
             'an additional': '# additional',
@@ -78,7 +78,7 @@ class ModMatcher:
             '#% reduced Waystones found in Area'
         }
 
-        self._global_atypes_manager = global_atypes_manager
+        self._poe2db_mods_manager = poe2db_mods_manager
 
     def _transform_text(self, text: str) -> str:
         """
@@ -96,7 +96,7 @@ class ModMatcher:
         return text
 
     def _attempt_hybrid_match(self, item_mod: ItemMod, min_score: float) -> str | None:
-        atype_manager = self._global_atypes_manager.fetch_atype_manager(atype_name=item_mod.atype)
+        atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
         hybrid_scores_tracker = _MatchScoreTracker()
 
         number_of_parts = len(item_mod.sub_mods)
@@ -115,36 +115,34 @@ class ModMatcher:
                                                 score_cutoff=min_score)
 
             for match, score, idx in matches:
-                poecd_mod_ids = mod_to_parent_dict[match]
+                poe2db_mods = mod_to_parent_dict[match]
 
                 # The number of parts in the Mod text has to line up with the number of parts in the Poecd mod
-                poecd_mod_ids = {
-                    mod_id
-                    for mod_id in poecd_mod_ids
-                    if atype_manager.determine_number_of_hybrid_parts(mod_id) == number_of_parts
+                poe2db_mods = {
+                    poe2db_mod.mod_id
+                    for poe2db_mod in poe2db_mods
+                    if atype_manager.determine_number_of_hybrid_parts(poe2db_mod) == number_of_parts
                 }
 
-                if not poecd_mod_ids:
+                if not poe2db_mods:
                     continue
 
                 hybrid_scores_tracker.score_round(sub_mod_id=sub_mod.mod_id,
-                                                  poecd_mod_ids=poecd_mod_ids,
+                                                  poecd_mod_ids=poe2db_mods,
                                                   score=score)
 
         poecd_mod_id_match = hybrid_scores_tracker.determine_winner()
         return poecd_mod_id_match
 
     def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float):
-        atype_manager = self._global_atypes_manager.fetch_atype_manager(atype_name=item_mod.atype)
-        if item_mod.affix_type_e:
-            poecd_mod_texts = list(atype_manager._mods_affixed_dict[item_mod.affix_type_e].keys())
-        else:
-            poecd_mod_texts = atype_manager.mod_texts
+        atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
+
+        poe2db_mod_texts = atype_manager.fetch_mod_texts(item_mod.affix_type_e)
 
         mod_text = item_mod.sub_mods[0].sanitized_mod_text
 
         result = rapidfuzz.process.extractOne(mod_text,
-                                              poecd_mod_texts,
+                                              poe2db_mod_texts,
                                               score_cutoff=min_score)
         if not result:
             return None

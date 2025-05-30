@@ -5,7 +5,7 @@ from shared.logging import LogsHandler, LogFile
 from .atype_manager_factory import AtypeManagerFactory
 from .data_pull import PoecdDataPuller, PoecdEndpoint
 from .internal_source_store import PoecdSourceStore
-from .mods_management import Poe2DbModsManager
+from poe2db_scrape.mods_management import Poe2DbModsManager
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 

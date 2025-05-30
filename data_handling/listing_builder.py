@@ -4,7 +4,7 @@ import re
 
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
-from poecd_api.mods_management import Poe2DbModsManager
+from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared import shared_utils
 from .atype_classifier import ATypeClassifier
 from shared.logging import LogFile, LogsHandler
