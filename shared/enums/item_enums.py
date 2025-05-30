@@ -85,7 +85,10 @@ class AType(Enum):
     SKILL_GEM = 'skill_gem'
     META_GEM = 'meta_gem'
     SUPPORT_GEM = 'support_gem'
-    JEWEL = 'jewel'
+    RUBY = 'ruby'
+    EMERALD = 'emerald'
+    SAPPHIRE = 'sapphire'
     AMULET = 'amulet'
     RING = 'ring'
+    BELT = 'belt'
 
