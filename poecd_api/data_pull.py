@@ -25,6 +25,9 @@ class PoecdEndpoint(Enum):
 
 
 class PoecdDataPuller:
+    """
+    This is currently unused. It may be used in the future if we have to pull from Craft of Exile.
+    """
 
     def __init__(self):
 

@@ -6,8 +6,7 @@ from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
 from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared import shared_utils
-from .atype_classifier import ATypeClassifier
-from shared.logging import LogFile, LogsHandler
+from shared.logging import LogFile, LogsHandler, log_errors
 from shared.enums.item_enums import ModAffixType
 from shared.enums.trade_enums import ModClass
 from . import utils
@@ -19,8 +18,8 @@ parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
 class ListingBuilder:
 
-    def __init__(self, global_atypes_manager: Poe2DbModsManager):
-        self._mod_resolver = _ModResolver(global_atypes_manager)
+    def __init__(self, poe2db_mods_manager: Poe2DbModsManager):
+        self._mod_resolver = _ModResolver(poe2db_mods_manager)
 
     def build_listing(self, rp: ApiResponseParser):
         minutes_since_listed = utils.determine_minutes_since(
@@ -60,9 +59,9 @@ class ListingBuilder:
 
 class _ModResolver:
 
-    def __init__(self, global_poecd_mods_manager: Poe2DbModsManager):
-        self._global_poecd_mods_manager = global_poecd_mods_manager
-        self.mod_matcher = ModMatcher(global_poecd_mods_manager)
+    def __init__(self, poe2db_mods_manager: Poe2DbModsManager):
+        self._poe2db_mods_manager = poe2db_mods_manager
+        self.mod_matcher = ModMatcher(poe2db_mods_manager)
 
         self.files_manager = FilesManager()
         self.file_item_mods = self.files_manager.fetch_data(data_path_e=DataPath.MODS, default=dict())
@@ -157,20 +156,21 @@ class _ModResolver:
             parse_log.error(f"Was not able to match item mod:\n{pprint.pprint(new_mod)}")
             return new_mod
 
-        poecd_mod = self._global_poecd_mods_manager.fetch_mod(atype=new_mod.atype,
-                                                              mod_id=matched_poecd_mod_id)
+        poecd_mod = self._poe2db_mods_manager.fetch_mod(atype=new_mod.atype,
+                                                        mod_id=matched_poecd_mod_id)
         new_mod.weighting = poecd_mod.fetch_weighting(ilvl=int(mod_data['level']))
         new_mod.mod_types = poecd_mod.mod_types
 
         return new_mod
 
+    @log_errors(parse_log)
     def resolve_mods(self, rp: ApiResponseParser) -> list[ItemMod]:
         """
         Attempts to pull each mod in the item's data from file. Otherwise, it manages the mod's creation and caching
         :return: All mods from the item data
         """
         self.current_rp = rp
-        self.current_atype = ATypeClassifier.classify(rp)
+        self.current_atype = rp.item_atype
 
         mods = []
 
@@ -187,6 +187,10 @@ class _ModResolver:
             if mod_id in self.file_item_mods:
                 mods.append(self.file_item_mods[mod_id])
                 continue
+
+            if not self._poe2db_mods_manager:
+                raise RuntimeError(f"Could not find mod with ID {mod_id}. Poe2DbModsManager does not exist, "
+                                   f"\nso the mod cannot be resolved. Returning error.")
 
             parse_log.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
             new_mod = self._create_item_mod(mod_data=mod_data,

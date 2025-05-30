@@ -1,5 +1,6 @@
 
 from file_management import FilesManager, DataPath
+from poe2db_scrape import Poe2DbScraper
 from shared import shared_utils
 from shared.logging import LogsHandler, LogFile
 from .atype_manager_factory import AtypeManagerFactory
@@ -27,28 +28,13 @@ class PoecdDataManager:
                  refresh_data: bool,
                  files_manager: FilesManager = None,
                  data_puller: PoecdDataPuller = None):
-        self.files_manager = files_manager or FilesManager()
-        self.data_puller = data_puller or PoecdDataPuller()
+        self.files_manager = files_manager
+        self.data_puller = data_puller
 
         if refresh_data:
-            self._refresh_and_fix_data()
+            self.poe2db_mods_manager = Poe2DbScraper().scrape()
 
         self.source_store = self._load_source_store_from_files()
-
-    def _refresh_and_fix_data(self):
-        bases_data = self.data_puller.pull_data(PoecdEndpoint.BASES)
-        bases_data = shared_utils.sanitize_dict_texts(bases_data)
-
-        stats_data = self.data_puller.pull_data(PoecdEndpoint.STATS)
-        stats_data = shared_utils.sanitize_dict_texts(stats_data)
-
-        self._fix_arrow_mods(bases_data, stats_data)
-
-        self.files_manager.cache_data(DataPath.POECD_BASES, bases_data)
-        self.files_manager.save_data(paths=[DataPath.POECD_BASES])
-
-        self.files_manager.cache_data(DataPath.POECD_STATS, stats_data)
-        self.files_manager.save_data(paths=[DataPath.POECD_STATS])
 
     def _load_source_store_from_files(self) -> PoecdSourceStore:
         return PoecdSourceStore(

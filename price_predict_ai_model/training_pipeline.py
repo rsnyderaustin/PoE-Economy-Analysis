@@ -17,13 +17,16 @@ price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
 
 class PricePredictModelPipeline:
-    def __init__(self, psql_manager: PostgreSqlManager, files_manager: FilesManager):
+    def __init__(self,
+                 psql_manager: PostgreSqlManager,
+                 files_manager: FilesManager,
+                 should_plot_visuals=False):
         self.psql_manager = psql_manager
-
-        self.model = None
         self.files_manager = files_manager
 
-        self.should_plot_visuals = False
+        self.should_plot_visuals = should_plot_visuals
+
+        self.model = None
 
     @staticmethod
     def _prediction_penalty_objective(y_true, y_pred, overpredict_penalty=2.0, underpredict_penalty=0.1):

@@ -5,7 +5,6 @@ import trade_api
 from data_handling import ListingBuilder
 from data_transforming import ListingsTransforming
 from file_management import FilesManager, DataPath
-from poecd_api import PoecdDataManager
 from shared import env_loading
 from trade_api.query import QueryPresets
 import psql
@@ -15,19 +14,13 @@ class TrainingDataPopulator:
 
     def __init__(self,
                  files_manager: FilesManager,
-                 refresh_poecd_source: bool,
                  psql_manager: psql.PostgreSqlManager):
         self.trade_api_handler = trade_api.TradeApiHandler(psql_manager=psql_manager)
         self.psql_manager = psql_manager
 
-        if refresh_poecd_source or not files_manager.fetch_data(DataPath.GLOBAL_POECD_MANAGER, None):
-            global_atypes_manager = PoecdDataManager(refresh_data=refresh_poecd_source).build_global_mods_manager()
-            files_manager.cache_data(path=DataPath.GLOBAL_POECD_MANAGER, data=global_atypes_manager)
-            files_manager.save_data(paths=[DataPath.GLOBAL_POECD_MANAGER])
-
-        global_atypes_manager = files_manager.fetch_data(DataPath.GLOBAL_POECD_MANAGER, missing_ok=False)
-
-        self.listing_builder = ListingBuilder(global_atypes_manager)
+        # Technically we don't need to have the Poe2Db mods manager if we have full coverage of all mods
+        poe2db_mods_manager = files_manager.fetch_data(DataPath.POE2DB_MODS, default=dict())
+        self.listing_builder = ListingBuilder(poe2db_mods_manager)
 
         self.env_loader = env_loading.EnvLoader()
 

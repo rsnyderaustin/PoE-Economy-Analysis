@@ -151,7 +151,8 @@ class _Poe2DbHtmlParser:
             text_list.append(text)
 
         mod_text = ' '.join(text_list)
-        mod_text = shared_utils.sanitize_mod_text(mod_text).replace('n_p', 'np')
+        mod_text = shared_utils.sanitize_mod_text(mod_text)
+        mod_text = mod_text.replace('n_p_', 'np')
 
         return mod_text, values_ranges
 

@@ -17,8 +17,7 @@ from shared.logging import log_errors
 class DataPath(Enum):
     MODS = Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
     CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/static_files/currency_prices.csv'
-    POECD_BASES = Path.cwd() / 'file_management/static_files/poecd_bases.json'
-    POECD_STATS = Path.cwd() / 'file_management/static_files/poecd_stats.json'
+    POE2DB_MODS = Path.cwd() / 'file_management/static_files/poe2db_mods.pkl'
     OFFICIAL_STATIC = Path.cwd() / 'file_management/static_files/official_static.json'
     OFFICIAL_STATS = Path.cwd() / 'file_management/static_files/official_stats.json'
     RAW_LISTINGS = Path.cwd() / 'file_management/dynamic_files/raw_listings.json'
@@ -127,8 +126,8 @@ class FilesManager:
             # Atomic move
         os.replace(tmp_path, file_path)
 
-    def cache_data(self, path: DataPath, data: Any):
-        self._file_data[path] = data
+    def cache_data(self, data_path: DataPath, data: Any):
+        self._file_data[data_path] = data
 
     def save_data(self, paths: list[DataPath]):
         for path_e in paths:
