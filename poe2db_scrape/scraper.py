@@ -125,22 +125,28 @@ class _Poe2DbHtmlParser:
         text_list = []
         values_ranges = []
 
-        children = [
-            child.get_text() for child in mod.contents
-            if (isinstance(child, NavigableString) and child.strip())
-               or (child.name == 'span' and 'mod-value' in child.get('class', []))
-        ]
+        valid_children = []
+        for child in mod.contents:
+            if not child:
+                continue
 
-        for child in children:
-            if child.name == 'span' and child.get('class' == 'mod_value'):
-                values = shared_utils.extract_values_from_text(text)
-                if values:
-                    value = values[0]
-                    values_ranges.append(value)
+            if isinstance(child, NavigableString) and child.strip():
+                valid_children.append(child.get_text())
 
-                    # +(3-5) to strength -> +# to strength
-                    if isinstance(value, tuple):
-                        text = '#'
+            if child.name != 'span':
+                continue
+            elif 'mod-value' in child.get('class', []) or 'KeywordPopups' in child.get('class', []):
+                valid_children.append(child.get_text())
+
+        for text in valid_children:
+            values = shared_utils.extract_values_from_text(text)
+            if values:
+                value = values[0]  # Because each child is an individual piece of the overall string, only one index is ever returned here
+                values_ranges.append(value)
+
+                # +(3-5) to strength -> +# to strength
+                if isinstance(value, tuple):
+                    text = '#'
 
             text_list.append(text)
 

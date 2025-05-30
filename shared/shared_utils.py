@@ -48,19 +48,20 @@ def sanitize_dict_texts(d: dict):
 
 def sanitize_mod_text(mod_text: str):
     # Replace any #-# with #_to_#
+    mod_text = mod_text.strip().lower()
     result = re.sub(
         r'(-?\d+(?:\.\d+)?)\s*[–—−-]\s*(-?\d+(?:\.\d+)?)',
         r'\1_to_\2',
         mod_text
     )
     result = re.sub(r'\d+', '#', result)
-    result = re.sub('#', 'n', result)
-    result = re.sub('%', 'p', result)
+
+    result = result.replace('#', 'n').replace('%', '%p')
 
     brackets_pattern = r'\[(.*?)\]'
     result = re.sub(brackets_pattern, _extract_from_brackets, result)
 
-    result = result.replace(' ', '_').lower()
+    result = result.replace(' ', '_').replace('__', '_')
     return result
 
 
