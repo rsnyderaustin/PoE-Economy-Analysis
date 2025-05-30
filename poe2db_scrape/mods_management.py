@@ -3,6 +3,10 @@ from dataclasses import dataclass
 from shared.enums.item_enums import ModAffixType, AType
 
 
+def create_mod_id(atype, mod_text, affix_type):
+    return atype, mod_text, affix_type
+
+
 @dataclass
 class PoeDbModTier:
     ilvl: int
@@ -27,14 +31,10 @@ class Poe2DbMod:
 
     @property
     def mod_id(self) -> tuple:
-        return self.create_mod_id(atype=self.atype, mod_text=self.mod_text)
-
-    @staticmethod
-    def create_mod_id(atype, mod_text, affix_type):
-        return atype, mod_text, affix_type
+        return create_mod_id(atype=self.atype, mod_text=self.mod_text, affix_type=self.affix_type)
 
     def __hash__(self):
-        return self.mod_id
+        return hash(self.mod_id)
 
     def add_tier(self, ilvl: int, tier_name: str, value_ranges: list[tuple], weighting: float):
         self.ilvl_to_mod_tier[ilvl] = PoeDbModTier(

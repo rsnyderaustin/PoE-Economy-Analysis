@@ -11,7 +11,7 @@ def extract_values_from_text(text) -> list:
     matches = re.findall(r'-?\d+(?:\.\d+)?(?:\s*[–-]\s*-?\d+(?:\.\d+)?)?', text)
     result = []
     for match in matches:
-        clean = match.replace('–', '-').replace('−', '-').replace(' ', '')
+        clean = re.sub(r'[–—−-]', '-', match).strip()
 
         if '-' in clean[1:]:  # if there's a dash not at the start, it's a range
             left_str, right_str = clean.split('-', 1)
@@ -47,7 +47,13 @@ def sanitize_dict_texts(d: dict):
 
 
 def sanitize_mod_text(mod_text: str):
-    result = re.sub(r'\d+', '#', mod_text)
+    # Replace any #-# with #_to_#
+    result = re.sub(
+        r'(-?\d+(?:\.\d+)?)\s*[–—−-]\s*(-?\d+(?:\.\d+)?)',
+        r'\1_to_\2',
+        mod_text
+    )
+    result = re.sub(r'\d+', '#', result)
     result = re.sub('#', 'n', result)
     result = re.sub('%', 'p', result)
 
