@@ -2003,3 +2003,6219 @@ Traceback (most recent call last):
   File "/Users/austinsnyder/GitHub/PoE-Economy-Analysis/venv/lib/python3.13/site-packages/requests/adapters.py", line 700, in send
     raise ConnectionError(e, request=request)
 requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.pathofexile.com', port=443): Max retries exceeded with url: /api/trade2/search/poe2/Dawn%20of%20the%20Hunt (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x14c756510>: Failed to resolve 'www.pathofexile.com' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-05-30 20:12:36,840 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:12:37,078 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-30 20:12:37,214 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:12:37,878 - INFO - 40 valid query responses out of 40.
+
+2025-05-30 20:12:37,889 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:12:41,905 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:12:41,913 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:12:41,914 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:13:19,060 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:13:19,254 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-30 20:13:19,405 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:13:19,558 - INFO - 17 valid query responses out of 17.
+
+2025-05-30 20:13:19,562 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_709508406', None). Creating and caching.
+
+2025-05-30 20:13:19,568 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_1037193709', None). Creating and caching.
+
+2025-05-30 20:13:19,576 - INFO - Could not find mod with ID ('quarterstaff', 'fractured.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:13:19,583 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:13:19,583 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:25,635 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:14:25,856 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-30 20:14:26,011 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:14:30,624 - INFO - 59 valid query responses out of 59.
+
+2025-05-30 20:14:30,629 - INFO - Could not find mod with ID ('spear', 'enchant.stat_709508406', None). Creating and caching.
+
+2025-05-30 20:14:30,631 - INFO - Could not find mod with ID ('spear', 'fractured.stat_1509134228', 'fractured.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:14:30,633 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 20:14:30,635 - INFO - Could not find mod with ID ('spear', 'enchant.stat_548198834', None). Creating and caching.
+
+2025-05-30 20:14:30,635 - INFO - Could not find mod with ID ('spear', 'enchant.stat_1509134228', None). Creating and caching.
+
+2025-05-30 20:14:30,637 - INFO - Could not find mod with ID ('spear', 'enchant.stat_3885634897', None). Creating and caching.
+
+2025-05-30 20:14:30,645 - INFO - Could not find mod with ID ('spear', 'enchant.stat_791928121', None). Creating and caching.
+
+2025-05-30 20:14:30,646 - INFO - Could not find mod with ID ('spear', 'enchant.stat_1037193709', None). Creating and caching.
+
+2025-05-30 20:14:30,654 - INFO - Could not find mod with ID ('spear', 'enchant.stat_210067635', None). Creating and caching.
+
+2025-05-30 20:14:30,654 - INFO - Could not find mod with ID ('spear', 'fractured.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:14:30,657 - INFO - Could not find mod with ID ('spear', 'fractured.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:14:30,667 - INFO - Could not find mod with ID ('spear', 'fractured.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:14:30,670 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,671 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,683 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,683 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,684 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,684 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,684 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,684 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,684 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,684 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,684 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,684 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,684 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,684 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,684 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,685 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,685 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,685 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,685 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,685 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,685 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,685 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,685 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,685 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,685 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,685 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,686 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,686 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,686 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,686 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,686 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,686 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,686 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,686 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,686 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,686 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,686 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,686 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,686 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,687 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,687 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,687 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,687 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,687 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,687 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,687 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,687 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,687 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,687 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,687 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,687 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,687 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,688 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,688 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,688 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,688 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,688 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,688 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,688 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,688 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,688 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,688 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,688 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,688 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,688 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,689 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,689 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,689 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,689 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,689 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,689 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,689 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,689 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,689 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,689 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,689 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,689 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,689 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,689 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,690 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,690 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,690 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,690 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,690 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,690 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,690 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,690 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,690 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,690 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,690 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,690 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,690 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,690 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,690 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,691 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,691 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,691 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,691 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,691 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,691 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,691 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,691 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,691 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,691 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,692 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,692 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,692 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,692 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,692 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,692 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,692 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,692 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,692 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,692 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,692 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,692 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,692 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,693 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,693 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,693 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,693 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,693 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,693 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,693 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,693 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,693 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,693 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,693 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,693 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,693 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,693 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,693 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,694 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,694 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,694 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,694 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,694 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,694 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,694 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,694 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,694 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,694 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,694 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,694 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,694 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,694 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,694 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,695 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,695 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,695 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,695 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,695 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,695 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,695 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,695 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,695 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,695 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,695 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,695 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,696 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,696 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,696 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,696 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,696 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,696 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,696 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,696 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,696 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,696 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,696 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,696 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,696 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,696 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,696 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,697 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,697 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,697 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,697 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,697 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,697 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,697 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,697 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,697 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,697 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,697 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,697 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,697 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,697 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,697 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,698 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,698 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,698 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,698 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,698 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,698 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,698 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,698 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,698 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,698 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,698 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,698 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,698 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,698 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,698 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,699 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,699 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,699 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,699 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,699 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,699 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,699 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,699 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,699 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,699 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,699 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,699 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,699 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,699 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,699 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,700 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,700 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,700 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,700 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,700 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,700 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,700 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,700 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,700 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,700 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,700 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,700 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,700 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,700 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,700 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,701 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,701 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,701 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,701 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,701 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,701 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,701 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,701 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,701 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,701 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,702 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,702 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,702 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,702 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,702 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,702 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,702 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,702 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,702 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,702 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,703 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,703 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,703 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,703 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,703 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,703 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,703 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,703 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,703 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,703 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,703 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,703 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,703 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,703 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,703 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,704 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,704 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,704 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,704 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,704 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,704 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,704 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,704 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,704 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,704 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,704 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,704 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,704 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,704 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,704 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,705 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,705 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,705 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,705 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,705 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,705 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:14:30,705 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:14:30,705 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:14:30,705 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:14:30,705 - INFO - Skills:
+None
+
+2025-05-30 20:14:30,705 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-30 20:15:26,164 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:15:26,440 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (4, 300, 0)]
+
+2025-05-30 20:15:26,670 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:15:31,194 - INFO - 53 valid query responses out of 53.
+
+2025-05-30 20:15:31,242 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:15:31,242 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:15:52,409 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:15:52,754 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (5, 300, 0)]
+
+2025-05-30 20:15:52,995 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:15:53,377 - INFO - 28 valid query responses out of 28.
+
+2025-05-30 20:15:53,403 - INFO - Could not find mod with ID ('quarterstaff', 'enchant.stat_210067635', None). Creating and caching.
+
+2025-05-30 20:15:53,409 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:15:53,409 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:16:06,172 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:16:06,373 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (3, 60, 0), (6, 300, 0)]
+
+2025-05-30 20:16:06,619 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:16:07,008 - INFO - 26 valid query responses out of 26.
+
+2025-05-30 20:16:07,015 - INFO - Could not find mod with ID ('crossbow', 'explicit.stat_1967051901', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:16:07,041 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:16:07,041 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:18:15,325 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:18:15,817 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (5, 300, 0)]
+
+2025-05-30 20:18:16,023 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:18:16,034 - INFO - 4 valid query responses out of 4.
+
+2025-05-30 20:18:16,043 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:18:16,043 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:19:12,627 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:19:12,835 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (5, 300, 0)]
+
+2025-05-30 20:19:13,087 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:19:21,441 - INFO - 100 valid query responses out of 100.
+
+2025-05-30 20:19:21,476 - INFO - Could not find mod with ID ('crossbow', 'enchant.stat_1037193709', None). Creating and caching.
+
+2025-05-30 20:19:21,491 - INFO - Could not find mod with ID ('crossbow', 'enchant.stat_2301191210', None). Creating and caching.
+
+2025-05-30 20:19:21,507 - INFO - Could not find mod with ID ('crossbow', 'enchant.stat_387439868', None). Creating and caching.
+
+2025-05-30 20:19:21,514 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:19:21,514 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:20:15,035 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:20:15,238 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (4, 300, 0)]
+
+2025-05-30 20:20:15,359 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:20:15,365 - INFO - 1 valid query responses out of 1.
+
+2025-05-30 20:20:15,365 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_518292764', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:20:15,369 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_3695891184', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:20:15,370 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_4080418644', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:20:15,370 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_709508406', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:20:15,370 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_3336890334', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:20:15,370 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:20:15,374 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:20:15,374 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:22:55,110 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:22:55,299 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (4, 300, 0)]
+
+2025-05-30 20:22:55,300 - INFO - Total valid responses in 0.0 minutes: 0
+
+2025-05-30 20:22:55,302 - INFO - Processing query 2 of 144 queries.
+
+2025-05-30 20:23:00,963 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:23:01,761 - INFO - 39 valid query responses out of 39.
+
+2025-05-30 20:23:01,800 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:23:01,801 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:14,332 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:14,334 - INFO - Skills:
+None
+
+2025-05-30 20:24:14,334 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:14,335 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,216 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,217 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,217 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,217 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,218 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,218 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,218 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,219 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,219 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,219 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,219 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,219 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,219 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,219 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,219 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,220 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,220 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,220 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,220 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,220 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,220 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,220 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,220 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,220 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,221 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,221 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,221 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,221 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,221 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,221 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,221 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,222 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,222 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,222 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,222 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,222 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,222 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,222 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,225 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,225 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,226 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,226 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,226 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,226 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,226 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,226 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,226 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,226 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,226 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,226 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,226 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,226 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,227 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,227 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,227 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,227 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,227 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,227 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,227 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,227 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,227 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,227 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,228 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,228 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,228 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,228 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,228 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,228 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,228 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,228 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,228 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,228 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,229 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,229 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,229 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,229 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,229 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,229 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,229 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,229 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,229 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,229 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,229 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,229 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,229 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,229 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,229 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,230 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,230 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,230 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,230 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,230 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,230 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,230 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,230 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,230 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,230 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,230 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,231 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,231 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,231 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,231 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,231 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,231 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,231 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,231 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,231 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,231 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,231 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,231 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,231 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,232 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,232 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,232 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,232 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,233 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,233 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,233 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,233 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,233 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,233 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,233 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,234 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,234 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,234 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,234 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,234 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,234 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,235 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,235 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,235 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,235 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,235 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,235 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,235 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,235 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,236 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,236 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,236 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,236 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,236 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,236 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,236 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,237 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,237 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,237 - INFO - Skills:
+None
+
+2025-05-30 20:24:15,237 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:15,237 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:15,238 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:15,238 - INFO - Skills:
+None
+
+2025-05-30 20:24:22,231 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:24:22,460 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (4, 300, 0)]
+
+2025-05-30 20:24:22,703 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-30 20:24:23,099 - INFO - 24 valid query responses out of 24.
+
+2025-05-30 20:24:23,133 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,133 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,137 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,137 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,137 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,137 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,137 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,137 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,137 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,138 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,138 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,138 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,138 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,138 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,138 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,138 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,138 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,138 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,138 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,138 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,138 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,139 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,139 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,139 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,139 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,139 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,139 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,139 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,139 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,139 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,139 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,139 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,139 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,140 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,140 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,140 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,140 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,140 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,140 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,140 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,140 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,140 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,140 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,140 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,140 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,140 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,141 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,141 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,141 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,141 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,141 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,141 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,141 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,141 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,141 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,141 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,141 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,141 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,141 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,141 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,141 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,142 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,142 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,142 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,142 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,142 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,142 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,142 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,142 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,142 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,142 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,142 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,142 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,142 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,143 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,143 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,143 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,143 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,143 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,143 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,143 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,143 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,143 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,143 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,143 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,143 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,144 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,144 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,144 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,144 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,144 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,144 - INFO - Skills:
+None
+
+2025-05-30 20:24:23,144 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:23,144 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:23,144 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:23,144 - INFO - Skills:
+None
+
+2025-05-30 20:24:33,980 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:24:34,177 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (5, 300, 0)]
+
+2025-05-30 20:24:34,319 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (2, 12, 0)]
+
+2025-05-30 20:24:34,608 - INFO - 30 valid query responses out of 30.
+
+2025-05-30 20:24:34,611 - INFO - Could not find mod with ID ('bow', 'enchant.stat_3336890334', None). Creating and caching.
+
+2025-05-30 20:24:34,615 - INFO - Could not find mod with ID ('bow', 'fractured.stat_3885405204', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:34,621 - INFO - Could not find mod with ID ('bow', 'explicit.stat_3885405204', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:34,632 - INFO - Could not find mod with ID ('bow', 'enchant.stat_1509134228', None). Creating and caching.
+
+2025-05-30 20:24:34,645 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,646 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,649 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,649 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,649 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,649 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,649 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,649 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,649 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,650 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,650 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,650 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,650 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,650 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,650 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,650 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,650 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,650 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,650 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,650 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,650 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,650 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,651 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,651 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,651 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,651 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,651 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,651 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,651 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,651 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,651 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,651 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,651 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,651 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,651 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,651 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,651 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,652 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,652 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,652 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,652 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,652 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,652 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,652 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,652 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,652 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,652 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,652 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,652 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,652 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,652 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,653 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,653 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,653 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,653 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,653 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,653 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,653 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,653 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,653 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,653 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,653 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,653 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,653 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,653 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,653 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,654 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,654 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,654 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,654 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,654 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,654 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,654 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,654 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,654 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,654 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,654 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,654 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,654 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,654 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,654 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,655 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,655 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,655 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,655 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,655 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,655 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,655 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,655 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,655 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,655 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,655 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,655 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,655 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,655 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,655 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,655 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,656 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,656 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,656 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,656 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,656 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,656 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,656 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,656 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,656 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,656 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,656 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,656 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,656 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,656 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,656 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,656 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,656 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,657 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,657 - INFO - Skills:
+None
+
+2025-05-30 20:24:34,657 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:34,657 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:34,657 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:34,657 - INFO - Skills:
+None
+
+2025-05-30 20:24:44,642 - INFO - Processing query 1 of 144 queries.
+
+2025-05-30 20:24:45,040 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (3, 60, 0), (6, 300, 0)]
+
+2025-05-30 20:24:45,306 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (4, 12, 0)]
+
+2025-05-30 20:24:45,467 - INFO - 17 valid query responses out of 17.
+
+2025-05-30 20:24:45,467 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_387439868', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:24:45,468 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_9187492', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:45,468 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_1368271171', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:45,468 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_1509134228', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:24:47,925 - ERROR - Was not able to match item mod:
+None
+
+2025-05-30 20:24:47,926 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_2694482655', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,939 - INFO - Could not find mod with ID ('one_hand_mace', 'implicit.stat_2694482655', None). Creating and caching.
+
+2025-05-30 20:24:47,939 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_669069897', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,940 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_1940865751', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:24:47,941 - INFO - Could not find mod with ID ('one_hand_mace', 'implicit.stat_1559935218', None). Creating and caching.
+
+2025-05-30 20:24:47,942 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_1509134228', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:24:47,942 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_691932474', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-30 20:24:47,942 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_55876295', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,943 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,943 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_3639275092', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,944 - INFO - Could not find mod with ID ('one_hand_mace', 'enchant.stat_2223678961', None). Creating and caching.
+
+2025-05-30 20:24:47,945 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_210067635', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,948 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_821021828', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,950 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_791928121', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,951 - INFO - Could not find mod with ID ('one_hand_mace', 'fractured.stat_748522257', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-30 20:24:47,952 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:47,952 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,673 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,674 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,675 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,676 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,677 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,677 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,677 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,678 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,678 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,678 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,678 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,678 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,679 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,679 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,679 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,679 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,679 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,679 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,679 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,679 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,680 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,680 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,680 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,680 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,680 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,680 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,680 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,681 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,681 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,681 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,681 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,681 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,681 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,681 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,682 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,682 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,682 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,682 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,682 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,682 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,683 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,683 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,683 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,683 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,683 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,683 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,683 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,683 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,684 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,684 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,684 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,684 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,684 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,684 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,684 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,685 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,685 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,685 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,685 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,685 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,685 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,685 - INFO - Skills:
+None
+
+2025-05-30 20:24:50,686 - INFO - NEW LISTING DATA
+None
+
+2025-05-30 20:24:50,686 - INFO - Listing calculations:
+None
+
+
+2025-05-30 20:24:50,686 - INFO - Summed sub-mods:
+None
+
+
+2025-05-30 20:24:50,686 - INFO - Skills:
+None
+
+2025-05-31 08:02:51,446 - INFO - Processing query 1 of 144 queries.
+
+2025-05-31 08:02:51,830 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (1, 300, 0)]
+
+2025-05-31 08:02:51,973 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-31 08:02:52,442 - INFO - 21 valid query responses out of 21.
+
+2025-05-31 08:02:52,453 - INFO - Could not find mod with ID ('one_hand_mace', 'explicit.stat_1263695895', 'explicit.stat_691932474', <ModAffixType.SUFFIX: 'suffix'>). Creating and caching.
+
+2025-05-31 08:02:52,456 - ERROR - Was not able to match item mod:
+None
+
+2025-05-31 08:02:52,473 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:02:52,474 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:03:29,515 - INFO - Processing query 1 of 144 queries.
+
+2025-05-31 08:03:29,792 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (2, 60, 0), (2, 300, 0)]
+
+2025-05-31 08:03:29,931 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-31 08:03:30,473 - INFO - 36 valid query responses out of 36.
+
+2025-05-31 08:03:30,504 - INFO - Could not find mod with ID ('two_hand_mace', 'enchant.stat_709508406', None). Creating and caching.
+
+2025-05-31 08:03:30,507 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:03:30,507 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,651 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,654 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,655 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,655 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,655 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,655 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,655 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,656 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,656 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,656 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,656 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,656 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,656 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,656 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,656 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,656 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,657 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,657 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,657 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,657 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,657 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,657 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,657 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,657 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,657 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,657 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,658 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,658 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,658 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,658 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,658 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,658 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,658 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,658 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,658 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,658 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,658 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,658 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,658 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,658 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,659 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,659 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,659 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,659 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,659 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,659 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,659 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,659 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,659 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,659 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,659 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,659 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,659 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,659 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,660 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,660 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,660 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,660 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,660 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,660 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,660 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,660 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,660 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,660 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,660 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,660 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,660 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,660 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,660 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,661 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,661 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,661 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,661 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,661 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,661 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,661 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,662 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,662 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,662 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,662 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,662 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,662 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,662 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,662 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,662 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,662 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,662 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,662 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,662 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,663 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,663 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,663 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,663 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,663 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,663 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,663 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,663 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,663 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,663 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,663 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,663 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,663 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,664 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,664 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,664 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,664 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,664 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,664 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,664 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,664 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,664 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,664 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,664 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,664 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,664 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,664 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,664 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,664 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,665 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,665 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,665 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,665 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,665 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,665 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,665 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,665 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,665 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,665 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,665 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,665 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,665 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,665 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,665 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,666 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,666 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,666 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,666 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,666 - INFO - Skills:
+None
+
+2025-05-31 08:04:30,666 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:30,666 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:04:30,666 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:04:30,666 - INFO - Skills:
+None
+
+2025-05-31 08:04:40,729 - INFO - Processing query 1 of 144 queries.
+
+2025-05-31 08:04:41,091 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (3, 300, 0)]
+
+2025-05-31 08:04:41,242 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-31 08:04:49,652 - INFO - 92 valid query responses out of 92.
+
+2025-05-31 08:04:49,725 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:04:49,725 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:28,999 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,000 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,001 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,002 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,003 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,003 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,003 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,003 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,003 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,003 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,003 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,004 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,004 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,004 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,004 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,004 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,004 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,005 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,005 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,005 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,005 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,005 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,005 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,006 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,006 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,006 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,006 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,006 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,006 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,006 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,007 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,007 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,007 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,007 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,007 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,007 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,007 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,008 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,008 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,008 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,008 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,008 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,008 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,008 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,009 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,009 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,009 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,009 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,009 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,009 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,009 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,009 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,010 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,010 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,010 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,010 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,010 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,010 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,010 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,010 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,010 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,010 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,010 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,011 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,011 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,011 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,011 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,011 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,011 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,011 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,011 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,011 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,012 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,012 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,012 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,012 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,012 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,012 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,012 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,012 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,012 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,012 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,012 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,013 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,013 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,013 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,013 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,013 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,013 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,013 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,013 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,013 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,013 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,014 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,014 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,014 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,014 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,014 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,014 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,014 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,014 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,014 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,014 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,014 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,015 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,015 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,015 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,015 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,015 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,015 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,016 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,016 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,016 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,016 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,016 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,017 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,017 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,017 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,017 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,017 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,017 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,017 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,017 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,017 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,017 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,017 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,018 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,018 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,018 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,018 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,018 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,018 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,018 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,018 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,018 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,018 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,019 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,019 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,019 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,019 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,019 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,019 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,019 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,019 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,019 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,020 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,020 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,020 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,020 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,020 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,020 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,020 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,020 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,020 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,020 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,021 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,021 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,021 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,021 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,021 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,021 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,021 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,021 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,021 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,022 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,022 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,022 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,022 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,022 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,022 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,022 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,022 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,023 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,023 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,023 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,023 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,023 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,023 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,023 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,023 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,023 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,023 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,024 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,024 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,024 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,024 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,024 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,024 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,024 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,024 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,024 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,024 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,024 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,025 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,025 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,025 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,025 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,025 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,025 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,025 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,025 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,025 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,025 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,026 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,026 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,026 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,026 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,026 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,026 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,026 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,026 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,026 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,026 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,026 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,026 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,027 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,027 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,027 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,027 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,027 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,027 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,027 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,027 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,027 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,027 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,027 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,028 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,028 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,028 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,028 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,028 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,028 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,028 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,028 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,028 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,028 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,028 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,029 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,029 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,029 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,029 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,029 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,029 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,029 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,029 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,029 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,029 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,029 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,030 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,030 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,030 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,030 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,030 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,030 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,030 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,030 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,030 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,030 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,030 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,031 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,031 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,031 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,031 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,031 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,032 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,032 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,032 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,032 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,032 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,032 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,032 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,032 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,033 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,033 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,033 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,033 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,033 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,033 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,033 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,033 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,034 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,034 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,034 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,034 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,034 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,034 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,034 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,034 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,034 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,035 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,035 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,035 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,035 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,035 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,035 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,035 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,035 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,035 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,035 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,035 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,036 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,036 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,036 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,036 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,036 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,036 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,036 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,036 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,037 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,037 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,037 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,037 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,037 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,037 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,037 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,037 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,037 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,037 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,037 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,038 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,038 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,038 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,038 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,038 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,038 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,038 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,038 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,038 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,038 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,038 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,038 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,039 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,039 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,039 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,039 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,039 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,039 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,039 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,039 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,039 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,039 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,039 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,040 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,040 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,040 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,040 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,040 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,040 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,040 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,040 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,040 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,040 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,040 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,040 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,041 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,041 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,041 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,041 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,041 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,041 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,041 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,041 - INFO - Skills:
+None
+
+2025-05-31 08:05:29,041 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:05:29,041 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:05:29,041 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:05:29,041 - INFO - Skills:
+None
+
+2025-05-31 08:05:58,249 - INFO - Processing query 1 of 144 queries.
+
+2025-05-31 08:05:58,479 - INFO - Setting new limits.
+	Account limits: [(3, 5, 60)]
+	Account state: [(1, 5, 0)]
+	IP limits: [(8, 10, 60), (15, 60, 120), (60, 300, 1800)]
+	IP state: [(1, 10, 0), (1, 60, 0), (4, 300, 0)]
+
+2025-05-31 08:05:58,691 - INFO - Setting new limits.
+	Account limits: [(6, 4, 10)]
+	Account state: [(1, 4, 0)]
+	IP limits: [(12, 4, 60), (16, 12, 60)]
+	IP state: [(1, 4, 0), (1, 12, 0)]
+
+2025-05-31 08:06:03,829 - INFO - 76 valid query responses out of 76.
+
+2025-05-31 08:06:03,904 - INFO - Could not find mod with ID ('spear', 'fractured.stat_1037193709', <ModAffixType.PREFIX: 'prefix'>). Creating and caching.
+
+2025-05-31 08:06:03,912 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:03,913 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:27,702 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:27,703 - INFO - Skills:
+None
+
+2025-05-31 08:06:27,704 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:27,704 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:27,705 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:34,554 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:34,556 - INFO - Skills:
+None
+
+2025-05-31 08:06:34,556 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:34,556 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:34,557 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:36,912 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:36,913 - INFO - Skills:
+None
+
+2025-05-31 08:06:36,914 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:36,915 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:36,915 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,789 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,791 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,791 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,792 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,792 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,793 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,794 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,794 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,794 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,795 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,795 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,795 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,796 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,796 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,797 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,797 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,797 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,798 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,798 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,798 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,798 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,799 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,799 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,799 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,799 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,799 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,800 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,800 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,800 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,800 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,801 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,801 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,801 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,802 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,802 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,802 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,802 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,802 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,802 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,803 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,803 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,803 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,803 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,803 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,803 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,804 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,804 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,804 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,804 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,804 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,804 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,804 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,805 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,805 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,805 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,805 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,805 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,806 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,806 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,806 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,806 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,806 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,807 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,807 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,807 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,807 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,807 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,807 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,807 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,807 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,808 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,808 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,808 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,808 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,808 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,808 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,809 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,810 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,810 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,810 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,810 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,810 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,810 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,810 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,810 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,811 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,811 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,811 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,811 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,811 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,811 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,811 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,812 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,812 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,812 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,812 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,812 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,812 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,812 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,812 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,813 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,813 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,813 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,813 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,813 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,813 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,813 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,814 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,814 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,814 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,814 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,814 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,814 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,814 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,814 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,815 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,815 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,815 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,815 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,815 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,815 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,815 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,815 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,815 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,816 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,816 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,816 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,816 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,816 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,816 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,816 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,816 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,817 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,817 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,817 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,817 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,817 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,817 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,817 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,817 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,818 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,818 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,818 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,818 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,818 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,818 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,818 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,819 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,819 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,819 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,819 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,819 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,819 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,819 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,819 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,819 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,820 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,820 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,820 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,820 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,820 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,820 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,821 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,821 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,821 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,821 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,821 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,821 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,822 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,822 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,822 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,822 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,822 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,822 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,822 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,823 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,823 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,823 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,823 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,823 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,824 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,824 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,824 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,824 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,824 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,824 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,824 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,825 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,825 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,825 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,825 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,825 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,825 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,825 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,826 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,826 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,826 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,826 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,826 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,826 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,827 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,827 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,827 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,827 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,827 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,827 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,827 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,828 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,828 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,828 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,828 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,828 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,829 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,829 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,829 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,829 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,829 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,829 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,829 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,830 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,830 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,830 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,830 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,830 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,830 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,830 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,830 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,831 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,831 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,832 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,832 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,832 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,832 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,832 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,832 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,833 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,833 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,833 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,833 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,833 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,834 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,834 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,834 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,834 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,834 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,834 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,834 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,835 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,835 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,835 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,835 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,835 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,835 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,836 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,836 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,836 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,836 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,836 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,836 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,836 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,836 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,837 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,837 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,837 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,837 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,837 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,837 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,837 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,838 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,838 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,838 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,838 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,838 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,838 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,838 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,838 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,838 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,839 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,839 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,839 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,839 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,839 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,839 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,839 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,839 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,840 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,840 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,840 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,840 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,840 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,840 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,840 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,841 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,841 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,841 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,841 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,841 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,841 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,841 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,841 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,841 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,841 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,842 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,842 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,842 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,842 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,842 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,842 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,842 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,842 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,843 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,843 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,843 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,843 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,843 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,843 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,843 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,843 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,843 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,844 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,844 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,844 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,844 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,844 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,844 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,844 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,844 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,845 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,845 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,845 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,845 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,845 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,845 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,845 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,845 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,846 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,846 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,846 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,846 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,846 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,846 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,846 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,847 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,847 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,847 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,847 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,847 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,847 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,847 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,847 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,847 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,847 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,848 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,848 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,848 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,848 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,848 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,848 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+
+2025-05-31 08:06:39,848 - INFO - NEW LISTING DATA
+None
+
+2025-05-31 08:06:39,848 - INFO - Listing calculations:
+None
+
+
+2025-05-31 08:06:39,848 - INFO - Summed sub-mods:
+None
+
+
+2025-05-31 08:06:39,849 - INFO - Skills:
+None
+
+2025-05-31 08:06:39,849 - ERROR - Found 1-length attribute name ['s'] for listing: 
+None
+Removing the extra column
+

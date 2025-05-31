@@ -87,6 +87,7 @@ class CurrencyConverter:
     def __init__(self):
         if self._initialized:
             return
+        self._initialized = True
 
         files_manager = file_management.FilesManager()
         conversions_df = files_manager.fetch_data(data_path_e=DataPath.CURRENCY_CONVERSIONS, missing_ok=False)
@@ -94,7 +95,6 @@ class CurrencyConverter:
         self.conversions_dict = dict()
         conversions_df.apply(self._apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
 
-        self._initialized = True
 
     @staticmethod
     def _apply_create_conversions_dict(row, conversions_dict: dict):
@@ -103,7 +103,7 @@ class CurrencyConverter:
         currency = row['currency']
         conversion_rate = row['div_per_currency']
 
-        if date not in conversions_dict:
+        if observation_date not in conversions_dict:
             conversions_dict[observation_date] = dict()
 
         conversions_dict[observation_date][currency] = conversion_rate
