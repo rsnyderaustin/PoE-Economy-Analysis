@@ -155,6 +155,7 @@ class TradeApiHandler:
     def generate_responses_from_queries(self, queries: list[Query]):
         for i, query in enumerate(queries):
             api_log.info(f"Processing query {i + 1} of {len(queries)} queries.")
+            print(f"Processing query {i + 1} of {len(queries)} queries.")
             for responses, response_results_count in self._process_query(query):
                 responses = [shared_utils.sanitize_dict_texts(response) for response in responses]
                 response_parsers = [ApiResponseParser(response) for response in responses]

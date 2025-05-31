@@ -31,13 +31,9 @@ class TrainingDataPopulator:
             data=row_data
         )
 
-    def fill_training_data(self, api_item_responses: list[dict]=None):
+    def fill_training_data(self):
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
-
-        if api_item_responses:
-            self._process_and_insert(api_item_responses)
-            return
 
         for api_item_responses in self.trade_api_handler.generate_responses_from_queries(training_queries):
             self._process_and_insert(api_item_responses)
