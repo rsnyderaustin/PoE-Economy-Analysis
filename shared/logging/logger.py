@@ -3,10 +3,11 @@ from abc import ABC
 from enum import Enum
 from pathlib import Path
 
-
+logging_path = Path.cwd() / 'shared/logging/logs/all_logs.log'
+logging_path.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
-    filename=Path.cwd() / 'shared/logging/logs/all_logs.log',
+    filename=logging_path,
     filemode='a',
     format='%(asctime)s - %(levelname)s - %(message)s\n'
 )
