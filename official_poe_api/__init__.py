@@ -1,2 +1,2 @@
-from .manager import OfficialApiManager
+from .manager import OfficialEndpoint, OfficialApiPuller
 

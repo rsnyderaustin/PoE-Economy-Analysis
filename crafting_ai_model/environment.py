@@ -194,26 +194,26 @@ class ObservationSpace:
 
     @log_errors(craft_log)
     def add_mod(self, mod: ItemMod):
-        num_mods = self.num_mods[mod.mod_class_e]
+        num_mods = self.num_mods[mod.mod_class]
 
-        if num_mods + 1 > self.max_mods[mod.mod_class_e]:
-            raise ValueError(f"Reached past the observation space limit for mod class {mod.mod_class_e}")
+        if num_mods + 1 > self.max_mods[mod.mod_class]:
+            raise ValueError(f"Reached past the observation space limit for mod class {mod.mod_class}")
 
         mod_i = num_mods
-        mod_id_key = self._create_mod_id_key(mod_class=mod.mod_class_e, mod_i=mod_i)
+        mod_id_key = self._create_mod_id_key(mod_class=mod.mod_class, mod_i=mod_i)
         self._space[mod_id_key] = mod.mod_id
 
-        if mod.mod_class_e in [ModClass.EXPLICIT, ModClass.FRACTURED]:
-            affix_key = self._create_affix_key(mod_class=mod.mod_class_e, mod_i=mod_i)
-            self._space[affix_key] = mod.affix_type_e.value
+        if mod.mod_class in [ModClass.EXPLICIT, ModClass.FRACTURED]:
+            affix_key = self._create_affix_key(mod_class=mod.mod_class, mod_i=mod_i)
+            self._space[affix_key] = mod.affix_type.value
 
         mod_values = [actual_value for sub_mod in mod.sub_mods for actual_value in sub_mod.actual_values]
 
-        if len(mod_values) > self.max_values[mod.mod_class_e]:
+        if len(mod_values) > self.max_values[mod.mod_class]:
             raise ValueError(f"Too many values in mod {mod.mod_id} for slot {mod_i}")
 
         for value_i, mod_value in enumerate(mod_values):
-            value_key = self._create_mod_value_key(mod_class=mod.mod_class_e, mod_i=mod_i, value_i=value_i)
+            value_key = self._create_mod_value_key(mod_class=mod.mod_class, mod_i=mod_i, value_i=value_i)
             self._space[value_key] = mod_value
 
     def add_attributes(self, listing: ModifiableListing):

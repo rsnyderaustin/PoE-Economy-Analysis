@@ -2,69 +2,32 @@
 import json
 from enum import Enum
 from pathlib import Path
+from urllib.parse import urljoin
 
 import requests
 
-from shared import PathProcessor, shared_utils
+from shared import shared_utils
 from shared.logging import LogsHandler, LogFile
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
 
-class Endpoint(Enum):
-    STATIC = 'static'
-    STATS = 'stats'
+class OfficialEndpoint(Enum):
+    STATIC = 'static/'
+    STATS = 'stats/'
 
 
-class OfficialApiManager:
+class OfficialApiPuller:
 
     def __init__(self):
         # Input
-        base_url = 'https://www.pathofexile.com/api/trade2/data/'
-
-        stats_input_endpoint = '/stats'
-        static_input_endpoint = '/static'
-
-        self.stats_input_path = (
-            PathProcessor(
-                path=base_url
-            )
-            .attach_url_endpoint(endpoint=stats_input_endpoint)
-            .path
-        )
-
-        self.static_input_path = (
-            PathProcessor(
-                path=base_url
-            )
-            .attach_url_endpoint(endpoint=static_input_endpoint)
-            .path
-        )
+        self.base_url = 'https://www.pathofexile.com/api/trade2/data/'
 
         self.headers = {
             'Accept': 'image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5',
             'Referer': 'FILL_WITH_API_URL',
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
         }
-
-        # Output
-        stats_endpoint = 'official_poe_api/official_api/json_data/official_stats.json'
-        static_endpoint = 'official_poe_api/official_api/json_data/official_static.json'
-
-        self.stats_output_path = (
-            PathProcessor(
-                path=Path.cwd()
-            )
-            .attach_file_path_endpoint(endpoint=stats_endpoint)
-            .path
-        )
-        self.static_output_path = (
-            PathProcessor(
-                path=Path.cwd()
-            )
-            .attach_file_path_endpoint(endpoint=static_endpoint)
-            .get
-        )
 
         self.acceptable_endpoints = ['static', 'stats']
 
@@ -119,38 +82,15 @@ class OfficialApiManager:
 
         return stat_json
 
-    def pull_data(self, endpoint: str, load_locally: bool = False):
-        self._verify_endpoint(endpoint)
+    def pull_data(self, endpoint: OfficialEndpoint):
+        url = urljoin(self.base_url, endpoint.value)
+        data = self._load_api_data(api_url=url)
 
-        endpoint = self.static_input_path if endpoint == 'static' else self.stats_input_path
-
-        if load_locally:
-            import_path = self.static_output_path if endpoint == 'static' else self.stats_output_path
-
-            with import_path.open('r', encoding='utf-8') as static_file:
-                data = json.load(static_file)
-            return data
-        else:
-            import_url = self.static_input_path if endpoint == 'static' else self.stats_input_path
-            data = self._load_api_data(api_url=import_url)
-
-            if endpoint == 'static':
-                data = self._format_static_data(data)
-            else:
-                data = self._format_stats_data(data)
-
-            return data
-
-    def save_data_to_json(self, endpoint: str):
-        data = self.pull_data(endpoint=endpoint)
-        if endpoint == 'static':
+        if endpoint == OfficialEndpoint.STATIC:
             data = self._format_static_data(data)
-            output_path = self.static_output_path
         else:
             data = self._format_stats_data(data)
-            output_path = self.stats_output_path
 
-        with open(output_path, "w") as f:
-            json.dump(data, f, indent=4)
+        return data
 
 

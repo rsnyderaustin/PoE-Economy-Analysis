@@ -117,6 +117,7 @@ class NonPhysicalDpsCalculator(ListingFeatureCalculator):
             CalculatedMod.COLD_DPS: cold_damage * attacks_per_second,
             CalculatedMod.FIRE_DPS: fire_damage * attacks_per_second,
             CalculatedMod.LIGHTNING_DPS: lightning_damage * attacks_per_second,
+            CalculatedMod.CHAOS_DPS: chaos_damage * attacks_per_second,
             CalculatedMod.ELEMENTAL_DPS: (cold_damage + fire_damage + lightning_damage) * attacks_per_second
         }
 
@@ -326,10 +327,10 @@ class _PricePredictTransformer:
         summed_sub_mods = {}
         for sub_mod in sub_mods:
             # We add the 'mod_' prefix here so that we can identify which columns are mod columns in the future
-            mod_text = f"mod_{sub_mod.sanitized_mod_text}"
+            mod_text = f"mod_{sub_mod.sanitized_text}"
             if sub_mod.actual_values:
                 avg_value = sum(sub_mod.actual_values) / len(sub_mod.actual_values)
-                if sub_mod.mod_id not in summed_sub_mods:
+                if sub_mod.sub_mod_hash not in summed_sub_mods:
                     summed_sub_mods[mod_text] = avg_value
                 else:
                     summed_sub_mods[mod_text] += avg_value

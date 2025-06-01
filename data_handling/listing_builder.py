@@ -1,12 +1,14 @@
-
+import copy
 import pprint
 import re
+from collections import Counter
+from dataclasses import dataclass
 
 from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
 from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared import shared_utils
-from shared.enums.item_enums import ModAffixType
+from shared.enums.item_enums import ModAffixType, AType
 from shared.enums.trade_enums import ModClass
 from shared.logging import LogFile, LogsHandler, log_errors
 from . import utils
@@ -46,10 +48,10 @@ class ListingBuilder:
             ilvl=rp.item_ilvl,
             identified=rp.is_identified,
             corrupted=rp.is_corrupted,
-            implicit_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.IMPLICIT],
-            enchant_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.ENCHANT],
-            fractured_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.FRACTURED],
-            explicit_mods=[mod for mod in item_mods if mod.mod_class_e == ModClass.EXPLICIT],
+            implicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.IMPLICIT],
+            enchant_mods=[mod for mod in item_mods if mod.mod_class == ModClass.ENCHANT],
+            fractured_mods=[mod for mod in item_mods if mod.mod_class == ModClass.FRACTURED],
+            explicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.EXPLICIT],
             item_skills=_SkillsFactory.create_skills(rp),
             item_properties=rp.item_properties
         )
@@ -57,31 +59,24 @@ class ListingBuilder:
         return listing
 
 
-class _ModResolver:
+class _ModValueRangesParser:
 
-    def __init__(self, poe2db_mods_manager: Poe2DbModsManager):
-        self._poe2db_mods_manager = poe2db_mods_manager
-        self.mod_matcher = ModMatcher(poe2db_mods_manager)
+    @staticmethod
+    def determine_sub_mod_value_ranges(mod_magnitudes: list) -> dict:
+        """
+        {
+            X: (10, 15),
+            X: (20, 25)
+        }
+        ---->
+        {
+            X: [(10, 15), (20, 25)]
+        """
+        mod_ids = {magnitude['hash'] for magnitude in mod_magnitudes}
 
-        self.files_manager = FilesManager()
-        self.file_item_mods = self.files_manager.fetch_data(data_path_e=DataPath.MODS, default=dict())
-
-        self.current_rp = None
-        self.current_atype = None
-
-    def _create_sub_mods(self, current_mod: ItemMod, mod_magnitudes: list) -> list[SubMod]:
-        # Sub-mods within a hybrid mod that share a magnitude represent a range of values
-        mod_id_to_mags = dict()
-        for magnitude in mod_magnitudes:
-            if magnitude['hash'] not in mod_id_to_mags:
-                mod_id_to_mags[magnitude['hash']] = list()
-
-            mod_id_to_mags[magnitude['hash']].append(magnitude)
-
-        mod_id_to_text = self.current_rp.fetch_mod_id_to_text(current_mod.mod_class_e)
-        sub_mods = []
-        for mod_id, magnitudes in mod_id_to_mags.items():
-            mod_text = mod_id_to_text[mod_id]
+        v_ranges = dict()
+        for mod_id in mod_ids:
+            magnitudes = [magnitude for magnitude in mod_magnitudes if magnitude['hash'] == mod_id]
 
             value_ranges = [
                 (
@@ -90,76 +85,190 @@ class _ModResolver:
                 )
                 for m in magnitudes
             ]
+
+            v_ranges[mod_id] = value_ranges
+
+        return v_ranges
+
+
+class _SubModValuesInjector:
+
+    @staticmethod
+    def inject_sub_mod_values(sub_mod_hash_to_text: dict, current_mod: ItemMod):
+        sub_mod_hash_to_sub_mod = {sub_mod.sub_mod_hash: sub_mod for sub_mod in current_mod.sub_mods}
+        for sub_mod_hash, sub_mod in sub_mod_hash_to_sub_mod.items():
+            sub_mod_text = sub_mod_hash_to_text[sub_mod_hash]
+            values = shared_utils.extract_values_from_text(sub_mod_text)
+            parse_log.info(f"Parsed sub-mod text '{sub_mod_text}' into values {values}")
+            sub_mod.actual_values = values
+
+
+class _PoE2DbInjector:
+
+    def __init__(self, mod_matcher: ModMatcher):
+        self.mod_matcher = mod_matcher
+
+    def inject_poe2db_into_mod(self, mod: ItemMod) -> ItemMod:
+        # Only explicit mods and fractured mods require weighting and mod types
+        if mod.mod_class not in (ModClass.EXPLICIT, ModClass.FRACTURED):
+            return mod
+
+        poe2db_mod = self.mod_matcher.match_mod(mod)
+
+        if not poe2db_mod:
+            parse_log.error(f"Was not able to match item mod:\n{pprint.pprint(mod)}")
+            return mod
+
+        mod.weighting = poe2db_mod.fetch_weighting(ilvl=mod.mod_ilvl)
+        mod.mod_types = poe2db_mod.mod_types
+
+        return mod
+
+
+@dataclass
+class _ModMeta:
+    mod_atype: AType
+    mod_class: ModClass
+    sub_mod_hashes: set
+    affix_type: ModAffixType | None
+    mod_tier: int | None
+
+    @property
+    def mod_id(self):
+        return generate_mod_id(mod_class=self.mod_class,
+                               atype=self.mod_atype,
+                               sub_mod_hashes=self.sub_mod_hashes,
+                               mod_tier=self.mod_tier,
+                               affix_type=self.affix_type)
+
+
+class _ModFactory:
+
+    @staticmethod
+    def _determine_mod_affix_type(mod_data: dict) -> ModAffixType | None:
+        mod_affix = None
+        if mod_data['tier']:
+            first_letter = mod_data['tier'][0]
+            if first_letter == 's':
+                mod_affix = ModAffixType.SUFFIX
+            elif first_letter == 'p':
+                mod_affix = ModAffixType.PREFIX
+            else:
+                parse_log.error(f"Did not recognize first character as an affix type for mod tier {mod_data['tier']}.")
+                return None
+
+        return mod_affix
+
+    @staticmethod
+    def _determine_mod_tier(mod_data: dict) -> int | None:
+        mod_tier = None
+        if mod_data['tier']:
+            mod_tier_match = re.search(r'\d+', mod_data['tier'])
+            if mod_tier_match:
+                mod_tier = mod_tier_match.group()
+            else:
+                parse_log.info(f"Did not find a tier number for mod tier {mod_data['tier']}")
+                return None
+
+        return int(mod_tier) if mod_tier else None
+
+    @staticmethod
+    def _create_sub_mods(sub_mod_hash_to_text: dict,
+                         mod_magnitudes: list) -> list[SubMod]:
+        sub_mod_hashes = set(magnitude['hash'] for magnitude in mod_magnitudes)
+
+        mod_id_to_values_ranges = _ModValueRangesParser.determine_sub_mod_value_ranges(mod_magnitudes=mod_magnitudes)
+
+        sub_mods = []
+        for sub_mod_hash in sub_mod_hashes:
+            sanitized_text = shared_utils.sanitize_mod_text(sub_mod_hash_to_text[sub_mod_hash])
+
+            value_ranges = mod_id_to_values_ranges[sub_mod_hash]
+
             new_sub_mod = SubMod(
-                mod_id=mod_id,
-                sanitized_mod_text=shared_utils.sanitize_mod_text(mod_text),
-                actual_values=shared_utils.extract_values_from_text(mod_text),
+                sub_mod_hash=sub_mod_hash,
+                sanitized_text=sanitized_text,
+                actual_values=None,
                 values_ranges=value_ranges
             )
             sub_mods.append(new_sub_mod)
 
         return sub_mods
 
-    @staticmethod
-    def _determine_mod_affix_type(mod_dict: dict) -> ModAffixType | None:
-        mod_affix = None
-        if mod_dict['tier']:
-            first_letter = mod_dict['tier'][0]
-            if first_letter == 's':
-                mod_affix = ModAffixType.SUFFIX
-            elif first_letter == 'p':
-                mod_affix = ModAffixType.PREFIX
-            else:
-                parse_log.error(f"Did not recognize first character as an affix type for mod tier {mod_dict['tier']}.")
-                return None
+    @classmethod
+    def create_mod_meta(cls,
+                        mod_class: ModClass,
+                        mod_atype: AType,
+                        mod_data: dict) -> _ModMeta:
+        sub_mod_hashes = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
+        affix_type = cls._determine_mod_affix_type(mod_data)
+        mod_tier = cls._determine_mod_tier(mod_data)
 
-        return mod_affix
+        return _ModMeta(
+            mod_atype=mod_atype,
+            mod_class=mod_class,
+            sub_mod_hashes=sub_mod_hashes,
+            affix_type=affix_type,
+            mod_tier=mod_tier
+        )
 
-    @staticmethod
-    def _determine_mod_tier(mod_dict: dict) -> int | None:
-        mod_tier = None
-        if mod_dict['tier']:
-            mod_tier_match = re.search(r'\d+', mod_dict['tier'])
-            if mod_tier_match:
-                mod_tier = mod_tier_match.group()
-            else:
-                parse_log.info(f"Did not find a tier number for mod tier {mod_dict['tier']}")
-                return None
-
-        return int(mod_tier) if mod_tier else None
-
-    def _create_item_mod(self, mod_data: dict, mod_class: ModClass, affix_type: ModAffixType):
+    @classmethod
+    def create_mod(cls, mod_atype: AType, mod_data: dict, mod_meta: _ModMeta, sub_mod_hash_to_text: dict):
         new_mod = ItemMod(
-            atype=self.current_atype,
-            mod_class_e=mod_class,
+            atype=mod_atype,
+            mod_class=mod_meta.mod_class,
             mod_name=mod_data['name'],
-            affix_type_e=affix_type,
-            mod_tier=self._determine_mod_tier(mod_data),
+            affix_type=mod_meta.affix_type,
+            mod_tier=mod_meta.mod_tier,
             mod_ilvl=int(mod_data['level'])
         )
-        magnitudes = mod_data['magnitudes']
 
-        sub_mods = self._create_sub_mods(
-            current_mod=new_mod,
-            mod_magnitudes=magnitudes
+        sub_mods = cls._create_sub_mods(
+            sub_mod_hash_to_text=sub_mod_hash_to_text,
+            mod_magnitudes=mod_data['magnitudes']
         )
 
         new_mod.insert_sub_mods(sub_mods)
 
-        # Only explicit mods and fractured mods require weighting and mod types
-        if new_mod.mod_class_e not in (ModClass.EXPLICIT, ModClass.FRACTURED):
-            return new_mod
-
-        poe2db_mod_match = self.mod_matcher.match_mod(new_mod)
-
-        if not poe2db_mod_match:
-            parse_log.error(f"Was not able to match item mod:\n{pprint.pprint(new_mod)}")
-            return new_mod
-
-        new_mod.weighting = poe2db_mod_match.fetch_weighting(ilvl=int(mod_data['level']))
-        new_mod.mod_types = poe2db_mod_match.mod_types
-
         return new_mod
+
+
+class _ModResolver:
+
+    def __init__(self,
+                 poe2db_mods_manager: Poe2DbModsManager):
+        self._poe2db_injector = _PoE2DbInjector(mod_matcher=ModMatcher(poe2db_mods_manager))
+
+        self._files_manager = FilesManager()
+        self.file_item_mods = self._files_manager.fetch_data(data_path_e=DataPath.MODS, default=dict())
+
+    @staticmethod
+    def _balance_same_hash_sub_mods(mods):
+        sub_mods = [sub_mod for mod in mods for sub_mod in mod.sub_mods]
+
+        sub_mod_hash_to_sub_mods = dict()
+        for sub_mod in sub_mods:
+            if sub_mod.sub_mod_hash not in sub_mod_hash_to_sub_mods:
+                sub_mod_hash_to_sub_mods[sub_mod.sub_mod_hash] = []
+
+            sub_mod_hash_to_sub_mods[sub_mod.sub_mod_hash].append(sub_mod)
+
+        sub_mod_hash_to_sub_mods = {
+            sub_mod_hash: sub_mods
+            for sub_mod_hash, sub_mods in sub_mod_hash_to_sub_mods.items()
+            if len(sub_mods) >= 2
+        }
+        for sub_mod_hash, sub_mods in sub_mod_hash_to_sub_mods.items():
+            range_sums = []
+            for sub_mod in sub_mods:
+                range_sum = sum([sum(value_range) for value_range in sub_mod.values_ranges])
+                range_sums.append(range_sum)
+
+            ranges_total = sum(range_sums)
+            range_portions = [range_sum/ranges_total for range_sum in range_sums]
+
+            for i, sub_mod in enumerate(sub_mods):
+                sub_mod.actual_values = [round(val * range_portions[i], 2) for val in sub_mod.actual_values]
 
     @log_errors(parse_log)
     def resolve_mods(self, rp: ApiResponseParser) -> list[ItemMod]:
@@ -167,37 +276,50 @@ class _ModResolver:
         Attempts to pull each mod in the item's data from file. Otherwise, it manages the mod's creation and caching
         :return: All mods from the item data
         """
-        self.current_rp = rp
-        self.current_atype = rp.item_atype
 
         mods = []
+        for mod_class in rp.mod_classes:
+            mods_data = rp.fetch_mods_data(mod_class)
+            for mod_data in mods_data:
+                mod_meta = _ModFactory.create_mod_meta(
+                    mod_class=mod_class,
+                    mod_atype=rp.item_atype,
+                    mod_data=mod_data
+                )
+                mod_id = mod_meta.mod_id
+                sub_mod_hash_to_text = rp.fetch_sub_mod_hash_to_text(mod_class=mod_meta.mod_class)
 
-        mod_datas = [
-            (mod_class_e, mod_data)
-            for mod_class_e in rp.mod_classes
-            for mod_data in rp.fetch_mods_data(mod_class_e)
-        ]
-        for mod_class_e, mod_data in mod_datas:
-            mod_ids = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
-            affix_type = self._determine_mod_affix_type(mod_data)
-            mod_id = generate_mod_id(atype=self.current_atype, mod_ids=mod_ids, affix_type=affix_type)
+                if mod_id in self.file_item_mods:
+                    new_mod = copy.deepcopy(self.file_item_mods[mod_id])
+                else:
+                    parse_log.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
+                    new_mod = _ModFactory.create_mod(
+                        mod_atype=mod_meta.mod_atype,
+                        mod_data=mod_data,
+                        mod_meta=mod_meta,
+                        sub_mod_hash_to_text=sub_mod_hash_to_text
+                    )
+                    self._poe2db_injector.inject_poe2db_into_mod(mod=new_mod)
 
-            if mod_id in self.file_item_mods:
-                mods.append(self.file_item_mods[mod_id])
-                continue
+                    template_mod = copy.deepcopy(new_mod)
+                    self.file_item_mods[mod_id] = template_mod
 
-            if not self._poe2db_mods_manager:
-                raise RuntimeError(f"Could not find mod with ID {mod_id}. Poe2DbModsManager does not exist, "
-                                   f"\nso the mod cannot be resolved. Returning error.")
+                # Mods are created as templates - which essentially just means that they have everything filled except
+                # for actual values in their sub-mods
+                _SubModValuesInjector.inject_sub_mod_values(
+                    sub_mod_hash_to_text=sub_mod_hash_to_text,
+                    current_mod=new_mod
+                )
+                mods.append(new_mod)
 
-            parse_log.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
-            new_mod = self._create_item_mod(mod_data=mod_data,
-                                            mod_class=mod_class_e,
-                                            affix_type=affix_type)
-            self.file_item_mods[new_mod.mod_id] = new_mod  # Add the new mod to our mod JSON file
-            mods.append(new_mod)
+        """
+         Individual mod texts on an item can be comprised of multiple different mods. The way mod creation
+         works currently, those individual mods will all contain the TOTAL mod value as their mod value.
+         We have to find those and balance them appropriately.
+        """
+        self._balance_same_hash_sub_mods(mods=mods)
 
-        self.files_manager.save_data([DataPath.MODS])
+        self._files_manager.save_data(paths=[DataPath.MODS])
 
         return mods
 

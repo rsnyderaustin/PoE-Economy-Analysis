@@ -78,7 +78,7 @@ class ApiResponseParser:
     def __init__(self, api_response_data: dict):
         self.api_d = self._clean_blank_spear_implicit(api_response_data)
 
-        self._mod_id_to_text = self._determine_mod_id_to_mod_text()
+        self.sub_mod_hash_to_text = self._determine_sub_mod_hash_to_text()
         self._properties = self._parse_properties()
 
     @staticmethod
@@ -129,32 +129,32 @@ class ApiResponseParser:
 
         return properties
 
-    def _determine_mod_id_to_mod_text(self) -> dict:
+    def _determine_sub_mod_hash_to_text(self) -> dict:
         mod_classes = [e for e in ModClass if e != ModClass.RUNE]
 
-        # ModClass: {mod_id: mod_text}
-        id_to_text_dict = dict()
-        for mod_class_e in mod_classes:
-            abbrev_class = self.__class__._mod_class_to_abbrev[mod_class_e]
+        # ModClass: {sub_mod_hash: mod_text}
+        hash_to_text = dict()
+        for mod_class in mod_classes:
+            abbrev_class = self.__class__._mod_class_to_abbrev[mod_class]
 
             if abbrev_class not in self.item_data['extended']['hashes']:
                 continue
 
             hashes_list = self.item_data['extended']['hashes'][abbrev_class]
 
-            mod_id_display_order = [mod_hash[0] for mod_hash in hashes_list]
-            mod_text_display_order = self.item_data[mod_class_e.value]
+            hash_display_order = [mod_hash[0] for mod_hash in hashes_list]
+            mod_text_display_order = self.item_data[mod_class.value]
 
             mod_id_to_text = {
-                mod_id: shared_utils.sanitize_mod_text(mod_text)
-                for mod_id, mod_text in zip(mod_id_display_order, mod_text_display_order)
+                mod_id: mod_text
+                for mod_id, mod_text in zip(hash_display_order, mod_text_display_order)
             }
-            id_to_text_dict[mod_class_e] = mod_id_to_text
+            hash_to_text[mod_class] = mod_id_to_text
 
-        return id_to_text_dict
+        return hash_to_text
 
-    def fetch_mod_id_to_text(self, mod_class: ModClass) -> dict:
-        return self._mod_id_to_text[mod_class] if mod_class in self._mod_id_to_text else dict()
+    def fetch_sub_mod_hash_to_text(self, mod_class: ModClass) -> dict:
+        return self.sub_mod_hash_to_text[mod_class] if mod_class in self.sub_mod_hash_to_text else dict()
 
     @property
     def item_data(self) -> dict:

@@ -106,7 +106,7 @@ class HybridModAnalyzer:
                 for part in hybrid_parts:
                     if part not in hybrid_part_to_parent_id:
                         hybrid_part_to_parent_id[part] = set()
-                    hybrid_part_to_parent_id[part].add(mod.mod_id)
+                    hybrid_part_to_parent_id[part].add(mod.sub_mod_hash)
         return hybrid_part_to_parent_id
 
 

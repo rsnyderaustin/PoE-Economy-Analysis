@@ -47,6 +47,7 @@ class PostgreSqlManager:
         self.inspector = inspect(self.engine)
 
     def _add_missing_columns(self, table_name: str, new_data: dict):
+
         table_col_names = self._fetch_column_names(table_name)
 
         new_cols = set(new_data.keys())
@@ -74,6 +75,8 @@ class PostgreSqlManager:
         return set(col['name'] for col in self.inspector.get_columns(table_name))
 
     def insert_data(self, table_name: str, data: dict):
+        if self.skip_sql:
+            return
 
         data = {utils.format_column_name(col): val for col, val in data.items()}
 
@@ -93,7 +96,9 @@ class PostgreSqlManager:
             conn.execute(insert_stmt, formatted_data)
         logging.info(f"{table_name} PSQL rows {rows_before} -> {self._count_table_rows(table_name)}")
 
-    def fetch_table_data(self, table_name: str):
+    def fetch_table_data(self, table_name: str) -> dict:
+        if self.skip_sql:
+            return dict()
         with self.engine.connect() as conn:
             # Select * from your table
             result = list(conn.execute(text(f'SELECT * FROM {table_name}')).mappings())
@@ -108,6 +113,9 @@ class PostgreSqlManager:
             return data_dict
 
     def fetch_columns_data(self, table_name: str, columns: list[str]) -> dict:
+        if self.skip_sql:
+            return dict()
+        
         if not columns:
             raise ValueError("No columns specified")
 

@@ -181,7 +181,7 @@ class ChaosOrb(CurrencyEngine):
         craft_log.info(f"Chaos Orb: Removed existing mod {removed_mod.mod_id}")
 
         # Remove the mod
-        mods_of_removed_mod_class = listing.fetch_mods(removed_mod.mod_class_e)
+        mods_of_removed_mod_class = listing.fetch_mods(removed_mod.mod_class)
         for i, mod in enumerate(mods_of_removed_mod_class):
             if mod == removed_mod:
                 del mods_of_removed_mod_class[i]
@@ -190,7 +190,7 @@ class ChaosOrb(CurrencyEngine):
         new_mod = mod_roller.roll_new_modifier(listing=listing,
                                                mod_class=ModClass.EXPLICIT)
         craft_log.info(f"Chaos Orb: Rolled new mod {new_mod.mod_id}")
-        listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
+        listing.fetch_mods(new_mod.mod_class).append(new_mod)
 
         return Outcome(new_listing=listing)
 
@@ -273,7 +273,7 @@ class ExaltedOrb(CurrencyEngine):
         new_mod = mod_roller.roll_new_modifier(listing=listing,
                                                mod_class=ModClass.EXPLICIT)
         craft_log.info(f"Exalted Orb: Item rolled new mod {new_mod.mod_id}")
-        listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
+        listing.fetch_mods(new_mod.mod_class).append(new_mod)
 
         return Outcome(new_listing=listing)
 
@@ -303,7 +303,7 @@ class FracturingOrb(CurrencyEngine):
         craft_log.info(f"Fracturing Orb: Fractured existing mod {fractured_mod.mod_id}")
 
         # Fracture a mod, removing it from its current mod class list and adding it to the fractured mods
-        mods_of_fractured_mod_class = listing.fetch_mods(fractured_mod.mod_class_e)
+        mods_of_fractured_mod_class = listing.fetch_mods(fractured_mod.mod_class)
         for i, mod in enumerate(mods_of_fractured_mod_class):
             if mod == fractured_mod:
                 del mods_of_fractured_mod_class[i]
@@ -382,7 +382,7 @@ class OrbOfAlchemy(CurrencyEngine):
         for _ in list(range(num_mods)):
             new_mod = mod_roller.roll_new_modifier(listing=listing,
                                                    mod_class=ModClass.EXPLICIT)
-            listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
+            listing.fetch_mods(new_mod.mod_class).append(new_mod)
 
         craft_log.info(f"Orb of Alchemy: {listing.item_category} item rolled {num_mods} new mods:\n"
                        f"{listing.fetch_mods(ModClass.EXPLICIT)}")
@@ -415,7 +415,7 @@ class OrbOfAnnulment(CurrencyEngine):
         craft_log.info(f"Orb of Annulment: Removed mod {removed_mod.mod_id}.")
 
         # Remove the mod
-        mods_of_removed_mod_class = listing.fetch_mods(removed_mod.mod_class_e)
+        mods_of_removed_mod_class = listing.fetch_mods(removed_mod.mod_class)
         for i, mod in enumerate(mods_of_removed_mod_class):
             if mod == removed_mod:
                 del mods_of_removed_mod_class[i]
@@ -448,7 +448,7 @@ class OrbOfAugmentation(CurrencyEngine):
         new_mod = mod_roller.roll_new_modifier(listing=listing,
                                                mod_class=ModClass.EXPLICIT)
         craft_log.info(f"Orb of Augmentation: Rolled new mod {new_mod.mod_id}")
-        listing.fetch_mods(new_mod.mod_class_e).append(new_mod)
+        listing.fetch_mods(new_mod.mod_class).append(new_mod)
 
         return Outcome(new_listing=listing)
 

@@ -17,10 +17,10 @@ def _mods_into_dict(mods: list[ItemMod]):
         if mod.atype not in d:
             d[mod.atype] = dict()
 
-        if mod.mod_class_e not in d[mod.atype]:
-            d[mod.atype][mod.mod_class_e] = set()
+        if mod.mod_class not in d[mod.atype]:
+            d[mod.atype][mod.mod_class] = set()
 
-        d[mod.atype][mod.mod_class_e].add(mod)
+        d[mod.atype][mod.mod_class].add(mod)
 
     return d
 
@@ -48,7 +48,7 @@ class ModsFetcher:
             mods = [mod for mod in mods if force_mod_type in mod.mod_types]
 
         if exclude_mod_ids:
-            mods = [mod for mod in mods if mod.mod_id != exclude_mod_ids]
+            mods = [mod for mod in mods if mod.sub_mod_hash != exclude_mod_ids]
 
         if affix_types:
             mods = [mod for mod in mods if mod.affix_type in affix_types]

@@ -66,6 +66,7 @@ def sanitize_mod_text(mod_text: str):
     )
     result = re.sub(r'\d+', '#', result)
 
+    result = result.replace('.#', '').replace('+', '').replace('-', '')
     result = result.replace('#', 'n').replace('%', 'p')
 
     brackets_pattern = r'\[(.*?)\]'

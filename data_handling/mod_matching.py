@@ -108,10 +108,10 @@ class ModMatcher:
         for each hybrid mod text, we just determine which poe2db hybrid mod is the best fit
         """
         for sub_mod in item_mod.sub_mods:
-            mod_part_to_parent_dict = atype_manager.fetch_hybrid_part_to_parents(item_mod.affix_type_e)
+            mod_part_to_parent_dict = atype_manager.fetch_hybrid_part_to_parents(item_mod.affix_type)
             hybrid_mod_texts = list(mod_part_to_parent_dict.keys())
 
-            matches = rapidfuzz.process.extract(sub_mod.sanitized_mod_text,
+            matches = rapidfuzz.process.extract(sub_mod.sanitized_text,
                                                 hybrid_mod_texts,
                                                 score_cutoff=min_score)
 
@@ -128,7 +128,7 @@ class ModMatcher:
                 if not valid_poe2db_mods:
                     continue
 
-                hybrid_scores_tracker.score_round(sub_mod_id=sub_mod.mod_id,
+                hybrid_scores_tracker.score_round(sub_mod_id=sub_mod.sub_mod_hash,
                                                   poe2db_mods=valid_poe2db_mods,
                                                   score=score)
 
@@ -138,9 +138,9 @@ class ModMatcher:
     def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float) -> Poe2DbMod:
         atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
 
-        poe2db_mod_texts = atype_manager.fetch_mod_texts(item_mod.affix_type_e)
+        poe2db_mod_texts = atype_manager.fetch_mod_texts(item_mod.affix_type)
 
-        mod_text = item_mod.sub_mods[0].sanitized_mod_text
+        mod_text = item_mod.sub_mods[0].sanitized_text
 
         result = rapidfuzz.process.extractOne(mod_text,
                                               poe2db_mod_texts,
@@ -152,16 +152,16 @@ class ModMatcher:
 
         mod_id = create_mod_id(atype=atype_manager.atype,
                                mod_text=match,
-                               affix_type=item_mod.affix_type_e)
+                               affix_type=item_mod.affix_type)
         mod = atype_manager.fetch_mod(mod_id)
 
         return mod
 
-    def _attempt_match(self, item_mod: ItemMod, min_score: float, attempt_to_transform: bool = False) -> str | None:
+    def _attempt_match(self, item_mod: ItemMod, min_score: float, attempt_to_transform: bool = False) -> Poe2DbMod | None:
         if attempt_to_transform:
             item_mod = copy.deepcopy(item_mod)
             for sub_mod in item_mod.sub_mods:
-                sub_mod.sanitized_mod_text = self._transform_text(sub_mod.sanitized_mod_text)
+                sub_mod.sanitized_text = self._transform_text(sub_mod.sanitized_text)
 
         if item_mod.is_hybrid:
             mod_match = self._attempt_hybrid_match(item_mod, min_score)

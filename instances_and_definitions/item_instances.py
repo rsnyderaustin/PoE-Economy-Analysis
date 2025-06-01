@@ -8,42 +8,46 @@ from shared.enums.trade_enums import ModClass, Rarity, Currency
 
 class SubMod:
     def __init__(self,
-                 mod_id: str,
-                 sanitized_mod_text: str,
+                 sub_mod_hash: str,
+                 sanitized_text: str,
                  actual_values: list = None,
                  values_ranges: list[tuple[float, float]] | list[tuple[int, int]] = None):
-        self.mod_id = mod_id
+        self.sub_mod_hash = sub_mod_hash
+        self.sanitized_text = sanitized_text
+
+        # When the ItemMod is stored as a template, its sub-mod values are empty
         self.actual_values = actual_values
-        self.sanitized_mod_text = sanitized_mod_text
         self.values_ranges = values_ranges
 
 
-def generate_mod_id(atype: AType,
-                    mod_ids: Iterable,
+def generate_mod_id(mod_class: ModClass,
+                    atype: AType,
+                    sub_mod_hashes: Iterable,
+                    mod_tier: int = None,
                     affix_type: ModAffixType = None):
     atype = atype.value.lower().replace(' ', '_')
-    mod_ids = sorted(list(mod_ids))
+    sub_mod_hashes = sorted(list(sub_mod_hashes))
 
-    return atype, *mod_ids, affix_type
+    return mod_class, atype, *sub_mod_hashes, mod_tier, affix_type
 
 
 class ItemMod:
 
     def __init__(self,
                  atype: AType,
-                 mod_class_e: ModClass,
+                 mod_class: ModClass,
                  mod_name: str,
-                 affix_type_e: ModAffixType,
+                 affix_type: ModAffixType,
                  mod_tier: int,
                  mod_ilvl: int,
                  sub_mods: list[SubMod] = None):
         self.atype = atype
-        self.mod_class_e = mod_class_e
+        self.mod_class = mod_class
         self.mod_name = mod_name
-        self.affix_type_e = affix_type_e
+        self.affix_type = affix_type
         self.mod_tier = mod_tier
         self.mod_ilvl = mod_ilvl
-        self.sub_mods = sorted(sub_mods, key=lambda sm: sm.mod_id) if sub_mods else []
+        self.sub_mods = sorted(sub_mods, key=lambda sm: sm.sub_mod_hash) if sub_mods else []
 
         # These variables should be very quickly filled in after creation
         self.mod_types = None
@@ -62,15 +66,20 @@ class ItemMod:
     @property
     def mod_id(self):
         return generate_mod_id(atype=self.atype,
-                               mod_ids=[sub_mod.mod_id for sub_mod in self.sub_mods],
-                               affix_type=self.affix_type_e)
+                               sub_mod_hashes=[sub_mod.sub_mod_hash for sub_mod in self.sub_mods],
+                               affix_type=self.affix_type,
+                               mod_class=self.mod_class)
 
     @property
     def mod_values(self):
         return [sub_mod.actual_values for sub_mod in self.sub_mods]
 
+    @property
+    def sub_mod_ids(self):
+        return [sub_mod.sub_mod_hash for sub_mod in self.sub_mods]
+
     def insert_sub_mods(self, sub_mods: list[SubMod]):
-        self.sub_mods = sorted(sub_mods, key=lambda sm: sm.mod_id)
+        self.sub_mods = sorted(sub_mods, key=lambda sm: sm.sub_mod_hash)
 
     def get_sub_mods(self):
         return self.sub_mods
@@ -154,7 +163,7 @@ class ModifiableListing:
         implicit_sub_mods = [sub_mod for mod in self.implicit_mods for sub_mod in mod.sub_mods]
         max_quality = 20
         for sub_mod in implicit_sub_mods:
-            if bool(re.fullmatch(r"maximum_quality_is", sub_mod.sanitized_mod_text)):
+            if bool(re.fullmatch(r"maximum_quality_is", sub_mod.sanitized_text)):
                 max_quality = sub_mod.actual_values[0]
 
         return max_quality
@@ -194,29 +203,29 @@ class ModifiableListing:
 
     @property
     def prefixes(self):
-        return [mod for mod in self.mods if mod.affix_type_e == ModAffixType.PREFIX]
+        return [mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX]
 
     @property
     def open_prefixes(self) -> int:
         if self.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
             return 0
         elif self.rarity == Rarity.MAGIC:
-            return 2 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.PREFIX])
+            return 2 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX])
         else:
-            return 3 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.PREFIX])
+            return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX])
 
     @property
     def suffixes(self):
-        return [mod for mod in self.mods if mod.affix_type_e == ModAffixType.SUFFIX]
+        return [mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX]
 
     @property
     def open_suffixes(self) -> int:
         if self.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
             return 0
         elif self.rarity == Rarity.MAGIC:
-            return 2 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.SUFFIX])
+            return 2 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
         else:
-            return 3 - len([mod for mod in self.mods if mod.affix_type_e == ModAffixType.SUFFIX])
+            return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
 
     def fetch_mods(self, mod_class: ModClass):
         return self._mod_class_to_attribute[mod_class]

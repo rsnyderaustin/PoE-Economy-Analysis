@@ -58,7 +58,7 @@ class AtypeManagerFactory:
         return atypes_managers
 
     def _fill_mods_with_tiers(self, mods, tiers_data):
-        mods_dict = {(mod.atype_id, mod.mod_id): mod for mod in mods}
+        mods_dict = {(mod.atype_id, mod.sub_mod_hash): mod for mod in mods}
 
         inputs = [
             (mod_id, atype_id, tiers_data)
