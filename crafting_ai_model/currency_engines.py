@@ -60,7 +60,7 @@ class ArcanistsEtcher(CurrencyEngine):
             quality_increase = 1
         else:
             raise ValueError(f"Arcanists Etcher: Invalid item rarity {listing.rarity}. See item data below:"
-                             f"\n{pprint.pprint(listing.__dict__)}")
+                             f"\n{pprint.pformat(listing.__dict__)}")
 
         new_quality = min(listing.maximum_quality, listing.quality + quality_increase)
         craft_log.info(f"Arcanists Etcher: Item with rarity {listing.rarity} had quality increased from "
@@ -95,7 +95,7 @@ class ArmourersScrap(CurrencyEngine):
             quality_increase = 1
         else:
             raise ValueError(f"Invalid item rarity {listing.rarity}. See item data below:"
-                             f"\n{pprint.pprint(listing.__dict__)}")
+                             f"\n{pprint.pformat(listing.__dict__)}")
 
         new_quality = min(listing.maximum_quality, listing.quality + quality_increase)
         craft_log.info(f"Armourers Scrap: Item quality increased from {listing.quality} to {new_quality}")
@@ -216,7 +216,7 @@ class DivineOrb(CurrencyEngine):
         mods_to_reroll = [*listing.implicit_mods, *listing.enchant_mods, *listing.explicit_mods]
         sub_mods_to_reroll = [sub_mod for mod in mods_to_reroll for sub_mod in mod.sub_mods]
         values_log = {sub_mod.values_ranges: sub_mod.actual_values for sub_mod in sub_mods_to_reroll}
-        craft_log.info(f"Divine Orb:\nOld mod values and ranges:\n{pprint.pprint(values_log)}")
+        craft_log.info(f"Divine Orb:\nOld mod values and ranges:\n{pprint.pformat(values_log)}")
 
         for sub_mod in sub_mods_to_reroll:
             if not sub_mod.values_ranges:
@@ -244,7 +244,7 @@ class DivineOrb(CurrencyEngine):
             sub_mod.actual_values = new_actual_values
 
         values_log = {sub_mod.values_ranges: sub_mod.actual_values for sub_mod in sub_mods_to_reroll}
-        craft_log.info(f"Divine Orb:\nNew mod values and ranges:\n{pprint.pprint(values_log)}")
+        craft_log.info(f"Divine Orb:\nNew mod values and ranges:\n{pprint.pformat(values_log)}")
 
         return Outcome(new_listing=listing)
 

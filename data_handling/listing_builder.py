@@ -116,7 +116,7 @@ class _PoE2DbInjector:
         poe2db_mod = self.mod_matcher.match_mod(mod)
 
         if not poe2db_mod:
-            parse_log.error(f"Was not able to match item mod:\n{pprint.pprint(mod)}")
+            parse_log.error(f"Was not able to match item mod:\n{pprint.pformat(mod)}")
             return mod
 
         mod.weighting = poe2db_mod.fetch_weighting(ilvl=mod.mod_ilvl)

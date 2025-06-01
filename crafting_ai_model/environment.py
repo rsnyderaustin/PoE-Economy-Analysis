@@ -25,7 +25,7 @@ def log_action(action: str, done: bool, original_price: float, predicted_price: 
                    f"\nPredicted price: {predicted_price}"
                    f"\nAction reward: {reward}"
                    f"\nMessage: {message}"
-                   f"\nListing data (Optional): {pprint.pprint(listing_data)}")
+                   f"\nListing data (Optional): {pprint.pformat(listing_data)}")
 
 
 @dataclass

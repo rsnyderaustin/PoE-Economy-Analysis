@@ -176,6 +176,8 @@ class ListingsTransforming:
             for k, v in flattened_data.items():
                 compiled_data[k].append(v)
 
+            pprint.pprint(flattened_data)
+
         return compiled_data
 
     @classmethod
@@ -243,7 +245,7 @@ class _PricePredictTransformer:
 
     def __init__(self, listing: ModifiableListing):
         self.listing = listing
-        parse_log.info(f"NEW LISTING DATA\n{pprint.pprint(listing)}")
+        parse_log.info(f"NEW LISTING DATA\n{pprint.pformat(listing)}")
 
         self.flattened_data = dict()
 
@@ -280,7 +282,7 @@ class _PricePredictTransformer:
             for calc in calculators
             for col_e, val in calc.calculate(self.listing).items()
         }
-        parse_log.info(f"Listing calculations:\n{pprint.pprint(derived_col_values)}\n")
+        parse_log.info(f"Listing calculations:\n{pprint.pformat(derived_col_values)}\n")
         self.flattened_data.update(derived_col_values)
 
         if delete_input_columns:
@@ -339,14 +341,14 @@ class _PricePredictTransformer:
                 # we assign it a 1 to indicate to the model that it's an active mod
                 summed_sub_mods[mod_text] = 1
 
-        parse_log.info(f"Summed sub-mods:\n{pprint.pprint(summed_sub_mods)}\n")
+        parse_log.info(f"Summed sub-mods:\n{pprint.pformat(summed_sub_mods)}\n")
         self.flattened_data.update(summed_sub_mods)
         return self
 
     def insert_skills(self):
         skills_dict = {item_skill.name: item_skill.level for item_skill in self.listing.item_skills}
         skills_dict = {skill_name: lvl for skill_name, lvl in skills_dict.items()}
-        parse_log.info(f"Skills:\n{pprint.pprint(skills_dict)}")
+        parse_log.info(f"Skills:\n{pprint.pformat(skills_dict)}")
         self.flattened_data.update(skills_dict)
         return self
 
@@ -359,7 +361,7 @@ class _PricePredictTransformer:
         cols_to_remove = [col for col in self.flattened_data if len(col) == 1]
         for col in cols_to_remove:
             parse_log.error(f"Found 1-length attribute name {cols_to_remove} for listing: "
-                            f"\n{pprint.pprint(self.flattened_data)}\nRemoving the extra column")
+                            f"\n{pprint.pformat(self.flattened_data)}\nRemoving the extra column")
             self.flattened_data.pop(col)
 
         return self
