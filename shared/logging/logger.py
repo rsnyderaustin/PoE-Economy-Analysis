@@ -21,6 +21,8 @@ class LogFile(Enum):
     EXTERNAL_APIS = Path.cwd() / 'shared/logging/logs/external_apis.log'
     PSQL = Path.cwd() / 'shared/logging/logs/psql.log'
     PRICE_PREDICT_MODEL = Path.cwd() / 'shared/logging/logs/price_predict_model.log'
+    INPUT_OUTPUT = Path.cwd() / 'shared/logging/logs/input_output.log'
+    PROGRAM_OVERVIEW = Path.cwd() / 'shared/logging/logs/program_overview.log'
 
 
 class Logger(ABC):

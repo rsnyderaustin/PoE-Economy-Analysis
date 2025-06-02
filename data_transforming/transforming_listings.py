@@ -11,8 +11,10 @@ from shared.enums import ItemEnumGroups, WhichCategoryType
 from shared.enums.item_enums import AType, LocalMod, CalculatedMod
 from shared.logging import LogsHandler, LogFile, log_errors
 
-parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
-price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
+lh = LogsHandler()
+parse_log = lh.fetch_log(LogFile.API_PARSING)
+price_predict_log = lh.fetch_log(LogFile.PRICE_PREDICT_MODEL)
+i_o_log = lh.fetch_log(LogFile.INPUT_OUTPUT)
 
 
 class ListingFeatureCalculator(ABC):
@@ -91,6 +93,12 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
         attack_speed = listing.item_properties.get(LocalMod.ATTACKS_PER_SECOND.value, 0)
         max_quality_pdps = max_quality_damage * attack_speed
 
+        i_o_log.info(
+            f"Phys damage {phys_damage} & quality {listing.quality} = Max quality phys damage {max_quality_damage}"
+            f"\n-> Max quality phys damage {max_quality_damage} * attacks per second {attack_speed} "
+            f"= Max quality Pdps {max_quality_pdps}"
+        )
+
         return {CalculatedMod.MAX_QUALITY_PDPS: max_quality_pdps}
 
 
@@ -113,12 +121,26 @@ class NonPhysicalDpsCalculator(ListingFeatureCalculator):
         chaos_damage = listing.item_properties.get(LocalMod.CHAOS_DAMAGE.value, 0)
         attacks_per_second = listing.item_properties.get(LocalMod.ATTACKS_PER_SECOND.value, 0)
 
+        cold_dps = cold_damage * attacks_per_second
+        fire_dps = fire_damage * attacks_per_second
+        lightning_dps = lightning_damage * attacks_per_second
+        chaos_dps = chaos_damage * attacks_per_second
+        elemental_dps = (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+
+        i_o_log.info(f"Cold damage ({cold_damage}) * attack speed ({attacks_per_second}) = Cold DPS ({cold_dps})")
+        i_o_log.info(f"Fire damage ({fire_damage}) * attack speed ({attacks_per_second}) = Fire DPS ({fire_dps})")
+        i_o_log.info(f"Lightning damage ({lightning_damage}) * attack speed ({attacks_per_second}) "
+                     f"= Lightning DPS ({lightning_dps})")
+        i_o_log.info(f"Chaos damage ({chaos_damage}) * attack speed ({attacks_per_second}) = Chaos DPS ({chaos_dps})")
+        i_o_log.info(f"Elemental DPS = (cold ({cold_damage}) + fire ({fire_damage}) + lightning ({lightning_damage})) "
+                     f"* attack speed ({attacks_per_second}) = ({elemental_dps})")
+
         return {
-            CalculatedMod.COLD_DPS: cold_damage * attacks_per_second,
-            CalculatedMod.FIRE_DPS: fire_damage * attacks_per_second,
-            CalculatedMod.LIGHTNING_DPS: lightning_damage * attacks_per_second,
-            CalculatedMod.CHAOS_DPS: chaos_damage * attacks_per_second,
-            CalculatedMod.ELEMENTAL_DPS: (cold_damage + fire_damage + lightning_damage) * attacks_per_second
+            CalculatedMod.COLD_DPS: cold_dps,
+            CalculatedMod.FIRE_DPS: fire_dps,
+            CalculatedMod.LIGHTNING_DPS: lightning_dps,
+            CalculatedMod.CHAOS_DPS: chaos_dps,
+            CalculatedMod.ELEMENTAL_DPS: elemental_dps,
         }
 
 
@@ -158,6 +180,9 @@ class ListingsTransforming:
                 .clean_columns()
                 .flattened_data
             )
+            parse_log.info(
+                f"--- Listing ---\n{pprint.pformat(listing)}\n-> Flattened into ->\n{pprint.pformat(flattened_data)}"
+            )
 
             # Fill in the previously missing columns with Nones up to all the rows before this loop
             cols_missing_from_compiled = [col for col in flattened_data if col not in compiled_data]
@@ -176,7 +201,7 @@ class ListingsTransforming:
             for k, v in flattened_data.items():
                 compiled_data[k].append(v)
 
-            pprint.pprint(flattened_data)
+            parse_log.info(f"Flattened data being inserted into PSQL:\n{pprint.pformat(flattened_data)}")
 
         return compiled_data
 
@@ -294,6 +319,7 @@ class _PricePredictTransformer:
 
     def insert_metadata(self):
         metadata = {
+            'listing_id': self.listing.listing_id,
             'date_fetched': self.listing.date_fetched,
             'minutes_since_listed': self.listing.minutes_since_listed,
             'minutes_since_league_start': self.listing.minutes_since_league_start
@@ -305,12 +331,6 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        divs_price = shared_utils.CurrencyConverter().convert_to_divs(
-            currency=self.listing.currency,
-            currency_amount=self.listing.currency_amount,
-            relevant_date=self.listing.date_fetched
-        )
-        self.flattened_data['divs'] = divs_price
         return self
 
     def insert_item_base_info(self):
@@ -355,7 +375,7 @@ class _PricePredictTransformer:
     def clean_columns(self):
         for col, value in self.flattened_data.items():
             if isinstance(value, float):
-                self.flattened_data[col] = round(value, 2)
+                self.flattened_data[col] = round(value, 5)
 
         # Some columns have just one letter - not sure why but need to find out
         cols_to_remove = [col for col in self.flattened_data if len(col) == 1]

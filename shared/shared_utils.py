@@ -121,8 +121,8 @@ class CurrencyConverter:
                           f"CurrencyConverter.convert_to_divs is {days_between}.")
 
         exchange_rate = self.conversions_dict[closest_date][currency.value]
-
-        return currency_amount * exchange_rate
+        converted_amount = currency_amount * exchange_rate
+        return converted_amount
 
 
 
