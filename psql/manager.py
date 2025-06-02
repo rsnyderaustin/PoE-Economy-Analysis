@@ -46,6 +46,8 @@ class PostgreSqlManager:
         self.connection = self.engine.connect()
         self.inspector = inspect(self.engine)
 
+        print("Connected to PostgreSQL")
+
     def _add_missing_columns(self, table_name: str, new_data: dict):
 
         table_col_names = self._fetch_column_names(table_name)
