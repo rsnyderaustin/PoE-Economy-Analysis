@@ -74,19 +74,20 @@ class TrainingDataPopulator:
             data=row_data
         )
 
-    def fill_training_data(self, raw_listings_file: RawListingsFile = None):
+    def fill_training_data_from_listings_file(self, raw_listings_file: RawListingsFile):
+        for responses in raw_listings_file.load():
+            parsers = [ApiResponseParser(response) for response in responses]
+            valid_parsers = [rp for rp in parsers
+                             if self._listing_gatekeeper.listing_is_valid(listing_id=rp.listing_id,
+                                                                          date_fetched=rp.date_fetched)]
+            self._process_and_insert(valid_parsers)
+
+
+    def fill_training_data(self):
         program_start = datetime.datetime.now()
 
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
-
-        if raw_listings_file:
-            for responses in raw_listings_file.load():
-                parsers = [ApiResponseParser(response) for response in responses]
-                valid_parsers = [rp for rp in parsers
-                                 if self._listing_gatekeeper.listing_is_valid(listing_id=rp.listing_id,
-                                                                              date_fetched=rp.date_fetched)]
-                self._process_and_insert(valid_parsers)
 
         responses_fetched = 0
         for responses in self.trade_api_handler.fetch_responses(training_queries):
