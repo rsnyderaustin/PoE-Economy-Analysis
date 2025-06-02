@@ -13,8 +13,7 @@ logging.basicConfig(level=logging.INFO)
 print("Loading PSQL manager.")
 psql_manager = psql.PostgreSqlManager(skip_sql=False)
 
-poe2db_mods_manager = Poe2DbModsManagerFile.load(missing_ok=False)
-listing_builder = ListingBuilder(poe2db_mods_manager)
+listing_builder = ListingBuilder()
 
 print("Loading TrainingDataPopulator class object.")
 tdp = TrainingDataPopulator(listing_builder=listing_builder,
