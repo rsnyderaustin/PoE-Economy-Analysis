@@ -3,6 +3,7 @@ import logging
 import os
 import tempfile
 from abc import ABC
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -192,9 +193,11 @@ class CraftingSimulatorFiles:
         return model
 
 
-class SetEncoder(json.JSONEncoder):
+class CustomEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, set):
             return list(obj)
+        if isinstance(obj, Decimal):
+            return float(obj)
         return super().default(obj)
 
