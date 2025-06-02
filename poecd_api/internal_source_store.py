@@ -76,5 +76,5 @@ class PoecdSourceStore:
         atype_name = self._atype_id_to_atype_name[atype_id]
         return AType(atype_name)
 
-    def fetch_mod_types(self, mod_id) -> str | None:
+    def fetch_mod_types(self, mod_id) -> list[str] | None:
         return self._mod_id_to_mod_types.get(mod_id, None)
