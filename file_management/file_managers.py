@@ -180,7 +180,7 @@ class CraftingSimulatorFiles:
         file_path = self._folder_path / f"{atype}"
         model.save(file_path)
 
-    def load_model(self, atype: AType) -> Optional[PPO]:
+    def load_model(self, atype: AType) -> Optional['PPO']:
         from stable_baselines3 import PPO
 
         file_path = self._folder_path / f"{atype}.zip"
