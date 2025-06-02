@@ -5,7 +5,7 @@ import tempfile
 from abc import ABC
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from instances_and_definitions import ItemMod
 from poe2db_scrape.mods_management import Poe2DbModsManager
@@ -180,7 +180,7 @@ class CraftingSimulatorFiles:
         file_path = self._folder_path / f"{atype}"
         model.save(file_path)
 
-    def load_model(self, atype: AType) -> 'PPO' | None:
+    def load_model(self, atype: AType) -> Optional[PPO]:
         from stable_baselines3 import PPO
 
         file_path = self._folder_path / f"{atype}.zip"
