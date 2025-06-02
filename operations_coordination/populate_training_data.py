@@ -8,6 +8,7 @@ import trade_api
 from data_handling import ListingBuilder, ApiResponseParser
 from data_transforming import ListingsTransforming
 from file_management import Poe2DbModsManagerFile, RawListingsFile
+from poe2db_scrape.mods_management import Poe2DbModsManager
 from psql import PostgreSqlManager
 from shared import env_loading
 from shared.logging import LogsHandler, LogFile
@@ -54,12 +55,12 @@ def _log_memory_usage(stage=""):
 class TrainingDataPopulator:
 
     def __init__(self,
+                 listing_builder: ListingBuilder,
                  psql_manager: psql.PostgreSqlManager):
         self.trade_api_handler = trade_api.TradeApiHandler(psql_manager=psql_manager)
         self.psql_manager = psql_manager
 
-        self._poe2db_mods_manager = Poe2DbModsManagerFile().load(missing_ok=False)
-        self.listing_builder = ListingBuilder(self._poe2db_mods_manager)
+        self.listing_builder = listing_builder
 
         self._listing_gatekeeper = _ListingImportGatekeeper(psql_manager=self.psql_manager)
 
@@ -75,7 +76,7 @@ class TrainingDataPopulator:
 
     def fill_training_data(self, raw_listings_file: RawListingsFile = None):
         program_start = datetime.datetime.now()
-        print(f"fill_training_data start: {program_start}")
+
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
 
@@ -94,13 +95,9 @@ class TrainingDataPopulator:
                              if self._listing_gatekeeper.listing_is_valid(listing_id=rp.listing_id,
                                                                           date_fetched=rp.date_fetched)]
 
-            raw_listings_data = [rp.raw_response_data for rp in valid_parsers]
-
-            self._poe2db_mods_manager.save(raw_listings_data)
-
             _log_memory_usage()
-            print(f"Fetched {len(valid_parsers)} API responses. Processing and inserting into PSQL.")
             responses_fetched += len(valid_parsers)
+            print(f"Fetched {len(valid_parsers)} API responses. Processing and inserting into PSQL.")
 
             self._process_and_insert(valid_parsers)
 

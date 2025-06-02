@@ -70,6 +70,8 @@ class CurrencyConversionsFile:
 
 class PickleFile(ABC):
 
+    _missing_data_msg = f"missing_ok is False when there is no data for class {__name__}"
+
     def __init__(self, path: Path = None):
         self._path = path or Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
 
@@ -99,7 +101,7 @@ class PickleFile(ABC):
             data = pickle.load(file)
 
             if not missing_ok and not data:
-                raise ValueError(f"missing_ok is False when there is no data for class {self.__class__.__name__}")
+                raise ValueError(self.__class__._missing_data_msg)
 
             data = data if data else default  # If the pkl is empty then it returns None, but we want our default
 
@@ -117,6 +119,8 @@ class ItemModsFile(PickleFile):
 
 
 class Poe2DbModsManagerFile(PickleFile):
+
+    _missing_data_msg = "Could not load Poe2DbModsManager. May need to scrape Poe2Db."
 
     def __init__(self, path: Path = None):
         super().__init__(path)
@@ -152,7 +156,7 @@ class PricePredictModelFiles:
         if os.path.getsize(file_path) <= 2:
             return None
 
-        model = model.load_model(str(file_path))
+        model.load_model(str(file_path))
         self._models[atype] = model
 
         return model
