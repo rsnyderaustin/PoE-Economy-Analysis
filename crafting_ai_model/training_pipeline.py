@@ -4,7 +4,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 
 from data_handling import ListingBuilder
-from file_management import FilesManager
+from file_management import FilesManager, DataPath
 from instances_and_definitions import ModifiableListing
 from price_predict_ai_model import PricePredictor
 from shared.logging import LogsHandler, LogFile, log_errors
@@ -35,14 +35,19 @@ class CraftingModelPipeline:
     def run(self):
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
-        for api_response_parsers in self._trade_api_handler.generate_responses_from_queries(training_queries):
-            listings = [self._listing_builder.build_listing(rp) for rp in api_response_parsers]
+        for response_parsers in self._trade_api_handler.generate_responses_from_queries(training_queries):
+            raw_response_data = [rp.raw_response_data for rp in response_parsers]
+            self._files_manager.append_json_list(path=DataPath.RAW_LISTINGS, records=raw_response_data)
+
+            listings = [self._listing_builder.build_listing(rp) for rp in response_parsers]
 
             if not listings:
                 continue
 
             for listing in listings:
                 self._train_crafting_model(listing=listing)
+
+
 
     @log_errors(craft_log)
     def _train_crafting_model(self, listing: ModifiableListing):

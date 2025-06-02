@@ -139,9 +139,6 @@ class TradeApiHandler:
         self.fetcher = TradeItemsFetcher()
         self._listing_gatekeeper = _ListingImportGatekeeper(psql_manager=psql_manager)
 
-        self.files_manager = FilesManager()
-        self.raw_listings = self.files_manager.fetch_data(DataPath.RAW_LISTINGS, default=[])
-
         self.split_threshold = 175
 
         self.total_valid_responses = 0
@@ -163,7 +160,6 @@ class TradeApiHandler:
                 valid_responses = [rp for rp in response_parsers
                                    if self._listing_gatekeeper.listing_is_valid(listing_id=rp.listing_id,
                                                                                 date_fetched=rp.date_fetched)]
-                self.raw_listings.extend([rp.api_d for rp in valid_responses])
 
                 api_log.info(f"{len(valid_responses)} valid query responses out of {len(responses)}.")
                 self.total_valid_responses += len(valid_responses)
@@ -172,7 +168,6 @@ class TradeApiHandler:
                 yield valid_responses
 
             self._log_responses_progress()
-            self.files_manager.save_data(paths=[DataPath.RAW_LISTINGS])
 
     def _process_query(self, query: Query):
         query_dict = query_construction.create_trade_query(query=query)

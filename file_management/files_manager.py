@@ -2,20 +2,105 @@ import json
 import logging
 import os
 import tempfile
+from abc import ABC
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from torch import Generator
+
+from instances_and_definitions import ItemMod
+from . import i_o_utils
 from shared.logging import log_errors
 
 
 class DataPath(Enum):
     MODS = Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
-    CURRENCY_CONVERSIONS = Path.cwd() / 'file_management/static_files/currency_prices.csv'
     POE2DB_MODS_MANAGER = Path.cwd() / 'file_management/static_files/poe2db_mods_manager.pkl'
-    OFFICIAL_STATIC = Path.cwd() / 'file_management/static_files/official_static.json'
-    OFFICIAL_STATS = Path.cwd() / 'file_management/static_files/official_stats.json'
-    RAW_LISTINGS = Path.cwd() / 'file_management/dynamic_files/raw_listings.json'
+
+
+class RawListingsFile:
+
+    def __init__(self, path: Path = None):
+        self._path = path or Path.cwd() / 'file_management/dynamic_files/raw_listings.json'
+
+    def save(self, new_records: list[dict]):
+        self._path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self._path, 'a', encoding='utf-8') as f:
+            for record in new_records:
+                json.dump(record, f)
+                f.write('\n')
+
+    def read(self, limit=20) -> Generator[dict[str, Any], None, None]:
+        with open(self._path, 'r', encoding='utf-8') as f:
+            for i, line in enumerate(f):
+                if limit and i >= limit:
+                    break
+                yield json.loads(line)
+
+
+class _JsonDictFile(ABC):
+
+    def __init__(self, path: Path):
+        self._path = path
+
+    def save(self, data: dict):
+        i_o_utils.write_json(path=self._path, data=data)
+
+    def load(self, default: Any = None) -> dict:
+        return i_o_utils.load_json(path=self._path, default=default)
+
+
+class OfficialStatsFile(_JsonDictFile):
+
+    def __init__(self, path: Path = None):
+        super().__init__(path or Path.cwd() / 'file_management/static_files/official_static.json')
+
+
+class OfficialStaticFile(_JsonDictFile):
+
+    def __init__(self, path: Path = None):
+        super().__init__(path or Path.cwd() / 'file_management/static_files/official_static.json')
+
+
+class CurrencyConversionsFile:
+
+    def __init__(self, path: Path = None):
+        self._path = path or Path.cwd() / 'file_management/static_files/currency_prices.csv'
+
+    def load(self) -> 'pd.DataFrame':
+        import pandas as pd
+
+        return pd.read_csv(str(self._path))
+
+
+class ItemModsFile:
+
+    def __init__(self, path: Path):
+        self._path = path or Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
+
+        self._item_mods = dict()
+
+    def save(self, mods: list[ItemMod]):
+        with tempfile.NamedTemporaryFile(mode='wb' if self._path.suffix == '.pkl' else 'w',
+                                         dir=self._path.parent,
+                                         delete=False,
+                                         suffix=self._path.suffix,
+                                         encoding='utf-8' if self._path.suffix in {'.json', '.csv'} else None) as tmp:
+            tmp_path = Path(tmp.name)
+
+    def load(self, default: Any):
+        import pickle
+
+        if self._item_mods:
+            return self._item_mods
+
+        with open(self._path, 'rb') as file:
+            data = pickle.load(file)
+
+            data = data if data else default  # If the pkl is empty then it returns None, but we want our default
+
+        return data
 
 
 class ModelPath(Enum):
@@ -96,6 +181,15 @@ class FilesManager:
                 data = data if data else default  # If the pkl is empty then it returns None, but we want our default
                 self._file_data[data_path_e] = data
                 return data
+
+    @staticmethod
+    def append_json_list(path: DataPath, records: list[dict]):
+        path = path.value
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'a', encoding='utf-8') as f:
+            for record in records:
+                json.dump(record, f)
+                f.write('\n')
 
     @staticmethod
     def _write_to_file(file_path: Path, data):

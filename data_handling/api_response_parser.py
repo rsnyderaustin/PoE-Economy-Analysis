@@ -76,7 +76,7 @@ class ApiResponseParser:
     }
 
     def __init__(self, api_response_data: dict):
-        self.api_d = self._clean_blank_spear_implicit(api_response_data)
+        self.raw_response_data = self._clean_blank_spear_implicit(api_response_data)
 
         self.sub_mod_hash_to_text = self._determine_sub_mod_hash_to_text()
         self._properties = self._parse_properties()
@@ -158,11 +158,11 @@ class ApiResponseParser:
 
     @property
     def item_data(self) -> dict:
-        return self.api_d['item']
+        return self.raw_response_data['item']
 
     @property
     def listing_data(self) -> dict:
-        return self.api_d['listing']
+        return self.raw_response_data['listing']
 
     @property
     def skills_data(self) -> dict:
@@ -175,7 +175,7 @@ class ApiResponseParser:
 
     @property
     def listing_id(self) -> str:
-        return self.api_d['id']
+        return self.raw_response_data['id']
 
     @property
     def mod_classes(self) -> list[ModClass]:

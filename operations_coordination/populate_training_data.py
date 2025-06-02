@@ -27,6 +27,7 @@ class TrainingDataPopulator:
         self.trade_api_handler = trade_api.TradeApiHandler(psql_manager=psql_manager)
         self.psql_manager = psql_manager
 
+        self.files_manager = FilesManager()
         poe2db_mods_manager = files_manager.fetch_data(DataPath.POE2DB_MODS_MANAGER, default=dict())
         self.listing_builder = ListingBuilder(poe2db_mods_manager)
 
@@ -47,12 +48,15 @@ class TrainingDataPopulator:
         random.shuffle(training_queries)
 
         responses_fetched = 0
-        for api_item_responses in self.trade_api_handler.generate_responses_from_queries(training_queries):
-            _log_memory_usage()
-            print(f"Fetched {len(api_item_responses)} API responses. Processing and inserting into PSQL.")
-            responses_fetched += len(api_item_responses)
+        for response_parsers in self.trade_api_handler.generate_responses_from_queries(training_queries):
+            raw_listings_data = [rp.raw_response_data for rp in response_parsers]
+            self.files_manager.append_json_list(path=DataPath.RAW_LISTINGS, records=raw_listings_data)
 
-            self._process_and_insert(api_item_responses)
+            _log_memory_usage()
+            print(f"Fetched {len(response_parsers)} API responses. Processing and inserting into PSQL.")
+            responses_fetched += len(response_parsers)
+
+            self._process_and_insert(response_parsers)
 
         print(f"fill_training_data fetched {responses_fetched} in "
               f"{(datetime.datetime.now() - program_start).seconds / 60} minutes.")
