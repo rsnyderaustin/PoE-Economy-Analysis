@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 fm = FilesManager()
 
 print("Loading PSQL manager.")
-psql_manager = psql.PostgreSqlManager(skip_sql=True)
+psql_manager = psql.PostgreSqlManager(skip_sql=False)
 
 print("Loading TrainingDataPopulator class object.")
 tdp = TrainingDataPopulator(files_manager=fm,
