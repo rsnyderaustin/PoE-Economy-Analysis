@@ -1,5 +1,7 @@
 import random
 import datetime
+import psutil
+import os
 
 import psql
 import trade_api
@@ -11,6 +13,11 @@ from shared.logging import LogsHandler, LogFile
 from trade_api.query import QueryPresets
 
 overview_log = LogsHandler().fetch_log(LogFile.PROGRAM_OVERVIEW)
+
+def _log_memory_usage(stage=""):
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info().rss / (1024 ** 2)  # in MB
+    print(f"[Memory] {stage}: {mem:.2f} MB")
 
 class TrainingDataPopulator:
 
@@ -35,16 +42,17 @@ class TrainingDataPopulator:
 
     def fill_training_data(self):
         program_start = datetime.datetime.now()
-        overview_log.info(f"fill_training_data start: {program_start}")
+        print(f"fill_training_data start: {program_start}")
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
 
         responses_fetched = 0
         for api_item_responses in self.trade_api_handler.generate_responses_from_queries(training_queries):
+            _log_memory_usage()
             print(f"Fetched {len(api_item_responses)} API responses. Processing and inserting into PSQL.")
-            api_item_responses += len(api_item_responses)
+            responses_fetched += len(api_item_responses)
 
             self._process_and_insert(api_item_responses)
 
-        overview_log.info(f"fill_training_data fetched {responses_fetched} in "
-                          f"{(datetime.datetime.now() - program_start).seconds / 60} minutes.")
+        print(f"fill_training_data fetched {responses_fetched} in "
+              f"{(datetime.datetime.now() - program_start).seconds / 60} minutes.")

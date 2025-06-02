@@ -1,5 +1,7 @@
 
 import logging
+import psutil
+import os
 
 import psql
 from file_management import FilesManager
