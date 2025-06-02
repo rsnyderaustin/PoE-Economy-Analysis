@@ -1,4 +1,3 @@
-
 print("Entered Python file for fill_training_data.py")
 
 import logging
@@ -12,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 fm = FilesManager()
 
 print("Loading PSQL manager.")
-psql_manager = psql.PostgreSqlManager(skip_sql=False)
+psql_manager = psql.PostgreSqlManager(skip_sql=True)
 
 print("Loading TrainingDataPopulator class object.")
 tdp = TrainingDataPopulator(files_manager=fm,

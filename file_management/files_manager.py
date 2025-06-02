@@ -1,15 +1,10 @@
 import json
 import logging
 import os
-import pickle
 import tempfile
 from enum import Enum
 from pathlib import Path
 from typing import Any
-
-import pandas as pd
-import xgboost as xgb
-from stable_baselines3 import PPO
 
 from shared.logging import log_errors
 
@@ -86,10 +81,12 @@ class FilesManager:
                 self._file_data[data_path_e] = data
                 return data
         elif path.suffix == '.csv':
+            import pandas as pd
             data = pd.read_csv(path)
             self._file_data[data_path_e] = data
             return data
         elif path.suffix == '.pkl':
+            import pickle
             with open(path, 'rb') as file:
                 data = pickle.load(file)
 
@@ -116,10 +113,11 @@ class FilesManager:
             if file_path.suffix == '.json':
                 json.dump(data, tmp, indent=2, cls=SetEncoder)
             elif file_path.suffix == '.csv':
-                # pandas to_csv wants a file path or file-like object
+                import pandas as pd
                 tmp.close()
                 data.to_csv(tmp_path, index=False)
             elif file_path.suffix == '.pkl':
+                import pickle
                 pickle.dump(data, tmp)
 
             # Atomic move
@@ -140,15 +138,22 @@ class FilesManager:
                                 file_path=path_e.value)
 
     @staticmethod
-    def save_price_predict_model(atype: str, model: xgb.Booster):
+    def save_price_predict_model(atype: str, xgb_model):
+        import xgboost as xgb
+
+        if not isinstance(xgb_model, xgb.Booster):
+            raise TypeError(f"Price predict model is type {type(xgb_model)}. Expected {xgb.Booster}")
+
         folder_path = ModelPath.PRICE_PREDICT_MODELS_DIRECTORY.value
         folder_path.mkdir(parents=True, exist_ok=True)
 
         file_path = folder_path / f"{atype}.json"
-        model.save_model(str(file_path))
+        xgb_model.save_model(str(file_path))
 
     @staticmethod
     def load_price_predict_model(atype: str):
+        import xgboost as xgb
+
         folder_path = ModelPath.PRICE_PREDICT_MODELS_DIRECTORY.value
         model = xgb.Booster()
         file_path = folder_path / f"{atype}.json"
@@ -159,15 +164,21 @@ class FilesManager:
         return model.load_model(str(file_path))
 
     @staticmethod
-    def save_crafting_model(atype: str, model: PPO):
+    def save_crafting_model(atype: str, ppo_model):
+        from stable_baselines3 import PPO
+
+        if not isinstance(ppo_model, PPO):
+            raise TypeError(f"PPO model is type {type(ppo_model)}. Expected {PPO}")
         folder_path = ModelPath.CRAFTING_MODELS_DIRECTORY.value
         folder_path.mkdir(parents=True, exist_ok=True)
 
         file_path = folder_path / f"{atype}"
-        model.save(file_path)
+        ppo_model.save(file_path)
 
     @staticmethod
     def load_crafting_model(atype: str):
+        from stable_baselines3 import PPO
+
         folder_path = ModelPath.CRAFTING_MODELS_DIRECTORY.value
         file_path = folder_path / f"{atype}.zip"
 
