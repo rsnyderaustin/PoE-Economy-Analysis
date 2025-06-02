@@ -1,3 +1,4 @@
 .env*
 file_management/dynamic_files/
 shared/logging/logs/
+.pyc*
