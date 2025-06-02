@@ -1,0 +1,49 @@
+
+from file_management import CurrencyConversionsFile
+
+
+class CurrencyConverter:
+    _instance = None
+    _initialized = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(CurrencyConverter, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if self._initialized:
+            return
+        self._initialized = True
+
+        conversions_df = CurrencyConversionsFile().load()
+
+        self.conversions_dict = dict()
+        conversions_df.apply(self._apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
+
+    @staticmethod
+    def _apply_create_conversions_dict(row, conversions_dict: dict):
+        # All manual currency price documentation is done in CST
+        observation_date = datetime.strptime(row['date'], '%Y-%m-%d').replace(tzinfo=ZoneInfo('America/Chicago'))
+        currency = row['currency']
+        conversion_rate = row['div_per_currency']
+
+        if observation_date not in conversions_dict:
+            conversions_dict[observation_date] = dict()
+
+        conversions_dict[observation_date][currency] = conversion_rate
+
+    def convert_to_divs(self, currency: Currency, currency_amount: int | float, relevant_date: date):
+        if currency == Currency.DIVINE_ORB:
+            return currency_amount
+
+        closest_date = min(self.conversions_dict.keys(), key=lambda d: abs(d - relevant_date))
+
+        days_between = (closest_date - relevant_date).days
+        if days_between >= 3:
+            logging.error(f"Date between relevant date and closest currency price observation dates in "
+                          f"CurrencyConverter.convert_to_divs is {days_between}.")
+
+        exchange_rate = self.conversions_dict[closest_date][currency.value]
+        converted_amount = currency_amount * exchange_rate
+        return converted_amount
