@@ -238,14 +238,6 @@ class ListingsTransforming:
 
         import pandas as pd
 
-        # Lazy load currency
-        for listing in listings:
-            listing.divs = shared_utils.CurrencyConverter().convert_to_divs(
-                currency=listing.currency,
-                currency_amount=listing.currency_amount,
-                relevant_date=listing.date_fetched
-            )
-
         if not rows:
             rows = cls.to_flat_rows(listings)
 
@@ -340,9 +332,11 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        if not self.listing.divs:
-            raise ValueError(f"Listing divs should be lazy loaded by now, but is not.\nListing:\n{pprint.pformat(self.listing)}")
-        self.flattened_data['divs'] = self.listing.divs
+        self.flattened_data['divs'] = shared_utils.CurrencyConverter().convert_to_divs(
+            currency=self.listing.currency,
+            currency_amount=self.listing.currency_amount,
+            relevant_date=self.listing.date_fetched
+        )
 
         return self
 

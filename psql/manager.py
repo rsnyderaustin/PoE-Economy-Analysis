@@ -33,6 +33,8 @@ class PostgreSqlManager:
             psql_log.info("Skipping SQL initialization.")
             return
 
+        psql_log.info(f"Connecting to PSQL database.")
+
         e = EnvLoader()
         user = e.get_env("PSQL_USERNAME")
         passw = e.get_env("PSQL_PASSWORD")
@@ -95,7 +97,7 @@ class PostgreSqlManager:
         rows_before = self._count_table_rows(table_name)
         with self.engine.begin() as conn:
             conn.execute(insert_stmt, formatted_data)
-        logging.info(f"{table_name} PSQL rows {rows_before} -> {self._count_table_rows(table_name)}")
+        psql_log.info(f"{table_name} PSQL rows {rows_before} -> {self._count_table_rows(table_name)}")
 
     def fetch_table_data(self, table_name: str) -> dict:
         if self.skip_sql:

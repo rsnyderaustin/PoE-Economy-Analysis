@@ -13,6 +13,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s\n'
 )
 
+
 class LogFile(Enum):
     API_PARSING = Path.cwd() / 'shared/logging/logs/api_parsing.log'
     CRAFTING_MODEL = Path.cwd() / 'shared/logging/logs/crafting_model.log'
