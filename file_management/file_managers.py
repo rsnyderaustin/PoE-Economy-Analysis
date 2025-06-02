@@ -17,7 +17,7 @@ from shared.logging import log_errors
 class RawListingsFile:
 
     def __init__(self, path: Path = None):
-        self._path = path or Path.cwd() / 'file_management/dynamic_files/raw_listings.json'
+        self._path = path or Path.cwd() / 'file_management/dynamic_files/raw_listings.jsonl'
 
     def save(self, new_records: list[dict]):
         self._path.parent.mkdir(parents=True, exist_ok=True)
