@@ -3,7 +3,6 @@ from copy import deepcopy
 from datetime import datetime
 
 from data_handling import ApiResponseParser
-from file_management import FilesManager, DataPath
 from psql import PostgreSqlManager
 from shared import shared_utils
 from shared.logging import LogsHandler, LogFile
@@ -109,15 +108,10 @@ class TradeApiHandler:
 
     def __init__(self, psql_manager: PostgreSqlManager):
         self.fetcher = TradeItemsFetcher()
-        self._listing_gatekeeper = _ListingImportGatekeeper(psql_manager=psql_manager)
 
         self.split_threshold = 175
 
         self.program_start = datetime.now()
-
-    def _log_responses_progress(self):
-        minutes_since_start = round((datetime.now() - self.program_start).seconds / 60, 1)
-        api_log.info(f"Total valid responses in {minutes_since_start} minutes: {self.total_valid_responses}")
 
     def fetch_responses(self, queries: list[Query]):
         for i, query in enumerate(queries):
@@ -126,16 +120,6 @@ class TradeApiHandler:
             for responses, response_results_count in self._process_query(query):
                 responses = [shared_utils.sanitize_dict_texts(response) for response in responses]
                 yield responses
-                valid_responses = [response for response in responses
-                                   if self._listing_gatekeeper.listing_is_valid()]
-                response_parsers = [ApiResponseParser(response) for response in responses]
-                valid_responses = [rp for rp in response_parsers
-                                   if self._listing_gatekeeper.listing_is_valid(listing_id=rp.listing_id,
-                                                                                date_fetched=rp.date_fetched)]
-
-                yield valid_responses
-
-            self._log_responses_progress()
 
     def _process_query(self, query: Query):
         query_dict = query_construction.create_trade_query(query=query)

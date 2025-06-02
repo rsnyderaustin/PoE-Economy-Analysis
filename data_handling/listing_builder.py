@@ -4,6 +4,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 
+from file_management import ItemModsFile, Poe2DbModsManagerFile
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
 from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared import shared_utils
@@ -17,10 +18,22 @@ from .mod_matching import ModMatcher
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
 
+
 class ListingBuilder:
 
-    def __init__(self, poe2db_mods_manager: Poe2DbModsManager):
-        self._mod_resolver = _ModResolver(poe2db_mods_manager)
+    def __init__(self):
+        self._mod_resolver = self._create_mod_resolver()
+
+    @staticmethod
+    def _create_mod_resolver() -> '_ModResolver':
+        item_mods_file = ItemModsFile()
+
+        poe2db_mods_manager = Poe2DbModsManagerFile().load(missing_ok=False)
+        mod_matcher = ModMatcher(poe2db_mods_manager)
+
+        poe2db_injector = _PoE2DbInjector(mod_matcher=mod_matcher)  # <-- Typo fix here
+        return _ModResolver(item_mods_file=item_mods_file,
+                            poe2db_injector=poe2db_injector)
 
     def build_listing(self, rp: ApiResponseParser):
         minutes_since_listed = utils.determine_minutes_since(
@@ -235,11 +248,12 @@ class _ModFactory:
 class _ModResolver:
 
     def __init__(self,
-                 poe2db_mods_manager: Poe2DbModsManager):
-        self._poe2db_injector = _PoE2DbInjector(mod_matcher=ModMatcher(poe2db_mods_manager))
+                 item_mods_file: ItemModsFile,
+                 poe2db_injector: _PoE2DbInjector):
+        self._poe2db_injector = poe2db_injector
 
-        self._files_manager = FilesManager()
-        self.file_item_mods = self._files_manager.fetch_data(data_path_e=DataPath.MODS, default=dict())
+        self._item_mods_file = item_mods_file
+        self._mods = item_mods_file.load(default=dict())
 
     @staticmethod
     def _balance_same_hash_sub_mods(mods):
@@ -288,8 +302,8 @@ class _ModResolver:
                 mod_id = mod_meta.mod_id
                 sub_mod_hash_to_text = rp.fetch_sub_mod_hash_to_text(mod_class=mod_meta.mod_class)
 
-                if mod_id in self.file_item_mods:
-                    new_mod = copy.deepcopy(self.file_item_mods[mod_id])
+                if mod_id in self._mods:
+                    new_mod = copy.deepcopy(self._mods[mod_id])
                 else:
                     parse_log.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
                     new_mod = _ModFactory.create_mod(
@@ -301,7 +315,7 @@ class _ModResolver:
                     self._poe2db_injector.inject_poe2db_into_mod(mod=new_mod)
 
                     template_mod = copy.deepcopy(new_mod)
-                    self.file_item_mods[mod_id] = template_mod
+                    self._mods[mod_id] = template_mod
 
                 # Mods are created as templates - which essentially just means that they have everything filled except
                 # for actual values in their sub-mods
@@ -318,7 +332,7 @@ class _ModResolver:
         """
         self._balance_same_hash_sub_mods(mods=mods)
 
-        self._files_manager.save_data(paths=[DataPath.MODS])
+        self._item_mods_file.save(data=self._mods)
 
         return mods
 

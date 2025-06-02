@@ -170,17 +170,17 @@ class CraftingSimulatorFiles:
 
         self._models = dict()
 
-    def save_model(self, atype: str, ppo_model):
+    def save_model(self, atype: AType, model):
         from stable_baselines3 import PPO
 
-        if not isinstance(ppo_model, PPO):
-            raise TypeError(f"PPO model is type {type(ppo_model)}. Expected {PPO}")
+        if not isinstance(model, PPO):
+            raise TypeError(f"PPO model is type {type(model)}. Expected {PPO}")
         self._folder_path.mkdir(parents=True, exist_ok=True)
 
         file_path = self._folder_path / f"{atype}"
-        ppo_model.save(file_path)
+        model.save(file_path)
 
-    def load_model(self, atype: str):
+    def load_model(self, atype: AType) -> 'PPO' | None:
         from stable_baselines3 import PPO
 
         file_path = self._folder_path / f"{atype}.zip"

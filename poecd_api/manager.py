@@ -1,8 +1,8 @@
 
-from file_management import FilesManager, DataPath
 from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared.logging import LogsHandler, LogFile
 from .atype_manager_factory import AtypeManagerFactory
+from file_management import
 from .data_pull import PoecdDataPuller
 from .internal_source_store import PoecdSourceStore
 
@@ -24,9 +24,7 @@ def _convert_str_ints(obj):
 class PoecdDataManager:
     def __init__(self,
                  refresh_data: bool,
-                 files_manager: FilesManager = None,
                  data_puller: PoecdDataPuller = None):
-        self.files_manager = files_manager
         self.data_puller = data_puller
 
         self.source_store = self._load_source_store_from_files()

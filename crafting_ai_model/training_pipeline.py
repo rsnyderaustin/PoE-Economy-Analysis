@@ -3,9 +3,10 @@ import random
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 
-from data_handling import ListingBuilder
-from file_management import FilesManager, DataPath
+from data_handling import ListingBuilder, ApiResponseParser
 from instances_and_definitions import ModifiableListing
+from file_management import CraftingSimulatorFiles, RawListingsFile
+from poe2db_scrape.mods_management import Poe2DbModsManager
 from price_predict_ai_model import PricePredictor
 from shared.logging import LogsHandler, LogFile, log_errors
 from trade_api import TradeApiHandler
@@ -18,28 +19,24 @@ craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
 class CraftingModelPipeline:
     
     def __init__(self,
-                 files_manager: FilesManager,
                  trade_api_handler: TradeApiHandler,
                  listing_builder: ListingBuilder,
                  training_divs_budget: int,
                  total_timesteps: int = 10000):
-        self._files_manager = files_manager
         self._trade_api_handler = trade_api_handler
         self._listing_builder = listing_builder
 
         self._divs_budget = training_divs_budget
         self._total_timesteps = total_timesteps
 
-        self._loaded_models = dict()
+        self._model_files = CraftingSimulatorFiles()
 
     def run(self):
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
-        for response_parsers in self._trade_api_handler.fetch_responses(training_queries):
-            raw_response_data = [rp.raw_response_data for rp in response_parsers]
-            self._files_manager.append_json_list(path=DataPath.RAW_LISTINGS, records=raw_response_data)
-
-            listings = [self._listing_builder.build_listing(rp) for rp in response_parsers]
+        for responses in self._trade_api_handler.fetch_responses(training_queries):
+            parsers = [ApiResponseParser(response) for response in responses]
+            listings = [self._listing_builder.build_listing(rp) for rp in parsers]
 
             if not listings:
                 continue
@@ -48,10 +45,9 @@ class CraftingModelPipeline:
                 self._train_crafting_model(listing=listing)
 
 
-
     @log_errors(craft_log)
     def _train_crafting_model(self, listing: ModifiableListing):
-        price_predict_model = self._files_manager.load_price_predict_model(atype=listing.item_atype)
+        price_predict_model = self._model_files.load_model(atype=listing.item_atype)
         if not price_predict_model:
             raise ValueError(f"PricePredictModel for Atype {listing.item_atype} does not exist.")
 
@@ -63,15 +59,11 @@ class CraftingModelPipeline:
 
         check_env(env)
 
-        if listing.item_atype in self._loaded_models:
-            craft_model = self._loaded_models[listing.item_atype]
-        else:
-            craft_model = self._files_manager.load_crafting_model(atype=listing.item_atype)
+        model = self._model_files.load_model(listing.item_atype)
+        if not model:
+            model = PPO("MlpPolicy", env=env)
 
-            if not craft_model:
-                craft_model = PPO("MlpPolicy", env=env)
+        model.set_env(env)
+        model.learn(total_timesteps=self._total_timesteps)
 
-            self._loaded_models[listing.item_atype] = craft_model
-
-        craft_model.set_env(env)
-        craft_model.learn(total_timesteps=self._total_timesteps)
+        self._model_files.save_model(atype=listing.item_atype, model=model)
