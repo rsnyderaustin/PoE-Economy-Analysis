@@ -1,11 +1,9 @@
-
-from file_management import FilesManager
+from file_management import PricePredictModelFiles
 from price_predict_ai_model import PricePredictModelPipeline
 from psql import PostgreSqlManager
 
-files_manager = FilesManager()
 psql_manager = PostgreSqlManager()
 
-pipeline = PricePredictModelPipeline(files_manager=files_manager,
+pipeline = PricePredictModelPipeline(price_predict_files=PricePredictModelFiles(),
                                      psql_manager=psql_manager)
 pipeline.run()

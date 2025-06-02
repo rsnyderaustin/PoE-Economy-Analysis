@@ -4,7 +4,6 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 
-from file_management import FilesManager, DataPath
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
 from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared import shared_utils

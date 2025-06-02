@@ -5,6 +5,7 @@ from typing import Iterable
 from shared.logging import LogFile, LogsHandler, log_errors
 
 psql_log = LogsHandler().fetch_log(log_e=LogFile.PSQL)
+
 def python_dtype_to_postgres(dtype) -> str:
     """
     Convert a Python/numpy/pandas dtype to a PostgreSQL column type.

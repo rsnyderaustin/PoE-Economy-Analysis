@@ -34,8 +34,9 @@ class AtypeManagerFactory:
             affix_type = ModAffixType.PREFIX if affix_type_str == 'prefix' else ModAffixType.SUFFIX
             mod_text = shared_utils.sanitize_mod_text(self.source_store.fetch_mod_text(mod_id))
             new_mod = Poe2DbMod(atype_id=atype_id,
-                                atype_name=self.source_store.fetch_atype_name(atype_id),
+                                atype_name=self.source_store.fetch_atype(atype_id),
                                 mod_id=mod_id,
+                                atype=
                                 mod_text=mod_text,
                                 mod_types=self.source_store.fetch_mod_types(mod_id=mod_id),
                                 affix_type=affix_type)
@@ -51,7 +52,7 @@ class AtypeManagerFactory:
 
         atypes_managers = [
             AtypeModsManager(atype_id=atype_id,
-                             atype_name=self.source_store.fetch_atype_name(atype_id=atype_id),
+                             atype_name=self.source_store.fetch_atype(atype_id=atype_id),
                              mods=atype_id_to_mods[atype_id])
             for atype_id in atype_ids
         ]

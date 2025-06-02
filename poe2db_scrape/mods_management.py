@@ -153,13 +153,10 @@ class AtypeModsManager:
 
         return list(self._mod_text_to_mod.keys())
 
-    def fetch_mod_by_id(self, mod_id: int):
-        return self._mod_id_to_mod[mod_id]
-
     def fetch_hybrid_part_to_parents(self, affix_type: ModAffixType = None) -> dict[str: set[Poe2DbMod]]:
         return self._hybrid_mod_analyzer.fetch_hybrid_part_to_parents(affix_type)
 
-    def determine_number_of_hybrid_parts(self, mod_id: int):
+    def determine_number_of_hybrid_parts(self, mod_id: Poe2DbMod):
         return self._hybrid_mod_analyzer.determine_number_of_hybrid_parts(mod_id)
 
 
@@ -171,12 +168,7 @@ class Poe2DbModsManager:
     def fetch_atype_manager(self, atype: AType = None):
         return self._atypes_managers[atype]
     
-    def fetch_mod(self, atype: AType, mod_text: str = None, affix_type: ModAffixType = None, mod_id: str = None):
+    def fetch_mod(self, atype: AType, mod_id: int):
         atype_manager = self._atypes_managers[atype]
 
-        if mod_text and affix_type:
-            mod = atype_manager.fetch_mod(mod_text, affix_type)
-        else:
-            mod = atype_manager.fetch_mod_by_id(mod_id)
-
-        return mod
+        return atype_manager.fetch_mod(mod_id)

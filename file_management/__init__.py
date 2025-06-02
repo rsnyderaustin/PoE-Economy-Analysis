@@ -1,1 +1,2 @@
-from .files_manager import FilesManager, DataPath, ModelPath
+from .files_manager import (OfficialStaticFile, OfficialStatsFile, CurrencyConversionsFile, ItemModsFile,
+                            Poe2DbModsManagerFile, PricePredictModelFiles, CraftingSimulatorFiles, RawListingsFile)

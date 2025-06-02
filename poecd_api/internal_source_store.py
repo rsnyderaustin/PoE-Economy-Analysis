@@ -1,5 +1,7 @@
 
 from shared import shared_utils
+from shared.enums.item_enums import AType
+
 
 def _convert_str_to_int(s):
     if isinstance(s, str) and (s.isdigit() or (s.startswith('-') and s[1:].isdigit())):
@@ -70,8 +72,9 @@ class PoecdSourceStore:
     def fetch_affix_type(self, mod_id) -> str | None:
         return self._mod_id_to_affix_type.get(mod_id, None)
 
-    def fetch_atype_name(self, atype_id) -> str | None:
-        return self._atype_id_to_atype_name.get(atype_id, None)
+    def fetch_atype(self, atype_id) -> AType | None:
+        atype_name = self._atype_id_to_atype_name[atype_id]
+        return AType(atype_name)
 
     def fetch_mod_types(self, mod_id) -> str | None:
         return self._mod_id_to_mod_types.get(mod_id, None)

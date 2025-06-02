@@ -35,7 +35,7 @@ class CraftingModelPipeline:
     def run(self):
         training_queries = QueryPresets().training_fills
         random.shuffle(training_queries)
-        for response_parsers in self._trade_api_handler.generate_responses_from_queries(training_queries):
+        for response_parsers in self._trade_api_handler.fetch_responses(training_queries):
             raw_response_data = [rp.raw_response_data for rp in response_parsers]
             self._files_manager.append_json_list(path=DataPath.RAW_LISTINGS, records=raw_response_data)
 

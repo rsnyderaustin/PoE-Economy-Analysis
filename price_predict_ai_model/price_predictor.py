@@ -1,5 +1,5 @@
 from data_transforming import ListingsTransforming
-from file_management import FilesManager
+from file_management import PricePredictModelFiles
 from instances_and_definitions import ModifiableListing
 from shared.logging import LogsHandler, LogFile, log_errors
 
@@ -8,8 +8,8 @@ price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
 
 class PricePredictor:
-    def __init__(self, files_manager: FilesManager):
-        self._files_manager = files_manager
+    def __init__(self, price_predictor_files: PricePredictModelFiles):
+        self._price_predictor_files = price_predictor_files
 
         self._loaded_models = {}
 
@@ -23,7 +23,7 @@ class PricePredictor:
             raise ValueError("Listing transformation failed; resulting dataframe is empty.")
 
         if listing.item_atype not in self._loaded_models:
-            self._loaded_models[listing.item_atype] = self._files_manager.load_price_predict_model(listing.item_atype)
+            self._price_predictor_files.load_model(atype=listing.item_atype)
 
         features = df.drop(columns=["divs"], errors="ignore")  # drop target/label if present
 

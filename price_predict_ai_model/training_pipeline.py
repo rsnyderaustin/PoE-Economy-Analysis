@@ -5,7 +5,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
 from data_transforming import ListingsTransforming
-from file_management import FilesManager
+from file_management import PricePredictModelFiles
 from price_predict_ai_model import visuals
 from psql import PostgreSqlManager
 from shared import env_loader
@@ -17,11 +17,11 @@ price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
 class PricePredictModelPipeline:
     def __init__(self,
+                 price_predict_files: PricePredictModelFiles,
                  psql_manager: PostgreSqlManager,
-                 files_manager: FilesManager,
                  should_plot_visuals=False):
+        self._files_manager = price_predict_files
         self.psql_manager = psql_manager
-        self.files_manager = files_manager
 
         self.should_plot_visuals = should_plot_visuals
 
@@ -54,7 +54,7 @@ class PricePredictModelPipeline:
                 price_column='divs'
             )
 
-            self.files_manager.save_price_predict_model(atype=str(atype), model=model)
+            self._files_manager.save_model(atype=atype, model=model)
 
     def _train_model(self,
                      df: pd.DataFrame,

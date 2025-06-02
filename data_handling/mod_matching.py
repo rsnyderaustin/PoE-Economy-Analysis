@@ -135,7 +135,7 @@ class ModMatcher:
         poe2db_mod_match = hybrid_scores_tracker.determine_winner()
         return poe2db_mod_match
 
-    def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float) -> Poe2DbMod:
+    def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float) -> Poe2DbMod | None:
         atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
 
         poe2db_mod_texts = atype_manager.fetch_mod_texts(item_mod.affix_type)
