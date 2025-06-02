@@ -156,6 +156,9 @@ class ModifiableListing:
             ModClass.EXPLICIT: self.explicit_mods
         }
 
+        # This is lazy loaded when loading into the PricePrediction model
+        self.divs = None
+
     def __hash__(self):
         return hash((self.listing_id, self.minutes_since_listed))
 

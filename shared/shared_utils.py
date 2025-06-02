@@ -17,6 +17,7 @@ def extract_average_from_text(text) -> float:
 
     return avg_value
 
+
 def extract_values_from_text(text) -> list:
     matches = re.findall(r'-?\d+(?:\.\d+)?(?:\s*[–-]\s*-?\d+(?:\.\d+)?)?', text)
     result = []
@@ -32,6 +33,7 @@ def extract_values_from_text(text) -> list:
             val = float(clean) if '.' in clean else int(clean)
             result.append(val)
     return result
+
 
 def _extract_from_brackets(match):
     parts = match.group(1).split('|')
@@ -96,7 +98,6 @@ class CurrencyConverter:
         self.conversions_dict = dict()
         conversions_df.apply(self._apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
 
-
     @staticmethod
     def _apply_create_conversions_dict(row, conversions_dict: dict):
         # All manual currency price documentation is done in CST
@@ -123,7 +124,3 @@ class CurrencyConverter:
         exchange_rate = self.conversions_dict[closest_date][currency.value]
         converted_amount = currency_amount * exchange_rate
         return converted_amount
-
-
-
-

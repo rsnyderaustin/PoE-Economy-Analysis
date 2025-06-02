@@ -1,6 +1,7 @@
 import logging
 from abc import ABC
 from enum import Enum
+from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
 logging_path = Path.cwd() / 'shared/logging/logs/all_logs.log'
@@ -12,10 +13,8 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s\n'
 )
 
-
 class LogFile(Enum):
     API_PARSING = Path.cwd() / 'shared/logging/logs/api_parsing.log'
-    RESPONSE_TRACKING = Path.cwd() / 'shared/logging/logs/response_tracking.log'
     CRAFTING_MODEL = Path.cwd() / 'shared/logging/logs/crafting_model.log'
     STATS_PREP = Path.cwd() / 'shared/logging/logs/stats_prep.log'
     EXTERNAL_APIS = Path.cwd() / 'shared/logging/logs/external_apis.log'
@@ -27,7 +26,7 @@ class LogFile(Enum):
 
 class Logger(ABC):
 
-    def __init__(self, log_name: LogFile | str, file_path: Path = None, formatter: logging.Formatter = None):
+    def __init__(self, log_name: LogFile | str, rotate_logs: bool = True, file_path: Path = None, formatter: logging.Formatter = None):
         logger_name = log_name if isinstance(log_name, str) else log_name.name
         file_path = Path(file_path or log_name.value if isinstance(log_name, LogFile) else f'logs/{logger_name}.log')
         file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -40,11 +39,17 @@ class Logger(ABC):
 
         # Only add handlers once
         if not self._logger.handlers:
-            file_handler = logging.FileHandler(file_path)
+            file_handler = TimedRotatingFileHandler(
+                filename=file_path,
+                when='midnight',  # or 'D' for daily
+                interval=1,
+                backupCount=7,  # keep 7 days of logs
+                encoding='utf-8'
+            ) if rotate_logs else logging.FileHandler(file_path)
             file_handler.setFormatter(formatter)
             self._logger.addHandler(file_handler)
 
-    def get_logger(self) -> logging.Logger:
+    def get_logger(self):
         return self._logger
 
 
@@ -63,18 +68,12 @@ class LogsHandler:
             return
         self._initialized = True
 
-        self._logs = self._create_loggers()
-
-    @staticmethod
-    def _create_loggers():
-        logs = dict()
-        for log_e in LogFile:
-            log = Logger(log_name=log_e)
-            logs[log_e] = log.get_logger()
-
-        return logs
+        self._logs = dict()
 
     def fetch_log(self, log_e: LogFile):
+        if log_e not in self._logs:
+            self._logs[log_e] = Logger(log_name=log_e).get_logger()
+
         return self._logs[log_e]
 
 

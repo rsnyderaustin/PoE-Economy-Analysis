@@ -3,8 +3,6 @@ import pprint
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
-import pandas as pd
-
 from instances_and_definitions import ModifiableListing
 from shared import shared_utils
 from shared.enums import ItemEnumGroups, WhichCategoryType
@@ -213,14 +211,14 @@ class ListingsTransforming:
 
     @staticmethod
     @log_errors(price_predict_log)
-    def _fill_out_features_columns(features_df: pd.DataFrame, model):
-        cols_missing_from_model = [col for col in features_df.columns if col not in model.features]
+    def _fill_out_features_columns(features_df: 'pd.DataFrame', model_features):
+        cols_missing_from_model = [col for col in features_df.columns if col not in model_features]
         if cols_missing_from_model:
             raise ValueError(f"Columns {cols_missing_from_model} in this listing but not in model. Model training data is "
                              f"therefore incomplete.")
 
         # Ensure all model-required columns exist in features
-        cols_missing_from_listing = [col for col in model.features if col not in features_df.columns]
+        cols_missing_from_listing = [col for col in model_features if col not in features_df.columns]
         for col in cols_missing_from_listing:
             features_df[col] = None  # fill in with 0 indicating the mod is not present
 
@@ -228,7 +226,7 @@ class ListingsTransforming:
     def to_price_predict_df(cls,
                             listings: list[ModifiableListing] = None,
                             rows: dict[str: list] = None,
-                            existing_model = None) -> pd.DataFrame:
+                            existing_model = None) -> 'pd.DataFrame':
         """
 
         :param listings: Listings to format into a DataFrame for the PricePredict model.
@@ -237,6 +235,17 @@ class ListingsTransforming:
             here. The model is used in this function to format the columns so that you can just feed the DataFrame output straight into the model.
         :return: Data formatted into a DataFrame for the PricePredict model
         """
+
+        import pandas as pd
+
+        # Lazy load currency
+        for listing in listings:
+            listing.divs = shared_utils.CurrencyConverter().convert_to_divs(
+                currency=listing.currency,
+                currency_amount=listing.currency_amount,
+                relevant_date=listing.date_fetched
+            )
+
         if not rows:
             rows = cls.to_flat_rows(listings)
 
@@ -259,7 +268,7 @@ class ListingsTransforming:
         if existing_model:
             features_df = df.drop(columns=['divs'])
             cls._fill_out_features_columns(features_df=features_df,
-                                           model=existing_model)
+                                           model_features=existing_model.features)
             df = pd.concat([features_df, df['divs']])
 
         return df
@@ -330,6 +339,10 @@ class _PricePredictTransformer:
     def insert_currency_info(self):
         self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
+
+        if not self.listing.divs:
+            raise ValueError(f"Listing divs should be lazy loaded by now, but is not.\nListing:\n{pprint.pformat(self.listing)}")
+        self.flattened_data['divs'] = self.listing.divs
 
         return self
 

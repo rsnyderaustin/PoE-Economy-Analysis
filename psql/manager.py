@@ -30,7 +30,7 @@ class PostgreSqlManager:
         self.skip_sql = skip_sql
 
         if skip_sql:
-            print("Skipping SQL initialization.")
+            psql_log.info("Skipping SQL initialization.")
             return
 
         e = EnvLoader()
@@ -40,13 +40,12 @@ class PostgreSqlManager:
         db_n = e.get_env("PSQL_DATABASE")
         ip = e.get_env("PSQL_IP")
         db_url = f"postgresql+psycopg2://{user}:{passw}@{ip}:{port}/{db_n}"
-        print(db_url)
 
         self.engine = sqlalchemy.create_engine(db_url)
         self.connection = self.engine.connect()
         self.inspector = inspect(self.engine)
 
-        print("Connected to PostgreSQL")
+        psql_log.info(f"Connected to PSQL database at: {db_url}")
 
     def _add_missing_columns(self, table_name: str, new_data: dict):
 
