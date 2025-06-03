@@ -13,38 +13,10 @@ from psql import PostgreSqlManager
 from shared import env_loading
 from shared.logging import LogsHandler, LogFile
 from trade_api.query import QueryPresets
+from trade_api.listing_gatekeeper import ListingImportGatekeeper
 
 overview_log = LogsHandler().fetch_log(LogFile.PROGRAM_OVERVIEW)
 
-
-class _ListingImportGatekeeper:
-
-
-    def __init__(self, psql_manager: PostgreSqlManager):
-        if psql_manager.skip_sql:
-            self.keys = set()
-            return
-
-        dates_and_ids = psql_manager.fetch_columns_data(table_name='listings',
-                                                        columns=['date_fetched', 'listing_id'])
-        self.id_fetch_dates = dict()
-        for date, listing_id in dates_and_ids:
-            if listing_id not in self.id_fetch_dates:
-                self.id_fetch_dates[listing_id] = date
-            else:
-                if date > self.id_fetch_dates[listing_id]:
-                    self.id_fetch_dates[listing_id] = date
-
-    def listing_is_valid(self, listing_id: str, date_fetched: datetime) -> bool:
-        if listing_id not in self.id_fetch_dates:
-            self.id_fetch_dates[listing_id] = date_fetched
-            return True
-
-        latest_fetch_date = self.id_fetch_dates[listing_id]
-        minutes_since_last_fetch = (date_fetched - latest_fetch_date).total_seconds() / 60
-
-        self.id_fetch_dates[listing_id] = date_fetched
-        return minutes_since_last_fetch > 180
 
 def _log_memory_usage(stage=""):
     process = psutil.Process(os.getpid())
@@ -57,12 +29,12 @@ class TrainingDataPopulator:
     def __init__(self,
                  listing_builder: ListingBuilder,
                  psql_manager: psql.PostgreSqlManager):
-        self.trade_api_handler = trade_api.TradeApiHandler(psql_manager=psql_manager)
+        self.trade_api_handler = trade_api.TradeApiHandler()
         self.psql_manager = psql_manager
 
         self.listing_builder = listing_builder
 
-        self._listing_gatekeeper = _ListingImportGatekeeper(psql_manager=self.psql_manager)
+        self._listing_gatekeeper = ListingImportGatekeeper(psql_manager=self.psql_manager)
 
         self.env_loader = env_loading.EnvLoader()
 
