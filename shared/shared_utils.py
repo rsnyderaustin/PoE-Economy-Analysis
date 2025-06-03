@@ -75,3 +75,8 @@ def sanitize_mod_text(mod_text: str):
     result = result.replace(' ', '_').replace('__', '_')
     return result
 
+
+def format_listing_date(listing_date: str):
+    listing_date = listing_date.lower().replace("z", "+00:00")
+    return datetime.fromisoformat(listing_date)
+
