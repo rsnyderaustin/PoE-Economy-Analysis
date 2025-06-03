@@ -3,6 +3,7 @@ import pprint
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
+import shared
 from instances_and_definitions import ModifiableListing
 from shared import shared_utils
 from shared.enums import ItemEnumGroups, WhichCategoryType
@@ -332,7 +333,7 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        self.flattened_data['divs'] = shared_utils.CurrencyConverter().convert_to_divs(
+        self.flattened_data['divs'] = shared.CurrencyConverter().convert_to_divs(
             currency=self.listing.currency,
             currency_amount=self.listing.currency_amount,
             relevant_date=self.listing.date_fetched
