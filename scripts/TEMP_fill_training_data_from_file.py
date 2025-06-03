@@ -13,4 +13,4 @@ populator = TrainingDataPopulator(
     psql_manager=psql_manager
 )
 
-populator.fill_training_data_from_listings_file(rlf, limit=None)
+populator.fill_training_data_from_listings_file(rlf)

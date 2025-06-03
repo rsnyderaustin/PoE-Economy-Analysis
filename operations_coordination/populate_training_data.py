@@ -74,10 +74,10 @@ class TrainingDataPopulator:
             data=row_data
         )
 
-    def fill_training_data_from_listings_file(self, raw_listings_file: RawListingsFile, limit: int = None):
+    def fill_training_data_from_listings_file(self, raw_listings_file: RawListingsFile):
         all_responses = 0
         valid_responses = 0
-        for response in raw_listings_file.load(limit):
+        for response in raw_listings_file.load():
             all_responses += 1
             parser = ApiResponseParser(response)
             if not self._listing_gatekeeper.listing_is_valid(listing_id=parser.listing_id,
@@ -87,7 +87,7 @@ class TrainingDataPopulator:
             valid_responses += 1
             self._process_and_insert(responses=[parser])
 
-        overview_log.info(f"JsonL Insert\nValid responses: {valid_responses}\nAll responses: {all_responses}")
+            overview_log.info(f"JsonL Insert\nValid responses: {valid_responses}\nAll responses: {all_responses}")
 
     def fill_training_data(self):
         program_start = datetime.datetime.now()

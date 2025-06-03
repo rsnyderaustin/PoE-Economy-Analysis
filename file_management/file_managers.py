@@ -26,11 +26,9 @@ class RawListingsFile:
                 json.dump(record, f)
                 f.write('\n')
 
-    def load(self, limit=20) -> 'Generator[dict[str, Any], None, None]':
+    def load(self) -> 'Generator[dict[str, Any], None, None]':
         with open(self._path, 'r', encoding='utf-8') as f:
             for i, line in enumerate(f):
-                if limit and i >= limit:
-                    break
                 yield json.loads(line)
 
 
