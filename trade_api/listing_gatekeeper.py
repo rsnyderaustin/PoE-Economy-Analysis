@@ -13,7 +13,7 @@ class ListingImportGatekeeper:
 
         dates_and_ids = psql_manager.fetch_columns_data(table_name='listings',
                                                         columns=['date_fetched', 'listing_id'])
-        dates = [shared_utils.format_listing_date(date_str) for date_str in dates_and_ids['date_fetched']]
+        dates = [shared_utils.format_date_into_utc(date_str) for date_str in dates_and_ids['date_fetched']]
         ids = dates_and_ids['listing_id']
 
         self.id_fetch_dates = dict()

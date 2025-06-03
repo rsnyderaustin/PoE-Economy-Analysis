@@ -170,7 +170,7 @@ class ApiResponseParser:
 
     @property
     def date_fetched(self) -> datetime:
-        return shared_utils.format_listing_date(self.listing_data['indexed'])
+        return shared_utils.format_date_into_utc(self.listing_data['indexed'])
 
     @property
     def listing_id(self) -> str:
