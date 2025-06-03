@@ -11,7 +11,7 @@ from operations_coordination.populate_training_data import TrainingDataPopulator
 logging.basicConfig(level=logging.INFO)
 
 print("Loading PSQL manager.")
-psql_manager = psql.PostgreSqlManager(skip_sql=True)
+psql_manager = psql.PostgreSqlManager(skip_sql=False)
 
 listing_builder = ListingBuilder()
 
