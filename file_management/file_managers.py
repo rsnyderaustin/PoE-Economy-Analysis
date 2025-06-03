@@ -116,7 +116,7 @@ class ItemModsFile(PickleFile):
         super().__init__(path)
 
     def load(self, default: Any = None, missing_ok: bool = True) -> dict:
-        pass
+        return super().load(default=default, missing_ok=missing_ok)
 
 
 class Poe2DbModsManagerFile(PickleFile):
@@ -127,7 +127,7 @@ class Poe2DbModsManagerFile(PickleFile):
         super().__init__(path)
 
     def load(self, default: Any = None, missing_ok: bool = True) -> Poe2DbModsManager:
-        pass
+        return super().load(default=default, missing_ok=missing_ok)
 
 
 class PricePredictModelFiles:
