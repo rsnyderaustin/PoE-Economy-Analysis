@@ -1,6 +1,6 @@
 import logging
 import re
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from typing import Iterable
 from zoneinfo import ZoneInfo
 
@@ -74,4 +74,22 @@ def sanitize_mod_text(mod_text: str):
 
     result = result.replace(' ', '_').replace('__', '_')
     return result
+
+
+def format_date_into_utc(listing_date):
+    if isinstance(listing_date, str):
+        listing_date = listing_date.lower().replace("z", "+00:00")
+        dt = datetime.fromisoformat(listing_date)
+    elif isinstance(listing_date, datetime):
+        dt = listing_date
+    else:
+        raise TypeError("Expected str or datetime.datetime")
+
+    # Ensure it's timezone-aware in UTC
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt = dt.astimezone(timezone.utc)
+
+    return dt
 
