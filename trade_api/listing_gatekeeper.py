@@ -12,8 +12,11 @@ class ListingImportGatekeeper:
 
         dates_and_ids = psql_manager.fetch_columns_data(table_name='listings',
                                                         columns=['date_fetched', 'listing_id'])
+        dates = dates_and_ids['date_fetched']
+        ids = dates_and_ids['listing_id']
+        
         self.id_fetch_dates = dict()
-        for date, listing_id in dates_and_ids:
+        for date, listing_id in zip(dates, ids):
             if listing_id not in self.id_fetch_dates:
                 self.id_fetch_dates[listing_id] = date
             else:
