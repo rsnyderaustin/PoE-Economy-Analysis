@@ -7,7 +7,7 @@ class ListingImportGatekeeper:
 
     def __init__(self, psql_manager: PostgreSqlManager):
         if psql_manager.skip_sql:
-            self.keys = set()
+            self.id_fetch_dates = dict()
             return
 
         dates_and_ids = psql_manager.fetch_columns_data(table_name='listings',
