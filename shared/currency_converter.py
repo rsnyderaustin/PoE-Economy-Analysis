@@ -1,5 +1,9 @@
+import logging
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 from file_management import CurrencyConversionsFile
+from shared.enums.trade_enums import Currency
 
 
 class CurrencyConverter:

@@ -75,13 +75,17 @@ class TrainingDataPopulator:
         )
 
     def fill_training_data_from_listings_file(self, raw_listings_file: RawListingsFile):
+        valid_responses = 0
         for response in raw_listings_file.load():
             parser = ApiResponseParser(response)
             if not self._listing_gatekeeper.listing_is_valid(listing_id=parser.listing_id,
                                                              date_fetched=parser.date_fetched):
                 continue
 
+            valid_responses += 1
             self._process_and_insert(responses=[parser])
+
+        overview_log.info(f"Inserted {valid_responses} valid responses")
 
     def fill_training_data(self):
         program_start = datetime.datetime.now()
