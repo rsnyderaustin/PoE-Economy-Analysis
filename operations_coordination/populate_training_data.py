@@ -66,7 +66,7 @@ class TrainingDataPopulator:
 
         self.env_loader = env_loading.EnvLoader()
 
-    def _process_and_insert(self, responses):
+    def _process_and_insert(self, responses: list[ApiResponseParser]):
         listings = [self.listing_builder.build_listing(api_r) for api_r in responses]
         row_data = ListingsTransforming.to_flat_rows(listings)
         self.psql_manager.insert_data(
@@ -75,13 +75,13 @@ class TrainingDataPopulator:
         )
 
     def fill_training_data_from_listings_file(self, raw_listings_file: RawListingsFile):
-        for responses in raw_listings_file.load():
-            parsers = [ApiResponseParser(response) for response in responses]
-            valid_parsers = [rp for rp in parsers
-                             if self._listing_gatekeeper.listing_is_valid(listing_id=rp.listing_id,
-                                                                          date_fetched=rp.date_fetched)]
-            self._process_and_insert(valid_parsers)
+        for response in raw_listings_file.load():
+            parser = ApiResponseParser(response)
+            if not self._listing_gatekeeper.listing_is_valid(listing_id=parser.listing_id,
+                                                             date_fetched=parser.date_fetched):
+                continue
 
+            self._process_and_insert(responses=[parser])
 
     def fill_training_data(self):
         program_start = datetime.datetime.now()
