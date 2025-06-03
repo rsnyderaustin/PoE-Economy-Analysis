@@ -2,8 +2,6 @@ import math
 from copy import deepcopy
 from datetime import datetime
 
-from data_handling import ApiResponseParser
-from psql import PostgreSqlManager
 from shared import shared_utils
 from shared.logging import LogsHandler, LogFile
 from . import query_construction
@@ -106,7 +104,7 @@ def _key_response(listing_id, date_fetched: str):
 
 class TradeApiHandler:
 
-    def __init__(self, psql_manager: PostgreSqlManager):
+    def __init__(self):
         self.fetcher = TradeItemsFetcher()
 
         self.split_threshold = 175

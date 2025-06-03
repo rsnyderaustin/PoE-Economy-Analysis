@@ -122,7 +122,7 @@ class Poe2DbModsManagerFile(PickleFile):
     _missing_data_msg = "Could not load Poe2DbModsManager. May need to scrape Poe2Db."
 
     def __init__(self, path: Path = None):
-        super().__init__(path)
+        super().__init__(path or Path.cwd() / 'file_management/static_files/poe2db_mods_manager.pkl')
 
     def load(self, default: Any = None, missing_ok: bool = True) -> Poe2DbModsManager:
         return super().load(default=default, missing_ok=missing_ok)
