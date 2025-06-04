@@ -5,6 +5,7 @@ from typing import Iterable
 from zoneinfo import ZoneInfo
 
 from shared.enums.trade_enums import Currency
+from shared.logging import LogsHandler, LogFile
 
 
 def extract_average_from_text(text) -> float:
@@ -56,6 +57,7 @@ def sanitize_dict_texts(d: dict):
         return d
 
 
+parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 def sanitize_mod_text(mod_text: str):
     # Replace any #-# with #_to_#
     mod_text = mod_text.strip().lower()
@@ -69,11 +71,16 @@ def sanitize_mod_text(mod_text: str):
 
     # Replace all non-alphabet characters with an underscore
     result = re.sub(r'[^a-zA-Z]', '_', result)
+    # Filter multiple underscores into a singular underscore
+    result = re.sub(r'_+', '_', result)
 
     brackets_pattern = r'\[(.*?)\]'
     result = re.sub(brackets_pattern, _extract_from_brackets, result)
 
     result = result.strip(' _')
+
+    print(f"Sanitized {mod_text} -> {result}")
+    parse_log.info(f"Sanitized {mod_text} -> {result}")
 
     return result
 
