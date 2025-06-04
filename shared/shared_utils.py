@@ -64,15 +64,17 @@ def sanitize_mod_text(mod_text: str):
         r'\1_to_\2',
         mod_text
     )
-    result = re.sub(r'\d+', '#', result)
+    result = re.sub(r'\d+', 'n', result)
+    result = result.replace('.n', '').replace('%', 'p')
 
-    result = result.replace('.#', '').replace('+', '').replace('-', '')
-    result = result.replace('#', 'n').replace('%', 'p')
+    # Replace all non-alphabet characters with an underscore
+    result = re.sub(r'[^a-zA-Z]', '_', result)
 
     brackets_pattern = r'\[(.*?)\]'
     result = re.sub(brackets_pattern, _extract_from_brackets, result)
 
-    result = result.replace(' ', '_').replace('__', '_')
+    result = result.strip(' _')
+
     return result
 
 

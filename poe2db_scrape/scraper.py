@@ -109,6 +109,8 @@ class _Poe2DbHtmlParser:
                 table_mods = div.find_all('div', class_='explicitMod')
                 return table_mods
 
+        return []
+
     @staticmethod
     def fetch_mod_types(table_mod):
         spans = table_mod.find_all('span', )

@@ -55,17 +55,20 @@ class PostgreSqlManager:
 
         new_cols = set(new_data.keys())
         missing_col_names = set(col for col in new_cols if col not in table_col_names)
+
+        if not missing_col_names:
+            return
+
         missing_col_data = {k: v for k, v in new_data.items() if k in missing_col_names}
         missing_col_dtypes = utils.determine_col_dtypes(raw_data=missing_col_data)
 
-        if missing_col_names:
-            with self.engine.begin() as conn:
-                psql_log.info(f"Adding missing '{table_name}' col names: {missing_col_names}")
-                for col, dtype in missing_col_dtypes.items():
-                    alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
-                    conn.execute(alter_stmt)
+        with self.engine.begin() as conn:
+            psql_log.info(f"Adding missing '{table_name}' col names: {missing_col_names}")
+            for col, dtype in missing_col_dtypes.items():
+                alter_stmt = text(f'ALTER TABLE {table_name} ADD COLUMN "{col}" {dtype};')
+                conn.execute(alter_stmt)
 
-            self.inspector = inspect(self.engine)
+        self.inspector = inspect(self.engine)
 
     def _count_table_rows(self, table_name: str):
         with self.connection.begin():
@@ -81,7 +84,8 @@ class PostgreSqlManager:
         if self.skip_sql:
             return
 
-        data = {utils.format_column_name(col): val for col, val in data.items()}
+        # Psql column names have a character limit of 63
+        data = {col[:55]: val for col, val in data.items()}
 
         utils.validate_dict_lists(data)
         self._add_missing_columns(table_name=table_name,

@@ -54,18 +54,6 @@ def determine_col_dtypes(raw_data: dict):
     return col_dtypes
 
 
-def format_column_name(column_name: str):
-    c = column_name.replace('#', 'N')
-    c = c.replace('%', 'P')
-    c = re.sub(r'[^a-zA-Z0-9]', '_', c)
-    c = c.lower()
-    c = c.replace(' ', '_')
-
-    c = c[:55]  # Psql column names have a character limit of 63
-
-    return c
-
-
 def format_data_into_rows(data: dict) -> list:
     columns = list(data.keys())
     values = zip(*data.values())

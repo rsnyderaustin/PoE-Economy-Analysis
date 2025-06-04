@@ -194,6 +194,8 @@ class _ModFactory:
         sub_mods = []
         for sub_mod_hash in sub_mod_hashes:
             sanitized_text = shared_utils.sanitize_mod_text(sub_mod_hash_to_text[sub_mod_hash])
+            parse_log.info(f"Parsed sub-mod text {sub_mod_hash_to_text[sub_mod_hash]} into {sanitized_text}")
+            print(f"Parsed sub-mod text {sub_mod_hash_to_text[sub_mod_hash]} into {sanitized_text}")
 
             value_ranges = mod_id_to_values_ranges[sub_mod_hash]
 

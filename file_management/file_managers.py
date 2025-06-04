@@ -72,7 +72,10 @@ class PickleFile(ABC):
     _missing_data_msg = f"missing_ok is False when there is no data for class {__name__}"
 
     def __init__(self, path: Path = None):
-        self._path = path or Path.cwd() / 'file_management/dynamic_files/item_mods.pkl'
+        self._path = path or 'default_pkl_file.filetype'
+
+        self._path.parent.mkdir(parents=True, exist_ok=True)  # ensure directory exists
+        self._path.touch(exist_ok=True) # ensure file exists
 
         self._data = None
 
@@ -97,21 +100,22 @@ class PickleFile(ABC):
             return self._data
 
         with open(self._path, 'rb') as file:
-            data = pickle.load(file)
+            try:
+                data = pickle.load(file)
+                self._data = data
+            except EOFError:
+                if not missing_ok:
+                    raise
 
-            if not missing_ok and not data:
-                raise ValueError(self.__class__._missing_data_msg)
+                self._data = default
 
-            data = data if data else default  # If the pkl is empty then it returns None, but we want our default
-
-        self._data = data
-        return data
+        return self._data
 
 
 class ItemModsFile(PickleFile):
 
     def __init__(self, path: Path = None):
-        super().__init__(path)
+        super().__init__(path or Path.cwd() / 'file_management/dynamic_files/item_mods.pkl')
 
     def load(self, default: Any = None, missing_ok: bool = True) -> dict:
         return super().load(default=default, missing_ok=missing_ok)
