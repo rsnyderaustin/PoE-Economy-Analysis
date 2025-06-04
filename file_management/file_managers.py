@@ -21,6 +21,8 @@ class RawListingsFile:
 
     def save(self, new_records: list[dict]):
         self._path.parent.mkdir(parents=True, exist_ok=True)
+        self._path.touch(exist_ok=True)
+
         with open(self._path, 'a', encoding='utf-8') as f:
             for record in new_records:
                 json.dump(record, f)
