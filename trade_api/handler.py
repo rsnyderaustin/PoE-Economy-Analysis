@@ -1,6 +1,7 @@
 import math
 from copy import deepcopy
 from datetime import datetime
+from typing import Generator
 
 from shared import shared_utils
 from shared.logging import LogsHandler, LogFile
@@ -111,7 +112,7 @@ class TradeApiHandler:
 
         self.program_start = datetime.now()
 
-    def fetch_responses(self, queries: list[Query]):
+    def fetch_responses(self, queries: list[Query]) -> Generator[list[dict]]:
         for i, query in enumerate(queries):
             api_log.info(f"Processing query {i + 1} of {len(queries)} queries.")
             print(f"Processing query {i + 1} of {len(queries)} queries.")

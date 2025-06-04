@@ -35,6 +35,7 @@ class TrainingDataPopulator:
         self.listing_builder = listing_builder
 
         self._listing_gatekeeper = ListingImportGatekeeper(psql_manager=self.psql_manager)
+        self._raw_listings_file = RawListingsFile()
 
         self.env_loader = env_loading.EnvLoader()
 
@@ -69,6 +70,8 @@ class TrainingDataPopulator:
 
         responses_fetched = 0
         for responses in self.trade_api_handler.fetch_responses(training_queries):
+            self._raw_listings_file.save(responses)
+
             parsers = [ApiResponseParser(response) for response in responses]
             valid_parsers = [rp for rp in parsers
                              if self._listing_gatekeeper.listing_is_valid(listing_id=rp.listing_id,
