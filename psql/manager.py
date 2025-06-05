@@ -84,6 +84,9 @@ class PostgreSqlManager:
         if self.skip_sql:
             return
 
+        if not data:
+            return
+
         # Psql column names have a character limit of 63
         data = {col[:55]: val for col, val in data.items()}
 
