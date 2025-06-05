@@ -79,7 +79,8 @@ class TrainingDataPopulator:
 
             _log_memory_usage()
             responses_fetched += len(valid_parsers)
-            print(f"Fetched {len(valid_parsers)} API responses. Processing and inserting into PSQL.")
+            print(f"{len(valid_parsers)} valid API responses out of {len(parsers)} total API responses. "
+                  f"Processing and inserting into PSQL.")
 
             self._process_and_insert(valid_parsers)
 

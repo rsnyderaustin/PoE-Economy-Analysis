@@ -112,7 +112,7 @@ class TradeApiHandler:
 
         self.program_start = datetime.now()
 
-    def fetch_responses(self, queries: list[Query]) -> Generator[list[dict]]:
+    def fetch_responses(self, queries: list[Query]) -> Generator[list[dict], None, None]:
         for i, query in enumerate(queries):
             api_log.info(f"Processing query {i + 1} of {len(queries)} queries.")
             print(f"Processing query {i + 1} of {len(queries)} queries.")
