@@ -168,6 +168,17 @@ class DataFramePrep:
 
         return self
 
+    def apply_column_weights(self, weights: dict):
+        for col, weight in weights.items():
+            self._df[col] = self._df[col] * weight
+
+        return self
+
+    def remove_indices(self, indices):
+        self._df = self._df.iloc[indices]
+
+        return self
+
 
 class StatsPrep:
 
@@ -176,6 +187,9 @@ class StatsPrep:
 
     @staticmethod
     def _apply_determine_market_price(row):
+        """
+        Not currently in use
+        """
         listed_price = row['real_price']
         distances = pd.Series(row['distances'])
         weights = (1 / (distances + 0.1))
@@ -190,26 +204,28 @@ class StatsPrep:
         weighted_bottom = total_weight * 0.1
         weighted_top = total_weight * 0.35
 
+        """
         cum_weight = 0
         for current_weight, current_price in zip(sorted_weights, sorted_prices):
             cum_weight += current_weight
 
             if cum_weight >= weighted_bottom and listed_price < current_price:
-                """print(f"Listed price: {listed_price}\nReturned price: {current_price}"
-                      f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")"""
+                print(f"Listed price: {listed_price}\nReturned price: {current_price}"
+                      f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")
                 return current_price
 
             # If we hit the top of the weight range, then check the listed price against the
             # top of the price range (which is the loop's current price)
             if cum_weight >= weighted_top:
                 if listed_price > current_price:
-                    """print(f"Listed price: {listed_price}\nReturned price: {current_price}"
-                          f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")"""
+                    print(f"Listed price: {listed_price}\nReturned price: {current_price}"
+                          f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")
                     return current_price
                 else:  # This condition indicates that the listed price was within the bottom and top weight range
-                    """print(f"Listed price: {listed_price}\nReturned price: {listed_price}"
-                          f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")"""
+                    print(f"Listed price: {listed_price}\nReturned price: {listed_price}"
+                          f"\nSorted prices: {str(sorted_prices)}\nSorted weights: {str(sorted_weights)}")
                     return listed_price
+        """
 
     @staticmethod
     def _apply_visualize_neighbors(row, features_df: pd.DataFrame, return_data: dict):
@@ -259,7 +275,6 @@ class StatsPrep:
                                                prices: pd.Series,
                                                min_neighbors: int = 20,
                                                radius_range: float = 0.5) -> tuple[pd.Series, list]:
-        features_df = features_df.reset_index(drop=True)
         radius_neighbors = RadiusNeighborsRegressor(radius=radius_range)
         radius_neighbors.fit(features_df, prices)
         distances, indices = radius_neighbors.radius_neighbors(features_df)
@@ -335,11 +350,11 @@ class StatsPrep:
     def prep_dataframe(self, df: pd.DataFrame, price_column: str):
         df_prep = (
             DataFramePrep(df, price_col_name='divs')
-            .reset_index(drop=True)
             .fillna(0)
             .select_dtypes(['int64', 'float64'])
             .log_price(log_column_name='log_divs')
             .drop_nan_rows()
+            .reset_index(drop=True)
             .drop_overly_null_columns(max_percent_nulls=0.97)
             .drop_overly_modal_columns(max_percent_mode=0.97)
         )
@@ -367,16 +382,14 @@ class StatsPrep:
         if column_pairs:
             df_prep.create_paired_columns(column_pairs)
 
-        df_prep.normalize_features()
+        (df_prep
+         .normalize_features()
+         .apply_column_weights(weights={**single_column_weights, **column_pair_weights})
+         )
 
         """igs = dict(zip(norm_features.columns, mutual_info_regression(norm_features, prices)))
         igs = {col: ig for col, ig in igs.items() if ig >= 0.10}
         norm_features = norm_features[list(igs.keys())]"""
-
-        single_column_weights = {utils.normalize_column_name(col): weight for col, weight in single_column_weights.items()}
-        column_pair_weights = {utils.normalize_column_name(col): weight for col, weight in column_pair_weights.items()}
-        norm_features = cls._weight_data(features_df=norm_features,
-                                         column_weights={**single_column_weights, **column_pair_weights})
 
         """plot = pd.concat([tr_features, log_prices])
 
@@ -388,13 +401,12 @@ class StatsPrep:
 
         stats_log.info("Determining correct prices and isolated indices via NearestNeighbor.")
         # We pass in prices instead of log_prices here on purpose to KNN
-        new_prices, out_of_range_indices = cls._normalize_prices_via_nearest_neighbor(
-            features_df=norm_features.copy(),
-            prices=prices.copy()
+        new_prices, out_of_range_indices = self._normalize_prices_via_nearest_neighbor(
+            features_df=df_prep.fetch_features(),
+            prices=df_prep.fetch_log_price_column
         )
 
-        tr_features = tr_features[~tr_features.index.isin(out_of_range_indices)]
-        df = tr_features
+        df_prep.remove_indices(out_of_range_indices)
 
         df[price_column] = new_prices
         df[f"log_{price_column}"] = np.log1p(new_prices)
