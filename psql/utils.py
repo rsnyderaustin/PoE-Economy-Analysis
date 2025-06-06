@@ -1,8 +1,6 @@
-
-import re
 from typing import Iterable
 
-from shared.logging import LogFile, LogsHandler, log_errors
+from program_logging import LogFile, LogsHandler, log_errors
 
 psql_log = LogsHandler().fetch_log(log_e=LogFile.PSQL)
 

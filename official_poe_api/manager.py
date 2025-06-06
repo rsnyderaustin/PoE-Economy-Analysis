@@ -1,13 +1,10 @@
-
-import json
 from enum import Enum
-from pathlib import Path
 from urllib.parse import urljoin
 
 import requests
 
 from shared import shared_utils
-from shared.logging import LogsHandler, LogFile
+from program_logging import LogsHandler, LogFile
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 

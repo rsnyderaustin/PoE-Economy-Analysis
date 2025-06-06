@@ -1,6 +1,6 @@
 
 from poe2db_scrape.mods_management import Poe2DbModsManager
-from shared.logging import LogsHandler, LogFile
+from program_logging import LogsHandler, LogFile
 from .atype_manager_factory import AtypeManagerFactory
 from .data_pull import PoecdDataPuller
 from .internal_source_store import PoecdSourceStore

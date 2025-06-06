@@ -1,11 +1,8 @@
-
-import logging
-
 import sqlalchemy
 from sqlalchemy import text, inspect
 
-from shared.env_loading import EnvLoader
-from shared.logging import LogsHandler, LogFile
+from core.env_loading import EnvLoader
+from program_logging import LogsHandler, LogFile
 from . import utils
 
 psql_log = LogsHandler().fetch_log(LogFile.PSQL)

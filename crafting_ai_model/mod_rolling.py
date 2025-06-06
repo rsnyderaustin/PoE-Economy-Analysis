@@ -1,6 +1,6 @@
 import random
 
-from file_management import ItemModsFile
+from file_management.file_managers import ItemModsFile
 from instances_and_definitions import ModifiableListing, ItemMod
 from shared.enums.item_enums import ModAffixType, AType
 from shared.enums.trade_enums import ModClass

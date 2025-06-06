@@ -1,5 +1,5 @@
 from data_handling import ListingBuilder
-from file_management import RawListingsFile
+from file_management.file_managers import RawListingsFile
 from operations_coordination.populate_training_data import TrainingDataPopulator
 from psql import PostgreSqlManager
 

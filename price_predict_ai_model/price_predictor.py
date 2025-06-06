@@ -1,7 +1,7 @@
 from data_transforming import ListingsTransforming
-from file_management import PricePredictModelFiles
+from file_management.file_managers import PricePredictModelFiles
 from instances_and_definitions import ModifiableListing
-from shared.logging import LogsHandler, LogFile, log_errors
+from program_logging import LogsHandler, LogFile, log_errors
 
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)

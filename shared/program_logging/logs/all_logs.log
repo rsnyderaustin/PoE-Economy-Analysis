@@ -1,0 +1,139 @@
+2025-06-05 18:17:13,936 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:17:36,590 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:17:39,262 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:45:22,683 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:45:44,199 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:45:45,624 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:46:18,582 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:46:19,818 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:47:38,005 - INFO - Columns removed from PricePredict DataFrame:
+{'reload_time', 'minutes_since_listed', 'elemental_dps', 'exalts', 'divs', 'critical_hit_chance', 'currency_amount', 'fire_dps', 'lightning_dps', 'open_prefixes', 'category', 'identified', 'ilvl', 'rarity', 'date_fetched', 'chaos_dps', 'cold_dps', 'open_suffixes', 'currency', 'corrupted', 'listing_id', 'chaos_damage'}
+
+2025-06-05 18:48:11,866 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:48:13,160 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:52:11,004 - INFO - Columns removed from PricePredict DataFrame:
+{'currency_amount', 'cold_dps', 'date_fetched', 'fire_dps', 'minutes_since_listed', 'divs', 'chaos_damage', 'currency', 'ilvl', 'category', 'identified', 'elemental_dps', 'lightning_dps', 'rarity', 'open_suffixes', 'reload_time', 'open_prefixes', 'corrupted', 'chaos_dps', 'critical_hit_chance', 'exalts', 'listing_id'}
+
+2025-06-05 18:53:20,160 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:53:21,462 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:53:39,581 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'cold_dps', 'fire_dps', 'lightning_dps', 'elemental_dps', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'divs', 'chaos_dps', 'listing_id']
+
+2025-06-05 18:54:02,990 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:54:04,228 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:55:46,188 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:55:47,418 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:55:56,251 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'cold_dps', 'fire_dps', 'lightning_dps', 'elemental_dps', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'divs', 'chaos_dps', 'listing_id']
+
+2025-06-05 18:57:47,248 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:57:48,491 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:57:55,768 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'divs', 'listing_id']
+
+2025-06-05 18:58:12,034 - INFO - Connecting to PSQL database.
+
+2025-06-05 18:58:13,302 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 18:59:03,862 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'divs', 'listing_id']
+
+2025-06-05 19:00:41,564 - INFO - Connecting to PSQL database.
+
+2025-06-05 19:00:42,771 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 19:00:49,795 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:00:50,186 - INFO - Valid column correlation ('max_quality_pdps', 'mod_adds_n_to_n_physical_damage'): 0.40915067878915845
+
+2025-06-05 19:00:50,473 - INFO - Determining correct prices and isolated indices via NearestNeighbor.
+
+2025-06-05 19:01:09,218 - INFO - Connecting to PSQL database.
+
+2025-06-05 19:01:10,511 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 19:01:17,819 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:03:53,021 - INFO - Valid column correlation ('max_quality_pdps', 'mod_adds_n_to_n_physical_damage'): 0.40915067878915845
+
+2025-06-05 19:03:55,093 - INFO - Determining correct prices and isolated indices via NearestNeighbor.
+
+2025-06-05 19:04:59,506 - INFO - Connecting to PSQL database.
+
+2025-06-05 19:05:00,848 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 19:05:17,554 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:05:21,654 - INFO - Valid column correlation ('max_quality_pdps', 'mod_adds_n_to_n_physical_damage'): 0.41032039459986497
+
+2025-06-05 19:05:22,669 - INFO - Determining correct prices and isolated indices via NearestNeighbor.
+
+2025-06-05 19:47:16,352 - INFO - Connecting to PSQL database.
+
+2025-06-05 19:47:41,684 - INFO - Connecting to PSQL database.
+
+2025-06-05 19:47:43,124 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 19:47:50,562 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:47:52,489 - INFO - Valid column correlation ('max_quality_pdps', 'mod_adds_n_to_n_physical_damage'): 0.41032039459986497
+
+2025-06-05 19:52:16,026 - INFO - Determining correct prices and isolated indices via NearestNeighbor.
+
+2025-06-05 19:58:05,450 - INFO - Connecting to PSQL database.
+
+2025-06-05 19:58:06,818 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 19:58:15,816 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:58:17,412 - INFO - Valid column correlation ('max_quality_pdps', 'mod_adds_n_to_n_physical_damage'): 0.41032039459986497
+
+2025-06-05 19:58:21,256 - INFO - Determining correct prices and isolated indices via NearestNeighbor.
+
+2025-06-05 20:05:59,660 - INFO - Connecting to PSQL database.
+
+2025-06-05 20:07:21,449 - INFO - Connecting to PSQL database.
+
+2025-06-05 20:07:22,692 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 20:07:28,804 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 20:07:48,228 - INFO - Valid column correlation ('max_quality_pdps', 'mod_adds_n_to_n_physical_damage'): 0.4106784360770837
+
+2025-06-05 20:07:49,068 - INFO - Determining correct prices and isolated indices via NearestNeighbor.
+
+2025-06-05 20:10:21,929 - INFO - Connecting to PSQL database.
+
+2025-06-05 20:10:23,126 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-05 20:10:30,228 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 20:10:30,652 - INFO - Valid column correlation ('max_quality_pdps', 'mod_adds_n_to_n_physical_damage'): 0.4099679941210545
+
+2025-06-05 20:10:30,871 - INFO - Determining correct prices and isolated indices via NearestNeighbor.
+

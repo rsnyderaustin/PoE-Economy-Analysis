@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import tempfile
 from abc import ABC
@@ -7,11 +6,8 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Optional
 
-from instances_and_definitions import ItemMod
-from poe2db_scrape.mods_management import Poe2DbModsManager
 from shared.enums.item_enums import AType
 from . import i_o_utils
-from shared.logging import log_errors
 
 
 class RawListingsFile:
@@ -130,7 +126,7 @@ class Poe2DbModsManagerFile(PickleFile):
     def __init__(self, path: Path = None):
         super().__init__(path or Path.cwd() / 'file_management/static_files/poe2db_mods_manager.pkl')
 
-    def load(self, default: Any = None, missing_ok: bool = True) -> Poe2DbModsManager:
+    def load(self, default: Any = None, missing_ok: bool = True) -> 'Poe2DbModsManager':
         return super().load(default=default, missing_ok=missing_ok)
 
 

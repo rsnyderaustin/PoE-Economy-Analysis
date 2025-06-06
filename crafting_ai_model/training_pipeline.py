@@ -5,10 +5,9 @@ from stable_baselines3.common.env_checker import check_env
 
 from data_handling import ListingBuilder, ApiResponseParser
 from instances_and_definitions import ModifiableListing
-from file_management import CraftingSimulatorFiles, RawListingsFile
-from poe2db_scrape.mods_management import Poe2DbModsManager
+from file_management.file_managers import CraftingSimulatorFiles
 from price_predict_ai_model import PricePredictor
-from shared.logging import LogsHandler, LogFile, log_errors
+from program_logging import LogsHandler, LogFile, log_errors
 from trade_api import TradeApiHandler
 from trade_api.query import QueryPresets
 from .environment import CraftingEnvironment

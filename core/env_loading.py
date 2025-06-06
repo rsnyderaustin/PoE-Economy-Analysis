@@ -25,6 +25,4 @@ class EnvLoader:
     def get_env(self, env_var: str):
         return os.getenv(env_var)
 
-
 env_loader = EnvLoader()
-

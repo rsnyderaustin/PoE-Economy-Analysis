@@ -1,11 +1,10 @@
-from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime
 
 from shared import shared_utils
 from shared.enums.item_enums import AType
 from shared.enums.trade_enums import ModClass, Currency, Rarity
-from shared.logging import LogsHandler, LogFile
+from program_logging import LogsHandler, LogFile
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 

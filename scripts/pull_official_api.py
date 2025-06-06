@@ -1,4 +1,4 @@
-from file_management import OfficialStatsFile, OfficialStaticFile
+from file_management.file_managers import OfficialStatsFile, OfficialStaticFile
 from official_poe_api import OfficialApiPuller, OfficialEndpoint
 
 api_m = OfficialApiPuller()

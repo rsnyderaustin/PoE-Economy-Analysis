@@ -1,8 +1,8 @@
-import logging
+import program_logging
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
-from file_management import CurrencyConversionsFile
+from file_management.file_managers import CurrencyConversionsFile
 from shared.enums.trade_enums import Currency
 
 
@@ -16,6 +16,7 @@ class CurrencyConverter:
         return cls._instance
 
     def __init__(self):
+
         if self._initialized:
             return
         self._initialized = True
@@ -45,7 +46,7 @@ class CurrencyConverter:
 
         days_between = (closest_date - relevant_date).days
         if days_between >= 3:
-            logging.error(f"Date between relevant date and closest currency price observation dates in "
+            program_logging.error(f"Date between relevant date and closest currency price observation dates in "
                           f"CurrencyConverter.convert_to_divs is {days_between}.")
 
         exchange_rate = self.conversions_dict[closest_date][currency.value]

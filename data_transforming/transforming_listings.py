@@ -3,12 +3,12 @@ import pprint
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
+import core
 import shared
 from instances_and_definitions import ModifiableListing
-from shared import shared_utils
 from shared.enums import ItemEnumGroups, WhichCategoryType
 from shared.enums.item_enums import AType, LocalMod, CalculatedMod
-from shared.logging import LogsHandler, LogFile, log_errors
+from program_logging import LogsHandler, LogFile, log_errors
 
 lh = LogsHandler()
 parse_log = lh.fetch_log(LogFile.API_PARSING)
@@ -63,9 +63,9 @@ class CalculatorRegistry:
         return {input_col for calc in calcs for input_col in calc.input_columns}
 
     @classmethod
-    def calculated_columns(cls) -> set[str]:
-        calcs = {calc for item_category, calcs in cls._item_atype_to_calculators.items() for calc in calcs}
-        return {calc_col for calc in calcs for calc_col in calc.calculated_columns}
+    def calculated_columns(cls) -> list[str]:
+        calcs = [calc for item_category, calcs in cls._item_atype_to_calculators.items() for calc in calcs]
+        return [calc_col for calc in calcs for calc_col in calc.calculated_columns]
 
 
 @CalculatorRegistry.register
@@ -106,7 +106,11 @@ class NonPhysicalDpsCalculator(ListingFeatureCalculator):
     applicable_atypes = ItemEnumGroups.fetch_martial_weapons(which=WhichCategoryType.ATYPE)
     input_columns = {LocalMod.CHAOS_DAMAGE, LocalMod.COLD_DAMAGE, LocalMod.FIRE_DAMAGE, LocalMod.LIGHTNING_DAMAGE,
                      LocalMod.ATTACKS_PER_SECOND}
-    calculated_columns = {CalculatedMod.COLD_DPS, CalculatedMod.FIRE_DPS, CalculatedMod.LIGHTNING_DPS, CalculatedMod.ELEMENTAL_DPS}
+    calculated_columns = {CalculatedMod.COLD_DPS.value,
+                          CalculatedMod.FIRE_DPS.value,
+                          CalculatedMod.LIGHTNING_DPS.value,
+                          CalculatedMod.CHAOS_DPS.value,
+                          CalculatedMod.ELEMENTAL_DPS.value}
 
     @classmethod
     @log_errors(parse_log)
@@ -152,9 +156,12 @@ class ListingsTransforming:
         'corrupted': bool
     }
 
+    # PricePredictDf naturally only includes mod columns. So we have to explicitly include other columns to feed into
+    # the model
     _price_predict_specific_cols = {
         'minutes_since_league_start',
         'atype',
+        'divs',
         *CalculatorRegistry.calculated_columns()
     }
 
@@ -205,9 +212,9 @@ class ListingsTransforming:
         return compiled_data
 
     @classmethod
-    def _determine_valid_price_predict_columns(cls, df) -> set[str]:
-        mod_cols = {col for col in df.columns if col.startswith('mod_')}
-        valid_cols = {*cls._price_predict_specific_cols, *mod_cols}
+    def _determine_valid_price_predict_columns(cls, df) -> list[str]:
+        mod_cols = [col for col in df.columns if col.startswith('mod_')]
+        valid_cols = [*cls._price_predict_specific_cols, *mod_cols]
         return valid_cols
 
     @staticmethod
@@ -246,9 +253,9 @@ class ListingsTransforming:
         df = df.drop_duplicates()
 
         cols = cls._determine_valid_price_predict_columns(df)
-        removed_cols = {col for col in df.columns if col not in cols}
 
-        price_predict_log.info(f"Columns removed from PricePredict DataFrame:\n{removed_cols}")
+        price_predict_log.info(f"Columns removed from PricePredict DataFrame:\n"
+                               f"{[col for col in df.columns if col not in cols]}")
 
         df = df[cols]
 
@@ -333,7 +340,7 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        self.flattened_data['divs'] = shared.CurrencyConverter().convert_to_divs(
+        self.flattened_data['divs'] = core.CurrencyConverter().convert_to_divs(
             currency=self.listing.currency,
             currency_amount=self.listing.currency_amount,
             relevant_date=self.listing.date_fetched

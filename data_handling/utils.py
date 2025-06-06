@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import pytz
 from dateutil.parser import isoparse
 
-from shared.logging import log_errors
+from program_logging import log_errors
 
 _dt = datetime(2025, 4, 4, 12, 0, 0)
 _pacific = pytz.timezone('US/Pacific')

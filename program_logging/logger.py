@@ -1,10 +1,11 @@
-import logging
+
 from abc import ABC
 from enum import Enum
+import logging
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
-logging_path = Path.cwd() / 'shared/logging/logs/all_logs.log'
+logging_path = Path.cwd() / 'shared/program_logging/logs/all_logs.log'
 logging_path.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
@@ -15,19 +16,24 @@ logging.basicConfig(
 
 
 class LogFile(Enum):
-    API_PARSING = Path.cwd() / 'shared/logging/logs/api_parsing.log'
-    CRAFTING_MODEL = Path.cwd() / 'shared/logging/logs/crafting_model.log'
-    STATS_PREP = Path.cwd() / 'shared/logging/logs/stats_prep.log'
-    EXTERNAL_APIS = Path.cwd() / 'shared/logging/logs/external_apis.log'
-    PSQL = Path.cwd() / 'shared/logging/logs/psql.log'
-    PRICE_PREDICT_MODEL = Path.cwd() / 'shared/logging/logs/price_predict_model.log'
-    INPUT_OUTPUT = Path.cwd() / 'shared/logging/logs/input_output.log'
-    PROGRAM_OVERVIEW = Path.cwd() / 'shared/logging/logs/program_overview.log'
+    API_PARSING = Path.cwd() / 'shared/program_logging/logs/api_parsing.log'
+    CRAFTING_MODEL = Path.cwd() / 'shared/program_logging/logs/crafting_model.log'
+    STATS_PREP = Path.cwd() / 'shared/program_logging/logs/stats_prep.log'
+    EXTERNAL_APIS = Path.cwd() / 'shared/program_logging/logs/external_apis.log'
+    PSQL = Path.cwd() / 'shared/program_logging/logs/psql.log'
+    PRICE_PREDICT_MODEL = Path.cwd() / 'shared/program_logging/logs/price_predict_model.log'
+    INPUT_OUTPUT = Path.cwd() / 'shared/program_logging/logs/input_output.log'
+    PROGRAM_OVERVIEW = Path.cwd() / 'shared/program_logging/logs/program_overview.log'
 
 
 class Logger(ABC):
 
-    def __init__(self, log_name: LogFile | str, rotate_logs: bool = True, file_path: Path = None, formatter: logging.Formatter = None):
+    def __init__(self,
+                 log_name: LogFile | str,
+                 rotate_logs: bool = True,
+                 file_path: Path = None,
+                 formatter: logging.Formatter = None
+                 ):
         logger_name = log_name if isinstance(log_name, str) else log_name.name
         file_path = Path(file_path or log_name.value if isinstance(log_name, LogFile) else f'logs/{logger_name}.log')
         file_path.parent.mkdir(parents=True, exist_ok=True)

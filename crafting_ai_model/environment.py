@@ -7,7 +7,7 @@ import numpy as np
 
 from instances_and_definitions import ItemMod, ItemSkill
 from price_predict_ai_model import PricePredictor
-from shared.currency_converter import CurrencyConverter
+from core.currency_converter import CurrencyConverter
 from .currency_engines import *
 from .currency_engines import CurrencyEngine
 from .mod_rolling import ModRoller

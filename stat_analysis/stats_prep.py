@@ -2,10 +2,10 @@ import itertools
 
 import numpy as np
 import pandas as pd
-from sklearn.neighbors import RadiusNeighborsClassifier
+from sklearn.neighbors import RadiusNeighborsRegressor
 from sklearn.preprocessing import StandardScaler
 
-from shared.logging import LogFile, LogsHandler
+from program_logging import LogFile, LogsHandler
 from . import utils
 
 stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
@@ -14,17 +14,23 @@ stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
 class CorrelationAnalyzer:
 
     @staticmethod
-    def determine_single_column_weights(features, prices, correlation_threshold: float) -> dict:
+    def determine_single_column_weights(features,
+                                        prices,
+                                        correlation_threshold: float,
+                                        weight_multiplier: float = None) -> dict:
         corrs = features.corrwith(prices)
         mod_weights = dict()
         for mod, corr in corrs.items():
             if corr >= correlation_threshold:
                 mod_weights[mod] = corr
 
+        if weight_multiplier:
+            mod_weights = {mod: weight * weight_multiplier for mod, weight in mod_weights.items()}
+
         return mod_weights
 
     @staticmethod
-    def determine_pair_column_weights(features: pd.DataFrame,
+    def determine_column_pair_weights(features: pd.DataFrame,
                                       prices,
                                       correlation_threshold: float) -> dict:
         mod_combinations = list(itertools.combinations(features.columns, 2))
@@ -59,47 +65,114 @@ class CorrelationAnalyzer:
         return valid_pairs_weights
 
 
+class DataFramePrep:
+
+    def __init__(self,
+                 dataframe: pd.DataFrame,
+                 price_col_name: str):
+        self._df = dataframe
+
+        self.price_col_name = price_col_name
+        self.log_col_name = None
+
+    def __getattr__(self, attr):
+        # Delegate all missing attributes to the internal DataFrame
+        return getattr(self._df, attr)
+
+    def __getitem__(self, key):
+        return self._df[key]
+
+    def __setitem__(self, key, value):
+        self._df[key] = value
+
+    def __repr__(self):
+        return repr(self._df)
+
+    @property
+    def df(self):
+        return self._df
+
+    def log_price(self,
+                  price_col_name: str,
+                  log_col_name: str):
+        self.df[log_col_name] = np.log1p(self.df[price_col_name])
+        self.log_col_name = log_col_name
+        return self
+
+    def fetch_price_column(self):
+        return self.df[self.price_col_name]
+
+    def fetch_log_price_column(self):
+        return self.df[self.log_col_name]
+
+    def fetch_features(self) -> pd.DataFrame:
+        target_cols = [col for col in [self.price_col_name, self.log_col_name] if col is not None]
+        feature_cols = [col for col in self._df.columns if col not in target_cols]
+
+        return self._df[feature_cols]
+
+    def drop_nan_rows(self):
+        features_df = self.fetch_features()
+
+        valid_indices = features_df[~((features_df == 0) | (pd.isna(features_df))).all(axis=1)].index
+
+        self._df = self._df.loc[valid_indices]
+
+    def drop_overly_null_columns(self, max_percent_nulls: float):
+        null_counts = dict()
+        for col in self._df.columns:
+            zero_rows = self._df[col] == 0
+            na_rows = pd.isna(self._df[col])
+            null_rows = zero_rows | na_rows
+
+            null_counts[col] = null_rows.sum()
+
+        valid_cols = [col for col, nulls_count in null_counts.items()
+                      if nulls_count / len(self._df) < max_percent_nulls]
+        self._df = self._df[valid_cols]
+
+        return self
+
+    def drop_overly_modal_columns(self, max_percent_mode: float):
+        mode_counts = dict()
+        for col in self._df.columns:
+            mode_value = self._df[col].mode()[0]
+            mode_counts[col] = (self._df[col] == mode_value).sum()
+
+        valid_cols = [col for col, mode_count in mode_counts.items()
+                      if mode_count / len(self._df) < max_percent_mode]
+        self._df = self._df[valid_cols]
+
+        return self
+
+    def create_paired_columns(self, column_pairs: list):
+        paired_cols = dict()
+        for mod1, mod2 in column_pairs:
+            paired_cols[f"{mod1}_{mod2}"] = self._df[mod1] * self._df[mod2]
+
+        for col_name, col in paired_cols.items():
+            self._df[col_name] = col
+
+        return self
+
+    def normalize_features(self):
+        features_df = self.fetch_features()
+        original_cols = features_df.columns
+
+        scaler = StandardScaler()
+        new_data = scaler.fit_transform(features_df)
+        new_df = pd.DataFrame(new_data)
+        new_df.columns = original_cols
+
+        self._df = new_df
+
+        return self
+
+
 class StatsPrep:
 
-    @classmethod
-    def _determine_insignificant_columns(cls,
-                                         features_df: pd.DataFrame,
-                                         non_null_count_threshold: int = 50,
-                                         non_mode_count_threshold: int = 50,
-                                         non_mode_percent_threshold: float = 0.02,
-                                         non_null_percent_threshold: float = 0.02) -> set[str]:
-        invalid_cols = set()
-        empty_cols = features_df.columns[((features_df == 0) | (pd.isna(features_df))).all()]
-        invalid_cols.update(empty_cols)
-
-        null_counts = cls._determine_null_counts(features_df)
-        mode_counts = cls._determine_mode_counts(features_df)
-
-        total_count = len(features_df)
-        for col in features_df.columns:
-            non_nulls = total_count - null_counts[col]
-            non_nulls_percent = non_nulls / total_count
-
-            if non_nulls < non_null_count_threshold:
-                invalid_cols.add(col)
-                continue
-
-            if non_nulls_percent < non_null_percent_threshold:
-                invalid_cols.add(col)
-                continue
-
-            non_modes = total_count - mode_counts[col]
-            non_modes_percent = non_modes / total_count
-
-            if non_modes < non_mode_count_threshold:
-                invalid_cols.add(col)
-                continue
-
-            if non_modes_percent < non_mode_percent_threshold:
-                invalid_cols.add(col)
-                continue
-
-        return invalid_cols
+    def __init__(self, plot_visuals):
+        self._plot_visuals = plot_visuals
 
     @staticmethod
     def _apply_determine_market_price(row):
@@ -187,7 +260,7 @@ class StatsPrep:
                                                min_neighbors: int = 20,
                                                radius_range: float = 0.5) -> tuple[pd.Series, list]:
         features_df = features_df.reset_index(drop=True)
-        radius_neighbors = RadiusNeighborsClassifier(radius=radius_range, weights='distance')
+        radius_neighbors = RadiusNeighborsRegressor(radius=radius_range)
         radius_neighbors.fit(features_df, prices)
         distances, indices = radius_neighbors.radius_neighbors(features_df)
 
@@ -215,17 +288,6 @@ class StatsPrep:
 
         prices = df.apply(cls._apply_determine_market_price, axis=1)
         return prices, isolated_indices
-
-    @staticmethod
-    def _normalize_data(features_df: pd.DataFrame) -> pd.DataFrame:
-        original_cols = features_df.columns
-
-        features_df.columns = [utils.normalize_column_name(col) for col in features_df.columns]
-        scaler = StandardScaler()
-        new_data = scaler.fit_transform(features_df)
-        new_df = pd.DataFrame(new_data)
-        new_df.columns = original_cols
-        return new_df
 
     @staticmethod
     def _pair_columns(features_df: pd.DataFrame,
@@ -270,61 +332,51 @@ class StatsPrep:
 
         return null_counts
 
-    @staticmethod
-    def _prep_dataframe(df: pd.DataFrame, price_column: str) -> tuple:
-        df = df.reset_index(drop=True)
-        df = df.select_dtypes(['int64', 'float64'])
-        df = df.fillna(0)
-
-        df[f"log_{price_column}"] = np.log1p(df[price_column])
-
-        features_df = df.drop(columns=[price_column, f"log_{price_column}"])
-        prices = df[price_column]
-        log_prices = df[f"log_{price_column}"]
-
-        # Drop all rows where all values are either 0 or NaN
-        features_df = features_df[~((features_df == 0) | (pd.isna(features_df))).all(axis=1)]
-
-        return features_df, prices, log_prices
-
-    @classmethod
-    def prep_dataframe(cls, df: pd.DataFrame, price_column: str):
-        features_df, prices, log_prices = cls._prep_dataframe(df,
-                                                              price_column=price_column)
-
-        insignificant_cols = cls._determine_insignificant_columns(features_df=features_df)
-        features_df = features_df.drop(columns=list(insignificant_cols))
+    def prep_dataframe(self, df: pd.DataFrame, price_column: str):
+        df_prep = (
+            DataFramePrep(df, price_col_name='divs')
+            .reset_index(drop=True)
+            .fillna(0)
+            .select_dtypes(['int64', 'float64'])
+            .log_price(log_column_name='log_divs')
+            .drop_nan_rows()
+            .drop_overly_null_columns(max_percent_nulls=0.97)
+            .drop_overly_modal_columns(max_percent_mode=0.97)
+        )
+        features_df = df_prep.fetch_features()
 
         single_column_weights = CorrelationAnalyzer.determine_single_column_weights(
             features=features_df,
-            prices=log_prices,
-            correlation_threshold=0.4
+            prices=df_prep.fetch_log_price_columns,
+            correlation_threshold=0.4,
+            weight_multiplier=2.5
         )
-        single_column_weights = {col: weight * 2.5 for col, weight in single_column_weights.items()}
 
-        pair_column_weights = CorrelationAnalyzer.determine_pair_column_weights(
+        column_pair_weights = CorrelationAnalyzer.determine_column_pair_weights(
             features=features_df,
-            prices=log_prices,
+            prices=df_prep.fetch_log_price_columns,
             correlation_threshold=0.4
         )
-        if not single_column_weights and not pair_column_weights:
+
+        if not single_column_weights and not column_pair_weights:
             return
 
-        valid_columns = list(single_column_weights.keys()) + list(pair_column_weights.keys())
+        column_pairs = list(column_pair_weights.keys())
+        single_columns = list(single_column_weights.keys())
 
-        tr_features = cls._pair_columns(features_df=features_df.copy(),
-                                        columns=valid_columns)
+        if column_pairs:
+            df_prep.create_paired_columns(column_pairs)
 
-        norm_features = cls._normalize_data(features_df=tr_features.copy())
+        df_prep.normalize_features()
 
         """igs = dict(zip(norm_features.columns, mutual_info_regression(norm_features, prices)))
         igs = {col: ig for col, ig in igs.items() if ig >= 0.10}
         norm_features = norm_features[list(igs.keys())]"""
 
         single_column_weights = {utils.normalize_column_name(col): weight for col, weight in single_column_weights.items()}
-        pair_column_weights = {utils.normalize_column_name(col): weight for col, weight in pair_column_weights.items()}
+        column_pair_weights = {utils.normalize_column_name(col): weight for col, weight in column_pair_weights.items()}
         norm_features = cls._weight_data(features_df=norm_features,
-                                         column_weights={**single_column_weights, **pair_column_weights})
+                                         column_weights={**single_column_weights, **column_pair_weights})
 
         """plot = pd.concat([tr_features, log_prices])
 

@@ -5,11 +5,10 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
 from data_transforming import ListingsTransforming
-from file_management import PricePredictModelFiles
+from file_management.file_managers import PricePredictModelFiles
 from price_predict_ai_model import visuals
 from psql import PostgreSqlManager
-from shared import env_loader
-from shared.logging import LogFile, LogsHandler
+from program_logging import LogFile, LogsHandler
 from stat_analysis.stats_prep import StatsPrep
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
@@ -18,12 +17,11 @@ price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 class PricePredictModelPipeline:
     def __init__(self,
                  price_predict_files: PricePredictModelFiles,
-                 psql_manager: PostgreSqlManager,
-                 should_plot_visuals=False):
+                 psql_manager: PostgreSqlManager):
         self._files_manager = price_predict_files
-        self.psql_manager = psql_manager
+        self._psql_manager = psql_manager
 
-        self.should_plot_visuals = should_plot_visuals
+        self.should_plot_visuals = None
 
         self.model = None
 
@@ -35,15 +33,15 @@ class PricePredictModelPipeline:
         hess = np.ones_like(y_true) * 0.1
         return grad, hess
 
-    def run(self, plot_visuals=False):
+    def run(self, plot_visuals):
         self.should_plot_visuals = plot_visuals
+        stats_prep = StatsPrep(plot_visuals=plot_visuals)
 
-        table_name = env_loader.get_env("PSQL_TRAINING_TABLE")
-        raw_data = self.psql_manager.fetch_table_data(table_name)
+        raw_data = self._psql_manager.fetch_table_data(table_name='listings')
         model_df = ListingsTransforming.to_price_predict_df(rows=raw_data)
 
         for atype, atype_df in model_df.groupby('atype'):
-            atype_df = StatsPrep.prep_dataframe(df=atype_df, price_column='divs')
+            atype_df = stats_prep.prep_dataframe(df=atype_df, price_column='divs')
 
             if atype_df is None:
                 continue

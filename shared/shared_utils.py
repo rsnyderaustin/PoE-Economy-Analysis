@@ -1,11 +1,8 @@
-import logging
 import re
-from datetime import datetime, date, timezone
+from datetime import datetime, timezone
 from typing import Iterable
-from zoneinfo import ZoneInfo
 
-from shared.enums.trade_enums import Currency
-from shared.logging import LogsHandler, LogFile
+from program_logging import LogsHandler, LogFile
 
 
 def extract_average_from_text(text) -> float:

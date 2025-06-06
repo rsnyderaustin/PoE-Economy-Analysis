@@ -1,13 +1,13 @@
 
 print("Entered Python file for fill_training_data.py")
 
-import logging
+import program_logging
 
 import psql
 from operations_coordination.populate_training_data import TrainingDataPopulator
-from file_management import RawListingsFile
+from file_management.file_managers import RawListingsFile
 
-logging.basicConfig(level=logging.INFO)
+program_logging.basicConfig(level=program_logging.INFO)
 
 print("Loading PSQL manager.")
 psql_m = psql.PostgreSqlManager(skip_sql=False)

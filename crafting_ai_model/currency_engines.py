@@ -7,7 +7,7 @@ from instances_and_definitions import ModifiableListing
 from shared import ATypeGroups
 from shared.enums.item_enums import AType
 from shared.enums.trade_enums import Rarity, ModClass, Currency
-from shared.logging import LogsHandler, LogFile, log_errors
+from program_logging import LogsHandler, LogFile, log_errors
 from . import utils
 
 craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
