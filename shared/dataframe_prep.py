@@ -93,6 +93,8 @@ class DataFramePrep:
         invalid_cols = [col for col in self.features.columns
                         if null_counts[col] / len(self._df) > max_percent_nulls]
 
+        if invalid_cols:
+            print(f"Dropping overly-null columns: {invalid_cols}")
         self._df = self._df.drop(columns=invalid_cols)
 
         return self
@@ -100,12 +102,20 @@ class DataFramePrep:
     def drop_overly_modal_columns(self, max_percent_mode: float):
         mode_counts = dict()
         for col in self.features.columns:
-            mode_order = self._df[col].mode()
-            mode_value = mode_order[0]
+            modes = self._df[col].mode()
+
+            # This most likely happens when rows in the DataFrame are entirely filtered out
+            if modes.empty:
+                mode_counts[col] = float('inf')
+                continue
+
+            mode_value = modes[0]
             mode_counts[col] = (self._df[col] == mode_value).sum()
 
         invalid_cols = [col for col in self.features.columns
                         if mode_counts[col] / len(self._df) > max_percent_mode]
+        if invalid_cols:
+            print(f"Dropping overly-modal columns: {invalid_cols}")
 
         self._df = self._df.drop(columns=invalid_cols)
 
@@ -114,7 +124,7 @@ class DataFramePrep:
     def create_paired_columns(self, column_pairs: list):
         paired_cols = dict()
         for mod1, mod2 in column_pairs:
-            paired_cols[f"{mod1}_{mod2}"] = self._df[mod1] * self._df[mod2]
+            paired_cols[(mod1, mod2)] = self._df[mod1] * self._df[mod2]
 
         for col_name, col in paired_cols.items():
             self._df[col_name] = col
