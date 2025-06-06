@@ -3,3 +3,4 @@ file_management/dynamic_files/
 program_logging/logs/
 .pyc*
 __pycache__/
+*.log
