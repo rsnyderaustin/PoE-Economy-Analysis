@@ -10,6 +10,7 @@ from price_predict_ai_model import visuals
 from psql import PostgreSqlManager
 from program_logging import LogFile, LogsHandler
 from stat_analysis.stats_prep import StatsPrep
+from shared.dataframe_prep import DataFramePrep
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
@@ -33,41 +34,38 @@ class PricePredictModelPipeline:
         hess = np.ones_like(y_true) * 0.1
         return grad, hess
 
-    def run(self, plot_visuals):
-        self.should_plot_visuals = plot_visuals
-        stats_prep = StatsPrep(plot_visuals=plot_visuals)
+    def run(self,
+            should_plot_visuals,
+            price_col_name: str):
+        self.should_plot_visuals = should_plot_visuals
+        stats_prep = StatsPrep(plot_visuals=should_plot_visuals)
 
         raw_data = self._psql_manager.fetch_table_data(table_name='listings')
         model_df = ListingsTransforming.to_price_predict_df(rows=raw_data)
 
         for atype, atype_df in model_df.groupby('atype'):
-            atype_df = stats_prep.prep_dataframe(df=atype_df, price_column='divs')
+            atype_df_prep = stats_prep.prep_dataframe(df=atype_df, price_column=price_col_name)
 
             if atype_df is None:
                 continue
 
             model = self._train_model(
-                df=atype_df,
-                atype=str(atype),
-                price_column='divs'
+                df_prep=atype_df_prep,
+                atype=str(atype)
             )
 
             self._files_manager.save_model(atype=atype, model=model)
 
     def _train_model(self,
-                     df: pd.DataFrame,
-                     price_column: str,
+                     df_prep: DataFramePrep,
                      atype: str,
                      price_is_logged=False,
                      training_depth: int = 12,
                      eta: float = 0.00075,
                      num_boost_rounds: int = 1250):
         """Train the XGBoost model on the input dataframe."""
-        features_df = df.drop(columns=[price_column], errors='ignore')
-        target_col = df[price_column]
-
         train_x, test_x, train_y, test_y = train_test_split(
-            features_df, target_col, test_size=0.2, random_state=42
+            df_prep.features, df_prep.log_price_column, test_size=0.2, random_state=42
         )
 
         train_data = xgb.DMatrix(train_x, label=train_y, enable_categorical=True)
@@ -95,7 +93,7 @@ class PricePredictModelPipeline:
         self._evaluate_model(test_data=test_data,
                              test_y=test_y,
                              test_x=test_x,
-                             features_df=features_df,
+                             features_df=df_prep.features,
                              atype=atype,
                              price_is_logged=price_is_logged)
 
