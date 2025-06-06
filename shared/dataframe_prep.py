@@ -10,15 +10,31 @@ class DataFramePrep:
 
     def __init__(self,
                  dataframe: pd.DataFrame,
-                 price_col_name: str = None):
+                 price_col_name: str = None,
+                 log_col_name: str = None):
         self._df = dataframe
 
         self.price_col_name = price_col_name
-        self.log_col_name = None
+        self.log_col_name = log_col_name or None
+
+    def _clone_with_new_df(self, new_df):
+        cloned = DataFramePrep(new_df, self.price_col_name)
+        cloned.log_col_name = self.log_col_name
+        return cloned
 
     def __getattr__(self, attr):
-        # Delegate all missing attributes to the internal DataFrame
-        return getattr(self._df, attr)
+        df_attr = getattr(self._df, attr)
+
+        if callable(df_attr):
+            def wrapper(*args, **kwargs):
+                result = df_attr(*args, **kwargs)
+                if isinstance(result, pd.DataFrame):
+                    return self._clone_with_new_df(result)
+                return result
+
+            return wrapper
+
+        return df_attr
 
     def __getitem__(self, key):
         return self._df[key]
@@ -34,9 +50,8 @@ class DataFramePrep:
         return self._df
 
     def log_price(self,
-                  price_col_name: str,
                   log_col_name: str):
-        self.df[log_col_name] = np.log1p(self.df[price_col_name])
+        self.df[log_col_name] = np.log1p(self.df[self.price_col_name])
         self.log_col_name = log_col_name
         return self
 
@@ -59,9 +74,8 @@ class DataFramePrep:
         return self._df[columns]
 
     def drop_nan_rows(self):
-        features_df = self.fetch_features()
-
-        valid_indices = features_df[~((features_df == 0) | (pd.isna(features_df))).all(axis=1)].index
+        f_df = self.features
+        valid_indices = f_df[~((f_df == 0) | (pd.isna(f_df))).all(axis=1)].index
 
         self._df = self._df.loc[valid_indices]
 
@@ -69,28 +83,31 @@ class DataFramePrep:
 
     def drop_overly_null_columns(self, max_percent_nulls: float):
         null_counts = dict()
-        for col in self._df.columns:
+        for col in self.features.columns:
             zero_rows = self._df[col] == 0
             na_rows = pd.isna(self._df[col])
             null_rows = zero_rows | na_rows
 
             null_counts[col] = null_rows.sum()
 
-        valid_cols = [col for col, nulls_count in null_counts.items()
-                      if nulls_count / len(self._df) < max_percent_nulls]
-        self._df = self._df[valid_cols]
+        invalid_cols = [col for col in self.features.columns
+                        if null_counts[col] / len(self._df) > max_percent_nulls]
+
+        self._df = self._df.drop(columns=invalid_cols)
 
         return self
 
     def drop_overly_modal_columns(self, max_percent_mode: float):
         mode_counts = dict()
-        for col in self._df.columns:
-            mode_value = self._df[col].mode()[0]
+        for col in self.features.columns:
+            mode_order = self._df[col].mode()
+            mode_value = mode_order[0]
             mode_counts[col] = (self._df[col] == mode_value).sum()
 
-        valid_cols = [col for col, mode_count in mode_counts.items()
-                      if mode_count / len(self._df) < max_percent_mode]
-        self._df = self._df[valid_cols]
+        invalid_cols = [col for col in self.features.columns
+                        if mode_counts[col] / len(self._df) > max_percent_mode]
+
+        self._df = self._df.drop(columns=invalid_cols)
 
         return self
 

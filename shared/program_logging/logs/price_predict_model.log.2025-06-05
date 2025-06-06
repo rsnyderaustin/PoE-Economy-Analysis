@@ -1,0 +1,39 @@
+2025-06-05 18:47:38,005 - INFO - Columns removed from PricePredict DataFrame:
+{'reload_time', 'minutes_since_listed', 'elemental_dps', 'exalts', 'divs', 'critical_hit_chance', 'currency_amount', 'fire_dps', 'lightning_dps', 'open_prefixes', 'category', 'identified', 'ilvl', 'rarity', 'date_fetched', 'chaos_dps', 'cold_dps', 'open_suffixes', 'currency', 'corrupted', 'listing_id', 'chaos_damage'}
+
+2025-06-05 18:52:11,004 - INFO - Columns removed from PricePredict DataFrame:
+{'currency_amount', 'cold_dps', 'date_fetched', 'fire_dps', 'minutes_since_listed', 'divs', 'chaos_damage', 'currency', 'ilvl', 'category', 'identified', 'elemental_dps', 'lightning_dps', 'rarity', 'open_suffixes', 'reload_time', 'open_prefixes', 'corrupted', 'chaos_dps', 'critical_hit_chance', 'exalts', 'listing_id'}
+
+2025-06-05 18:53:39,581 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'cold_dps', 'fire_dps', 'lightning_dps', 'elemental_dps', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'divs', 'chaos_dps', 'listing_id']
+
+2025-06-05 18:55:56,251 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'cold_dps', 'fire_dps', 'lightning_dps', 'elemental_dps', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'divs', 'chaos_dps', 'listing_id']
+
+2025-06-05 18:57:55,768 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'divs', 'listing_id']
+
+2025-06-05 18:59:03,862 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'divs', 'listing_id']
+
+2025-06-05 19:00:49,795 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:01:17,819 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:05:17,554 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:47:50,562 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 19:58:15,816 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 20:07:28,804 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-05 20:10:30,228 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+

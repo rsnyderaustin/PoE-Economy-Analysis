@@ -17,9 +17,8 @@ class _CorrelationAnalysis:
     def determine_single_column_weights(df_prep: DataFramePrep,
                                         correlation_threshold: float,
                                         weight_multiplier: float = None) -> dict:
-        features_df = df_prep.fetch_features()
-        prices = df_prep.fetch_log_price_column()
-        corrs = features_df.corrwith(prices)
+        prices = df_prep.log_price_column
+        corrs = df_prep.features.corrwith(prices)
         mod_weights = dict()
         for mod, corr in corrs.items():
             if corr >= correlation_threshold:
@@ -33,21 +32,22 @@ class _CorrelationAnalysis:
     @staticmethod
     def determine_column_pair_weights(df_prep: DataFramePrep,
                                       correlation_threshold: float) -> dict:
-        mod_combinations = list(itertools.combinations(df_prep.df.columns, 2))
+        mod_combinations = list(itertools.combinations(df_prep.features.columns, 2))
 
         # Build initial dictionary of DataFrames filtered by nonzero rows
         valid_pairs_weights = dict()
         for mod1, mod2 in mod_combinations:
             pair_df = df_prep.fetch_columns_df([df_prep.log_col_name, mod1, mod2])
             pair_df_prep = (DataFramePrep(pair_df,
-                                          price_col_name=df_prep.log_col_name)
+                                          price_col_name=df_prep.log_col_name,
+                                          log_col_name=df_prep.log_col_name)
                             .drop_nan_rows()
                             .multiply_columns(columns=[mod1, mod2])
-                            .drop([mod1, mod2], inplace=True)
+                            .drop(columns=[mod1, mod2])
                             .drop_overly_modal_columns(max_percent_mode=0.97)
                             )
 
-            pair_df = pair_df_prep.fetch_features()
+            pair_df = pair_df_prep.features
 
             # The DataFrame is empty in the rare case that the product is overly-modal
             if pair_df.empty:
@@ -142,15 +142,14 @@ class StatsPrep:
     def prep_dataframe(self, df: pd.DataFrame, price_column: str) -> DataFramePrep | None:
         df_prep = (
             DataFramePrep(df, price_col_name=price_column)
-            .fillna(0)
             .select_dtypes(['int64', 'float64'])
-            .log_price(log_column_name='log_divs')
+            .fillna(0)
+            .log_price(log_col_name='log_divs')
             .drop_nan_rows()
             .reset_index(drop=True)
             .drop_overly_null_columns(max_percent_nulls=0.97)
             .drop_overly_modal_columns(max_percent_mode=0.97)
         )
-        features_df = df_prep.fetch_features()
 
         single_column_weights = _CorrelationAnalysis.determine_single_column_weights(
             df_prep=df_prep,

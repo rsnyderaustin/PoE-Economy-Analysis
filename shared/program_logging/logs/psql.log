@@ -1,72 +1,202 @@
-2025-06-05 18:17:13,936 - INFO - Connecting to PSQL database.
+2025-06-06 16:02:22,324 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:17:36,590 - INFO - Connecting to PSQL database.
+2025-06-06 16:02:42,236 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:17:39,262 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:02:43,771 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:45:22,683 - INFO - Connecting to PSQL database.
+2025-06-06 16:02:55,176 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:45:44,199 - INFO - Connecting to PSQL database.
+2025-06-06 16:02:56,659 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:45:45,624 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:03:12,539 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:46:18,582 - INFO - Connecting to PSQL database.
+2025-06-06 16:03:14,038 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:46:19,818 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:04:41,237 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:48:11,866 - INFO - Connecting to PSQL database.
+2025-06-06 16:04:43,072 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:48:13,160 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:13:54,588 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:53:20,160 - INFO - Connecting to PSQL database.
+2025-06-06 16:13:56,109 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:53:21,462 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:14:58,270 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:54:02,990 - INFO - Connecting to PSQL database.
+2025-06-06 16:15:00,103 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:54:04,228 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:15:22,346 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:55:46,188 - INFO - Connecting to PSQL database.
+2025-06-06 16:15:23,896 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:55:47,418 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:16:48,827 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:57:47,248 - INFO - Connecting to PSQL database.
+2025-06-06 16:16:50,403 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:57:48,491 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:21:17,040 - INFO - Connecting to PSQL database.
 
-2025-06-05 18:58:12,034 - INFO - Connecting to PSQL database.
+2025-06-06 16:21:18,599 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 18:58:13,302 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:21:30,506 - INFO - Connecting to PSQL database.
 
-2025-06-05 19:00:41,564 - INFO - Connecting to PSQL database.
+2025-06-06 16:21:32,026 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 19:00:42,771 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:23:33,333 - INFO - Connecting to PSQL database.
 
-2025-06-05 19:01:09,218 - INFO - Connecting to PSQL database.
+2025-06-06 16:23:34,867 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 19:01:10,511 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:24:41,022 - INFO - Connecting to PSQL database.
 
-2025-06-05 19:04:59,506 - INFO - Connecting to PSQL database.
+2025-06-06 16:24:42,540 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 19:05:00,848 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:25:28,165 - INFO - Connecting to PSQL database.
 
-2025-06-05 19:47:16,352 - INFO - Connecting to PSQL database.
+2025-06-06 16:25:29,667 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 19:47:41,684 - INFO - Connecting to PSQL database.
+2025-06-06 16:26:07,389 - INFO - Connecting to PSQL database.
 
-2025-06-05 19:47:43,124 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:26:08,932 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 19:58:05,450 - INFO - Connecting to PSQL database.
+2025-06-06 16:26:48,546 - INFO - Connecting to PSQL database.
 
-2025-06-05 19:58:06,818 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:26:50,079 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 20:05:59,660 - INFO - Connecting to PSQL database.
+2025-06-06 16:27:21,417 - INFO - Connecting to PSQL database.
 
-2025-06-05 20:07:21,449 - INFO - Connecting to PSQL database.
+2025-06-06 16:27:22,949 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 20:07:22,692 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:27:56,151 - INFO - Connecting to PSQL database.
 
-2025-06-05 20:10:21,929 - INFO - Connecting to PSQL database.
+2025-06-06 16:27:57,714 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
-2025-06-05 20:10:23,126 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+2025-06-06 16:28:30,827 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:28:32,365 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:29:28,808 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:29:30,331 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:31:10,301 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:31:11,828 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:31:26,015 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:31:27,568 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:34:33,131 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:34:35,000 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:35:22,085 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:35:23,635 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:37:11,967 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:37:13,518 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:37:28,890 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:37:30,417 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:38:18,234 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:38:19,778 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:39:06,576 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:39:08,098 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:39:55,464 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:39:56,994 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:40:18,709 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:40:20,295 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:40:32,856 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:40:34,408 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:41:11,092 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:41:12,622 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:41:48,798 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:41:50,340 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:44:28,987 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:44:30,633 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:44:45,719 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:44:47,250 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:45:10,472 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:45:12,002 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:45:21,794 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:45:23,334 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:45:36,699 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:45:38,241 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:46:37,173 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:46:38,762 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:47:53,763 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:47:55,299 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:48:33,313 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:48:35,405 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:48:57,900 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:48:59,856 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:49:47,079 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:49:48,608 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:50:26,355 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:50:27,960 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:50:58,822 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:51:00,329 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:52:33,923 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:52:35,490 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:52:54,115 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:52:55,653 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:53:15,766 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:53:17,272 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:54:24,062 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:54:25,618 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:55:15,300 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:55:16,858 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-06 16:56:30,369 - INFO - Connecting to PSQL database.
+
+2025-06-06 16:56:31,904 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 

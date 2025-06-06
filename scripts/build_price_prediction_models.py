@@ -6,4 +6,6 @@ psql_manager = PostgreSqlManager()
 
 pipeline = PricePredictModelPipeline(price_predict_files=PricePredictModelFiles(),
                                      psql_manager=psql_manager)
-pipeline.run(plot_visuals=True)
+pipeline.run(should_plot_visuals=True,
+             price_col_name='divs',
+             from_cache=True)

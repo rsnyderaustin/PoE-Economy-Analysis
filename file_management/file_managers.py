@@ -193,6 +193,12 @@ class CraftingSimulatorFiles:
         return model
 
 
+class PricePredictCacheFile(PickleFile):
+
+    def __init__(self, path: Path = None):
+        super().__init__(path or Path.cwd() / 'file_management/pp_training_cache.pkl')
+
+
 class CustomEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, set):
