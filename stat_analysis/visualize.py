@@ -123,7 +123,9 @@ def _indiv_radar_plot(main_point, neighbors, feature_names, title="Feature Compa
     plt.show()
 
 
-def bar_plot_neighbors(features_df: pd.DataFrame, indices):
+def bar_plot_neighbors(features_df: pd.DataFrame,
+                       indices,
+                       distances):
     for main_i in list(range(len(features_df))):
         main_point = features_df.iloc[main_i]
         neighbor_idxs = indices[main_i][1:]  # skip self

@@ -13,73 +13,6 @@ from stat_analysis import visualize
 stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
 
 
-class _ColumnPairCorrelation:
-
-    def __init__(self, mod1, mod2, correlation, col_series):
-        self.mod1 = mod1
-        self.mod2 = mod2
-        self.correlation = correlation
-        self.col_series = col_series
-
-
-class _CorrelationAnalysis:
-
-    @staticmethod
-    def determine_single_column_correlations(df_prep: DataFramePrep) -> dict:
-        prices = df_prep.log_price_column
-        corrs = df_prep.features.corrwith(prices)
-        mod_weights = dict()
-        for mod, corr in corrs.items():
-            mod_weights[mod] = corr
-
-        return mod_weights
-
-    @staticmethod
-    def determine_column_pair_correlations(df_prep: DataFramePrep) -> list[_ColumnPairCorrelation]:
-        mod_combinations = list(itertools.combinations(df_prep.features.columns, 2))
-
-        pair_corrs = []
-        for mod1, mod2 in mod_combinations:
-            pair_df = df_prep.df[[
-                df_prep.price_col_name,
-                df_prep.log_col_name,
-                mod1,
-                mod2
-            ]]
-            pair_df_prep = (DataFramePrep(pair_df,
-                                          price_col_name=df_prep.price_col_name,
-                                          log_col_name=df_prep.log_col_name)
-                            .drop_nan_rows()
-                            .multiply_columns(columns=[mod1, mod2], new_col_name=(mod1, mod2), replace_source=True)
-
-                            # Just make sure product isn't all the same value
-                            .drop_overly_modal_columns(max_percent_mode=0.99)
-                            )
-
-            pair_features = pair_df_prep.features
-
-            if len(pair_features.columns) == 0:
-                continue
-
-            if len(pair_features) < 30:
-                continue
-
-            pair_corr = pair_features.corrwith(pair_df_prep.log_price_column)
-            corr_val = pair_corr[(mod1, mod2)]
-
-            pair_corrs.append(
-                _ColumnPairCorrelation(
-                    mod1=mod1,
-                    mod2=mod2,
-                    correlation=corr_val,
-                    col_series=pair_features[(mod1, mod2)]
-                )
-            )
-            # print(f"{mod1} and {mod2} correlation -> {corr_val}")
-
-        return pair_corrs
-
-
 class _NearestNeighborAnalysis:
 
     @staticmethod
@@ -145,7 +78,7 @@ class _NearestNeighborAnalysis:
         # visualize.plot_avg_distance_to_nearest_neighbor(norm_features_df)
         # visualize.plot_all_nearest_neighbors(norm_features_df)
         # visualize.radar_plot_neighbors(features_df=raw_features_df, indices=indices)
-        # visualize.bar_plot_neighbors(features_df=raw_features_df, indices=indices)
+        visualize.bar_plot_neighbors(features_df=raw_features_df, indices=indices, distances=distances)
 
         isolated_indices = [i for i, distances in enumerate(distances) if len(distances) < min_neighbors]
 
