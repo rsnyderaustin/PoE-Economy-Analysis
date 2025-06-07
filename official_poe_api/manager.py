@@ -3,8 +3,8 @@ from urllib.parse import urljoin
 
 import requests
 
-from shared import shared_utils
 from program_logging import LogsHandler, LogFile
+from shared import shared_utils
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 

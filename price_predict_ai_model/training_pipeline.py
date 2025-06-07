@@ -7,10 +7,10 @@ from sklearn.model_selection import train_test_split
 from data_transforming import ListingsTransforming
 from file_management.file_managers import PricePredictModelFiles, PricePredictCacheFile
 from price_predict_ai_model import visuals
-from psql import PostgreSqlManager
 from program_logging import LogFile, LogsHandler
-from stat_analysis.stats_prep import StatsPrep
+from psql import PostgreSqlManager
 from shared.dataframe_prep import DataFramePrep
+from stat_analysis.stats_prep import StatsPrep
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
@@ -45,10 +45,10 @@ class PricePredictModelPipeline:
         if from_cache:
             model_df = training_cache.load(default=None)
 
-            if not model_df:
+            if model_df is None:
                 print("Raw training cache data is missing / empty.")
 
-        if not model_df:
+        if model_df is None:
             print("Fetching PSQL table data.")
             raw_data = self._psql_manager.fetch_table_data(table_name='listings')
 
@@ -64,9 +64,10 @@ class PricePredictModelPipeline:
             if atype_df is None:
                 continue
 
+            print(f"Building PricePredict model for Atype {atype}")
             model = self._train_model(
                 df_prep=atype_df_prep,
-                atype=str(atype)
+                atype=str(atype),
             )
 
             self._files_manager.save_model(atype=atype, model=model)
@@ -74,13 +75,15 @@ class PricePredictModelPipeline:
     def _train_model(self,
                      df_prep: DataFramePrep,
                      atype: str,
-                     price_is_logged=False,
                      training_depth: int = 12,
                      eta: float = 0.00075,
                      num_boost_rounds: int = 1250):
         """Train the XGBoost model on the input dataframe."""
         train_x, test_x, train_y, test_y = train_test_split(
-            df_prep.features, df_prep.log_price_column, test_size=0.2, random_state=42
+            df_prep.features,
+            df_prep.log_price_column,
+            test_size=0.2,
+            random_state=42
         )
 
         train_data = xgb.DMatrix(train_x, label=train_y, enable_categorical=True)
@@ -94,6 +97,7 @@ class PricePredictModelPipeline:
 
         evals = [(train_data, 'train'), (test_data, 'test')]
 
+        print("Training model.")
         self.model = xgb.train(
             params,
             train_data,
@@ -105,12 +109,13 @@ class PricePredictModelPipeline:
             verbose_eval=False
         )
 
+        print("Evaluating model.")
         self._evaluate_model(test_data=test_data,
                              test_y=test_y,
                              test_x=test_x,
                              features_df=df_prep.features,
                              atype=atype,
-                             price_is_logged=price_is_logged)
+                             price_is_logged=True)
 
         return self.model
 
@@ -134,7 +139,7 @@ class PricePredictModelPipeline:
         test_results_df.sort_values(by='error')
 
         mse = mean_squared_error(test_y, test_predictions)
-        price_predict_log.info(f"Atype {atype} MSE: {mse}")
+        print(f"Atype {atype} MSE: {mse}")
 
         if self.should_plot_visuals:
             visuals.plot_feature_importance(model=self.model, atype=atype)

@@ -175,11 +175,6 @@ class DataFramePrep:
 
         return self
 
-    def remove_indices(self, indices):
-        self._df = self._df.iloc[indices]
-
-        return self
-
     def multiply_columns(self,
                          columns: list[str],
                          new_col_name: str,

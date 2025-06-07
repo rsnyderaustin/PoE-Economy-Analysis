@@ -1,7 +1,7 @@
 
+import logging
 from abc import ABC
 from enum import Enum
-import logging
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 

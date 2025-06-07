@@ -1,7 +1,7 @@
-import program_logging
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
+import program_logging
 from file_management.file_managers import CurrencyConversionsFile
 from shared.enums.trade_enums import Currency
 

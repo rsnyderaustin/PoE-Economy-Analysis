@@ -4,13 +4,12 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
 import core
-import shared
 from core import CurrencyConverter
 from instances_and_definitions import ModifiableListing
+from program_logging import LogsHandler, LogFile, log_errors
 from shared import shared_utils
 from shared.enums import ItemEnumGroups, WhichCategoryType
 from shared.enums.item_enums import AType, LocalMod, CalculatedMod
-from program_logging import LogsHandler, LogFile, log_errors
 from shared.enums.trade_enums import Currency
 
 lh = LogsHandler()

@@ -4,10 +4,10 @@ from abc import abstractmethod, ABC
 
 from crafting_ai_model.mod_rolling import ModRoller
 from instances_and_definitions import ModifiableListing
+from program_logging import LogsHandler, LogFile, log_errors
 from shared import ATypeGroups
 from shared.enums.item_enums import AType
 from shared.enums.trade_enums import Rarity, ModClass, Currency
-from program_logging import LogsHandler, LogFile, log_errors
 from . import utils
 
 craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
