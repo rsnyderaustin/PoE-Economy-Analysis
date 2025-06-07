@@ -36,30 +36,30 @@ class PricePredictModelPipeline:
 
     def run(self,
             should_plot_visuals,
-            price_col_name: str,
             from_cache: bool = False):
         self.should_plot_visuals = should_plot_visuals
         stats_prep = StatsPrep(plot_visuals=should_plot_visuals)
 
         training_cache = PricePredictCacheFile()
-        raw_data = None
+        model_df = None
         if from_cache:
-            raw_data = training_cache.load(default=dict())
+            model_df = training_cache.load(default=None)
 
-            if not raw_data:
+            if not model_df:
                 print("Raw training cache data is missing / empty.")
 
-        if not raw_data:
+        if not model_df:
             print("Fetching PSQL table data.")
             raw_data = self._psql_manager.fetch_table_data(table_name='listings')
-            training_cache.save(raw_data)
 
-        print("Converting PSQL table to PricePredict DataFrame.")
-        model_df = ListingsTransforming.to_price_predict_df(rows=raw_data)
+            print("Converting PSQL table to PricePredict DataFrame.")
+            model_df = ListingsTransforming.to_price_predict_df(rows=raw_data)
+
+            training_cache.save(model_df)
 
         for atype, atype_df in model_df.groupby('atype'):
             print(f"Beginning stats preparation for Atype {atype}")
-            atype_df_prep = stats_prep.prep_dataframe(df=atype_df, price_column=price_col_name)
+            atype_df_prep = stats_prep.prep_dataframe(df=atype_df, price_column='divs')
 
             if atype_df is None:
                 continue

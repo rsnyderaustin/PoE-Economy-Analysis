@@ -1008,3 +1008,66 @@
 
 2025-06-07 13:11:24,103 - INFO - Skipping SQL initialization.
 
+2025-06-07 13:19:27,584 - INFO - Skipping SQL initialization.
+
+2025-06-07 13:20:18,912 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:20:20,540 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:20:53,114 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'exalts', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-07 13:25:02,376 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:25:03,783 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:32:26,673 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:32:28,172 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:44:43,886 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:44:45,634 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:44:56,799 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:44:58,221 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:49:14,356 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:49:15,798 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:49:44,969 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:49:46,343 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:50:53,792 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:50:55,343 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:51:23,707 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:51:25,190 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:54:27,720 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:54:29,203 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:55:30,683 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:55:32,077 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:55:38,372 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:55:40,957 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:56:55,826 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+
+2025-06-07 13:59:11,649 - INFO - Connecting to PSQL database.
+
+2025-06-07 13:59:13,084 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
+
+2025-06-07 13:59:57,248 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+

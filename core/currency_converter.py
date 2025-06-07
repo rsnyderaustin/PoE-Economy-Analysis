@@ -23,6 +23,8 @@ class CurrencyConverter:
 
         conversions_df = CurrencyConversionsFile().load()
 
+        self._conversion_cache = {}
+
         self.conversions_dict = dict()
         conversions_df.apply(self._apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
 
@@ -42,13 +44,21 @@ class CurrencyConverter:
         if currency == Currency.DIVINE_ORB:
             return currency_amount
 
+        simple_date = (relevant_date.year, relevant_date.month, relevant_date.day)
+        convert_key = (currency, currency_amount, simple_date)
+        if convert_key in self._conversion_cache:
+            return self._conversion_cache[convert_key]
+
         closest_date = min(self.conversions_dict.keys(), key=lambda d: abs(d - relevant_date))
 
         days_between = (closest_date - relevant_date).days
         if days_between >= 3:
             program_logging.error(f"Date between relevant date and closest currency price observation dates in "
-                          f"CurrencyConverter.convert_to_divs is {days_between}.")
+                                  f"CurrencyConverter.convert_to_divs is {days_between}.")
 
         exchange_rate = self.conversions_dict[closest_date][currency.value]
         converted_amount = currency_amount * exchange_rate
+
+        self._conversion_cache[convert_key] = converted_amount
+
         return converted_amount

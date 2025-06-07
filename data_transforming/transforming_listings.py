@@ -5,10 +5,13 @@ from collections.abc import Iterable
 
 import core
 import shared
+from core import CurrencyConverter
 from instances_and_definitions import ModifiableListing
+from shared import shared_utils
 from shared.enums import ItemEnumGroups, WhichCategoryType
 from shared.enums.item_enums import AType, LocalMod, CalculatedMod
 from program_logging import LogsHandler, LogFile, log_errors
+from shared.enums.trade_enums import Currency
 
 lh = LogsHandler()
 parse_log = lh.fetch_log(LogFile.API_PARSING)
@@ -217,6 +220,14 @@ class ListingsTransforming:
         valid_cols = [*cls._price_predict_specific_cols, *mod_cols]
         return valid_cols
 
+    @classmethod
+    def _apply_determine_divs_price(cls, row):
+        return CurrencyConverter().convert_to_divs(
+            currency=Currency(row['currency']),
+            currency_amount=row['currency_amount'],
+            relevant_date=shared_utils.format_date_into_utc(row['date_fetched'])
+        )
+
     @staticmethod
     @log_errors(price_predict_log)
     def _fill_out_features_columns(features_df: 'pd.DataFrame', model_features):
@@ -251,6 +262,8 @@ class ListingsTransforming:
 
         df = pd.DataFrame(rows)
         df = df.drop_duplicates()
+
+        df['divs'] = df.apply(cls._apply_determine_divs_price, axis=1)
 
         cols = cls._determine_valid_price_predict_columns(df)
 
