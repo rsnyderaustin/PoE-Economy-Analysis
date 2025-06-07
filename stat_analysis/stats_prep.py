@@ -11,59 +11,70 @@ from program_logging import LogFile, LogsHandler
 stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
 
 
+class _ColumnPairCorrelation:
+
+    def __init__(self, mod1, mod2, correlation, col_series):
+        self.mod1 = mod1
+        self.mod2 = mod2
+        self.correlation = correlation
+        self.col_series = col_series
+
 class _CorrelationAnalysis:
 
     @staticmethod
-    def determine_single_column_weights(df_prep: DataFramePrep,
-                                        correlation_threshold: float,
-                                        weight_multiplier: float = None) -> dict:
+    def determine_single_column_correlations(df_prep: DataFramePrep) -> dict:
         prices = df_prep.log_price_column
         corrs = df_prep.features.corrwith(prices)
         mod_weights = dict()
         for mod, corr in corrs.items():
-            if corr >= correlation_threshold:
-                mod_weights[mod] = corr
-
-        if weight_multiplier:
-            mod_weights = {mod: weight * weight_multiplier for mod, weight in mod_weights.items()}
+            mod_weights[mod] = corr
 
         return mod_weights
 
     @staticmethod
-    def determine_column_pair_weights(df_prep: DataFramePrep,
-                                      correlation_threshold: float) -> dict:
+    def determine_column_pair_correlations(df_prep: DataFramePrep) -> list[_ColumnPairCorrelation]:
         mod_combinations = list(itertools.combinations(df_prep.features.columns, 2))
 
-        # Build initial dictionary of DataFrames filtered by nonzero rows
-        valid_pairs_weights = dict()
+        pair_corrs = []
         for mod1, mod2 in mod_combinations:
-            pair_df = df_prep.fetch_columns_df([df_prep.log_col_name, mod1, mod2])
+            pair_df = df_prep.df[[
+                df_prep.price_col_name,
+                df_prep.log_col_name,
+                mod1,
+                mod2
+            ]]
             pair_df_prep = (DataFramePrep(pair_df,
-                                          price_col_name=df_prep.log_col_name,
+                                          price_col_name=df_prep.price_col_name,
                                           log_col_name=df_prep.log_col_name)
                             .drop_nan_rows()
-                            .multiply_columns(columns=[mod1, mod2])
-                            .drop(columns=[mod1, mod2])
-                            .drop_overly_modal_columns(max_percent_mode=0.97)
+                            .multiply_columns(columns=[mod1, mod2], new_col_name=(mod1, mod2), replace_source=True)
+
+                            # Just make sure product isn't all the same value
+                            .drop_overly_modal_columns(max_percent_mode=0.99)
                             )
 
-            pair_df = pair_df_prep.features
+            pair_features = pair_df_prep.features
 
-            # The DataFrame is empty in the rare case that the product is overly-modal
-            if pair_df.empty:
+            if len(pair_features.columns) == 0:
                 continue
 
-            if len(pair_df) < 30:
+            if len(pair_features) < 30:
                 continue
 
-            pair_corr = pair_df.corrwith(pair_df_prep.log_price_column)
+            pair_corr = pair_features.corrwith(pair_df_prep.log_price_column)
             corr_val = pair_corr[(mod1, mod2)]
 
-            if corr_val >= correlation_threshold:
-                stats_log.info(f"Valid column correlation {(mod1, mod2)}: {corr_val}")
-                valid_pairs_weights[(mod1, mod2)] = corr_val
+            pair_corrs.append(
+                _ColumnPairCorrelation(
+                    mod1=mod1,
+                    mod2=mod2,
+                    correlation=corr_val,
+                    col_series=pair_features[(mod1, mod2)]
+                )
+            )
+            # print(f"{mod1} and {mod2} correlation -> {corr_val}")
 
-        return valid_pairs_weights
+        return pair_corrs
 
 
 class _NearestNeighborAnalysis:
@@ -110,8 +121,8 @@ class _NearestNeighborAnalysis:
     def determine_outliers(cls,
                            features_df: pd.DataFrame,
                            prices: pd.Series,
-                           min_neighbors: int = 20,
-                           radius_range: float = 0.5) -> list:
+                           min_neighbors: int = 8,
+                           radius_range: float = 5.0) -> list:
         radius_neighbors = RadiusNeighborsRegressor(radius=radius_range)
         radius_neighbors.fit(features_df, prices)
         distances, indices = radius_neighbors.radius_neighbors(features_df)
@@ -142,42 +153,35 @@ class StatsPrep:
     def prep_dataframe(self, df: pd.DataFrame, price_column: str) -> DataFramePrep | None:
         df_prep = (
             DataFramePrep(df, price_col_name=price_column)
-            .select_dtypes(['int64', 'float64'])
+            .drop(columns=['atype'])
             .fillna(0)
             .log_price(log_col_name='log_divs')
             .drop_nan_rows()
             .reset_index(drop=True)
-            .drop_overly_null_columns(max_percent_nulls=0.97)
-            .drop_overly_modal_columns(max_percent_mode=0.97)
+            .drop_overly_null_columns(max_percent_nulls=0.98)
+            .drop_overly_modal_columns(max_percent_mode=0.98)
         )
 
-        single_column_weights = _CorrelationAnalysis.determine_single_column_weights(
-            df_prep=df_prep,
-            correlation_threshold=0.4,
-            weight_multiplier=2.5
-        )
+        single_column_weights = _CorrelationAnalysis.determine_single_column_correlations(df_prep=df_prep)
 
-        column_pair_weights = _CorrelationAnalysis.determine_column_pair_weights(
-            df_prep=df_prep,
-            correlation_threshold=0.4
-        )
+        for col_name, weight in single_column_weights.items():
+            df_prep.df[col_name] = df_prep.df[col_name] * weight
 
-        if not single_column_weights and not column_pair_weights:
-            return
+        pair_corrs = _CorrelationAnalysis.determine_column_pair_correlations(df_prep=df_prep)
 
-        column_pairs = list(column_pair_weights.keys())
-        single_columns = list(single_column_weights.keys())
-
-        if column_pairs:
-            df_prep.create_paired_columns(column_pairs)
+        pair_cols = {}
+        for pc in pair_corrs:
+            col_name = (pc.mod1, pc.mod2)
+            pair_cols[col_name] = pc.col_series * pc.correlation
 
         (df_prep
+         .concat(pd.DataFrame(pair_cols))
+         .fillna(0)
          .normalize_features()
-         .apply_column_weights(weights={**single_column_weights, **column_pair_weights})
          )
 
         outlier_indices = _NearestNeighborAnalysis.determine_outliers(
-            features_df=df_prep.fetch_features(),
+            features_df=df_prep.features,
             prices=df_prep.log_price_column
         )
 
