@@ -12,12 +12,11 @@ class DataFramePrep:
         self._df = dataframe
 
         self.price_col_name = price_col_name
-        self.log_col_name = log_col_name or None
+        self.log_col_name = log_col_name
 
     def _clone_with_new_df(self, new_df):
-        cloned = DataFramePrep(new_df, self.price_col_name)
-        cloned.log_col_name = self.log_col_name
-        return cloned
+        self._df = new_df
+        return self
 
     def __getattr__(self, attr):
         df_attr = getattr(self._df, attr)
@@ -146,6 +145,8 @@ class DataFramePrep:
         return self
 
     def normalize_features(self):
+        original_cols = self._df.columns
+
         # Rename columns if they are tuples
         self._df.columns = [
             f"{col[0]}_{col[1]}" if isinstance(col, tuple) else col
@@ -161,11 +162,14 @@ class DataFramePrep:
         scaled_df = pd.DataFrame(scaled_data, columns=feature_cols, index=self._df.index)
 
         # Replace the original feature columns with scaled values
+        self._df = self._df.astype(float)
         self._df.loc[:, feature_cols] = scaled_df
+
+        self._df.columns = original_cols
 
         return self
 
-    def apply_column_weights(self, weights: dict):
+    def weight_columns(self, weights: dict):
         for col, weight in weights.items():
             self._df[col] = self._df[col] * weight
 

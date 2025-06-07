@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
+from sklearn.neighbors import NearestNeighbors
 
 
 def plot_correlations(df: pd.DataFrame, atype: str):
@@ -48,47 +49,127 @@ def plot_pca(features_df: pd.DataFrame, price_column: str):
     plt.show()
 
 
-def visualize_neighbors_regression(features_df: pd.DataFrame,
-                                   prices: pd.Series,
-                                   distances,
-                                   indices):
-    """
+def plot_avg_distance_to_nearest_neighbor(features_df):
+    nn = NearestNeighbors(n_neighbors=2)
+    nn.fit(features_df)
+    distances, _ = nn.kneighbors(features_df)
 
-    :param features_df: A denormalized DataFrame of features
-    :param prices:
-    :param distances:
-    :param indices:
-    :return:
-    """
-    data = {
-        'index': [],
-        'distance': [],
-        'neighbor_price': [],
-        'listing_price': [],
-        **{f"mainpoint_{f}": [] for f in features_df.columns},
-        **{f: [] for f in features_df.columns}
-    }
-    # Display the neighbors
-    inputs = list(zip(distances, indices))
-    for main_i, (dx_to_ns, idxs) in enumerate(inputs):
-        # Get the features of the main point
-        main_point_features = features_df.iloc[main_i].values
+    # distances[:, 1] gives the distance to the nearest *other* point
+    plt.hist(distances[:, 1], bins=100, edgecolor='k')
+    plt.title("Distance to nearest neighbor")
+    plt.xlabel("Distance")
+    plt.ylabel("Frequency")
+    plt.grid(True)
+    plt.show()
 
-        # Loop through each neighbor index and corresponding distance
-        for dx, idx in zip(dx_to_ns, idxs):
-            data['index'].append(main_i)
-            data['listing_price'].append(prices.iloc[main_i])
-            data['neighbor_price'].append(prices.iloc[idx])
-            data['distance'].append(dx)
-            for i, col in enumerate(features_df.columns):
-                data[f"mainpoint_{col}"].append(main_point_features[i])
 
-            neighbor_features = features_df.iloc[idx]
-            for col, val in neighbor_features.items():
-                data[col].append(val)
+def plot_all_nearest_neighbors(features_df):
+    nbrs = NearestNeighbors(n_neighbors=2)
+    nbrs.fit(features_df)  # X is your features_df or similar
+    distances, _ = nbrs.kneighbors(features_df)
 
-        if main_i >= 250:  # Doing all rows takes forever, so we just stop after 250
-            break
+    # Skip the first column (distance to self = 0)
+    nearest_distances = distances[:, 1]
 
-    neighbors_df = pd.DataFrame(data)
-    return neighbors_df
+    plt.hist(nearest_distances, bins=100, edgecolor='k')
+    plt.title('Histogram of Distance to Nearest Neighbor')
+    plt.xlabel('Distance')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+
+    # Focus only on 0–5 range
+    plt.xlim(0, 10)
+
+    # Add more x-axis labels (ticks)
+    plt.xticks(np.linspace(0, 10, num=20))  # e.g., [0.0, 0.5, 1.0, ..., 5.0]
+
+    plt.show()
+
+
+def radar_plot_neighbors(features_df: pd.DataFrame, indices):
+    for main_i in list(range(len(features_df))):
+        main_point = features_df.iloc[main_i]
+        neighbor_idxs = indices[main_i][1:]  # skip self
+        neighbors = features_df.iloc[neighbor_idxs]
+        _indiv_radar_plot(main_point=main_point,
+                          neighbors=neighbors,
+                          feature_names=features_df.columns)
+
+
+def _indiv_radar_plot(main_point, neighbors, feature_names, title="Feature Comparison"):
+    num_vars = len(feature_names)
+
+    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+    angles += angles[:1]  # Complete the loop
+
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+
+    def add_line(values, label, style):
+        values = values.tolist()
+        values += values[:1]
+        ax.plot(angles, values, style, label=label)
+        ax.fill(angles, values, alpha=0.1)
+
+    add_line(main_point, "Main Point", "b-")
+
+    for i in range(len(neighbors)):
+        neighbor = neighbors.iloc[i]
+        add_line(neighbor, f"Neighbor {i + 1}", "r--")
+
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(feature_names)
+    ax.set_title(title)
+    ax.legend(loc='upper right', bbox_to_anchor=(1.2, 1.1))
+    plt.show()
+
+
+def bar_plot_neighbors(features_df: pd.DataFrame, indices):
+    for main_i in list(range(len(features_df))):
+        main_point = features_df.iloc[main_i]
+        neighbor_idxs = indices[main_i][1:]  # skip self
+
+        if len(neighbor_idxs) == 0:  # Skip if this point has no nearby neighbors
+            continue
+
+        neighbors = features_df.iloc[neighbor_idxs]
+
+        for i in range(len(neighbors)):
+            neighbor = neighbors.iloc[i]
+            _bar_plot_feature_diff(main_point=main_point, neighbor=neighbor, feature_names=features_df.columns)
+
+
+def _bar_plot_feature_diff(main_point, neighbor, feature_names, title="Feature Comparison"):
+    # Select relevant columns with non-zero features
+    filtered_cols = [f for f in feature_names if (main_point[f] != 0) or (neighbor[f] != 0)]
+    if not filtered_cols:
+        print("No non-zero features to plot.")
+        return
+
+    main_point = main_point[filtered_cols]
+    neighbor = neighbor[filtered_cols]
+
+    main_vals = main_point.astype(float)
+    neighbor_vals = neighbor.astype(float)
+
+    max_vals = pd.concat([main_vals, neighbor_vals], axis=1).max(axis=1)
+    # Avoid division by zero by replacing 0 with 1 (both zero => both 0%)
+    max_vals_replaced = max_vals.replace(0, 1)
+
+    norm_main = (main_vals / max_vals_replaced) * 100
+    norm_neighbor = (neighbor_vals / max_vals_replaced) * 100
+
+    y = np.arange(len(filtered_cols))
+    height = 0.35
+
+    fig, ax = plt.subplots(figsize=(10, max(6, int(len(filtered_cols) * 0.3))))
+
+    ax.barh(y - height / 2, norm_main, height, label='Main (normalized)', color='blue')
+    ax.barh(y + height / 2, norm_neighbor, height, label='Neighbor (normalized)', color='red')
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(filtered_cols)
+    ax.set_xlabel('Normalized Feature Value')
+    ax.set_title(title)
+    ax.legend()
+    plt.tight_layout()
+    plt.show()
