@@ -1,8 +1,8 @@
 import psql
 from crafting_ai_model import CraftingModelPipeline
 from data_handling import ListingBuilder
-from trade_api import TradeApiHandler
 from file_management.file_managers import Poe2DbModsManagerFile
+from trade_api import TradeApiHandler
 
 poe2db_mods_manager = Poe2DbModsManagerFile().load(missing_ok=False)
 

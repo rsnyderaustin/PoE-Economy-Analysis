@@ -1,7 +1,8 @@
 
-import ijson
 import json
 from pathlib import Path
+
+import ijson
 
 from file_management.file_managers import CustomEncoder
 

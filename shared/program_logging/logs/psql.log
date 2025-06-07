@@ -470,3 +470,101 @@
 
 2025-06-07 13:59:13,084 - INFO - Connected to PSQL database at: postgresql+psycopg2://austie_psql:McWLEaZ2iHfaYXL3HQxR@localhost:5433/poe_econ_analysis
 
+2025-06-07 14:19:37,968 - INFO - Connecting to PSQL database.
+
+2025-06-07 14:20:02,550 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:20:24,908 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:20:51,760 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:25:47,897 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:26:27,702 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:30:54,845 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:41:40,397 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:42:14,771 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:44:21,870 - INFO - Skipping SQL initialization.
+
+2025-06-07 14:45:10,202 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:00:41,118 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:04:20,318 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:04:58,512 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:08:03,421 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:09:33,810 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:10:49,747 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:13:49,173 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:14:31,661 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:18:39,446 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:20:19,489 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:31:54,774 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:32:45,027 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:33:40,474 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:33:46,310 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:33:56,852 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:34:23,164 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:35:54,994 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:36:44,070 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:38:35,264 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:42:48,691 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:43:56,231 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:48:26,587 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:50:04,159 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:51:05,111 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:52:06,949 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:53:54,306 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:56:41,709 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:57:54,151 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:58:00,607 - INFO - Skipping SQL initialization.
+
+2025-06-07 15:59:05,481 - INFO - Skipping SQL initialization.
+
+2025-06-07 16:00:06,330 - INFO - Skipping SQL initialization.
+
+2025-06-07 16:01:57,319 - INFO - Skipping SQL initialization.
+
+2025-06-07 16:02:49,767 - INFO - Skipping SQL initialization.
+
+2025-06-07 16:03:49,533 - INFO - Skipping SQL initialization.
+
+2025-06-07 16:06:21,450 - INFO - Skipping SQL initialization.
+
+2025-06-07 16:11:22,861 - INFO - Skipping SQL initialization.
+
+2025-06-07 16:14:58,315 - INFO - Skipping SQL initialization.
+
+2025-06-07 16:25:01,261 - INFO - Skipping SQL initialization.
+

@@ -5,10 +5,10 @@ from dataclasses import dataclass
 
 from file_management.file_managers import ItemModsFile, Poe2DbModsManagerFile
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
+from program_logging import LogFile, LogsHandler, log_errors
 from shared import shared_utils
 from shared.enums.item_enums import ModAffixType, AType
 from shared.enums.trade_enums import ModClass
-from program_logging import LogFile, LogsHandler, log_errors
 from . import utils
 from .api_response_parser import ApiResponseParser
 from .mod_matching import ModMatcher

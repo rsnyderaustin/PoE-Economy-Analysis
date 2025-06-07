@@ -3,8 +3,8 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Generator
 
-from shared import shared_utils
 from program_logging import LogsHandler, LogFile
+from shared import shared_utils
 from . import query_construction
 from .query import Query, MetaFilter
 from .trade_items_fetcher import TradeItemsFetcher

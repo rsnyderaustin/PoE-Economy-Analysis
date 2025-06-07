@@ -3,9 +3,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 from poe2db_scrape.mods_management import Poe2DbMod
+from program_logging import LogsHandler, LogFile
 from shared import shared_utils
 from shared.enums.item_enums import AType, ModAffixType
-from program_logging import LogsHandler, LogFile
 from . import mods_management
 from .mods_management import AtypeModsManager, Poe2DbModsManager
 

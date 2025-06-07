@@ -1,8 +1,7 @@
 
+from program_logging import LogsHandler, LogFile, log_errors
 from shared import ATypeGroups
 from shared.enums.item_enums import AType
-from program_logging import LogsHandler, LogFile, log_errors
-
 
 craft_log = LogsHandler().fetch_log(LogFile.CRAFTING_MODEL)
 
