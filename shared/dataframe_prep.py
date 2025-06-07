@@ -1,9 +1,6 @@
 import numpy as np
 import pandas as pd
-
-
-class StandardScaler:
-    pass
+from sklearn.preprocessing import StandardScaler
 
 
 class DataFramePrep:
@@ -49,6 +46,10 @@ class DataFramePrep:
     def df(self):
         return self._df
 
+    @df.setter
+    def df(self, df):
+        self._df = df
+
     def log_price(self,
                   log_col_name: str):
         self.df[log_col_name] = np.log1p(self.df[self.price_col_name])
@@ -70,11 +71,15 @@ class DataFramePrep:
 
         return self._df[feature_cols]
 
-    def fetch_columns_df(self, columns: list[str]) -> pd.DataFrame:
-        return self._df[columns]
+    def fillna(self, value=0):
+        # Fill only on non-categorical columns (exclude object and category types)
+        non_cat_cols = self._df.select_dtypes(exclude=['category', 'object']).columns
+        self._df[non_cat_cols] = self._df[non_cat_cols].fillna(value)
+        return self
 
     def drop_nan_rows(self):
         f_df = self.features
+        f_df = f_df.select_dtypes(['int64', 'float64'])
         valid_indices = f_df[~((f_df == 0) | (pd.isna(f_df))).all(axis=1)].index
 
         self._df = self._df.loc[valid_indices]
@@ -84,6 +89,11 @@ class DataFramePrep:
     def drop_overly_null_columns(self, max_percent_nulls: float):
         null_counts = dict()
         for col in self.features.columns:
+            # This most likely happens when rows in the DataFrame are entirely filtered out
+            if self._df[col].empty:
+                null_counts[col] = float('inf')
+                continue
+
             zero_rows = self._df[col] == 0
             na_rows = pd.isna(self._df[col])
             null_rows = zero_rows | na_rows
@@ -97,6 +107,10 @@ class DataFramePrep:
             print(f"Dropping overly-null columns: {invalid_cols}")
         self._df = self._df.drop(columns=invalid_cols)
 
+        return self
+
+    def concat(self, other_df):
+        self._df = pd.concat([self._df, other_df], axis=1)
         return self
 
     def drop_overly_modal_columns(self, max_percent_mode: float):
@@ -132,15 +146,22 @@ class DataFramePrep:
         return self
 
     def normalize_features(self):
-        features_df = self.fetch_features()
-        original_cols = features_df.columns
+        # Rename columns if they are tuples
+        self._df.columns = [
+            f"{col[0]}_{col[1]}" if isinstance(col, tuple) else col
+            for col in self._df.columns
+        ]
 
+        # Only scale the feature columns (e.g., not the target)
+        feature_cols = self.features.columns  # assuming this is a DataFrame
         scaler = StandardScaler()
-        new_data = scaler.fit_transform(features_df)
-        new_df = pd.DataFrame(new_data)
-        new_df.columns = original_cols
+        scaled_data = scaler.fit_transform(self.features)
 
-        self._df = new_df
+        # Rebuild just the scaled part as a DataFrame
+        scaled_df = pd.DataFrame(scaled_data, columns=feature_cols, index=self._df.index)
+
+        # Replace the original feature columns with scaled values
+        self._df.loc[:, feature_cols] = scaled_df
 
         return self
 
@@ -157,11 +178,11 @@ class DataFramePrep:
 
     def multiply_columns(self,
                          columns: list[str],
-                         inplace=True):
-        col_name = tuple(columns)
+                         new_col_name: str,
+                         replace_source: bool = False):
+        self._df[new_col_name] = self._df[columns].prod(axis=1)
 
-        if not inplace:
-            return self._df[columns].prod(axis=1)
+        if replace_source:
+            self._df = self._df.drop(columns=columns)
 
-        self._df[col_name] = self._df[columns].prod(axis=1)
         return self
