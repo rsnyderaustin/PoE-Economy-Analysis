@@ -141,6 +141,21 @@ def _indiv_radar_plot(main_point, neighbors, feature_names, title="Feature Compa
     plt.show()
 
 
+def plot_column(col_name, price_col_name, data, figsize=(6, 4), transparency=0.7):
+    if col_name not in data.columns or price_col_name not in data.columns:
+        raise ValueError(f"Column(s) '{col_name}' or '{price_col_name}' not found in dataframe.")
+
+    plt.figure(figsize=figsize)
+    plt.scatter(data[col_name], data[price_col_name], alpha=transparency)
+    plt.xlabel(price_col_name)
+    plt.ylabel(price_col_name)
+    plt.title(f'{price_col_name} vs. {col_name}')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+
 def bar_plot_neighbors(neighborhoods: list[Neighborhood]):
     for neighborhood in neighborhoods:
         if len(neighborhood.neighbors) == 0:

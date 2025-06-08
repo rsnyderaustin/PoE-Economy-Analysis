@@ -93,6 +93,9 @@ class StatsPrep:
                        price_column: str) -> DataFramePrep | None:
         self._original_df = df
 
+        visualize.plot_column(col_name='max_quality_pdps',
+                              price_col_name=price_column,
+                              data=df)
         print("Pre-prepping DataFrame.")
         df_prep = (
             DataFramePrep(df, price_col_name=price_column)
