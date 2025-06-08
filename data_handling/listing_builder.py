@@ -16,7 +16,6 @@ from .mod_matching import ModMatcher
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
 
-
 class ListingBuilder:
 
     def __init__(self):

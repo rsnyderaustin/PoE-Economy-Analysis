@@ -140,6 +140,10 @@ class StatsPrep:
         df_prep.drop(index=outliers_indices)
         norm_df_prep.drop(index=outliers_indices)
 
+        visualize.plot_column(col_name='max_quality_pdps',
+                              price_col_name=df_prep.price_col_name,
+                              data=df_prep.df)
+
         # visualize.plot_pca(df_prep.df, df_prep.price_column)
         """for n in neighborhoods:
             for ne in n.neighbors:
