@@ -1,6 +1,7 @@
+import itertools
+
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
 
 
 class DataFramePrep:
@@ -11,8 +12,23 @@ class DataFramePrep:
                  log_col_name: str = None):
         self._df = dataframe
 
-        self.price_col_name = price_col_name
-        self.log_col_name = log_col_name
+        self._metadata = {
+            'price_col_name': price_col_name,
+            'log_col_name': log_col_name,
+            'mutual_info_series': None
+        }
+
+    @property
+    def price_col_name(self):
+        return self._metadata['price_col_name']
+
+    @property
+    def log_col_name(self):
+        return self._metadata['log_col_name']
+
+    @property
+    def mutual_info_series(self):
+        return self._metadata['mutual_info_series']
 
     def _clone_with_new_df(self, new_df):
         self._df = new_df
@@ -145,6 +161,8 @@ class DataFramePrep:
         return self
 
     def normalize_features(self):
+        from sklearn.preprocessing import StandardScaler
+
         original_cols = self._df.columns
 
         # Rename columns if they are tuples
@@ -184,4 +202,24 @@ class DataFramePrep:
         if replace_source:
             self._df = self._df.drop(columns=columns)
 
+        return self
+    
+    def pair_features(self):
+        mod_combinations = list(itertools.combinations(self.features.columns, 2))
+        pair_cols = {(col1, col2): self.df[col1] * self.df[col2] for col1, col2 in mod_combinations}
+        self.concat(pd.DataFrame(pair_cols))
+        return self
+    
+    def drop_low_information_columns(self, threshold: float):
+        from sklearn.feature_selection import mutual_info_regression
+
+        features_sample = self.features.sample(10000, random_state=42)
+        price_sample = self.price_column[features_sample.index]
+        mi_scores = mutual_info_regression(features_sample, price_sample, discrete_features='auto')
+        mi_series = pd.Series(mi_scores, index=features_sample.columns).sort_values(ascending=False)
+
+        self._metadata['mutual_info_series'] = mi_series
+
+        invalid_cols = mi_series[mi_series <= threshold].index.tolist()
+        self.drop(columns=invalid_cols)
         return self

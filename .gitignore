@@ -1,5 +1,6 @@
 .env*
 file_management/dynamic_files/
+file_management/temp_files/
 program_logging/logs/
 .pyc*
 __pycache__/

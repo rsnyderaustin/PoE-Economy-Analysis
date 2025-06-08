@@ -5,6 +5,8 @@ from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 
+from .neighborhood_class import Neighborhood, Neighbor
+
 
 def plot_correlations(df: pd.DataFrame, atype: str):
     df = df.drop(columns=['divs'], errors='ignore')
@@ -63,25 +65,24 @@ def plot_avg_distance_to_nearest_neighbor(features_df):
     plt.show()
 
 
-def plot_all_nearest_neighbors(features_df):
-    nbrs = NearestNeighbors(n_neighbors=2)
-    nbrs.fit(features_df)  # X is your features_df or similar
-    distances, _ = nbrs.kneighbors(features_df)
+def plot_all_nearest_neighbors(neighborhoods: list[Neighborhood]):
+    distances = [
+        neighbor.distance
+        for neighborhood in neighborhoods
+        for neighbor in neighborhood.neighbors
+    ]
 
-    # Skip the first column (distance to self = 0)
-    nearest_distances = distances[:, 1]
-
-    plt.hist(nearest_distances, bins=100, edgecolor='k')
+    plt.hist(distances, bins=100, edgecolor='k')
     plt.title('Histogram of Distance to Nearest Neighbor')
     plt.xlabel('Distance')
     plt.ylabel('Frequency')
     plt.grid(True)
 
     # Focus only on 0–5 range
-    plt.xlim(0, 10)
+    plt.xlim(0, 1)
 
     # Add more x-axis labels (ticks)
-    plt.xticks(np.linspace(0, 10, num=20))  # e.g., [0.0, 0.5, 1.0, ..., 5.0]
+    plt.xticks(np.linspace(0, 1, num=20))  # e.g., [0.0, 0.5, 1.0, ..., 5.0]
 
     plt.show()
 
@@ -123,42 +124,44 @@ def _indiv_radar_plot(main_point, neighbors, feature_names, title="Feature Compa
     plt.show()
 
 
-def bar_plot_neighbors(features_df: pd.DataFrame,
-                       indices,
-                       distances):
-    for main_i in list(range(len(features_df))):
-        main_point = features_df.iloc[main_i]
-        neighbor_idxs = indices[main_i][1:]  # skip self
-
-        if len(neighbor_idxs) == 0:  # Skip if this point has no nearby neighbors
+def bar_plot_neighbors(neighborhoods: list[Neighborhood]):
+    for neighborhood in neighborhoods:
+        if len(neighborhood.neighbors) == 0:
             continue
 
-        neighbors = features_df.iloc[neighbor_idxs]
-
-        for i in range(len(neighbors)):
-            neighbor = neighbors.iloc[i]
-            _bar_plot_feature_diff(main_point=main_point, neighbor=neighbor, feature_names=features_df.columns)
+        for neighbor in neighborhood.neighbors:
+            _bar_plot_feature_diff(neighborhood=neighborhood,
+                                   neighbor=neighbor)
 
 
-def _bar_plot_feature_diff(main_point, neighbor, feature_names, title="Feature Comparison"):
-    # Select relevant columns with non-zero features
-    filtered_cols = [f for f in feature_names if (main_point[f] != 0) or (neighbor[f] != 0)]
+def _bar_plot_feature_diff(neighborhood: Neighborhood,
+                           neighbor: Neighbor):
+    feature_names = neighborhood.feature_names
+
+    # Wrap arrays in labeled Series
+    main_point = pd.Series(neighborhood.main_point, index=feature_names)
+    neighbor_point = pd.Series(neighbor.data, index=feature_names)
+    main_norm = pd.Series(neighborhood.normalized_main_point, index=feature_names)
+    neighbor_norm = pd.Series(neighbor.normalized_data, index=feature_names)
+
+    # Only keep features where either point is non-zero
+    filtered_cols = [col for col in feature_names
+                     if (main_point[col] != 0) or (neighbor_point[col] != 0)]
+
     if not filtered_cols:
         print("No non-zero features to plot.")
         return
 
-    main_point = main_point[filtered_cols]
-    neighbor = neighbor[filtered_cols]
+    # Filter and convert to float
+    main_vals = main_norm[filtered_cols].astype(float)
+    neighbor_vals = neighbor_norm[filtered_cols].astype(float)
 
-    main_vals = main_point.astype(float)
-    neighbor_vals = neighbor.astype(float)
-
+    # Normalize each pair
     max_vals = pd.concat([main_vals, neighbor_vals], axis=1).max(axis=1)
-    # Avoid division by zero by replacing 0 with 1 (both zero => both 0%)
     max_vals_replaced = max_vals.replace(0, 1)
 
-    norm_main = (main_vals / max_vals_replaced) * 100
-    norm_neighbor = (neighbor_vals / max_vals_replaced) * 100
+    norm_main = (main_vals / max_vals_replaced)
+    norm_neighbor = (neighbor_vals / max_vals_replaced)
 
     y = np.arange(len(filtered_cols))
     height = 0.35
@@ -171,7 +174,8 @@ def _bar_plot_feature_diff(main_point, neighbor, feature_names, title="Feature C
     ax.set_yticks(y)
     ax.set_yticklabels(filtered_cols)
     ax.set_xlabel('Normalized Feature Value')
-    ax.set_title(title)
+    ax.set_title(f"Neighbor Attributes (Distance: {round(neighbor.distance, 3)}")
     ax.legend()
     plt.tight_layout()
-    plt.show()
+    plt.show(block=True)
+    plt.pause(3)
