@@ -44,20 +44,21 @@ def plot_feature_importance(model, atype: str):
 
 
 def plot_actual_vs_predicted(atype, test_predictions, test_targets):
-    min_predict_axis = min(test_predictions) * 0.8
-    max_predict_axis = max(test_predictions) * 1.2
-
-    min_target_axis = min(test_targets) * 0.8
-    max_target_axis = max(test_targets) * 1.2
+    all_values = list(test_predictions) + list(test_targets)
+    min_val = min(all_values) * 0.8
+    max_val = max(all_values) * 1.2
 
     plt.figure(figsize=(8, 5))
     plt.scatter(test_predictions, test_targets, alpha=0.5)
-    plt.plot([min_predict_axis, max_predict_axis], [min_target_axis, max_target_axis], color='red', linestyle='--')
+    plt.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--')  # perfect prediction line
     plt.xlabel("Predicted Price (Divs)")
-    plt.ylabel("Actual Prices (Divs)")
+    plt.ylabel("Actual Price (Divs)")
 
     plt.title(f"Actual vs. Predicted Prices for {atype}")
+    plt.xlim(min_val, max_val)
+    plt.ylim(min_val, max_val)
     plt.grid(True)
+    plt.axis('equal')  # Optional: keeps aspect ratio square
     plt.show()
 
 

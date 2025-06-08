@@ -16,76 +16,16 @@ stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
 
 class _NearestNeighborAnalysis:
 
-    @staticmethod
-    def _apply_determine_is_outlier(row):
-        """
-        Determine if the listing's price is an outlier based on weighted neighbor prices.
-        Currently not in use.
-        """
-        list_price = row['list_price']
-        prices = pd.Series(row['prices'])
-        distances = pd.Series(row['distances'])
-
-        # Compute weights inversely proportional to distance (+ 0.1 to avoid div/0)
-        weights = 1 / (distances + 0.1)
-
-        # Sort prices and weights by price
-        sorted_indices = prices.argsort()
-        sorted_prices = prices.iloc[sorted_indices].values
-        sorted_weights = weights.iloc[sorted_indices].values
-
-        # Cumulative weight
-        cum_weights = np.cumsum(sorted_weights)
-        total_weight = cum_weights[-1]
-
-        # Determine bottom 10% and top 35% weight thresholds
-        bottom_weight = total_weight * 0.10
-        top_weight = total_weight * 0.35
-
-        # Check if the real price is less than prices before bottom_weight
-        lower_idx = np.searchsorted(cum_weights, bottom_weight)
-        if list_price < sorted_prices[lower_idx]:
-            return True
-
-        # Check if it's more than prices after top_weight
-        upper_idx = np.searchsorted(cum_weights, top_weight)
-        if list_price > sorted_prices[upper_idx]:
-            return True
-
-        return False
-
-    @staticmethod
-    def _filter_self_neighbor(features_df, distances, indices):
-        filtered_dists = []
-        filtered_indices = []
-
-        for dist_list, idx_list, i in zip(distances, indices, range(len(features_df))):
-            filtered = [(d, idx) for d, idx in zip(dist_list, idx_list) if idx != i]
-            if filtered:
-                dists, idxs = zip(*filtered)
-                filtered_dists.append(list(dists))
-                filtered_indices.append(list(idxs))
-            else:
-                filtered_dists.append([])
-                filtered_indices.append([])
-
-        return filtered_dists, filtered_indices
-
     @classmethod
-    def determine_outliers(cls,
-                           norm_features_df: pd.DataFrame,
-                           raw_features_df: pd.DataFrame,
-                           list_prices: pd.Series,
-                           min_neighbors: int = 10,
-                           neighbors_searched: int = 100,
-                           within_range: float = 0.1
-                           ) -> list[Neighborhood]:
+    def create_neighborhoods(cls,
+                             norm_features_df: pd.DataFrame,
+                             raw_features_df: pd.DataFrame,
+                             list_prices: pd.Series,
+                             neighbors_searched: int = 100
+                             ) -> list[Neighborhood]:
         print("Starting determining outliers based on nearest neighbors.")
         norm_features_df = norm_features_df.copy()
         raw_features_df = raw_features_df.copy()
-
-        # RadiusNeighborsRegressor naturally resets the index, so this allows us to convert the index back
-        index_convert = {i: idx for i, idx in enumerate(raw_features_df.index)}
 
         # RadiusNeighborsRegressor requires that all columns be str
         original_cols = norm_features_df.columns
@@ -97,6 +37,8 @@ class _NearestNeighborAnalysis:
         knn.fit(norm_features_df, list_prices)
         distances, indices = knn.kneighbors(norm_features_df)
 
+        indices = np.array(norm_features_df.index)[indices]
+
         norm_features_df.columns = original_cols
 
         print("\nCompiling KNeighborsRegressor results")
@@ -104,77 +46,39 @@ class _NearestNeighborAnalysis:
         distances = [list(arr[1:]) for arr in distances]
         indices = [list(arr[1:]) for arr in indices]
 
-        print("Creating neighborhoods.")
-        raw_arr = raw_features_df.to_numpy()
-        norm_arr = norm_features_df.to_numpy()
-        prices_arr = np.array(list_prices)
+        # Convert to DataFrames so we can reattach indices
+        distances_df = pd.DataFrame(distances, index=norm_features_df.index)
+        neighbor_indices_df = pd.DataFrame(indices, index=norm_features_df.index)
 
-        # Make a map from label index to position if needed
-        idx_map = {k: v for v, k in enumerate(norm_features_df.index)}
+        print("Creating Neighborhoods.")
+        if not norm_features_df.index.equals(raw_features_df.index):
+            raise ValueError("Norm features and raw features are misaligned.")
 
-        neighborhoods = [
-            Neighborhood(
-                main_point=raw_arr[idx_map[index_convert[neighborhood_i]]],
-                normalized_main_point=norm_arr[idx_map[index_convert[neighborhood_i]]],
-                neighbors_data=[
-                    raw_arr[idx_map[index_convert[i]]] for i in indices[neighborhood_i]
-                ],
-                normalized_neighbors_data=[
-                    norm_arr[idx_map[index_convert[i]]] for i in indices[neighborhood_i]
-                ],
-                distances=distances[neighborhood_i],
-                prices=[prices_arr[idx_map[index_convert[i]]] for i in indices[neighborhood_i]],
+        raw_features_dict = raw_features_df.to_dict(orient="index")
+        norm_features_dict = norm_features_df.to_dict(orient="index")
+        list_prices_dict = list_prices.to_dict()
+
+        neighborhoods = []
+        for i, neighborhood_i in enumerate(norm_features_df.index):
+            if i % 1000 == 0:
+                print(f"Creating Neighborhood {i} of {len(norm_features_df)}")
+
+            neighbor_idxs = neighbor_indices_df.loc[neighborhood_i]
+
+            new_neighborhood = Neighborhood(
+                list_index=neighborhood_i,
+                list_data=raw_features_dict[neighborhood_i],
+                normalized_list_data=norm_features_dict[neighborhood_i],
+                list_price=list_prices_dict[neighborhood_i],
+                neighbors_data=[raw_features_dict[i] for i in neighbor_idxs],
+                normalized_neighbors_data=[norm_features_dict[i] for i in neighbor_idxs],
+                distances=distances_df.loc[neighborhood_i],
+                prices=[list_prices_dict[i] for i in neighbor_idxs],
                 feature_names=norm_features_df.columns
             )
-            for neighborhood_i in range(len(norm_features_df))
-        ]
+            neighborhoods.append(new_neighborhood)
 
         return neighborhoods
-
-        visualize.plot_all_nearest_neighbors(neighborhoods)
-
-        print("Filtering neighborhoods.")
-        for n in neighborhoods:
-            n.filter_distant_neighbors(within_range)
-        neighborhoods = [n for n in neighborhoods if len(n.neighbors) >= min_neighbors]
-
-        # visualize.plot_avg_distance_to_nearest_neighbor(norm_features_df)
-        # visualize.radar_plot_neighbors(features_df=raw_features_df, indices=indices)
-        visualize.bar_plot_neighbors(neighborhoods)
-
-        # Filter out any items that don't have all their closest neighbors within the 'radius_range'
-        isolated_indices = [i for i, ds in enumerate(distances) if ds[-1] > within_range]
-
-        index_ = []
-        cols_dict = {
-            'distances': [],
-            'prices': [],
-            'list_price': []
-        }
-        for row_i, (n_distances, n_indices) in enumerate(zip(distances, indices)):
-            if row_i in isolated_indices:
-                continue
-
-            index_.append(index_convert[row_i])
-
-            list_price = list_prices.loc[index_convert[row_i]]
-            cols_dict['list_price'].append(list_price)
-
-            cols_dict['distances'].append(n_distances)
-
-            converted_indices = [index_convert[i] for i in n_indices]
-            n_prices = [list_prices.loc[i] for i in converted_indices]
-            cols_dict['prices'].append(n_prices)
-
-        df = pd.DataFrame(cols_dict, index=index_)
-
-        print("Determining outliers based on neighbors pricing.")
-        df['is_price_outlier'] = df.apply(cls._apply_determine_is_outlier, axis=1)
-        outlier_indices = df[df['is_price_outlier']].index.tolist()
-
-        all_outliers_indices = set(isolated_indices) | set(outlier_indices)
-
-        return all_outliers_indices
 
 
 class StatsPrep:
@@ -186,8 +90,9 @@ class StatsPrep:
 
     def prep_dataframe(self,
                        df: pd.DataFrame,
-                       price_column: str,
-                       mutual_info_threshold: float = 0.05) -> DataFramePrep | None:
+                       price_column: str) -> DataFramePrep | None:
+        self._original_df = df
+
         print("Pre-prepping DataFrame.")
         df_prep = (
             DataFramePrep(df, price_col_name=price_column)
@@ -200,10 +105,9 @@ class StatsPrep:
             .drop_overly_modal_columns(max_percent_mode=0.98)
             .drop_duplicates()
             .pair_features()
-            .drop_low_information_columns(mutual_info_threshold)
+            .drop_low_information_columns(threshold=0.01,
+                                          attribute_pairs_weight=0.5)
         )
-
-        self._original_df = df_prep.df
 
         print("Normalizing and weighting features.")
         norm_df_prep = (
@@ -214,13 +118,35 @@ class StatsPrep:
             .weight_columns(df_prep.mutual_info_series)
         )
 
-        outlier_indices = _NearestNeighborAnalysis.determine_outliers(
-            original_df=self._original_df,
+        neighborhoods = _NearestNeighborAnalysis.create_neighborhoods(
             norm_features_df=norm_df_prep.features,
             raw_features_df=df_prep.features,
             list_prices=norm_df_prep.log_price_column
         )
+        # visualize.plot_all_nearest_neighbors(neighborhoods)
 
-        df_prep.drop(index=outlier_indices)
+        print("Filtering Neighborhoods.")
+        for n in neighborhoods:
+            n.filter_distant_neighbors(0.1)
+
+        # visualize.plot_number_of_neighbors(neighborhoods)
+
+        print("Determining Neighborhood outliers.")
+        outliers_indices = [n.list_index for n in neighborhoods if n.is_outlier(min_neighbors=5)]
+
+        df_prep.drop(index=outliers_indices)
+        norm_df_prep.drop(index=outliers_indices)
+
+        # visualize.plot_pca(df_prep.df, df_prep.price_column)
+        """for n in neighborhoods:
+            for ne in n.neighbors:
+                list_data = {col: v for col, v in n.list_data.items() if v != 0}
+                ne_data = {col: v for col, v in ne.data.items() if v != 0}
+                print(f"\n\n--- New Comparison ---\nDistance:{ne.distance}\nListing:\n{pprint.pformat(list_data)}"
+                      f"\nNeighbor:\n{pprint.pformat(ne_data)}")"""
+
+        # visualize.plot_avg_distance_to_nearest_neighbor(norm_features_df)
+        # visualize.radar_plot_neighbors(features_df=raw_features_df, indices=indices)
+        # visualize.bar_plot_neighbors(neighborhoods)
 
         return df_prep

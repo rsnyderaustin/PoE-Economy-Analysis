@@ -352,22 +352,6 @@ class _PricePredictTransformer:
         self.flattened_data['currency'] = self.listing.currency.value
         self.flattened_data['currency_amount'] = self.listing.currency_amount
 
-        divs = core.CurrencyConverter().convert_to_divs(
-            currency=self.listing.currency,
-            currency_amount=self.listing.currency_amount,
-            relevant_date=self.listing.date_fetched
-        )
-
-        if not divs:
-            raise ValueError(f"Determined 0 / NULL divs for {self.flattened_data['currency_amount']} "
-                             f"{self.flattened_data['currency']}s")
-        
-        self.flattened_data['divs'] = core.CurrencyConverter().convert_to_divs(
-            currency=self.listing.currency,
-            currency_amount=self.listing.currency_amount,
-            relevant_date=self.listing.date_fetched
-        )
-
         return self
 
     def insert_item_base_info(self):

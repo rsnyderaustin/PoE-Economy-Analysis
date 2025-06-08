@@ -22,13 +22,25 @@ class DataFramePrep:
     def price_col_name(self):
         return self._metadata['price_col_name']
 
+    @price_col_name.setter
+    def price_col_name(self, name):
+        self._metadata['price_col_name'] = name
+
     @property
     def log_col_name(self):
         return self._metadata['log_col_name']
 
+    @log_col_name.setter
+    def log_col_name(self, name):
+        self._metadata['log_col_name'] = name
+
     @property
     def mutual_info_series(self):
         return self._metadata['mutual_info_series']
+
+    @mutual_info_series.setter
+    def mutual_info_series(self, mi_series):
+        self._metadata['mutual_info_series'] = mi_series
 
     def _clone_with_new_df(self, new_df):
         self._df = new_df
@@ -189,6 +201,10 @@ class DataFramePrep:
 
     def weight_columns(self, weights: dict):
         for col, weight in weights.items():
+            if col not in self._df.columns:
+                continue
+
+            print(f"Weighting {col}: {weight}")
             self._df[col] = self._df[col] * weight
 
         return self
@@ -203,14 +219,14 @@ class DataFramePrep:
             self._df = self._df.drop(columns=columns)
 
         return self
-    
+
     def pair_features(self):
         mod_combinations = list(itertools.combinations(self.features.columns, 2))
         pair_cols = {(col1, col2): self.df[col1] * self.df[col2] for col1, col2 in mod_combinations}
         self.concat(pd.DataFrame(pair_cols))
         return self
-    
-    def drop_low_information_columns(self, threshold: float):
+
+    def drop_low_information_columns(self, threshold: float, attribute_pairs_weight: float):
         from sklearn.feature_selection import mutual_info_regression
 
         features_sample = self.features.sample(10000, random_state=42)
@@ -218,8 +234,17 @@ class DataFramePrep:
         mi_scores = mutual_info_regression(features_sample, price_sample, discrete_features='auto')
         mi_series = pd.Series(mi_scores, index=features_sample.columns).sort_values(ascending=False)
 
-        self._metadata['mutual_info_series'] = mi_series
+        mi_series = pd.Series(
+            [score * attribute_pairs_weight if isinstance(name, tuple) else score
+             for name, score in mi_series.items()],
+            index=mi_series.index
+        )
 
         invalid_cols = mi_series[mi_series <= threshold].index.tolist()
+        print(f"Dropping low information columns: {invalid_cols}")
         self.drop(columns=invalid_cols)
+
+        mi_series = mi_series.drop(columns=invalid_cols)
+        self.mutual_info_series = mi_series
+
         return self

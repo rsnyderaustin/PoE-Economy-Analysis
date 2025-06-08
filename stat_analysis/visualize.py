@@ -28,26 +28,26 @@ def plot_dimensions(df: pd.DataFrame, price_column: str, atype: str):
         plt.show()
 
 
-def plot_pca(features_df: pd.DataFrame, price_column: str):
+def plot_pca(features_df: pd.DataFrame, price_column: pd.Series):
+    features_df = features_df.copy()
+    features_df.columns = [f"{col[0]}_{col[1]}" if isinstance(col, tuple) else col for col in features_df.columns]
     pca = PCA(n_components=2)
-    prices = features_df[price_column]
-    features_df = features_df.drop(columns=[price_column])
 
     pca_components = pca.fit_transform(features_df)
     pca_df = pd.DataFrame(pca_components, columns=['pca1', 'pca2'])
-    pca_df[price_column] = prices
+    pca_df['price'] = price_column
 
     # Plot the clusters
     plt.figure(figsize=(10, 7))
     c_palette = sns.color_palette("flare", as_cmap=True)
     # plot_df.loc[plot_df['cluster'] == -1, 'cluster'] = 999
-    sns.scatterplot(data=pca_df, x='pca1', y='pca2', hue=price_column, palette=c_palette, edgecolor='black')
+    sns.scatterplot(data=pca_df, x='pca1', y='pca2', hue='price', palette=c_palette, edgecolor='black')
 
     # Customize the plot
     plt.title("Clusters of Mod Combinations (Excluding Price) Based on PCA Components")
     plt.xlabel("PCA Component 1")
     plt.ylabel("PCA Component 2")
-    plt.legend(title='divs')
+    plt.legend(title='price')
     plt.show()
 
 
@@ -64,6 +64,23 @@ def plot_avg_distance_to_nearest_neighbor(features_df):
     plt.grid(True)
     plt.show()
 
+
+def plot_number_of_neighbors(neighborhoods: list[Neighborhood]):
+    num_neighbors = [len(n.neighbors) for n in neighborhoods]
+
+    plt.hist(num_neighbors, bins=100, edgecolor='k')
+    plt.title('Histogram of Number of Neighborsr')
+    plt.xlabel('Neighbors')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+
+    # Focus only on 0–5 range
+    plt.xlim(0, 20)
+
+    # Add more x-axis labels (ticks)
+    plt.xticks(np.linspace(0, 20, num=20))  # e.g., [0.0, 0.5, 1.0, ..., 5.0]
+
+    plt.show()
 
 def plot_all_nearest_neighbors(neighborhoods: list[Neighborhood]):
     distances = [
@@ -139,9 +156,9 @@ def _bar_plot_feature_diff(neighborhood: Neighborhood,
     feature_names = neighborhood.feature_names
 
     # Wrap arrays in labeled Series
-    main_point = pd.Series(neighborhood.main_point, index=feature_names)
+    main_point = pd.Series(neighborhood.list_data, index=feature_names)
     neighbor_point = pd.Series(neighbor.data, index=feature_names)
-    main_norm = pd.Series(neighborhood.normalized_main_point, index=feature_names)
+    main_norm = pd.Series(neighborhood.normalized_list_data, index=feature_names)
     neighbor_norm = pd.Series(neighbor.normalized_data, index=feature_names)
 
     # Only keep features where either point is non-zero
