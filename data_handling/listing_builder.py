@@ -32,6 +32,57 @@ class ListingBuilder:
         return _ModResolver(item_mods_file=item_mods_file,
                             poe2db_injector=poe2db_injector)
 
+    @staticmethod
+    def _build_listing_string(rp: ApiResponseParser):
+        if rp.item_properties:
+            properties_ = {
+                shared_utils.extract_from_brackets(p['name']): shared_utils.extract_values_from_text(p['values'][0][0])[0]
+                for p in rp.item_properties[1:]
+            }
+        else:
+            properties_ = {}
+
+        att_requirements = {
+            k: v for k, v in {
+                'Str': rp.str_requirement,
+                'Dex': rp.dex_requirement,
+                'Int': rp.int_requirement
+            }.items() if v
+        }
+
+        implicits = rp.fetch_tiered_mod_strings(mod_class=ModClass.IMPLICIT,
+                                                mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.IMPLICIT])
+        enchants = rp.fetch_tiered_mod_strings(mod_class=ModClass.ENCHANT,
+                                               mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.ENCHANT])
+        fractureds = rp.fetch_tiered_mod_strings(mod_class=ModClass.FRACTURED,
+                                                 mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.FRACTURED])
+        explicits = rp.fetch_tiered_mod_strings(mod_class=ModClass.EXPLICIT,
+                                                mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.EXPLICIT])
+
+        s = []
+
+        s.append(f"{rp.item_name} {rp.item_btype}\n"
+                 f"{rp.item_category}\n")
+
+        if properties_:
+            s.append('\n'.join(f"{k}: {v}" for k, v in properties_.items()))
+
+        s.append(f"\nItem Level: {rp.item_ilvl}")
+
+        if rp.level_requirement:
+            s.append(f"\nRequires Level: {rp.level_requirement} ")
+        if att_requirements:
+            s.append(', '.join(f"{k}: {v}" for k, v in att_requirements.items()))
+
+        skills = _SkillsFactory.create_skills(rp)
+        if skills:
+            s.append('\n'.join([f"Grants Skill: Level {skill.level} {skill.name}" for skill in skills]))
+
+        s.append('\n\n' + '\n'.join(implicits + enchants + fractureds + explicits))
+        s.append(f"\n\n{rp.price.amount}x {rp.price.currency.value}  IGN: {rp.account_name}")
+
+        return ''.join(s)
+
     def build_listing(self, rp: ApiResponseParser):
         minutes_since_listed = utils.determine_minutes_since(
             relevant_date=rp.date_fetched
@@ -43,6 +94,7 @@ class ListingBuilder:
         item_mods = self._mod_resolver.resolve_mods(rp)
 
         listing = ModifiableListing(
+            listing_str=self._build_listing_string(rp),
             account_name=rp.account_name,
             listing_id=rp.listing_id,
             date_fetched=rp.date_fetched,

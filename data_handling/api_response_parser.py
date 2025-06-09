@@ -15,6 +15,13 @@ class Price:
     amount: int
 
 
+@dataclass
+class ModTextTiers:
+    mod_class: ModClass
+    mod_text: str
+    tiers: list[str]
+
+
 class _ATypeClassifier:
     _wand_btype_map = {
         'volatile_wand': 'fire_wand',
@@ -60,7 +67,7 @@ class _ATypeClassifier:
 
 
 class ApiResponseParser:
-    _mod_class_to_abbrev = {
+    mod_class_to_abbrev = {
         ModClass.IMPLICIT: 'implicit',
         ModClass.ENCHANT: 'enchant',
         ModClass.EXPLICIT: 'explicit',
@@ -79,6 +86,23 @@ class ApiResponseParser:
 
         self.sub_mod_hash_to_text = self._determine_sub_mod_hash_to_text()
         self._properties = self._parse_properties()
+
+    def fetch_tiered_mod_strings(self, mod_class: ModClass, mod_abbrev: str) -> list[str]:
+        hash_to_text = {k: f"({mod_class.value}) {v}   " for k, v in self.sub_mod_hash_to_text[mod_class].items()}
+        for mod in self.item_data['extended']['mods'][mod_abbrev]:
+            hashes = [magnitude['hash'] for magnitude in mod['magnitudes']]
+            is_hybrid = len(hashes) >= 2
+
+            mod_tier = f"Hybrid {mod['tier']}" if is_hybrid else mod['tier']
+
+            # Implicit mods and enchant mods do not have a mod tier
+            if not mod_tier:
+                continue
+
+            for hash_ in hashes:
+                hash_to_text[hash_] = f"{hash_to_text[hash_]} {mod_tier}"
+
+        return list(hash_to_text.values())
 
     @staticmethod
     def _clean_blank_spear_implicit(response_data: dict):
@@ -134,7 +158,7 @@ class ApiResponseParser:
         # ModClass: {sub_mod_hash: mod_text}
         hash_to_text = dict()
         for mod_class in mod_classes:
-            abbrev_class = self.__class__._mod_class_to_abbrev[mod_class]
+            abbrev_class = self.__class__.mod_class_to_abbrev[mod_class]
 
             if abbrev_class not in self.item_data['extended']['hashes']:
                 continue
@@ -182,7 +206,7 @@ class ApiResponseParser:
                 if mod_class.value in self.item_data and mod_class != ModClass.RUNE]
 
     def fetch_mods_data(self, mod_class: ModClass) -> dict:
-        abbrev_class = self.__class__._mod_class_to_abbrev[mod_class]
+        abbrev_class = self.__class__.mod_class_to_abbrev[mod_class]
         mods_data = self.item_data['extended']['mods']
         return mods_data[abbrev_class] if abbrev_class in mods_data else dict()
 
@@ -215,6 +239,11 @@ class ApiResponseParser:
         return int(self.item_data['ilvl'])
 
     @property
+    def level_requirement(self) -> int:
+        reqs = self.item_data['requirements']
+        return int(reqs[0]['values'][0][0]) if reqs and reqs[0]['name'] == 'Level' else 0
+
+    @property
     def is_identified(self) -> bool:
         return 'identified' in self.item_data and self.item_data['identified'] is True
 
@@ -224,12 +253,15 @@ class ApiResponseParser:
 
     @property
     def item_atype(self) -> AType:
-        item_category = self.item_data['properties'][0]['name']
-        return _ATypeClassifier.classify(item_category=item_category,
+        return _ATypeClassifier.classify(item_category=self.item_category,
                                          item_btype=self.item_btype,
                                          str_req=self.str_requirement,
                                          dex_req=self.dex_requirement,
                                          int_req=self.int_requirement)
+
+    @property
+    def item_category(self):
+        return shared_utils.extract_from_brackets(self.item_properties[0]['name'])
 
     @property
     def item_properties(self) -> dict:

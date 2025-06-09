@@ -2,6 +2,7 @@ import datetime
 import re
 from typing import Iterable
 
+from shared import shared_utils
 from shared.enums.item_enums import ModAffixType, AType
 from shared.enums.trade_enums import ModClass, Rarity, Currency
 
@@ -49,7 +50,7 @@ class ItemMod:
         self.mod_ilvl = mod_ilvl
         self.sub_mods = sorted(sub_mods, key=lambda sm: sm.sub_mod_hash) if sub_mods else []
 
-        # These variables should be very quickly filled in after creation
+        # These variables should be very quickly filled in after creation if applicable
         self.mod_types = None
         self.weighting = None
 
@@ -107,6 +108,7 @@ class ItemSocketer:
 class ModifiableListing:
 
     def __init__(self,
+                 listing_str: str,
                  account_name: str,
                  listing_id: str,
                  date_fetched: datetime,
@@ -119,6 +121,10 @@ class ModifiableListing:
                  item_atype: AType,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
                  rarity: Rarity,
                  ilvl: int,
+                 level_requirement: int,
+                 str_requirement: int,
+                 int_requirement: int,
+                 dex_requirement: int,
                  identified: bool,
                  corrupted: bool,
                  implicit_mods: list[ItemMod],
@@ -128,25 +134,39 @@ class ModifiableListing:
                  item_skills: list[ItemSkill],
                  item_properties: dict
                  ):
+        self.listing_string = listing_str
+
         self.account_name = account_name
         self.listing_id = listing_id
+
         self.date_fetched = date_fetched
         self.minutes_since_listed = minutes_since_listed
         self.minutes_since_league_start = minutes_since_league_start
+
         self.currency = currency
         self.currency_amount = currency_amount
+
         self.item_name = item_name
         self.item_btype = item_btype
         self.item_atype = item_atype
         self.rarity = rarity
         self.ilvl = ilvl
+        self.level_requirement = level_requirement
+
+        self.str_requirement = str_requirement
+        self.int_requirement = int_requirement
+        self.dex_requirement = dex_requirement
+
         self.identified = identified
         self.corrupted = corrupted
+
+        self.item_skills = item_skills
+
         self.implicit_mods = implicit_mods
         self.enchant_mods = enchant_mods
-        self.item_skills = item_skills
         self.fractured_mods = fractured_mods
         self.explicit_mods = explicit_mods
+
         self.item_properties = item_properties
 
         self._mod_class_to_attribute = {
@@ -161,6 +181,9 @@ class ModifiableListing:
 
     def __hash__(self):
         return hash((self.listing_id, self.minutes_since_listed))
+
+    def __str__(self):
+        return self.listing_string
 
     def _determine_max_quality(self) -> int:
         implicit_sub_mods = [sub_mod for mod in self.implicit_mods for sub_mod in mod.sub_mods]

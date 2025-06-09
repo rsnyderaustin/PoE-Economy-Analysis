@@ -31,14 +31,14 @@ def extract_values_from_text(text) -> list:
     return result
 
 
-def _extract_from_brackets(match):
+def extract_from_brackets(match):
     parts = match.group(1).split('|')
     return parts[-1] if len(parts) > 1 else parts[0]
 
 
 def sanitize_text(text: str):
     brackets_pattern = r'\[(.*?)\]'
-    result = re.sub(brackets_pattern, _extract_from_brackets, text)
+    result = re.sub(brackets_pattern, extract_from_brackets, text)
     result = result.strip().lower().replace(' ', '_')
     return result
 
@@ -72,7 +72,7 @@ def sanitize_mod_text(mod_text: str):
     result = re.sub(r'_+', '_', result)
 
     brackets_pattern = r'\[(.*?)\]'
-    result = re.sub(brackets_pattern, _extract_from_brackets, result)
+    result = re.sub(brackets_pattern, extract_from_brackets, result)
 
     result = result.strip(' _')
 
