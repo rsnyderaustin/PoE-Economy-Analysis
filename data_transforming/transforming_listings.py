@@ -244,7 +244,7 @@ class ListingsTransforming:
     def to_price_predict_df(cls,
                             listings: list[ModifiableListing] = None,
                             rows: dict[str: list] = None,
-                            existing_model = None) -> 'pd.DataFrame':
+                            existing_model=None) -> 'pd.DataFrame':
         """
 
         :param listings: Listings to format into a DataFrame for the PricePredict model.
@@ -340,6 +340,7 @@ class _PricePredictTransformer:
 
     def insert_metadata(self):
         metadata = {
+            'my_id': self.listing.my_id,
             'listing_id': self.listing.listing_id,
             'date_fetched': self.listing.date_fetched,
             'minutes_since_listed': self.listing.minutes_since_listed,

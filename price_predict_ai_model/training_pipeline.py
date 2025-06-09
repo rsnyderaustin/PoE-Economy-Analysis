@@ -10,7 +10,7 @@ from price_predict_ai_model import visuals
 from program_logging import LogFile, LogsHandler
 from psql import PostgreSqlManager
 from shared.dataframe_prep import DataFramePrep
-from stat_analysis.stats_prep import StatsPrep
+from price_predict_ai_model.stat_analysis import StatsPrep
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 

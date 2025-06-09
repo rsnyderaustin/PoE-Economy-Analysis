@@ -9,7 +9,7 @@ import trade_api
 from core import env_loading
 from data_handling import ListingBuilder, ApiResponseParser
 from data_transforming import ListingsTransforming
-from file_management.file_managers import RawListingsFile
+from file_management.file_managers import RawListingsFile, ListingStringsFile
 from program_logging import LogsHandler, LogFile
 from trade_api.listing_gatekeeper import ListingImportGatekeeper
 from trade_api.query import QueryPresets
@@ -40,8 +40,17 @@ class TrainingDataPopulator:
 
     def _process_and_insert(self, responses: list[ApiResponseParser]):
         listings = [self.listing_builder.build_listing(api_r) for api_r in responses]
+
+        for listing in listings:
+            self.psql_manager.insert_listing_string(table_name='listing_strings',
+                                                    my_id=listing.my_id,
+                                                    listing_str=str(listing)
+                                                    )
+
+        overview_log.info(f"Inserted {len(listings)} listing strings into Psql.")
+
         row_data = ListingsTransforming.to_flat_rows(listings)
-        self.psql_manager.insert_data(
+        self.psql_manager.insert_listing(
             table_name=self.env_loader.get_env("PSQL_TRAINING_TABLE"),
             data=row_data
         )

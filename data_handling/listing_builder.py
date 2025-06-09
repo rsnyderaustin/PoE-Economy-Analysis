@@ -2,6 +2,7 @@ import copy
 import pprint
 import re
 from dataclasses import dataclass
+import uuid
 
 from file_management.file_managers import ItemModsFile, Poe2DbModsManagerFile
 from instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
@@ -76,7 +77,7 @@ class ListingBuilder:
 
         skills = _SkillsFactory.create_skills(rp)
         if skills:
-            s.append('\n'.join([f"Grants Skill: Level {skill.level} {skill.name}" for skill in skills]))
+            s.append('\n' + '\n'.join([f"Grants Skill: Level {skill.level} {skill.name}" for skill in skills]))
 
         s.append('\n\n' + '\n'.join(implicits + enchants + fractureds + explicits))
         s.append(f"\n\n{rp.price.amount}x {rp.price.currency.value}  IGN: {rp.account_name}")
@@ -94,6 +95,7 @@ class ListingBuilder:
         item_mods = self._mod_resolver.resolve_mods(rp)
 
         listing = ModifiableListing(
+            my_id=f"LST_{uuid.uuid4().hex[:10].upper()}",
             listing_str=self._build_listing_string(rp),
             account_name=rp.account_name,
             listing_id=rp.listing_id,

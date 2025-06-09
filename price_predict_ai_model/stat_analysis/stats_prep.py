@@ -1,24 +1,19 @@
-import itertools
-import pprint
-
 import numpy as np
 import pandas as pd
-from sklearn.feature_selection import mutual_info_regression
 from sklearn.neighbors import KNeighborsRegressor
 
 from program_logging import LogFile, LogsHandler
 from shared.dataframe_prep import DataFramePrep
-from stat_analysis import visualize
+from price_predict_ai_model.stat_analysis import visualize
 from .neighborhood_class import Neighborhood
 
 stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
 
 
-class _NearestNeighborAnalysis:
+class _NeighborhoodFactory:
 
-    @classmethod
-    def create_neighborhoods(cls,
-                             norm_features_df: pd.DataFrame,
+    @staticmethod
+    def create_neighborhoods(norm_features_df: pd.DataFrame,
                              raw_features_df: pd.DataFrame,
                              list_prices: pd.Series,
                              neighbors_searched: int = 100
@@ -86,16 +81,9 @@ class StatsPrep:
     def __init__(self, plot_visuals):
         self._plot_visuals = plot_visuals
 
-        self._original_df = None
-
     def prep_dataframe(self,
                        df: pd.DataFrame,
                        price_column: str) -> DataFramePrep | None:
-        self._original_df = df
-
-        visualize.plot_column(col_name='max_quality_pdps',
-                              price_col_name=price_column,
-                              data=df)
         print("Pre-prepping DataFrame.")
         df_prep = (
             DataFramePrep(df, price_col_name=price_column)
@@ -121,11 +109,12 @@ class StatsPrep:
             .weight_columns(df_prep.mutual_info_series)
         )
 
-        neighborhoods = _NearestNeighborAnalysis.create_neighborhoods(
+        neighborhoods = _NeighborhoodFactory.create_neighborhoods(
             norm_features_df=norm_df_prep.features,
             raw_features_df=df_prep.features,
             list_prices=norm_df_prep.log_price_column
         )
+
         # visualize.plot_all_nearest_neighbors(neighborhoods)
 
         print("Filtering Neighborhoods.")

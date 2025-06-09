@@ -35,11 +35,16 @@ class _JsonDictFile(ABC):
     def __init__(self, path: Path = None):
         self._path = path
 
-    def save(self, data: dict):
+    def save(self, data):
         i_o_utils.write_json(path=self._path, data=data)
 
-    def load(self, default: Any = None) -> dict:
+    def load(self, default: Any = None):
         return i_o_utils.load_json(path=self._path, default=default)
+
+
+class ListingStringsFile(_JsonDictFile):
+    def __init__(self, path: Path = None):
+        super().__init__(path or Path.cwd() / 'file_management/dynamic_files/listing_strings.json')
 
 
 class OfficialStatsFile(_JsonDictFile):

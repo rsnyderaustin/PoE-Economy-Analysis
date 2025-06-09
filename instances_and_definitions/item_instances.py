@@ -108,6 +108,7 @@ class ItemSocketer:
 class ModifiableListing:
 
     def __init__(self,
+                 my_id: int,
                  listing_str: str,
                  account_name: str,
                  listing_id: str,
@@ -134,6 +135,7 @@ class ModifiableListing:
                  item_skills: list[ItemSkill],
                  item_properties: dict
                  ):
+        self.my_id = my_id
         self.listing_string = listing_str
 
         self.account_name = account_name
