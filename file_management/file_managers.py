@@ -212,3 +212,37 @@ class CustomEncoder(json.JSONEncoder):
             return float(obj)
         return super().default(obj)
 
+
+class PricePredictPerformanceFile:
+
+    def __init__(self, path: Path = None):
+        self.path = path or Path.cwd() / 'file_management/temp_files/price_predict_performance.csv'
+
+    def load(self, default: Any = None, missing_ok: bool = True) -> 'pd.DataFrame':
+        import pandas as pd
+        """
+        Load performance data from CSV into a DataFrame.
+        If the file does not exist, returns the default value or raises an error.
+        """
+        if not self.path.exists():
+            if missing_ok:
+                return default
+            else:
+                raise FileNotFoundError(f"File not found at path: {self.path}")
+
+        try:
+            return pd.read_csv(self.path)
+        except Exception as e:
+            print(f"Error loading file: {e}")
+            return default
+
+    def save(self, df: 'pd.DataFrame'):
+        """
+        Save the provided DataFrame to a CSV file.
+        Creates parent directories if they do not exist.
+        """
+        import pandas as pd
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(self.path, index=False)
+
+

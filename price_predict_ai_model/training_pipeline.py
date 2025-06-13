@@ -5,7 +5,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
 from data_transforming import ListingsTransforming
-from file_management.file_managers import PricePredictModelFiles, PricePredictCacheFile
+from file_management.file_managers import PricePredictModelFiles, PricePredictCacheFile, PricePredictPerformanceFile
 from price_predict_ai_model import visuals
 from program_logging import LogFile, LogsHandler
 from psql import PostgreSqlManager
@@ -35,20 +35,22 @@ class ModelPerformance:
 class ModelPerformanceTracker:
 
     def __init__(self):
-        self._performance_data = {}
+        self.performance_data = {}
 
     def add_model_performance(self, model_performance: ModelPerformance):
-        for k, v in model_performance.__dict__:
-            if k not in self._performance_data:
-                self._performance_data[k] = v
+        for k, v in model_performance.__dict__.items():
+            if k not in self.performance_data:
+                self.performance_data[k] = []
 
-            self._performance_data[k].append(v)
+            self.performance_data[k].append(v)
 
 class PricePredictModelPipeline:
     def __init__(self,
                  price_predict_files: PricePredictModelFiles,
+                 performance_file: PricePredictPerformanceFile,
                  psql_manager: PostgreSqlManager):
         self._files_manager = price_predict_files
+        self._performance_file = performance_file
         self._psql_manager = psql_manager
 
         self.should_plot_visuals = None
@@ -94,14 +96,18 @@ class PricePredictModelPipeline:
 
                 self._perf_tracker.add_model_performance(performance_track)
 
-            # self._files_manager.save_model(atype=atype, model=model)
+                # self._files_manager.save_model(atype=atype, model=model)
+
+        perf_df = pd.DataFrame(self._perf_tracker.performance_data)
+        self._performance_file.save(perf_df)
 
     def _train_model(self,
                      performance_track: ModelPerformance,
                      df_prep: DataFramePrep,
                      training_depth: int = 12,
                      eta: float = 0.00075,
-                     num_boost_rounds: int = 1250):
+                     num_boost_rounds: int = 1250,
+                     early_stopping_rounds: int = 50):
         """Train the XGBoost model on the input dataframe."""
         train_x, test_x, train_y, test_y = train_test_split(
             df_prep.features,
@@ -125,7 +131,6 @@ class PricePredictModelPipeline:
         evals = [(train_data, 'train'), (test_data, 'test')]
 
         print("Training model.")
-        early_stopping_rounds = 50
         self.model = xgb.train(
             params,
             train_data,
