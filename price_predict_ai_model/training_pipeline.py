@@ -10,10 +10,39 @@ from price_predict_ai_model import visuals
 from program_logging import LogFile, LogsHandler
 from psql import PostgreSqlManager
 from shared.dataframe_prep import DataFramePrep
-from price_predict_ai_model.stat_analysis import StatsPrep
+from .stats_prep import StatsPrep
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
+
+class ModelPerformance:
+
+    def __init__(self,
+                 atype: str,
+                 tier: str):
+        self.atype = atype
+        self.tier = tier
+
+        # Params
+        self.eta = None
+        self.max_depth = None
+        self.num_boost_rounds = None
+        self.early_stopping_rounds = None
+
+        # Results
+        self.mse = None
+
+class ModelPerformanceTracker:
+
+    def __init__(self):
+        self._performance_data = {}
+
+    def add_model_performance(self, model_performance: ModelPerformance):
+        for k, v in model_performance.__dict__:
+            if k not in self._performance_data:
+                self._performance_data[k] = v
+
+            self._performance_data[k].append(v)
 
 class PricePredictModelPipeline:
     def __init__(self,
@@ -26,19 +55,12 @@ class PricePredictModelPipeline:
 
         self.model = None
 
-    @staticmethod
-    def _prediction_penalty_objective(y_true, y_pred, overpredict_penalty=2.0, underpredict_penalty=0.1):
-        """Custom error function for diagnostic use (not directly used in training)."""
-        error = y_pred - y_true
-        grad = np.where(error > 0, overpredict_penalty * error, underpredict_penalty * error)
-        hess = np.ones_like(y_true) * 0.1
-        return grad, hess
+        self._perf_tracker = ModelPerformanceTracker()
 
     def run(self,
             should_plot_visuals,
             from_cache: bool = False):
         self.should_plot_visuals = should_plot_visuals
-        stats_prep = StatsPrep(plot_visuals=should_plot_visuals)
 
         training_cache = PricePredictCacheFile()
         model_df = None
@@ -59,22 +81,24 @@ class PricePredictModelPipeline:
 
         for atype, atype_df in model_df.groupby('atype'):
             print(f"Beginning stats preparation for Atype {atype}")
-            atype_df_prep = stats_prep.prep_dataframe(df=atype_df, price_column='divs')
+            df_preps = StatsPrep.prep(df=atype_df, price_column='divs')
 
-            if atype_df is None:
-                continue
+            print(f"Building PricePredict models for Atype {atype}")
 
-            print(f"Building PricePredict model for Atype {atype}")
-            model = self._train_model(
-                df_prep=atype_df_prep,
-                atype=str(atype),
-            )
+            for tier, df_prep in df_preps.items():
+                print(f" -------- Model for tier: {tier} -----------")
+                performance_track = ModelPerformance(atype=atype,
+                                                     tier=tier)
+                self._train_model(df_prep=df_prep,
+                                  performance_track=performance_track)
 
-            self._files_manager.save_model(atype=atype, model=model)
+                self._perf_tracker.add_model_performance(performance_track)
+
+            # self._files_manager.save_model(atype=atype, model=model)
 
     def _train_model(self,
+                     performance_track: ModelPerformance,
                      df_prep: DataFramePrep,
-                     atype: str,
                      training_depth: int = 12,
                      eta: float = 0.00075,
                      num_boost_rounds: int = 1250):
@@ -94,54 +118,37 @@ class PricePredictModelPipeline:
             'eta': eta,
             'eval_metric': 'rmse'
         }
+        performance_track.eta = eta
+        performance_track.max_depth = training_depth
+        performance_track.num_boost_rounds = num_boost_rounds
 
         evals = [(train_data, 'train'), (test_data, 'test')]
 
         print("Training model.")
+        early_stopping_rounds = 50
         self.model = xgb.train(
             params,
             train_data,
             num_boost_round=num_boost_rounds,
-            early_stopping_rounds=50,
+            early_stopping_rounds=early_stopping_rounds,
             evals=evals,
             # Uncomment below to use custom objective
             # obj=lambda preds, dmatrix: self._prediction_penalty_objective(preds, dmatrix, overprediction_weight, underprediction_weight),
             verbose_eval=False
         )
+        performance_track.early_stopping_rounds = early_stopping_rounds
 
         print("Evaluating model.")
-        self._evaluate_model(test_data=test_data,
-                             test_y=test_y,
-                             test_x=test_x,
-                             features_df=df_prep.features,
-                             atype=atype,
-                             price_is_logged=True)
-
-        return self.model
-
-    def _evaluate_model(self, test_data, test_y, test_x, features_df, atype, price_is_logged):
         """Evaluate the model's prediction performance."""
         test_predictions = self.model.predict(test_data)
 
-        if price_is_logged:
-            # Exponentiate to reverse the earlier log transformation (return to original price scale)
-            test_predictions = np.expm1(test_predictions)
-            test_y = np.expm1(test_y)
-
-        test_results_df = pd.DataFrame({
-            'test_y': test_y,
-            'test_predictions': test_predictions,
-            'error': np.where(test_predictions != 0,
-                              (test_y - test_predictions).abs() / test_predictions,
-                              np.nan)
-        })
-        test_results_df = pd.concat([test_results_df, features_df], axis=1)
-        test_results_df.sort_values(by='error')
+        # Only do this if the price column is logged
+        # Exponentiate to reverse the earlier log transformation (return to original price scale)
+        test_predictions = np.expm1(test_predictions)
+        test_y = np.expm1(test_y)
 
         mse = mean_squared_error(test_y, test_predictions)
-        print(f"Atype {atype} MSE: {mse}")
+        performance_track.mse = mse
+        print(f"Atype {performance_track.atype} MSE: {mse}")
 
-        if self.should_plot_visuals:
-            visuals.plot_feature_importance(model=self.model, atype=atype)
-            visuals.plot_actual_vs_predicted(atype, test_predictions, test_y)
-
+        return self.model

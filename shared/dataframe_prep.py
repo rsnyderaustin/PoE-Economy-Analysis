@@ -98,6 +98,10 @@ class DataFramePrep:
 
         return self._df[feature_cols]
 
+    def print_columns(self):
+        print(self.df.columns)
+        return self
+
     def fillna(self, value=0):
         # Fill only on non-categorical columns (exclude object and category types)
         non_cat_cols = self._df.select_dtypes(exclude=['category', 'object']).columns
@@ -140,6 +144,19 @@ class DataFramePrep:
         self._df = pd.concat([self._df, other_df], axis=1)
         return self
 
+    def stratify_dataframe(self, col_name: str, quantiles: list[float]) -> list[pd.DataFrame]:
+        quantiles = [self._df[col_name].quantile(q) for q in quantiles]
+
+        first_df = self._df[self._df[col_name] <= quantiles[0]]
+        dfs = [first_df]
+        for i, quantile in enumerate(quantiles[1:], start=1):
+            last_quantile = quantiles[i - 1]
+            current_quantile = quantiles[i]
+            new_df = self._df[(self._df[col_name] > last_quantile) & (self._df[col_name] <= current_quantile)]
+            dfs.append(new_df)
+
+        return dfs
+
     def drop_overly_modal_columns(self, max_percent_mode: float):
         mode_counts = dict()
         for col in self.features.columns:
@@ -160,6 +177,15 @@ class DataFramePrep:
 
         self._df = self._df.drop(columns=invalid_cols)
 
+        return self
+
+    def drop_safe(self, columns: list[str]):
+        present_cols = [c for c in columns if c in self._df.columns]
+        invalid_cols = [c for c in columns if c not in self._df.columns]
+
+        print(f"{invalid_cols} not in DataFrame. Will not drop.")
+
+        self._df = self._df.drop(columns=present_cols)
         return self
 
     def create_paired_columns(self, column_pairs: list):
@@ -226,21 +252,21 @@ class DataFramePrep:
         self.concat(pd.DataFrame(pair_cols))
         return self
 
-    def drop_low_information_columns(self, threshold: float, attribute_pairs_weight: float):
+    def drop_low_information_columns(self, threshold: float):
         from sklearn.feature_selection import mutual_info_regression
 
-        features_sample = self.features.sample(10000, random_state=42)
+        features_sample = self.features.sample(n=min(len(self.features), 10000), random_state=42)
         price_sample = self.price_column[features_sample.index]
         mi_scores = mutual_info_regression(features_sample, price_sample, discrete_features='auto')
         mi_series = pd.Series(mi_scores, index=features_sample.columns).sort_values(ascending=False)
 
-        mi_series = pd.Series(
-            [score * attribute_pairs_weight if isinstance(name, tuple) else score
-             for name, score in mi_series.items()],
-            index=mi_series.index
-        )
+        invalid_cols = mi_series[mi_series < threshold].index.tolist()
 
-        invalid_cols = mi_series[mi_series <= threshold].index.tolist()
+        if not invalid_cols:
+            self.mutual_info_series = mi_series
+            print(f"No low information columns found. Returning.")
+            return self
+
         print(f"Dropping low information columns: {invalid_cols}")
         self.drop(columns=invalid_cols)
 
