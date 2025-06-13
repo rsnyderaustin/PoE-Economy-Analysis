@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
 
-from . import visuals
+from . import plots
 from program_logging import LogFile, LogsHandler
 from shared.dataframe_prep import DataFramePrep
 from price_predict_ai_model.neighborhood_class import Neighborhood
@@ -76,9 +76,10 @@ class _NeighborhoodFactory:
 
 
 class StatsPrep:
-    
+
     @classmethod
     def prep(cls,
+             atype: str,
              df: pd.DataFrame,
              price_column: str) -> dict:
         df['days_since_league_start'] = (df['minutes_since_league_start'] / (60 * 24)).astype(int)
@@ -88,11 +89,11 @@ class StatsPrep:
             quantiles=[0.25, 0.5, 0.75, 0.9, 1.0]
         )
         df_tiers = {
-            'very_low': dfs[0],
-            'low': dfs[1],
-            'med': dfs[2],
-            'high': dfs[3],
-            'very_high': dfs[4]
+            'very_low_price': dfs[0],
+            'low_price': dfs[1],
+            'med_price': dfs[2],
+            'high_price': dfs[3],
+            'very_high_price': dfs[4]
         }
 
         prepped_dfs = dict()
@@ -112,19 +113,26 @@ class StatsPrep:
                 # Drop the local modifiers - they are accounted for in dps calculations
                 .drop_safe(
                     ['mod_adds_n_to_n_cold_damage',
-                       'mod_adds_n_to_n_fire_damage',
-                       'mod_adds_n_to_n_lightning_damage',
-                       'mod_adds_n_to_n_chaos_damage',
-                       'mod_adds_n_to_n_physical_damage'])
+                     'mod_adds_n_to_n_fire_damage',
+                     'mod_adds_n_to_n_lightning_damage',
+                     'mod_adds_n_to_n_chaos_damage',
+                     'mod_adds_n_to_n_physical_damage']
+                )
                 .drop_low_information_columns(threshold=0.01)
             )
 
-            visuals.plot_binned_median(df=df_prep.df,
-                                       col_name='days_since_league_start',
-                                       price_col_name='divs')
+            plots.plot_binned_median(df=df_prep.df,
+                                     col_name='days_since_league_start',
+                                     price_col_name='divs',
+                                     title=f'{atype.capitalize()} {tier.capitalize()} Median Div Bins',
+                                     bin_width=60)
 
-            visuals.plot_histogram(df_prep.price_column, bins=100, title='Divs')
-            visuals.plot_histogram(df_prep.log_price_column, bins=100, title='Log Divs')
+            plots.plot_histogram(df_prep.price_column,
+                                 bins=100,
+                                 title=f'{atype.capitalize()} {tier.capitalize()} Divs')
+            plots.plot_histogram(df_prep.log_price_column,
+                                 bins=100,
+                                 title=f'{atype.capitalize()} {tier.capitalize()} Log Divs')
             print("Normalizing and weighting features.")
             norm_df_prep = (
                 DataFramePrep(df_prep.df.copy(),
@@ -140,13 +148,15 @@ class StatsPrep:
                 list_prices=norm_df_prep.log_price_column
             )
 
-            visuals.plot_all_nearest_neighbors(neighborhoods)
+            plots.neighbor_distances_histogram(neighborhoods,
+                                               title=f'{atype.capitalize()} {tier.capitalize()} Neighbor Distances Histogram')
 
             print("Filtering Neighborhoods.")
             for n in neighborhoods:
                 n.filter_distant_neighbors(distance=0.1)
 
-            visuals.plot_number_of_neighbors(neighborhoods)
+            plots.number_of_neighbors_histogram(neighborhoods,
+                                                title=f'{atype.capitalize()} {tier.capitalize()} Number of Neighbors Histogram')
 
             print("Determining Neighborhood outliers.")
             outliers_indices = [n.list_index for n in neighborhoods if n.is_outlier(min_neighbors=5)]
@@ -154,15 +164,14 @@ class StatsPrep:
             df_prep.drop(index=outliers_indices)
             norm_df_prep.drop(index=outliers_indices)
 
-            visuals.plot_column(col_name='max_quality_pdps',
-                                price_col_name=df_prep.price_col_name,
-                                df=df_prep.df)
+            plots.plot_binned_median(col_name='max_quality_pdps',
+                                     price_col_name=df_prep.price_col_name,
+                                     df=df_prep.df,
+                                     title=f'{atype.capitalize()} {tier.capitalize()} Pdps Bins')
 
-            visuals.plot_pca(df_prep.df,
-                             df_prep.price_column)
-            visuals.plot_avg_distance_to_nearest_neighbor(features_df=norm_df_prep.df)
-            visuals.bar_plot_neighbors(neighborhoods, should_plot=False)
-
+            plots.plot_pca(df_prep.df,
+                           df_prep.price_column,
+                           title=f'{atype.capitalize()} {tier.capitalize()} PCA')
             prepped_dfs[tier] = df_prep
 
         return prepped_dfs

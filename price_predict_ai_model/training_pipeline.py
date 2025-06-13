@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 
 from data_transforming import ListingsTransforming
 from file_management.file_managers import PricePredictModelFiles, PricePredictCacheFile, PricePredictPerformanceFile
-from price_predict_ai_model import visuals
+from price_predict_ai_model import plots
 from program_logging import LogFile, LogsHandler
 from psql import PostgreSqlManager
 from shared.dataframe_prep import DataFramePrep
@@ -83,7 +83,9 @@ class PricePredictModelPipeline:
 
         for atype, atype_df in model_df.groupby('atype'):
             print(f"Beginning stats preparation for Atype {atype}")
-            df_preps = StatsPrep.prep(df=atype_df, price_column='divs')
+            df_preps = StatsPrep.prep(atype=atype,
+                                      df=atype_df,
+                                      price_column='divs')
 
             print(f"Building PricePredict models for Atype {atype}")
 

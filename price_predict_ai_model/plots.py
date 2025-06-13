@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 
+
 # Assume Neighborhood and Neighbor classes are defined elsewhere
 
 def _apply_log_outliers(row):
@@ -19,10 +20,12 @@ def _apply_log_outliers(row):
     for k, v in non_null_dict.items():
         print(f"\t{k}: {v}")
 
+
 def log_outliers(outliers_df, should_plot=True):
     if not should_plot:
         return
     outliers_df.apply(_apply_log_outliers, axis=1)
+
 
 def plot_correlation_matrix(df: pd.DataFrame, should_plot=True):
     if not should_plot:
@@ -32,6 +35,7 @@ def plot_correlation_matrix(df: pd.DataFrame, should_plot=True):
     corr_matrix = corr_df.corr()
     sns.heatmap(corr_matrix[['divs']].sort_values(by='divs', ascending=False), annot=True, cmap='coolwarm')
     plt.show()
+
 
 def plot_feature_importance(model, atype: str, should_plot=True):
     if not should_plot:
@@ -44,6 +48,7 @@ def plot_feature_importance(model, atype: str, should_plot=True):
     plt.xlabel('Importance')
     plt.ylabel('Feature')
     plt.show()
+
 
 def plot_actual_vs_predicted(atype, test_predictions, test_targets, should_plot=True):
     if not should_plot:
@@ -63,6 +68,7 @@ def plot_actual_vs_predicted(atype, test_predictions, test_targets, should_plot=
     plt.axis('equal')
     plt.show()
 
+
 def print_outliers(test_target_df, test_features_df, test_predictions, should_plot=True):
     if not should_plot:
         return
@@ -71,6 +77,7 @@ def print_outliers(test_target_df, test_features_df, test_predictions, should_pl
     training_df['Absolute Error'] = (training_df['Predicted Price'] - training_df['divs']).abs()
     under_priced_df = training_df[training_df['divs'] - training_df['Predicted Price'] < 0]
     outliers_df = under_priced_df.sort_values(by='Absolute Error', ascending=False).head(3)
+
 
 def plot_correlations(df: pd.DataFrame, atype: str, should_plot=True):
     if not should_plot:
@@ -81,6 +88,7 @@ def plot_correlations(df: pd.DataFrame, atype: str, should_plot=True):
     plt.title(f'{atype}')
     sns.heatmap(corr, annot=True, cmap='coolwarm')
     plt.show()
+
 
 def plot_dimensions(df: pd.DataFrame, price_column: str, atype: str, should_plot=True):
     if not should_plot:
@@ -93,7 +101,8 @@ def plot_dimensions(df: pd.DataFrame, price_column: str, atype: str, should_plot
         sns.scatterplot(x=df[col], y=df[price_column])
         plt.show()
 
-def plot_pca(features_df: pd.DataFrame, price_column: pd.Series, should_plot=True):
+
+def plot_pca(features_df: pd.DataFrame, price_column: pd.Series, title: str, should_plot=True):
     if not should_plot:
         return
     features_df = features_df.copy()
@@ -105,31 +114,19 @@ def plot_pca(features_df: pd.DataFrame, price_column: pd.Series, should_plot=Tru
     plt.figure(figsize=(10, 7))
     c_palette = sns.color_palette("flare", as_cmap=True)
     sns.scatterplot(data=pca_df, x='pca1', y='pca2', hue='price', palette=c_palette, edgecolor='black')
-    plt.title("Clusters of Mod Combinations (Excluding Price) Based on PCA Components")
+    plt.title(title)
     plt.xlabel("PCA Component 1")
     plt.ylabel("PCA Component 2")
     plt.legend(title='price')
     plt.show()
 
-def plot_avg_distance_to_nearest_neighbor(features_df, should_plot=True):
-    if not should_plot:
-        return
-    nn = NearestNeighbors(n_neighbors=2)
-    nn.fit(features_df)
-    distances, _ = nn.kneighbors(features_df)
-    plt.hist(distances[:, 1], bins=100, edgecolor='k')
-    plt.title("Distance to nearest neighbor")
-    plt.xlabel("Distance")
-    plt.ylabel("Frequency")
-    plt.grid(True)
-    plt.show()
 
-def plot_number_of_neighbors(neighborhoods, should_plot=True):
+def number_of_neighbors_histogram(neighborhoods, title: str, should_plot=True):
     if not should_plot:
         return
     num_neighbors = [len(n.neighbors) for n in neighborhoods]
     plt.hist(num_neighbors, bins=100, edgecolor='k')
-    plt.title('Histogram of Number of Neighborsr')
+    plt.title(title)
     plt.xlabel('Neighbors')
     plt.ylabel('Frequency')
     plt.grid(True)
@@ -137,7 +134,8 @@ def plot_number_of_neighbors(neighborhoods, should_plot=True):
     plt.xticks(np.linspace(0, 20, num=20))
     plt.show()
 
-def plot_all_nearest_neighbors(neighborhoods, should_plot=True):
+
+def neighbor_distances_histogram(neighborhoods, title: str, should_plot=True):
     if not should_plot:
         return
     distances = [
@@ -146,13 +144,14 @@ def plot_all_nearest_neighbors(neighborhoods, should_plot=True):
         for neighbor in neighborhood.neighbors
     ]
     plt.hist(distances, bins=100, edgecolor='k')
-    plt.title('Histogram of Distance to Nearest Neighbor')
+    plt.title(title)
     plt.xlabel('Distance')
     plt.ylabel('Frequency')
     plt.grid(True)
     plt.xlim(0, 1)
     plt.xticks(np.linspace(0, 1, num=20))
     plt.show()
+
 
 def radar_plot_neighbors(features_df: pd.DataFrame, indices, should_plot=True):
     if not should_plot:
@@ -162,6 +161,7 @@ def radar_plot_neighbors(features_df: pd.DataFrame, indices, should_plot=True):
         neighbor_idxs = indices[main_i][1:]
         neighbors = features_df.iloc[neighbor_idxs]
         _indiv_radar_plot(main_point=main_point, neighbors=neighbors, feature_names=features_df.columns)
+
 
 def _indiv_radar_plot(main_point, neighbors, feature_names, title="Feature Comparison", should_plot=True):
     if not should_plot:
@@ -188,7 +188,8 @@ def _indiv_radar_plot(main_point, neighbors, feature_names, title="Feature Compa
     ax.legend(loc='upper right', bbox_to_anchor=(1.2, 1.1))
     plt.show()
 
-def bar_plot_neighbors(neighborhoods, should_plot=True):
+
+def neighbor_features_comparison(neighborhoods, title: str, should_plot=True):
     if not should_plot:
         return
     for neighborhood in neighborhoods:
@@ -196,6 +197,7 @@ def bar_plot_neighbors(neighborhoods, should_plot=True):
             continue
         for neighbor in neighborhood.neighbors:
             _bar_plot_feature_diff(neighborhood=neighborhood, neighbor=neighbor)
+
 
 def _bar_plot_feature_diff(neighborhood, neighbor, should_plot=True):
     if not should_plot:
@@ -229,6 +231,7 @@ def _bar_plot_feature_diff(neighborhood, neighbor, should_plot=True):
     plt.show(block=True)
     plt.pause(3)
 
+
 def plot_column(col_name,
                 price_col_name,
                 df: pd.DataFrame,
@@ -248,7 +251,8 @@ def plot_column(col_name,
     plt.tight_layout()
     plt.show()
 
-def plot_binned_median(df, col_name: str, price_col_name: str, bin_width=60, should_plot=True):
+
+def plot_binned_median(df, col_name: str, price_col_name: str, title: str, bin_width, should_plot=True):
     if not should_plot:
         return
 
@@ -264,9 +268,10 @@ def plot_binned_median(df, col_name: str, price_col_name: str, bin_width=60, sho
     plt.plot(grouped['bin'], grouped[price_col_name], marker='o', linestyle='-')
     plt.xlabel(f'{col_name} (binned)')
     plt.ylabel(f'Median {price_col_name}')
-    plt.title(f'Median {price_col_name}')
+    plt.title(title)
     plt.grid(True)
     plt.show()
+
 
 def plot_histogram(series, bins=30, title=None, xlabel=None, ylabel='Frequency', color='blue', should_plot=True):
     if not should_plot:
