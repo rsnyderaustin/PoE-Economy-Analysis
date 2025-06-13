@@ -18,6 +18,8 @@ class DataFramePrep:
             'mutual_info_series': None
         }
 
+        self.dropped_columns = []
+
     @property
     def price_col_name(self):
         return self._metadata['price_col_name']
@@ -134,8 +136,8 @@ class DataFramePrep:
         invalid_cols = [col for col in self.features.columns
                         if null_counts[col] / len(self._df) > max_percent_nulls]
 
-        if invalid_cols:
-            print(f"Dropping overly-null columns: {invalid_cols}")
+        self.dropped_columns.extend(invalid_cols)
+
         self._df = self._df.drop(columns=invalid_cols)
 
         return self
@@ -172,18 +174,20 @@ class DataFramePrep:
 
         invalid_cols = [col for col in self.features.columns
                         if mode_counts[col] / len(self._df) > max_percent_mode]
-        if invalid_cols:
-            print(f"Dropping overly-modal columns: {invalid_cols}")
+
+        self.dropped_columns.extend(invalid_cols)
 
         self._df = self._df.drop(columns=invalid_cols)
 
         return self
 
-    def drop_safe(self, columns: list[str]):
-        present_cols = [c for c in columns if c in self._df.columns]
-        invalid_cols = [c for c in columns if c not in self._df.columns]
+    def drop_safe(self, drops: list[str]):
+        present_cols = [c for c in drops if c in self._df.columns]
+        invalid_cols = [c for c in drops if c not in self._df.columns]
 
         print(f"{invalid_cols} not in DataFrame. Will not drop.")
+
+        self.dropped_columns.extend(present_cols)
 
         self._df = self._df.drop(columns=present_cols)
         return self
@@ -209,18 +213,19 @@ class DataFramePrep:
             for col in self._df.columns
         ]
 
-        # Only scale the feature columns (e.g., not the target)
-        feature_cols = self.features.columns  # assuming this is a DataFrame
+        # Only scale the non-categorical feature columns
+        feature_cols = [col for col, dtype in self.features.dtypes
+                        if dtype in ('int', 'float')]
+        scalable_features = self.features[feature_cols]
+
         scaler = StandardScaler()
-        scaled_data = scaler.fit_transform(self.features)
+        scaled_data = scaler.fit_transform(scalable_features)
 
         # Rebuild just the scaled part as a DataFrame
         scaled_df = pd.DataFrame(scaled_data, columns=feature_cols, index=self._df.index)
+        scaled_df = scaled_df.astype(float)
 
-        # Replace the original feature columns with scaled values
-        self._df = self._df.astype(float)
-        self._df.loc[:, feature_cols] = scaled_df
-
+        self._df[scaled_df.columns] = scaled_df
         self._df.columns = original_cols
 
         return self
@@ -261,6 +266,8 @@ class DataFramePrep:
         mi_series = pd.Series(mi_scores, index=features_sample.columns).sort_values(ascending=False)
 
         invalid_cols = mi_series[mi_series < threshold].index.tolist()
+
+        self.dropped_columns.extend(invalid_cols)
 
         if not invalid_cols:
             self.mutual_info_series = mi_series

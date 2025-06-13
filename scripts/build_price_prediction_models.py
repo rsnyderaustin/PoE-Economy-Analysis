@@ -8,4 +8,4 @@ pipeline = PricePredictModelPipeline(price_predict_files=PricePredictModelFiles(
                                      performance_file=PricePredictPerformanceFile(),
                                      psql_manager=psql_manager)
 pipeline.run(should_plot_visuals=True,
-             from_cache=True)
+             load_model_from_cache=True)

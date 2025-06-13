@@ -6,101 +6,6 @@ from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 
 
-# Assume Neighborhood and Neighbor classes are defined elsewhere
-
-def _apply_log_outliers(row):
-    non_null_dict = {col: val for col, val in row.items()
-                     if pd.notna(val) and val > 0.0 and col not in ['Predicted Price', 'divs']}
-
-    print(f"\n\n")
-    print(f"Predicted Price: {row['Predicted Price']}"
-          f"\nActual Price: {row['divs']}"
-          f"\n\tAttributes and values:")
-
-    for k, v in non_null_dict.items():
-        print(f"\t{k}: {v}")
-
-
-def log_outliers(outliers_df, should_plot=True):
-    if not should_plot:
-        return
-    outliers_df.apply(_apply_log_outliers, axis=1)
-
-
-def plot_correlation_matrix(df: pd.DataFrame, should_plot=True):
-    if not should_plot:
-        return
-    corr_df = df.select_dtypes(include=['int64', 'float64'])
-    plt.figure(figsize=(18, 8))
-    corr_matrix = corr_df.corr()
-    sns.heatmap(corr_matrix[['divs']].sort_values(by='divs', ascending=False), annot=True, cmap='coolwarm')
-    plt.show()
-
-
-def plot_feature_importance(model, atype: str, should_plot=True):
-    if not should_plot:
-        return
-    importance = model.get_score(importance_type='weight')
-    importance_df = pd.DataFrame(list(importance.items()), columns=['Feature', 'Importance'])
-    importance_df = importance_df.sort_values(by='Importance', ascending=False)
-    importance_df.plot(kind='barh', x='Feature', y='Importance', legend=False, figsize=(10, 6))
-    plt.title(f'Feature Importance for {atype}')
-    plt.xlabel('Importance')
-    plt.ylabel('Feature')
-    plt.show()
-
-
-def plot_actual_vs_predicted(atype, test_predictions, test_targets, should_plot=True):
-    if not should_plot:
-        return
-    all_values = list(test_predictions) + list(test_targets)
-    min_val = min(all_values) * 0.8
-    max_val = max(all_values) * 1.2
-    plt.figure(figsize=(8, 5))
-    plt.scatter(test_predictions, test_targets, alpha=0.5)
-    plt.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--')
-    plt.xlabel("Predicted Price (Divs)")
-    plt.ylabel("Actual Price (Divs)")
-    plt.title(f"Actual vs. Predicted Prices for {atype}")
-    plt.xlim(min_val, max_val)
-    plt.ylim(min_val, max_val)
-    plt.grid(True)
-    plt.axis('equal')
-    plt.show()
-
-
-def print_outliers(test_target_df, test_features_df, test_predictions, should_plot=True):
-    if not should_plot:
-        return
-    training_df = pd.concat([test_target_df, test_features_df], axis=1)
-    training_df['Predicted Price'] = test_predictions
-    training_df['Absolute Error'] = (training_df['Predicted Price'] - training_df['divs']).abs()
-    under_priced_df = training_df[training_df['divs'] - training_df['Predicted Price'] < 0]
-    outliers_df = under_priced_df.sort_values(by='Absolute Error', ascending=False).head(3)
-
-
-def plot_correlations(df: pd.DataFrame, atype: str, should_plot=True):
-    if not should_plot:
-        return
-    df = df.drop(columns=['divs'], errors='ignore')
-    corr = df.corr()
-    plt.figure(figsize=(8, 6))
-    plt.title(f'{atype}')
-    sns.heatmap(corr, annot=True, cmap='coolwarm')
-    plt.show()
-
-
-def plot_dimensions(df: pd.DataFrame, price_column: str, atype: str, should_plot=True):
-    if not should_plot:
-        return
-    for col in df.columns:
-        if col == price_column:
-            continue
-        plt.figure(figsize=(8, 6))
-        plt.title(f'{atype}_{col}')
-        sns.scatterplot(x=df[col], y=df[price_column])
-        plt.show()
-
 
 def plot_pca(features_df: pd.DataFrame, price_column: pd.Series, title: str, should_plot=True):
     if not should_plot:
@@ -153,52 +58,6 @@ def neighbor_distances_histogram(neighborhoods, title: str, should_plot=True):
     plt.show()
 
 
-def radar_plot_neighbors(features_df: pd.DataFrame, indices, should_plot=True):
-    if not should_plot:
-        return
-    for main_i in list(range(len(features_df))):
-        main_point = features_df.iloc[main_i]
-        neighbor_idxs = indices[main_i][1:]
-        neighbors = features_df.iloc[neighbor_idxs]
-        _indiv_radar_plot(main_point=main_point, neighbors=neighbors, feature_names=features_df.columns)
-
-
-def _indiv_radar_plot(main_point, neighbors, feature_names, title="Feature Comparison", should_plot=True):
-    if not should_plot:
-        return
-    num_vars = len(feature_names)
-    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-    angles += angles[:1]
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-
-    def add_line(values, label, style):
-        values = values.tolist()
-        values += values[:1]
-        ax.plot(angles, values, style, label=label)
-        ax.fill(angles, values, alpha=0.1)
-
-    add_line(main_point, "Main Point", "b-")
-    for i in range(len(neighbors)):
-        neighbor = neighbors.iloc[i]
-        add_line(neighbor, f"Neighbor {i + 1}", "r--")
-
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(feature_names)
-    ax.set_title(title)
-    ax.legend(loc='upper right', bbox_to_anchor=(1.2, 1.1))
-    plt.show()
-
-
-def neighbor_features_comparison(neighborhoods, title: str, should_plot=True):
-    if not should_plot:
-        return
-    for neighborhood in neighborhoods:
-        if len(neighborhood.neighbors) == 0:
-            continue
-        for neighbor in neighborhood.neighbors:
-            _bar_plot_feature_diff(neighborhood=neighborhood, neighbor=neighbor)
-
-
 def _bar_plot_feature_diff(neighborhood, neighbor, should_plot=True):
     if not should_plot:
         return
@@ -232,27 +91,17 @@ def _bar_plot_feature_diff(neighborhood, neighbor, should_plot=True):
     plt.pause(3)
 
 
-def plot_column(col_name,
-                price_col_name,
-                df: pd.DataFrame,
-                should_plot: bool = True,
-                figsize=(6, 4),
-                transparency=0.7):
+def neighbor_features_comparison(neighborhoods, title: str, should_plot=True):
     if not should_plot:
         return
-    if col_name not in df.columns or price_col_name not in df.columns:
-        raise ValueError(f"Column(s) '{col_name}' or '{price_col_name}' not found in dataframe.")
-    plt.figure(figsize=figsize)
-    plt.scatter(df[col_name], df[price_col_name], alpha=transparency)
-    plt.xlabel(col_name)
-    plt.ylabel(price_col_name)
-    plt.title(f'{price_col_name} vs. {col_name}')
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
+    for neighborhood in neighborhoods:
+        if len(neighborhood.neighbors) == 0:
+            continue
+        for neighbor in neighborhood.neighbors:
+            _bar_plot_feature_diff(neighborhood=neighborhood, neighbor=neighbor)
 
 
-def plot_binned_median(df, col_name: str, price_col_name: str, title: str, bin_width, should_plot=True):
+def binned_median(df, col_name: str, price_col_name: str, title: str, bin_width, should_plot=True):
     if not should_plot:
         return
 
@@ -273,7 +122,7 @@ def plot_binned_median(df, col_name: str, price_col_name: str, title: str, bin_w
     plt.show()
 
 
-def plot_histogram(series, bins=30, title=None, xlabel=None, ylabel='Frequency', color='blue', should_plot=True):
+def histogram(series, bins=30, title=None, xlabel=None, ylabel='Frequency', color='blue', should_plot=True):
     if not should_plot:
         return
     plt.figure(figsize=(8, 5))

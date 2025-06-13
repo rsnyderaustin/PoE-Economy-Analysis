@@ -6,43 +6,14 @@ from sklearn.model_selection import train_test_split
 
 from data_transforming import ListingsTransforming
 from file_management.file_managers import PricePredictModelFiles, PricePredictCacheFile, PricePredictPerformanceFile
-from price_predict_ai_model import plots
 from program_logging import LogFile, LogsHandler
 from psql import PostgreSqlManager
-from shared.dataframe_prep import DataFramePrep
+from price_predict_ai_model.dataframe_prep import DataFramePrep
 from .stats_prep import StatsPrep
+from .lifecycle_class import ModelLifeCycle
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
-
-class ModelPerformance:
-
-    def __init__(self,
-                 atype: str,
-                 tier: str):
-        self.atype = atype
-        self.tier = tier
-
-        # Params
-        self.eta = None
-        self.max_depth = None
-        self.num_boost_rounds = None
-        self.early_stopping_rounds = None
-
-        # Results
-        self.mse = None
-
-class ModelPerformanceTracker:
-
-    def __init__(self):
-        self.performance_data = {}
-
-    def add_model_performance(self, model_performance: ModelPerformance):
-        for k, v in model_performance.__dict__.items():
-            if k not in self.performance_data:
-                self.performance_data[k] = []
-
-            self.performance_data[k].append(v)
 
 class PricePredictModelPipeline:
     def __init__(self,
@@ -53,17 +24,11 @@ class PricePredictModelPipeline:
         self._performance_file = performance_file
         self._psql_manager = psql_manager
 
-        self.should_plot_visuals = None
-
         self.model = None
 
-        self._perf_tracker = ModelPerformanceTracker()
+        self._model_lifecycles = []
 
-    def run(self,
-            should_plot_visuals,
-            from_cache: bool = False):
-        self.should_plot_visuals = should_plot_visuals
-
+    def _load_training_data(self, from_cache: bool) -> pd.DataFrame:
         training_cache = PricePredictCacheFile()
         model_df = None
         if from_cache:
@@ -81,18 +46,53 @@ class PricePredictModelPipeline:
 
             training_cache.save(model_df)
 
+        return model_df
+
+    def _stratify_dataframe(self, model_df: pd.DataFrame):
+        stratified_dfs = {}
+
         for atype, atype_df in model_df.groupby('atype'):
+            prep = DataFramePrep(atype_df, price_col_name='divs')
+            stratified = prep.stratify_dataframe(
+                col_name='divs',
+                quantiles=[0.25, 0.5, 0.75, 0.9, 1.0]
+            )
+
+            tier_names = [
+                'very_low_price',
+                'low_price',
+                'med_price',
+                'high_price',
+                'very_high_price'
+            ]
+
+            for tier_name, df in zip(tier_names, stratified):
+                stratified_dfs[(atype, tier_name)] = df
+
+        return stratified_dfs
+
+    def run(self,
+            load_model_from_cache: bool = False):
+        model_df = self._load_training_data(from_cache=load_model_from_cache)
+        model_df['days_since_league_start'] = (model_df['minutes_since_league_start'] / (60 * 24)).astype(int)
+
+        stratified_dfs = self._stratify_dataframe(model_df)
+
+        for (atype, tier), df in stratified_dfs.items():
+            model_lifecycle = ModelLifeCycle(atype=str(atype),
+                                             tier=str(tier))
+
             print(f"Beginning stats preparation for Atype {atype}")
-            df_preps = StatsPrep.prep(atype=atype,
-                                      df=atype_df,
-                                      price_column='divs')
+            df_prep = StatsPrep.prep(model_lifecycle=model_lifecycle,
+                                     df=df,
+                                     price_column='divs')
 
             print(f"Building PricePredict models for Atype {atype}")
 
             for tier, df_prep in df_preps.items():
                 print(f" -------- Model for tier: {tier} -----------")
-                performance_track = ModelPerformance(atype=atype,
-                                                     tier=tier)
+                performance_track = ModelLifeCycle(atype=atype,
+                                                   tier=tier)
                 self._train_model(df_prep=df_prep,
                                   performance_track=performance_track)
 
@@ -104,7 +104,7 @@ class PricePredictModelPipeline:
         self._performance_file.save(perf_df)
 
     def _train_model(self,
-                     performance_track: ModelPerformance,
+                     performance_track: ModelLifeCycle,
                      df_prep: DataFramePrep,
                      training_depth: int = 12,
                      eta: float = 0.00075,
