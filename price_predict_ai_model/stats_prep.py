@@ -123,7 +123,7 @@ class StatsPrep:
              model_lifecycle: ModelLifeCycle,
              df: pd.DataFrame,
              price_column: str,
-             neighbor_distance_threshold: float = 0.1) -> dict:
+             neighbor_distance_threshold: float = 0.1) -> DataFramePrep:
 
         atype = model_lifecycle.atype
         tier = model_lifecycle.tier

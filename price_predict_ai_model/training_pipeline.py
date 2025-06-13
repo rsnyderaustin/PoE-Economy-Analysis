@@ -71,6 +71,13 @@ class PricePredictModelPipeline:
 
         return stratified_dfs
 
+    def _combine_lifecycles(self) -> pd.DataFrame:
+        cols = {c: [] for c in self._model_lifecycles[0].__dict__}
+        for ml in self._model_lifecycles:
+            for c, v in ml.__dict__.items():
+                cols[c].append(v)
+        return pd.DataFrame(cols)
+
     def run(self,
             load_model_from_cache: bool = False):
         model_df = self._load_training_data(from_cache=load_model_from_cache)
@@ -81,30 +88,23 @@ class PricePredictModelPipeline:
         for (atype, tier), df in stratified_dfs.items():
             model_lifecycle = ModelLifeCycle(atype=str(atype),
                                              tier=str(tier))
+            self._model_lifecycles.append(model_lifecycle)
 
             print(f"Beginning stats preparation for Atype {atype}")
             df_prep = StatsPrep.prep(model_lifecycle=model_lifecycle,
                                      df=df,
                                      price_column='divs')
 
-            print(f"Building PricePredict models for Atype {atype}")
+            self._train_model(df_prep=df_prep,
+                              model_lifecycle=model_lifecycle)
 
-            for tier, df_prep in df_preps.items():
-                print(f" -------- Model for tier: {tier} -----------")
-                performance_track = ModelLifeCycle(atype=atype,
-                                                   tier=tier)
-                self._train_model(df_prep=df_prep,
-                                  performance_track=performance_track)
+            # self._files_manager.save_model(atype=atype, model=model)
 
-                self._perf_tracker.add_model_performance(performance_track)
-
-                # self._files_manager.save_model(atype=atype, model=model)
-
-        perf_df = pd.DataFrame(self._perf_tracker.performance_data)
+        perf_df = self._combine_lifecycles()
         self._performance_file.save(perf_df)
 
     def _train_model(self,
-                     performance_track: ModelLifeCycle,
+                     model_lifecycle: ModelLifeCycle,
                      df_prep: DataFramePrep,
                      training_depth: int = 12,
                      eta: float = 0.00075,
@@ -126,9 +126,9 @@ class PricePredictModelPipeline:
             'eta': eta,
             'eval_metric': 'rmse'
         }
-        performance_track.eta = eta
-        performance_track.max_depth = training_depth
-        performance_track.num_boost_rounds = num_boost_rounds
+        model_lifecycle.eta = eta
+        model_lifecycle.max_depth = training_depth
+        model_lifecycle.num_boost_rounds = num_boost_rounds
 
         evals = [(train_data, 'train'), (test_data, 'test')]
 
@@ -143,7 +143,7 @@ class PricePredictModelPipeline:
             # obj=lambda preds, dmatrix: self._prediction_penalty_objective(preds, dmatrix, overprediction_weight, underprediction_weight),
             verbose_eval=False
         )
-        performance_track.early_stopping_rounds = early_stopping_rounds
+        model_lifecycle.early_stopping_rounds = early_stopping_rounds
 
         print("Evaluating model.")
         """Evaluate the model's prediction performance."""
@@ -155,7 +155,7 @@ class PricePredictModelPipeline:
         test_y = np.expm1(test_y)
 
         mse = mean_squared_error(test_y, test_predictions)
-        performance_track.mse = mse
-        print(f"Atype {performance_track.atype} MSE: {mse}")
+        model_lifecycle.mse = mse
+        print(f"Atype {model_lifecycle.atype} tier {model_lifecycle.tier} MSE: {mse}")
 
         return self.model
