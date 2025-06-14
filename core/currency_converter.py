@@ -1,6 +1,8 @@
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
+import pandas as pd
+
 import program_logging
 from file_management.file_managers import CurrencyConversionsFile
 from shared.enums.trade_enums import Currency
@@ -27,6 +29,28 @@ class CurrencyConverter:
 
         self.conversions_dict = dict()
         conversions_df.apply(self._apply_create_conversions_dict, axis=1, args=(self.conversions_dict,))
+
+    @staticmethod
+    def _create_conversions_dict(conversions_df: pd.DataFrame) -> dict:
+        df = conversions_df
+        df['date'] = pd.to_datetime(df['date'])
+
+        # Create a full date range covering all currencies
+        full_date_range = pd.date_range(df['date'].min(), df['date'].max(), freq='D')
+
+        # Group by currency and interpolate each group
+        conversion_dict = {}
+        for currency, group in df.groupby('currency'):
+            group = group.set_index('date').sort_index()
+            group = group.reindex(full_date_range)
+            group['div_per_currency'] = group['div_per_currency'].interpolate(method='linear')
+            group.index.name = 'date'
+            # Convert to dictionary with datetime.date keys
+            conversion_dict[currency] = {
+                date.date(): rate for date, rate in group['div_per_currency'].items()
+            }
+
+        return conversion_dict
 
     @staticmethod
     def _apply_create_conversions_dict(row, conversions_dict: dict):
