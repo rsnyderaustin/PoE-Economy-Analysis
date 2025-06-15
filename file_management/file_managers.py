@@ -173,8 +173,6 @@ class CraftingSimulatorFiles:
     def __init__(self, folder_path: str = None):
         self._folder_path = folder_path or Path.cwd() / 'file_management/crafting_models'
 
-        self._models = dict()
-
     def save_model(self, atype: AType, model):
         from stable_baselines3 import PPO
 
@@ -194,7 +192,7 @@ class CraftingSimulatorFiles:
             return None
 
         model = PPO.load(file_path)
-        self._models[atype] = model
+
         return model
 
 

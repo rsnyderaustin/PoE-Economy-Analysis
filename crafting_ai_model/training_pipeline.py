@@ -29,27 +29,12 @@ class CraftingModelPipeline:
         self._total_timesteps = total_timesteps
 
         self._model_files = CraftingSimulatorFiles()
-
-    def run(self):
-        training_queries = QueryPresets().training_fills
-        random.shuffle(training_queries)
-        for responses in self._trade_api_handler.fetch_responses(training_queries):
-            parsers = [ApiResponseParser(response) for response in responses]
-            listings = [self._listing_builder.build_listing(rp) for rp in parsers]
-
-            if not listings:
-                continue
-
-            for listing in listings:
-                self._train_crafting_model(listing=listing)
-
+        self._loaded_price_predict_models = dict()
 
     @log_errors(craft_log)
-    def _train_crafting_model(self, listing: ModifiableListing):
-        price_predict_model = self._model_files.load_model(atype=listing.item_atype)
-        if not price_predict_model:
-            raise ValueError(f"PricePredictModel for Atype {listing.item_atype} does not exist.")
-
+    def _train_crafting_model(self,
+                              listing: ModifiableListing,
+                              price_predict_model):
         price_predictor = PricePredictor(price_predict_model)
 
         env = CraftingEnvironment(listing=listing,
@@ -66,3 +51,22 @@ class CraftingModelPipeline:
         model.learn(total_timesteps=self._total_timesteps)
 
         self._model_files.save_model(atype=listing.item_atype, model=model)
+
+    def run(self):
+        training_queries = QueryPresets().training_fills
+        random.shuffle(training_queries)
+        for responses in self._trade_api_handler.fetch_responses(training_queries):
+            parsers = [ApiResponseParser(response) for response in responses]
+            listings = [self._listing_builder.build_listing(rp) for rp in parsers]
+
+            if not listings:
+                continue
+
+            for listing in listings:
+                atype = listing.item_atype
+                if atype not in self._loaded_price_predict_models:
+                    self._loaded_price_predict_models[atype] = self._model_files.load_model(atype=atype)
+
+                self._train_crafting_model(listing=listing,
+                                           price_predict_model=self._loaded_price_predict_models[atype])
+

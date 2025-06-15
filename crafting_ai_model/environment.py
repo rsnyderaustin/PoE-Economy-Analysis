@@ -103,8 +103,10 @@ class ObservationSpace:
             self.__class__._space_cache[_cache_key] = _base_space
             self._space = copy.deepcopy(_base_space)
 
-        self._key_to_index = {k: i for i, k in enumerate(self._space.keys())}  # For determining indices with keys (adding elements)
-        self._index_to_key = {i: k for i, k in enumerate(self._space.keys())}  # For determining keys with indices (removing elements)
+        self._key_to_index = {k: i for i, k in
+                              enumerate(self._space.keys())}  # For determining indices with keys (adding elements)
+        self._index_to_key = {i: k for i, k in
+                              enumerate(self._space.keys())}  # For determining keys with indices (removing elements)
 
         self.num_mods = {
             ModClass.IMPLICIT: 0,
@@ -224,7 +226,8 @@ class ObservationSpace:
 
     def add_currency_cost(self, currency: Currency, divs_price: float):
         if currency.value in self._space:
-            craft_log.error(f"Overwriting currency {currency} in ObservationSpace from {self._space[currency.value]} to {divs_price} divs.")
+            craft_log.error(
+                f"Overwriting currency {currency} in ObservationSpace from {self._space[currency.value]} to {divs_price} divs.")
 
         self._space[currency.value] = divs_price
 
@@ -234,10 +237,15 @@ class ObservationSpace:
 
 class CraftingEnvironment(gym.Env):
 
-    def __init__(self, listing: ModifiableListing, price_predictor: PricePredictor, divs_budget):
+    def __init__(self,
+                 listing: ModifiableListing,
+                 price_predictor: PricePredictor,
+                 divs_budget,
+                 currency_converter: CurrencyConverter):
         super(CraftingEnvironment, self).__init__()
 
         self.divs_budget = divs_budget
+        self.currency_converter = currency_converter
 
         self.original_state = copy.deepcopy(listing)
         self.original_price = price_predictor.predict(listing=listing)
@@ -305,9 +313,9 @@ class CraftingEnvironment(gym.Env):
 
         # Relevant date is the listing fetch date because everything concerning crafting an item is centered around the context
         # of that item at the time of posting
-        currency_cost = CurrencyConverter().convert_to_divs(currency=currency.currency_class,
-                                                            currency_amount=1,
-                                                            relevant_date=self.listing.date_fetched)
+        currency_cost = self.currency_converter.convert_to_divs(currency=currency.currency_class,
+                                                                currency_amount=1,
+                                                                relevant_date=self.listing.date_fetched)
 
         # Return a small negative reward if we went over budget
         if self.total_divs_spent + currency_cost > self.divs_budget:
