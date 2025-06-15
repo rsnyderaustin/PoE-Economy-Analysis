@@ -1,0 +1,3 @@
+2025-06-13 19:46:17,586 - INFO - Columns removed from PricePredict DataFrame:
+['critical_hit_chance', 'date_fetched', 'minutes_since_listed', 'currency', 'currency_amount', 'open_prefixes', 'open_suffixes', 'ilvl', 'category', 'rarity', 'corrupted', 'identified', 'reload_time', 'chaos_damage', 'listing_id']
+

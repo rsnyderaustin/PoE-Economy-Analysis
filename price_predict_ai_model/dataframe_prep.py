@@ -214,8 +214,8 @@ class DataFramePrep:
         ]
 
         # Only scale the non-categorical feature columns
-        feature_cols = [col for col, dtype in self.features.dtypes
-                        if dtype in ('int', 'float')]
+        feature_cols = [col for col in self.features.columns
+                        if np.issubdtype(self.features[col].dtype, np.number)]
         scalable_features = self.features[feature_cols]
 
         scaler = StandardScaler()

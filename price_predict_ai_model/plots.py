@@ -101,7 +101,7 @@ def neighbor_features_comparison(neighborhoods, title: str, should_plot=True):
             _bar_plot_feature_diff(neighborhood=neighborhood, neighbor=neighbor)
 
 
-def binned_median(df, col_name: str, price_col_name: str, title: str, bin_width, should_plot=True):
+def binned_median(df, col_name: str, price_col_name: str, title: str, bin_width: int = 60, should_plot=True):
     if not should_plot:
         return
 

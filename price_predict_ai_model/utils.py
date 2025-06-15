@@ -12,9 +12,9 @@ class DataFramePrep:
 
     def __init__(self,
                  dataframe: pd.DataFrame,
+                 model_lifecycle: 'ModelLifeCycle',
                  price_col_name: str = None,
-                 log_col_name: str = None,
-                 model_lifecycle: ModelLifeCycle):
+                 log_col_name: str = None):
         self._df = dataframe
 
         self._metadata = {

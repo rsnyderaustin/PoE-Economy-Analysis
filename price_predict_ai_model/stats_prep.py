@@ -159,8 +159,7 @@ class StatsPrep:
         plots.binned_median(df=df_prep.df,
                             col_name='days_since_league_start',
                             price_col_name='divs',
-                            title=f'{atype.capitalize()} {tier.capitalize()} Median Div Bins',
-                            bin_width=60)
+                            title=f'{atype.capitalize()} {tier.capitalize()} Median Div Bins')
 
         plots.histogram(df_prep.price_column,
                         bins=100,
@@ -178,7 +177,8 @@ class StatsPrep:
         plots.binned_median(col_name='max_quality_pdps',
                             price_col_name=df_prep.price_col_name,
                             df=df_prep.df,
-                            title=f'{atype.capitalize()} {tier.capitalize()} Pdps Bins')
+                            title=f'{atype.capitalize()} {tier.capitalize()} Pdps Bins',
+                            bin_width=60)
 
         plots.plot_pca(df_prep.df,
                        df_prep.price_column,
