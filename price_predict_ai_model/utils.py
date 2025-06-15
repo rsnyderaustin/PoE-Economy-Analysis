@@ -33,11 +33,7 @@ class DataFramePrep:
 
     def __init__(self,
                  dataframe: pd.DataFrame,
-<<<<<<< Updated upstream
-                 model_lifecycle: 'ModelLifeCycle',
-=======
                  model_lifecycle: ModelLifeCycle,
->>>>>>> Stashed changes
                  price_col_name: str = None,
                  log_col_name: str = None):
         self._df = dataframe
