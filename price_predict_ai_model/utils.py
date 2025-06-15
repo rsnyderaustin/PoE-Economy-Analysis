@@ -8,14 +8,40 @@ import numpy as np
 import pandas as pd
 
 
+class ModelLifeCycle:
+
+    def __init__(self,
+                 atype: str,
+                 tier: str):
+        self.atype = atype
+        self.tier = tier
+
+        self.dropped_cols = []
+        self.mi_series = None
+
+        # Params
+        self.eta = None
+        self.max_depth = None
+        self.num_boost_rounds = None
+        self.early_stopping_rounds = None
+
+        # Results
+        self.mse = None
+
+
 class DataFramePrep:
 
     def __init__(self,
                  dataframe: pd.DataFrame,
+<<<<<<< Updated upstream
                  model_lifecycle: 'ModelLifeCycle',
+=======
+                 model_lifecycle: ModelLifeCycle,
+>>>>>>> Stashed changes
                  price_col_name: str = None,
                  log_col_name: str = None):
         self._df = dataframe
+        self._model_lifecycles = model_lifecycle
 
         self._metadata = {
             'price_col_name': price_col_name,
@@ -45,6 +71,7 @@ class DataFramePrep:
 
     @mutual_info_series.setter
     def mutual_info_series(self, mi_series):
+        self._model_lifecycles.mi_series = mi_series
         self._metadata['mutual_info_series'] = mi_series
 
     def _clone_with_new_df(self, new_df):
@@ -140,8 +167,10 @@ class DataFramePrep:
                         if null_counts[col] / len(self._df) > max_percent_nulls]
 
         if invalid_cols:
+            self._model_lifecycles.dropped_cols.extend(invalid_cols)
+
             print(f"Dropping overly-null columns: {invalid_cols}")
-        self._df = self._df.drop(columns=invalid_cols)
+            self._df = self._df.drop(columns=invalid_cols)
 
         return self
 
@@ -178,9 +207,10 @@ class DataFramePrep:
         invalid_cols = [col for col in self.features.columns
                         if mode_counts[col] / len(self._df) > max_percent_mode]
         if invalid_cols:
-            print(f"Dropping overly-modal columns: {invalid_cols}")
+            self._model_lifecycles.dropped_cols.extend(invalid_cols)
 
-        self._df = self._df.drop(columns=invalid_cols)
+            print(f"Dropping overly-modal columns: {invalid_cols}")
+            self._df = self._df.drop(columns=invalid_cols)
 
         return self
 
@@ -188,6 +218,7 @@ class DataFramePrep:
         present_cols = [c for c in columns if c in self._df.columns]
         invalid_cols = [c for c in columns if c not in self._df.columns]
 
+        self._model_lifecycles.dropped_cols.extend(present_cols)
         print(f"{invalid_cols} not in DataFrame. Will not drop.")
 
         self._df = self._df.drop(columns=present_cols)
@@ -272,6 +303,7 @@ class DataFramePrep:
             print(f"No low information columns found. Returning.")
             return self
 
+        self._model_lifecycles.dropped_cols.extend(invalid_cols)
         print(f"Dropping low information columns: {invalid_cols}")
         self.drop(columns=invalid_cols)
 
@@ -280,23 +312,3 @@ class DataFramePrep:
 
         return self
 
-
-class ModelLifeCycle:
-
-    def __init__(self,
-                 atype: str,
-                 tier: str):
-        self.atype = atype
-        self.tier = tier
-
-        self.dropped_cols = []
-        self.mi_series = None
-
-        # Params
-        self.eta = None
-        self.max_depth = None
-        self.num_boost_rounds = None
-        self.early_stopping_rounds = None
-
-        # Results
-        self.mse = None
