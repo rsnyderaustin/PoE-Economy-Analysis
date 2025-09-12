@@ -38,8 +38,8 @@ class TrainingDataPopulator:
 
         self.env_loader = env_loading.EnvLoader()
 
-    def _process_and_insert(self, responses: list[ApiResponseParser]):
-        listings = [self.listing_builder.build_listing(api_r) for api_r in responses]
+    def _process_and_insert(self, response_parsers: list[ApiResponseParser]):
+        listings = [self.listing_builder.build_listing(api_r) for api_r in response_parsers]
 
         for listing in listings:
             self.psql_manager.insert_listing_string(table_name='listing_strings',

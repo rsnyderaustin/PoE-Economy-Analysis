@@ -32,12 +32,10 @@ class PricePredictor:
             raise ValueError(f"Columns {cols_missing_from_model} in this listing but not in model. Model training data is "
                              f"therefore incomplete.")
 
-        # Ensure all model-required columns exist in features
         cols_missing_from_listing = [col for col in model.features if col not in features]
         for col in cols_missing_from_listing:
             features[col] = None  # fill in with 0 indicating the mod is not present
 
-        # Make sure the column order matches what the model expects
         features = features[model.features]
 
         prediction = model.predict(features)

@@ -7,7 +7,7 @@ from program_logging import LogsHandler, LogFile
 from shared import shared_utils
 from . import query_construction
 from .query import Query, MetaFilter
-from .trade_items_fetcher import TradeItemsFetcher
+from .fetching import TradeItemsFetching
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 
@@ -106,7 +106,7 @@ def _key_response(listing_id, date_fetched: str):
 class TradeApiHandler:
 
     def __init__(self):
-        self.fetcher = TradeItemsFetcher()
+        self.fetcher = TradeItemsFetching()
 
         self.split_threshold = 175
 

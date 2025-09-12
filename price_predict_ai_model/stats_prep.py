@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
 
-from . import plots
+from . import plotting
 from .utils import ModelLifeCycle
 from program_logging import LogFile, LogsHandler
 from price_predict_ai_model.dataframe_prep import DataFramePrep

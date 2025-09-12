@@ -14,7 +14,7 @@ def chunk_list(items: list, chunk_size: int = 10):
     return [items[i:i + chunk_size] for i in range(0, len(items), chunk_size)]
 
 
-class TradeItemsFetcher:
+class TradeItemsFetching:
 
     post_url = "https://www.pathofexile.com/api/trade2/search/poe2/Dawn%20of%20the%20Hunt"
     get_url = "https://www.pathofexile.com/api/trade2/fetch/"
