@@ -5,18 +5,10 @@ from enum import Enum
 import logging
 from functools import wraps
 from pprint import pprint
-import pandas as pd
 import time
 import cv2
 
-import mss
 import numpy as np
-import pytesseract
-import easyocr
-from PIL import Image as PILImage
-from io import BytesIO
-from pynput import mouse, keyboard
-from pytesseract import Output
 
 
 @dataclass(frozen=True)
@@ -65,6 +57,8 @@ class _ScreenBoundsCapturer:
         return True
 
     def capture(self) -> _CaptureBounds | None:
+        from pynput import mouse
+
         with mouse.Listener(on_click=self._on_click) as listener:
             print(f"Click to select the first corner of {self._ui_element.value}...")
             listener.join()
@@ -101,6 +95,8 @@ class _KeyPressCapturer:
             print(f"\tInvalid character key press {key}")
 
     def capture(self) -> str | None:
+        from pynput import keyboard
+
         print(f"\tListening for key press...")
         listener = keyboard.Listener(on_press=self._on_press)
         listener.start()
@@ -126,6 +122,7 @@ class _ScreenShotCapturer:
 
     @staticmethod
     def capture(bounds: _CaptureBounds) -> _ScreenShot:
+        import mss
         with mss.mss() as sct:
             region = {
                 "left": bounds.x_min,
@@ -186,11 +183,11 @@ class _ScreenShotCollection:
         return self._screen_shots[ui_element]
 
 @dataclass
-class _RatioSupply:
+class RatioSupply:
     have_currency: str
     want_currency: str
-    haves_per_want: float = None
-    supply: int = None
+    want_per_have: float
+    supply: int
 
 class _MarketSupplyTable:
 
@@ -202,8 +199,8 @@ class _MarketSupplyTable:
 
         self._ratios = dict()
 
-    def sort_ratio_supply_objs(self, reverse: bool = False) -> list[_RatioSupply]:
-        return sorted(self._ratios.values(), key=lambda r: r.haves_per_want, reverse=reverse)
+    def sort_ratio_supply_objs(self, reverse: bool = False) -> list[RatioSupply]:
+        return sorted(self._ratios.values(), key=lambda r: r.want_per_have, reverse=reverse)
 
     def add_ratio_supply(self,
                          cost_per_have: float = None,
@@ -211,13 +208,13 @@ class _MarketSupplyTable:
         k = cost_per_have, stock
         if k in self._ratios:
             r = self._ratios[k]
-            r.haves_per_want = r.haves_per_want or cost_per_have
+            r.want_per_have = r.want_per_have or cost_per_have
             r.supply = r.supply or stock
         else:
-            self._ratios[k] = _RatioSupply(have_currency=self._have_currency,
-                                           want_currency=self._want_currency,
-                                           haves_per_want=cost_per_have,
-                                           supply=stock)
+            self._ratios[k] = RatioSupply(have_currency=self._have_currency,
+                                          want_currency=self._want_currency,
+                                          want_per_have=cost_per_have,
+                                          supply=stock)
 
 
 def skippable(func):
@@ -313,93 +310,6 @@ class _ImageProcessor:
         return self
 
     @skippable
-    def split_into_parts(self,
-                         show_algorithm: bool) -> list["_ImageProcessor"]:
-        img_array = (
-            _ImageProcessor(img_array=self._img_array.copy(),
-                            logger=self._logger)
-            .resize(new_size=600)
-            .close_gaps(closure_iterations=1)
-            .binarize()
-            .show(name='split into parts prep')
-            .img_array
-        )
-        display_img_array = (
-            _ImageProcessor(img_array=img_array.copy(),
-                            logger=self._logger)
-            .to_color()
-            .img_array
-        )
-
-        self._logger.info("Splitting table into parts...")
-        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(
-            img_array,
-            connectivity=8
-        )
-        self._logger.info(f"\tFinished splitting table. Split into {num_labels - 1} parts")
-
-        if show_algorithm:
-            self._logger.info("Drawing split image parts...")
-            for i in range(1, num_labels):
-                x, y, w, h, area = stats[i]
-                _Cv2Visualizer.draw_rectangle(
-                    img_array=display_img_array,
-                    x=x,
-                    y=y,
-                    w=w,
-                    h=h,
-                    color='red',
-                    thickness=5,
-                    inplace=True
-                )
-            self._logger.info(f"\tFinished drawing split image parts.")
-
-            _Cv2Visualizer.show(img_array=display_img_array,
-                                name='drawn parts')
-
-        merged = []
-        current = list(stats[0])
-        for x, y, w, h, area in stats[1:]:
-            curr_x, curr_y, curr_w, curr_h, curr_area = current
-
-            if show_algorithm:
-                temp_img_array = _Cv2Visualizer.draw_rectangle(
-                    img_array=display_img_array,
-                    x=curr_x,
-                    y=curr_y,
-                    w=10,
-                    h=8,
-                    color='red',
-                    inplace=False
-                )
-                _Cv2Visualizer.show(img_array=temp_img_array)
-
-            # same line + close horizontally
-            if abs(y - curr_y) < 10 and x <= curr_x + curr_w + 8:
-                # merge
-                new_x = min(curr_x, x)
-                new_y = min(curr_y, y)
-                new_w = max(curr_x + curr_w, x + w) - new_x
-                new_h = max(curr_y + curr_h, y + h) - new_y
-                current = [new_x, new_y, new_w, new_h]
-            else:
-                merged.append(tuple(current))
-                current = [x, y, w, h]
-
-        merged.append(tuple(current))
-
-        split_processors = []
-        for x, y, w, h in merged:
-            split_processors.append(
-                _ImageProcessor(
-                    img_array=img_array[y:y + h, x:x + w],
-                    logger=self._logger
-                )
-            )
-
-        return split_processors
-
-    @skippable
     def invert_black_white(self,
                            skip: bool = False) -> "_ImageProcessor":
         self._img_array = cv2.bitwise_not(self._img_array)
@@ -458,7 +368,7 @@ class _ImageProcessor:
 
     @skippable
     def isolate_outlines(self,
-                         white_threshold: int = 100) -> "_ImageProcessor":
+                         white_threshold: int = 120) -> "_ImageProcessor":
         _, mask = cv2.threshold(
             self._img_array,
             white_threshold,
@@ -490,15 +400,21 @@ class _ImageProcessor:
         return self
 
     @skippable
-    def to_strings(self,
-                   allowed_chars: str,
-                   skip: bool = False) -> list[str]:
-        reader = easyocr.Reader(['en'], gpu=False)  # gpu=True if you have CUDA
+    def to_string(self,
+                  allowed_chars: str,
+                  skip: bool = False) -> list[str]:
+        import easyocr
+        """config = rf'-c tessedit_char_whitelist={allowed_chars} --psm 7'
+        text = pytesseract.image_to_string(
+            self._img_array,
+            config=config
+        )"""
+        reader = easyocr.Reader(['en'])
+        result = reader.readtext(self._img_array)
 
-        results = reader.readtext(self._img_array,
-                                  detail=0,
-                                  allowlist=allowed_chars)
-        return results
+        line = [r[1] for r in sorted(result, key=lambda x: x[0][0][0])]
+
+        return line
 
 
 class _ScreenShotAnalyzer:
@@ -507,21 +423,6 @@ class _ScreenShotAnalyzer:
 
     def __init__(self, logger: logging.Logger):
         self._logger = logger
-
-    def _preprocess(self, screen_shot: np.ndarray) -> PILImage:
-        # Convert mss BGRA to PIL RGB
-        img = PILImage.fromarray(screen_shot[:, :, :3])
-
-        # Convert to grayscale
-        img = img.convert('L')
-
-        return img
-
-    def _extract_text(self, img) -> str:
-        text = pytesseract.image_to_string(img, config='--psm 6')  # psm 7 = single line
-        formatted_text = text.replace('\n', ' ').strip()
-        self._logger.info(f"Extracted text from image: {formatted_text}")
-        return formatted_text
 
     def _attempt_to_parse_ratio(self, raw_ratio: str) -> tuple[float, float] | None:
         split_done = False
@@ -570,7 +471,7 @@ class _ScreenShotAnalyzer:
         row_slices = [(row_boundaries[i], row_boundaries[i + 1]) for i in range(num_rows)]
         draw_img_array = img_array.copy()
 
-        for row_start, row_end in row_slices:
+        """for row_start, row_end in row_slices:
             _Cv2Visualizer.draw_rectangle(
                 img_array=draw_img_array,
                 x=10,
@@ -581,21 +482,33 @@ class _ScreenShotAnalyzer:
                 inplace=True,
                 thickness=2
             )
-        _Cv2Visualizer.show(img_array=draw_img_array)
+        _Cv2Visualizer.show(img_array=draw_img_array)"""
 
         row_arrays = [
             img_array[row_start:row_end, :]
             for row_start, row_end in row_slices
         ]
         for row_array in row_arrays:
+            for thresh in range(80, 120):
+                """s = (
+                    _ImageProcessor(row_array,
+                                    logger=self._logger)
+                    .grayscale()
+                    .show(skip=False)
+                    .isolate_outlines()
+                    .show(skip=False)
+                    .resize(new_size=600)
+                    .show(skip=False)
+                    .to_string(allowed_chars='0123456789:,.<>')
+                )"""
             s = (
                 _ImageProcessor(row_array,
                                 logger=self._logger)
                 .grayscale()
-                .isolate_outlines()
+                .isolate_outlines(white_threshold=120)
                 .resize(new_size=600)
-                .show()
-                .to_strings(allowed_chars='0123456789:,.<>')
+                .show(skip=False)
+                .to_string(allowed_chars='0123456789:,.<>')
             )
             print(s)
 
@@ -637,23 +550,31 @@ class _ScreenShotAnalyzer:
         return r
 
     def analyze_for_table(self,
-                          screen_shot: _ScreenShot,
+                          img_array: np.ndarray,
                           have_currency: str,
                           want_currency: str) -> _MarketSupplyTable | None:
         print(f"Analyzing screen shot for table...")
-        r = self._extract_supply_table(screen_shot.img_array,
+        r = self._extract_supply_table(img_array,
                                        have_currency=have_currency,
                                        want_currency=want_currency)
         print("\tFinished analyzing screen shot for table.")
         return r
 
 
-class _MarketDataManager:
+class MarketDataManager:
 
     def __init__(self, logger: logging.Logger):
         self._logger = logger
 
         self._market_data = dict()
+
+    def fetch_data(self) -> list[RatioSupply]:
+        return_ratio_objs = []
+        for want_currency, have_currency_ratio_objs in self._market_data.items():
+            for have_currency, ratio_objs in have_currency_ratio_objs.items():
+               return_ratio_objs.extend(ratio_objs)
+
+        return return_ratio_objs
 
     def record_market_data(self,
                            want_currency: str,
@@ -661,8 +582,8 @@ class _MarketDataManager:
                            gold_cost: int | None = None,
                            available_trades_table: _MarketSupplyTable | None = None,
                            competing_trades_table: _MarketSupplyTable | None = None):
-        if have_currency not in self._market_data:
-            self._market_data[have_currency] = dict()
+        if want_currency not in self._market_data:
+            self._market_data[want_currency] = dict()
 
         available_ratios = available_trades_table.sort_ratio_supply_objs(reverse=True)
         if available_trades_table and not available_ratios:
@@ -674,7 +595,8 @@ class _MarketDataManager:
             self._logger.error(f"No competing trades found for converting {have_currency} to {want_currency}")
             return
 
-        self._market_data[have_currency][want_currency] = available_ratios[0].haves_per_want
+        self._market_data[want_currency][have_currency] = available_trades_table.sort_ratio_supply_objs(reverse=True)
+
 
 class _MarketDataCaptureManager:
 
@@ -689,7 +611,7 @@ class _MarketDataCaptureManager:
 
         self._screen_bounds_manager = _ScreenBoundsManager(logger=logger,
                                                            expected_bounds=set(self._ui_element_keys.values()))
-        self._market_data_manager = _MarketDataManager(logger=logger)
+        self._market_data_manager = MarketDataManager(logger=logger)
 
         self._logger = logger
 
@@ -749,12 +671,12 @@ class _MarketDataCaptureManager:
             screen_shot=screen_shot_collection.fetch_screen_shot(ui_element=_MarketUiElement.GOLD_COST)
         )"""
         available_trades_table = screen_shot_analyzer.analyze_for_table(
-            screen_shot=screen_shot_collection.fetch_screen_shot(ui_element=_MarketUiElement.AVAILABLE_TRADES),
+            img_array=screen_shot_collection.fetch_screen_shot(ui_element=_MarketUiElement.AVAILABLE_TRADES).img_array,
             have_currency=have_currency,
             want_currency=want_currency
         )
         competing_trades_table = screen_shot_analyzer.analyze_for_table(
-            screen_shot=screen_shot_collection.fetch_screen_shot(ui_element=_MarketUiElement.COMPETING_TRADES),
+            img_array=screen_shot_collection.fetch_screen_shot(ui_element=_MarketUiElement.COMPETING_TRADES).img_array,
             have_currency=have_currency,
             want_currency=want_currency
         )
@@ -766,12 +688,12 @@ class _MarketDataCaptureManager:
         )
 
 
-    def capture(self):
+    def capture(self) -> MarketDataManager:
         self._capture_bounds()
 
         screen_shot_analyzer = _ScreenShotAnalyzer(logger=self._logger)
         for screen_shot_collection in self._capture_screen_shots():
             self._record_market_data(screen_shot_analyzer=screen_shot_analyzer,
                                      screen_shot_collection=screen_shot_collection)
-        x=0
 
+        return self._market_data_manager
