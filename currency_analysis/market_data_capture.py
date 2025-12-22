@@ -113,10 +113,19 @@ class _KeyPressCapturer:
         return self._captured_char
 
 
+@dataclass(frozen=True)
+class _ScreenShot:
+    img_array: np.ndarray
+    x_min: int
+    y_min: int
+    x_max: int
+    y_max: int
+
+
 class _ScreenShotCapturer:
 
     @staticmethod
-    def capture(bounds: _CaptureBounds):
+    def capture(bounds: _CaptureBounds) -> _ScreenShot:
         with mss.mss() as sct:
             region = {
                 "left": bounds.x_min,
@@ -126,7 +135,13 @@ class _ScreenShotCapturer:
             }
             img = np.array(sct.grab(region))
 
-            return img
+            return _ScreenShot(
+                img_array=img,
+                x_min=bounds.x_min,
+                y_min=bounds.y_min,
+                x_max=bounds.x_max,
+                y_max=bounds.y_max
+            )
 
 
 class _ScreenBoundsManager:
@@ -161,14 +176,13 @@ class _ScreenBoundsManager:
 
 class _ScreenShotCollection:
 
-    def __init__(self, screen_shots: dict[_MarketUiElement: np.ndarray]):
-        missing_ui_elements = ui_element_enums - set(screen_shots.keys())
-        if missing_ui_elements:
-            raise ValueError(f"Missing bounds types {missing_ui_elements}")
-
+    def __init__(self, screen_shots: dict[_MarketUiElement: _ScreenShot]):
         self._screen_shots = screen_shots
 
-    def fetch_screen_shot(self, ui_element: _MarketUiElement) -> np.ndarray:
+    def fetch_screen_shot(self, ui_element: _MarketUiElement) -> _ScreenShot:
+        if ui_element not in self._screen_shots:
+            raise ValueError(f"UiElement {ui_element} ScreenShot not in self._screen_shots")
+
         return self._screen_shots[ui_element]
 
 @dataclass
@@ -458,7 +472,12 @@ class _ImageProcessor:
     def resize(self,
                new_size: int,
                skip: bool = False) -> "_ImageProcessor":
-        curr_width, curr_height = self._img_array.shape
+        shape = self._img_array.shape
+
+        if len(shape) == 2:  # grayscale
+            curr_height, curr_width = shape
+        elif len(shape) == 3:  # color
+            curr_height, curr_width = shape[:2]
         scale_factor = new_size / curr_width
         self._img_array = cv2.resize(
             self._img_array,
@@ -535,8 +554,50 @@ class _ScreenShotAnalyzer:
     def _extract_supply_table(self,
                               img_array: np.ndarray,
                               have_currency: str,
-                              want_currency: str) -> _MarketSupplyTable | None:
+                              want_currency: str,
+                              num_rows: int = 6) -> _MarketSupplyTable | None:
+        img_array = (
+            _ImageProcessor(img_array=img_array,
+                            logger=self._logger)
+            .resize(new_size=600)
+            .img_array
+        )
+        row_boundaries = np.linspace(0,
+                                     img_array.shape[0],
+                                     num_rows + 1,
+                                     dtype=int)
 
+        row_slices = [(row_boundaries[i], row_boundaries[i + 1]) for i in range(num_rows)]
+        draw_img_array = img_array.copy()
+
+        for row_start, row_end in row_slices:
+            _Cv2Visualizer.draw_rectangle(
+                img_array=draw_img_array,
+                x=10,
+                y=row_start,
+                w=img_array.shape[1] - 20,
+                h=row_end - row_start,
+                color='red',
+                inplace=True,
+                thickness=2
+            )
+        _Cv2Visualizer.show(img_array=draw_img_array)
+
+        row_arrays = [
+            img_array[row_start:row_end, :]
+            for row_start, row_end in row_slices
+        ]
+        for row_array in row_arrays:
+            s = (
+                _ImageProcessor(row_array,
+                                logger=self._logger)
+                .grayscale()
+                .isolate_outlines()
+                .resize(new_size=600)
+                .show()
+                .to_strings(allowed_chars='0123456789:,.<>')
+            )
+            print(s)
 
         """table_texts = [re.sub(r'[,<>]', '', t) for t in table_texts]
 
@@ -567,19 +628,20 @@ class _ScreenShotAnalyzer:
 
         return table
 """
-    def analyze_for_string(self, screen_shot: np.ndarray) -> str | None:
+    def analyze_for_string(self, screen_shot: _ScreenShot) -> str | None:
+        img_array = screen_shot.img_array
         print(f"Analyzing screen shot for string...")
-        preprocessed_image = self._preprocess(screen_shot)
+        preprocessed_image = self._preprocess(img_array)
         r = self._extract_text(preprocessed_image)
         print("\tFinished analyzing screen shot for string.")
         return r
 
     def analyze_for_table(self,
-                          screen_shot: np.ndarray,
+                          screen_shot: _ScreenShot,
                           have_currency: str,
                           want_currency: str) -> _MarketSupplyTable | None:
         print(f"Analyzing screen shot for table...")
-        r = self._extract_supply_table(screen_shot,
+        r = self._extract_supply_table(screen_shot.img_array,
                                        have_currency=have_currency,
                                        want_currency=want_currency)
         print("\tFinished analyzing screen shot for table.")
