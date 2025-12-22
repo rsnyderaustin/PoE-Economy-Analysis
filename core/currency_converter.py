@@ -5,6 +5,21 @@ import pandas as pd
 from shared.enums.trade_enums import Currency
 
 
+class CurrencyData:
+
+    def __init__(self, df: pd.DataFrame):
+        self._df = df
+
+    def validate(self):
+        expected_cols = {
+            'date_recorded',
+            'currency_type',
+            'to_div_ratio'
+        }
+
+        if
+
+
 class CurrencyConverter:
     _instance = None
     _initialized = None
