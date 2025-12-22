@@ -112,6 +112,16 @@ class _GraphCycle:
             if 'supply_til_worst_tier' not in p.atts:
                 p.atts['supply_til_worst_tier'] = sum(r.supply for r in p.sorted_ratios[:-1])
 
+        table_rows = {
+            'have_currency': [p.have_currency for p in pair_objs],
+            'want_currency': [p.want_currency for p in pair_objs],
+            'buyout_cost': [p.atts['cost_to_reach_worst_tier'] for p in pair_objs],
+            'supplies': [p.atts['supply_til_worst_tier'] for p in pair_objs]
+        }
+        df = pd.DataFrame(table_rows)
+
+        df['buyout_ratio'] = 
+
         worst_cost = None
         latest_supply = None
         for i, p in enumerate(pair_objs):
@@ -122,9 +132,9 @@ class _GraphCycle:
                 worst_cost = total_buyout_cost
                 latest_supply = buyout_supplies
                 continue
-            
-            # Can we buyout everything up until the worst tier with the supply from the last exchange?
-            if total_buyout_cost > latest_cost:
+
+            # Do we have enough from the last step to buyout everything here?
+            if total_buyout_cost > latest_supply:
                 limiting_currency = p.want_currency
 
 
