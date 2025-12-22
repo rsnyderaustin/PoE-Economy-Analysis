@@ -3,7 +3,7 @@ import math
 import pprint
 import pandas as pd
 
-from currency_analysis.market_data_capture import MarketDataManager, RatioSupply
+from currency_analysis.market_data_capture import MarketDataManager, RatioSupply, CurrencyPairRates
 
 import networkx as nx
 
@@ -11,15 +11,16 @@ import networkx as nx
 class _CurrencyConverter:
 
     def __init__(self,
-                 ratio_objs: list[RatioSupply],
+                 currency_pair_rates: list[CurrencyPairRates],
                  logger: logging.Logger):
         self._logger = logger
 
-        self._df = self._build_df(ratio_objs=ratio_objs)
+        self._df = self._build_df(currency_pair_rates=currency_pair_rates)
 
-    def _build_df(self, ratio_objs) -> pd.DataFrame:
+    def _build_df(self, currency_pair_rates: list[CurrencyPairRates]) -> pd.DataFrame:
         ratios = dict()
-        for r in ratio_objs:
+        for pair_rates in currency_pair_rates:
+            d = pair_rates.grouped_d
             k = r.have_currency, r.want_currency
             if k not in ratios:
                 ratios[k] = list()
@@ -86,20 +87,64 @@ class _CurrencyConverter:
         return want
 
 
+class _GraphCycle:
+
+    def __init__(self, cycle_nodes: list):
+        self._nodes = cycle_nodes
+
+    def determine_cost_to_reach_worst_ratio(self):
+        """
+        Determines what the initial cycle supply is to reach the worst ratio on any one of the trades.
+        :return:
+        """
+
+        """
+        Essentially all this function does is algorithmically determines what our limiting factor 
+        (currency) is
+        """
+
+        pair_objs = [node.pair_obj for node in self._nodes]
+
+        for p in pair_objs:
+            if 'cost_to_reach_worst_tier' not in p.atts:
+                p.atts['cost_to_reach_worst_tier'] = sum(r.buyout_cost for r in p.sorted_ratios[:-1])
+
+            if 'supply_til_worst_tier' not in p.atts:
+                p.atts['supply_til_worst_tier'] = sum(r.supply for r in p.sorted_ratios[:-1])
+
+        worst_cost = None
+        latest_supply = None
+        for i, p in enumerate(pair_objs):
+            total_buyout_cost = p.atts['cost_to_reach_worst_tier']
+            buyout_supplies = p.atts['supply_til_worst_tier']
+
+            if i == 0:
+                worst_cost = total_buyout_cost
+                latest_supply = buyout_supplies
+                continue
+            
+            # Can we buyout everything up until the worst tier with the supply from the last exchange?
+            if total_buyout_cost > latest_cost:
+                limiting_currency = p.want_currency
+
+
+
+
 class CurrencyArbitrager:
 
     def __init__(self,
                  market_data_manager: MarketDataManager,
                  logger: logging.Logger):
         self._market_data_manager = market_data_manager
-        self._ratio_objs = self._market_data_manager.fetch_data()
+        self._currency_pair_objs = self._market_data_manager.fetch_currency_pair_objs()
 
-        self._converter = _CurrencyConverter(ratio_objs=self._ratio_objs,
+        self._converter = _CurrencyConverter(currency_pair_rates=self._market_data_manager.fetch_currency_pair_objs(),
                                              logger=logger)
 
     def determine_missing_trade_records(self) -> list[dict]:
-        all_currencies = {c for r in self._ratio_objs for c in (r.have_currency, r.want_currency)}
-        to_div_currencies = {r.have_currency for r in self._ratio_objs if r.want_currency == 'divine orb'}
+        all_currencies = {c for p in self._currency_pair_objs for c in (p.have_currency, p.want_currency)}
+        to_div_currencies = {p.have_currency for p in self._currency_pair_objs
+                             if p.want_currency == 'divine orb'}
         missing_currencies = all_currencies - to_div_currencies
         missing_currencies = missing_currencies - {'divine orb'}
 
@@ -107,26 +152,22 @@ class CurrencyArbitrager:
                  'want': 'divine orb'} for missing_c in missing_currencies]
 
     def _build_graph(self) -> nx.DiGraph():
-        g = nx.DiGraph()
+        G = nx.DiGraph()
 
-        ratio_objs = self._market_data_manager.fetch_data()
-        for ratio_obj in ratio_objs:
-            g.add_edge(
-                ratio_obj.have_currency,
-                ratio_obj.want_currency,
-                weight=-math.log(ratio_obj.haves_per_want)
+        pair_objs = self._market_data_manager.fetch_currency_pair_objs()
+        for pair_obj in pair_objs:
+            G.add_edge(
+                pair_obj.have_currency,
+                pair_obj.want_currency,
+                pair_obj=pair_obj
             )
 
-        return g
+        return G
 
-    def _convert_to_divs(self, currency: str, amount: int):
-
-
-    def _determine_profitability(self, graph: nx.DiGraph):
-        cycles = list(nx.simple_cycles(G=graph,
+    def _determine_profitability(self, G: nx.DiGraph):
+        cycles = list(nx.simple_cycles(G=G,
                                        length_bounds=5))
 
-        G = graph
         for cycle in cycles:
             prod_rate = 1
 
@@ -149,13 +190,12 @@ class CurrencyArbitrager:
 
     def arbitrage(self):
         missing_trade_records = self.determine_missing_trade_records()
-
         if missing_trade_records:
             raise RuntimeError(
                 "Missing trade records:\n"
                 f"{pprint.pformat(missing_trade_records)}"
             )
 
-        g = self._build_graph()
-        cycles = nx.negative_edge_cycle(g, weight="weight")
+        G = self._build_graph()
+        self._determine_profitability(G=G)
 

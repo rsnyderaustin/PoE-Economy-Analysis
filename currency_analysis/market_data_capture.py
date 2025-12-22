@@ -182,12 +182,101 @@ class _ScreenShotCollection:
 
         return self._screen_shots[ui_element]
 
+
 @dataclass
 class RatioSupply:
     have_currency: str
     want_currency: str
     want_per_have: float
     supply: int
+
+    @property
+    def buyout_cost(self) -> float:
+        return (1 / self.want_per_have) * self.supply
+
+
+class CurrencyPairRates:
+
+    def __init__(self,
+                 have_currency: str,
+                 want_currency: str):
+        self.have_currency = have_currency
+        self.want_currency = want_currency
+
+        self._ratios = []
+        self._sorted_ratios = None
+
+        self.atts = dict()
+
+    def to_df(self):
+        rows = {
+            'have_currency': [],
+            'want_currency': [],
+            'tier': [],
+            'want_per_have': [],
+            'max_have': [],
+            'prev_cum_have': [],
+            'max_want': []
+        }
+
+        for (have_currency, want_currency), ratio_objs in ratios.items():
+            tier = 0
+            cum_have = 0
+            for i, ratio_obj in enumerate(ratio_objs):
+                rows['have_currency'].append(have_currency)
+                rows['want_currency'].append(want_currency)
+                rows['tier'].append(tier)
+                rows['want_per_have'].append(ratio_obj.want_per_have)
+
+                # For the worst posted ratio, but we just assume an infinite supply
+                if i == len(ratio_objs) - 1:
+                    max_have = 999e3
+                    max_want = 999e3
+                else:
+                    max_have = (1 / ratio_obj.want_per_have) * ratio_obj.supply
+                    max_want = ratio_obj.supply
+
+                rows['max_have'].append(max_have)
+                rows['max_want'].append(max_want)
+                rows['prev_cum_have'] = cum_have
+
+                cum_have += max_have
+
+                cum_have += ratio_obj.supply
+                tier += 1
+
+        return pd.DataFrame(rows)
+
+    @property
+    def sorted_ratios(self) -> list[RatioSupply]:
+        if 'sorted_ratios' not in self.atts:
+            self.atts['sorted_ratios'] = sorted(list(self._ratios), key=lambda r:r.want_per_have)
+
+        return self.atts['sorted_ratios']
+
+    def add_ratios(self, ratio_supplies: list[RatioSupply]):
+        for ratio_supply in ratio_supplies:
+            if ratio_supply.have_currency != self.have_currency:
+                raise ValueError(f"Invalid have currency: {ratio_supply.have_currency}")
+
+            if ratio_supply.want_currency != self.want_currency:
+                raise ValueError(f"Invalid want currency: {ratio_supply.want_currency}")
+
+            self._ratios.append(ratio_supply)
+
+    def _group_into_dict(self, ratios: list[RatioSupply]) -> dict:
+        ratios = dict()
+        for r in ratios:
+            k = r.have_currency, r.want_currency
+            if k not in ratios:
+                ratios[k] = list()
+            ratios[k].append(r)
+
+        for currencies, ratio_objs in ratios.items():
+            ratios[currencies] = sorted(ratio_objs, key=lambda r: r.want_per_have)
+
+        return ratios
+
 
 class _MarketSupplyTable:
 
@@ -199,8 +288,9 @@ class _MarketSupplyTable:
 
         self._ratios = dict()
 
-    def sort_ratio_supply_objs(self, reverse: bool = False) -> list[RatioSupply]:
-        return sorted(self._ratios.values(), key=lambda r: r.want_per_have, reverse=reverse)
+    @property
+    def supply_ratios(self, reverse: bool = False) -> list[RatioSupply]:
+        return list(self._ratios.values())
 
     def add_ratio_supply(self,
                          cost_per_have: float = None,
@@ -568,7 +658,7 @@ class MarketDataManager:
 
         self._market_data = dict()
 
-    def fetch_data(self) -> list[RatioSupply]:
+    def fetch_currency_pair_objs(self) -> list[CurrencyPairRates]:
         return_ratio_objs = []
         for want_currency, have_currency_ratio_objs in self._market_data.items():
             for have_currency, ratio_objs in have_currency_ratio_objs.items():
@@ -579,23 +669,26 @@ class MarketDataManager:
     def record_market_data(self,
                            want_currency: str,
                            have_currency: str,
-                           gold_cost: int | None = None,
                            available_trades_table: _MarketSupplyTable | None = None,
                            competing_trades_table: _MarketSupplyTable | None = None):
         if want_currency not in self._market_data:
             self._market_data[want_currency] = dict()
 
-        available_ratios = available_trades_table.sort_ratio_supply_objs(reverse=True)
+        available_ratios = available_trades_table.supply_ratios
         if available_trades_table and not available_ratios:
-            self._logger.error(f"No available trades found for converting {have_currency} to {want_currency}")
+            self._logger.error(f"No available trades found for '{have_currency}' -> '{want_currency}'")
             return
 
-        competing_ratios = competing_trades_table.sort_ratio_supply_objs(reverse=True)
+        competing_ratios = competing_trades_table.supply_ratios
         if competing_trades_table and not competing_ratios:
-            self._logger.error(f"No competing trades found for converting {have_currency} to {want_currency}")
+            self._logger.error(f"No competing trades found for '{have_currency}' -> '{want_currency}'")
             return
 
-        self._market_data[want_currency][have_currency] = available_trades_table.sort_ratio_supply_objs(reverse=True)
+        pair_rates_obj = CurrencyPairRates(have_currency=have_currency,
+                                           want_currency=want_currency)
+        pair_rates_obj.add_ratios(available_ratios)
+
+        self._market_data[want_currency][have_currency] = pair_rates_obj
 
 
 class _MarketDataCaptureManager:
