@@ -32,7 +32,9 @@ def test_fake_cycle():
     currencies = ['exalted orb', 'divine orb', 'chaos orb']
     market_data_manager = MarketDataManager(logger=logger)
 
-    for have_currency, want_currency in itertools.product(currencies, currencies):
+    pairs = itertools.product(currencies, currencies)
+    pairs = [p for p in pairs if p[0] != p[1]]
+    for have_currency, want_currency in pairs:
         available_table = _MarketSupplyTable(ratio_type=RatioType.AVAILABLE,
                                              have_currency=have_currency,
                                              want_currency=want_currency)
@@ -54,7 +56,8 @@ def test_fake_cycle():
         market_data_manager=market_data_manager,
         logger=logger
     )
-    arbitrager.arbitrage()
+    arbitrage_df = arbitrager.arbitrage()
+    x=0
 
 test_fake_cycle()
 # test_run()
