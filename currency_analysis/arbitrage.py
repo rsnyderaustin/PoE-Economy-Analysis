@@ -1,54 +1,46 @@
 import logging
-import math
 import pprint
-import pandas as pd
-
-from currency_analysis.market_data_capture import MarketDataManager, RatioSupply, CurrencyPairRates
+import uuid
 
 import networkx as nx
+import pandas as pd
+
+from currency_analysis.market_data_capture import MarketDataManager, CurrencyPair
 
 
-class _CurrencyConverter:
+class _CurrencyPairsDataManager:
 
     def __init__(self,
-                 currency_pair_rates: list[CurrencyPairRates],
-                 logger: logging.Logger):
+                 logger: logging.Logger,
+                 currency_pairs: list[CurrencyPair]):
         self._logger = logger
+        self._currency_pairs = currency_pairs
 
-        self._df = self._build_df(currency_pair_rates=currency_pair_rates)
+        self._indexed_dfs = self._build_indexed_dfs(currency_pairs)
 
-    def _build_df(self, currency_pair_rates: list[CurrencyPairRates]) -> pd.DataFrame:
-        ratios = dict()
-        for pair_rates in currency_pair_rates:
-            d = pair_rates.grouped_d
-            k = r.have_currency, r.want_currency
-            if k not in ratios:
-                ratios[k] = list()
-            ratios[k].append(r)
+    def _build_indexed_dfs(self, currency_pairs: list[CurrencyPair]) -> dict:
+        indexed_pair_dfs = dict()
+        for currency_pair in currency_pairs:
+            rows = {
+                'have_currency': [],
+                'want_currency': [],
+                'tier': [],
+                'want_per_have': [],
+                'max_have': [],
+                'prev_cum_have': [],
+                'max_want': []
+            }
 
-        for currencies, ratio_objs in ratios.items():
-            ratios[currencies] = sorted(ratio_objs, key=lambda r: r.want_per_have)
-
-        rows = {
-            'have_currency': [],
-            'want_currency': [],
-            'tier': [],
-            'want_per_have': [],
-            'max_have': [],
-            'prev_cum_have': [],
-            'max_want': []
-        }
-        for (have_currency, want_currency), ratio_objs in ratios.items():
             tier = 0
             cum_have = 0
-            for i, ratio_obj in enumerate(ratio_objs):
-                rows['have_currency'].append(have_currency)
-                rows['want_currency'].append(want_currency)
+            for i, ratio_obj in enumerate(currency_pair.sorted_ratios):
+                rows['have_currency'].append(currency_pair.have_currency)
+                rows['want_currency'].append(currency_pair.want_currency)
                 rows['tier'].append(tier)
                 rows['want_per_have'].append(ratio_obj.want_per_have)
 
                 # For the worst posted ratio, but we just assume an infinite supply
-                if i == len(ratio_objs) - 1:
+                if i == len(currency_pair.sorted_ratios) - 1:
                     max_have = 999e3
                     max_want = 999e3
                 else:
@@ -64,16 +56,34 @@ class _CurrencyConverter:
                 cum_have += ratio_obj.supply
                 tier += 1
 
-        return pd.DataFrame(rows)
+            k = currency_pair.have_currency, currency_pair.want_currency
+            indexed_pair_dfs[k] = pd.DataFrame(rows)
+
+        return indexed_pair_dfs
+
+    def fetch_dataframe(self, have_currency: str, want_currency: str) -> pd.DataFrame:
+        k = have_currency, want_currency
+        if k not in self._indexed_dfs:
+            raise ValueError(f"Could not find {have_currency} -> {want_currency} dataframe in "
+                             f"_CurrencyPairDataManager")
+
+        return self._indexed_dfs[k]
+
+
+class _CurrencyConverter:
+
+    def __init__(self,
+                 currency_pairs_data_manager: _CurrencyPairsDataManager,
+                 logger: logging.Logger):
+        self._logger = logger
+        self._data_m = currency_pairs_data_manager
 
     def convert(self,
                 have_currency: str,
                 want_currency: str,
                 have_amount: int) -> float:
-        c_df = self._df[
-            (self._df['have_currency'] == have_currency) &
-            (self._df['want_currency'] == want_currency)
-        ]
+        c_df = self._data_m.fetch_dataframe(have_currency=have_currency,
+                                            want_currency=want_currency)
         if c_df.empty:
             raise RuntimeError(f"Found no conversion data for {have_currency} -> {want_currency}")
 
@@ -87,53 +97,155 @@ class _CurrencyConverter:
         return want
 
 
-class _GraphCycle:
+class _Cycle:
 
-    def __init__(self, cycle_nodes: list):
-        self._nodes = cycle_nodes
+    def __init__(self, nodes):
+        self.id_ = uuid.uuid4()
+        self.nodes = nodes
+        self.currency_pair_objects = [n.pair_obj for n in nodes]
 
-    def determine_cost_to_reach_worst_ratio(self) -> float:
-        """
-        Determines what the initial cycle supply is to reach the worst ratio on any one of the trades.
-        :return:
-        """
+        self.start_currency = nodes[0].pair_obj.have_currency
+        self.end_currency = nodes[-1].pair_obj.want_currency
 
-        """
-        Essentially all this function does is algorithmically determines what our limiting factor 
-        (currency) is
-        """
+        self._starting_amounts = None
 
-        pair_objs = [node.pair_obj for node in self._nodes]
+    @property
+    def test_principals(self) -> list:
+        first_step_buyout = self.nodes[0].pair_obj.determine_total_buyout_cost()
+        return [
+            first_step_buyout * 0.05,
+            first_step_buyout * 0.1,
+            first_step_buyout * 0.25,
+            first_step_buyout * 0.5,
+            first_step_buyout * 0.75,
+            first_step_buyout,
+            first_step_buyout * 1.25
+        ]
 
-        for p in pair_objs:
-            if 'cost_to_reach_worst_tier' not in p.atts:
-                p.atts['cost_to_reach_worst_tier'] = sum(r.buyout_cost for r in p.sorted_ratios[:-1])
+    @property
+    def feasibility_principal(self) -> float:
+        return self.nodes[0].pair_obj.determine_total_buyout_cost() * 0.05
 
-            if 'supply_til_worst_tier' not in p.atts:
-                p.atts['supply_til_worst_tier'] = sum(r.supply for r in p.sorted_ratios[:-1])
 
-        table_rows = {
-            'have_currency': [p.have_currency for p in pair_objs],
-            'want_currency': [p.want_currency for p in pair_objs],
-            'buyout_cost': [p.atts['cost_to_reach_worst_tier'] for p in pair_objs],
-            'buyout_supply': [p.atts['supply_til_worst_tier'] for p in pair_objs]
+class _ArbitrageDataTracker:
+
+    def __init__(self):
+        self._steps_data = {
+            'cycle_start_currency': [],
+            'cycle_end_currency': [],
+            'iteration_principal': [],
+            'step_num': [],
+            'step_start_currency': [],
+            'step_start_cost': [],
+            'step_end_currency': [],
+            'step_end_supply': []
         }
-        df = pd.DataFrame(table_rows)
-        df['buyout_ratio'] = (df['buyout_supply'].shift(1) / df['buyout_cost']).fillna(1)
 
-        limiting_ratio = min(df['buyout_ratio'])
-        pass
+        self._profit_data = {
+            'cycle_start_currency': [],
+            'cycle_end_currency': [],
+            'iteration_principal': [],
+            'divs_profit': []
+        }
+
+    def add_step(self,
+                 cycle: _Cycle,
+                 step_num: int,
+                 iteration_starting_amount: float,
+                 starting_currency: str,
+                 starting_amount: float,
+                 ending_currency: str,
+                 ending_amount: float):
+        self._steps_data['cycle_start_currency'].append(cycle.start_currency)
+        self._steps_data['cycle_end_currency'].append(cycle.end_currency)
+
+        self._steps_data['iteration_principal'].append(iteration_starting_amount)
+        self._steps_data['step_num'].append(step_num)
+
+        self._steps_data['step_start_currency'].append(starting_currency)
+        self._steps_data['step_start_cost'].append(starting_amount)
+        self._steps_data['step_end_currency'].append(ending_currency)
+        self._steps_data['step_end_supply'].append(ending_amount)
+
+    def add_profit(self, cycle: _Cycle, starting_amount: float, divs_profit: float):
+        self._profit_data['cycle_start_currency'].append(cycle.start_currency)
+        self._profit_data['cycle_end_currency'].append(cycle.end_currency)
+        self._profit_data['starting_amount'].append(starting_amount)
+        self._profit_data['divs_profit'].append(divs_profit)
+
+    def to_dataframe(self) -> pd.DataFrame:
+        steps_df = pd.DataFrame(self._steps_data)
+        profit_df = pd.DataFrame(self._profit_data)
+
+        df = steps_df.merge(profit_df,
+                            how='left',
+                            left_on=['cycle_start_currency',
+                                     'cycle_end_currency',
+                                     'iteration_principal'],
+                            right_on=['cycle_start_currency',
+                                      'cycle_end_currency',
+                                      'iteration_principal']
+                            )
+
+        return df
 
 
-class _ProfitResults:
+# Not used for now
+class _CycleAnalyzer:
 
-    def __init__(self, pair_objs: list[CurrencyPairRates]):
-        self._pair_objs = pair_objs
+    def __init__(self,
+                 currency_converter: _CurrencyConverter,
+                 data_tracker: _ArbitrageDataTracker,
+                 logger: logging.Logger):
+        self._converter = currency_converter
+        self._data_tracker = data_tracker
+        self._logger = logger
 
-        self._data = dict()
+    def _determine_and_record_profit(self,
+                                     cycle: _Cycle,
+                                     principal,
+                                     pair_objs: list[CurrencyPair]):
+        last_supply = principal
+        last_currency = pair_objs[0].have_currency
+        for i, pair_obj in enumerate(pair_objs):
+            conversion_amount = self._converter.convert(
+                have_currency=pair_obj.have_currency,
+                want_currency=pair_obj.want_currency,
+                have_amount=last_supply
+            )
+            self._data_tracker.add_step(
+                cycle=cycle,
+                step_num=i + 1,
+                iteration_starting_amount=principal,
+                starting_amount=last_supply,
+                starting_currency=last_currency,
+                ending_amount=conversion_amount,
+                ending_currency=pair_obj.want_currency
+            )
+            last_currency = pair_obj.want_currency
+            last_supply = conversion_amount
 
-    def add_results(self, starting_amount: float, divs_profit: float):
-        self._data[starting_amount] = divs_profit
+        profit = last_supply - principal
+        divs_profit = self._converter.convert(have_currency=pair_objs[-1].want_currency,
+                                              want_currency='divine orb',
+                                              have_amount=profit)
+        self._data_tracker.add_profit(cycle=cycle,
+                                      starting_amount=principal,
+                                      divs_profit=divs_profit)
+        return divs_profit
+
+    def analyze_cycle(self, cycle: _Cycle) -> _ArbitrageDataTracker:
+        feasibility_profit = self._determine_and_record_profit(cycle=cycle,
+                                                               principal=cycle.feasibility_principal,
+                                                               pair_objs=cycle.currency_pair_objects)
+        if feasibility_profit < 0:
+            return self._data_tracker
+
+        for test_cost in cycle.test_principals:
+            self._determine_and_record_profit(cycle=cycle,
+                                              principal=test_cost,
+                                              pair_objs=cycle.currency_pair_objects)
+
 
 class CurrencyArbitrager:
 
@@ -141,10 +253,20 @@ class CurrencyArbitrager:
                  market_data_manager: MarketDataManager,
                  logger: logging.Logger):
         self._market_data_manager = market_data_manager
-        self._currency_pair_objs = self._market_data_manager.fetch_currency_pair_objs()
+        self._logger = logger
 
-        self._converter = _CurrencyConverter(currency_pair_rates=self._market_data_manager.fetch_currency_pair_objs(),
-                                             logger=logger)
+        self._currency_pair_objs = self._market_data_manager.fetch_currency_pair_objs()
+        self._data_m = _CurrencyPairsDataManager(currency_pairs=self._currency_pair_objs,
+                                                 logger=logger)
+        self._data_tracker = _ArbitrageDataTracker()
+        self._cycle_analyzer = _CycleAnalyzer(
+            currency_converter=_CurrencyConverter(
+                currency_pairs_data_manager=self._data_m,
+                logger=logger
+            ),
+            data_tracker=self._data_tracker,
+            logger=logger
+        )
 
     def determine_missing_trade_records(self) -> list[dict]:
         all_currencies = {c for p in self._currency_pair_objs for c in (p.have_currency, p.want_currency)}
@@ -159,8 +281,7 @@ class CurrencyArbitrager:
     def _build_graph(self) -> nx.DiGraph:
         G = nx.DiGraph()
 
-        pair_objs = self._market_data_manager.fetch_currency_pair_objs()
-        for pair_obj in pair_objs:
+        for pair_obj in self._currency_pair_objs:
             G.add_edge(
                 pair_obj.have_currency,
                 pair_obj.want_currency,
@@ -169,56 +290,7 @@ class CurrencyArbitrager:
 
         return G
 
-    def _determine_profit(self, initial_cost, pair_objs: list[CurrencyPairRates]):
-        last_supply = initial_cost
-        for pair_obj in pair_objs:
-            conversion_amount = self._converter.convert(
-                have_currency=pair_obj.have_currency,
-                want_currency=pair_obj.want_currency,
-                have_amount=last_supply
-            )
-            last_supply = conversion_amount
-
-        profit = last_supply - initial_cost
-        divs_profit = self._converter.convert(have_currency=pair_objs[-1].want_currency,
-                                              want_currency='divine orb',
-                                              have_amount=profit)
-        return divs_profit
-
-    def determine_profitability(self, nodes) -> _ProfitResults:
-        results = _ProfitResults(pair_objs=self._currency_pair_objs)
-
-        pair_objs = [node.pair_obj for node in nodes]
-        cost_basis = pair_objs[0].determine_total_buyout_cost()
-
-        feasibility_cost = cost_basis * 0.05
-        profit = self._determine_profit(initial_cost=feasibility_cost,
-                                        pair_objs=pair_objs)
-        if profit < 0:
-            results.add_results(starting_amount=feasibility_cost,
-                                divs_profit=profit)
-            return results
-
-        test_costs = [
-            cost_basis * 0.05,
-            cost_basis * 0.1,
-            cost_basis * 0.25,
-            cost_basis * 0.5,
-            cost_basis * 0.75,
-            cost_basis,
-            cost_basis * 1.25
-        ]
-
-        for test_cost in test_costs:
-            profit = self._determine_profit(initial_cost=test_cost,
-                                            pair_objs=pair_objs)
-            results.add_results(starting_amount=test_cost,
-                                divs_profit=profit)
-
-        return results
-
-
-    def arbitrage(self):
+    def arbitrage(self) -> pd.DataFrame:
         missing_trade_records = self.determine_missing_trade_records()
         if missing_trade_records:
             raise RuntimeError(
@@ -227,5 +299,11 @@ class CurrencyArbitrager:
             )
 
         G = self._build_graph()
-        self._determine_profitability(G=G)
+        cycles = nx.simple_cycles(G=G, length_bound=5)
+        cycle_objs = [_Cycle(simple_cycle) for simple_cycle in nx.simple_cycles(G=G, length_bound=5)]
+        for i, cycle in enumerate(cycle_objs):
+            self._logger.info(f"Analyzing cycle {i} of {len(cycles)} ({i / len(cycles)})")
+            self._cycle_analyzer.analyze_cycle(cycle)
+            
+        return self._data_tracker.to_dataframe()
 
