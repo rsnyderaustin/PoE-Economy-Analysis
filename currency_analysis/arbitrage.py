@@ -92,7 +92,7 @@ class _GraphCycle:
     def __init__(self, cycle_nodes: list):
         self._nodes = cycle_nodes
 
-    def determine_cost_to_reach_worst_ratio(self):
+    def determine_cost_to_reach_worst_ratio(self) -> float:
         """
         Determines what the initial cycle supply is to reach the worst ratio on any one of the trades.
         :return:
@@ -116,29 +116,24 @@ class _GraphCycle:
             'have_currency': [p.have_currency for p in pair_objs],
             'want_currency': [p.want_currency for p in pair_objs],
             'buyout_cost': [p.atts['cost_to_reach_worst_tier'] for p in pair_objs],
-            'supplies': [p.atts['supply_til_worst_tier'] for p in pair_objs]
+            'buyout_supply': [p.atts['supply_til_worst_tier'] for p in pair_objs]
         }
         df = pd.DataFrame(table_rows)
+        df['buyout_ratio'] = (df['buyout_supply'].shift(1) / df['buyout_cost']).fillna(1)
 
-        df['buyout_ratio'] = 
-
-        worst_cost = None
-        latest_supply = None
-        for i, p in enumerate(pair_objs):
-            total_buyout_cost = p.atts['cost_to_reach_worst_tier']
-            buyout_supplies = p.atts['supply_til_worst_tier']
-
-            if i == 0:
-                worst_cost = total_buyout_cost
-                latest_supply = buyout_supplies
-                continue
-
-            # Do we have enough from the last step to buyout everything here?
-            if total_buyout_cost > latest_supply:
-                limiting_currency = p.want_currency
+        limiting_ratio = min(df['buyout_ratio'])
+        pass
 
 
+class _ProfitResults:
 
+    def __init__(self, pair_objs: list[CurrencyPairRates]):
+        self._pair_objs = pair_objs
+
+        self._data = dict()
+
+    def add_results(self, starting_amount: float, divs_profit: float):
+        self._data[starting_amount] = divs_profit
 
 class CurrencyArbitrager:
 
@@ -161,7 +156,7 @@ class CurrencyArbitrager:
         return [{'have': missing_c,
                  'want': 'divine orb'} for missing_c in missing_currencies]
 
-    def _build_graph(self) -> nx.DiGraph():
+    def _build_graph(self) -> nx.DiGraph:
         G = nx.DiGraph()
 
         pair_objs = self._market_data_manager.fetch_currency_pair_objs()
@@ -174,29 +169,54 @@ class CurrencyArbitrager:
 
         return G
 
-    def _determine_profitability(self, G: nx.DiGraph):
-        cycles = list(nx.simple_cycles(G=G,
-                                       length_bounds=5))
+    def _determine_profit(self, initial_cost, pair_objs: list[CurrencyPairRates]):
+        last_supply = initial_cost
+        for pair_obj in pair_objs:
+            conversion_amount = self._converter.convert(
+                have_currency=pair_obj.have_currency,
+                want_currency=pair_obj.want_currency,
+                have_amount=last_supply
+            )
+            last_supply = conversion_amount
 
-        for cycle in cycles:
-            prod_rate = 1
+        profit = last_supply - initial_cost
+        divs_profit = self._converter.convert(have_currency=pair_objs[-1].want_currency,
+                                              want_currency='divine orb',
+                                              have_amount=profit)
+        return divs_profit
 
-            edge_supplies = []
-            for i in range(len(cycle)):
-                src = cycle[i]
-                dst = cycle[(i + 1) % len(cycle)]
-                edge_data = G[src][dst]  # assuming single edge for now
-                rate = edge_data['rate']
-                supply = edge_data.get('available_B', float('inf'))  # or however supply is stored
-                prod_rate *= rate
-                edge_supplies.append(supply)
+    def determine_profitability(self, nodes) -> _ProfitResults:
+        results = _ProfitResults(pair_objs=self._currency_pair_objs)
 
-            # Max quantity feasible = min(edge supplies)
-            max_qty = min(edge_supplies)
+        pair_objs = [node.pair_obj for node in nodes]
+        cost_basis = pair_objs[0].determine_total_buyout_cost()
 
-            # Profit multiplier = final / initial
-            profit_multiplier = prod_rate
-            net_profit_per_unit = profit_multiplier - 1  # can also subtract fees if applicable
+        feasibility_cost = cost_basis * 0.05
+        profit = self._determine_profit(initial_cost=feasibility_cost,
+                                        pair_objs=pair_objs)
+        if profit < 0:
+            results.add_results(starting_amount=feasibility_cost,
+                                divs_profit=profit)
+            return results
+
+        test_costs = [
+            cost_basis * 0.05,
+            cost_basis * 0.1,
+            cost_basis * 0.25,
+            cost_basis * 0.5,
+            cost_basis * 0.75,
+            cost_basis,
+            cost_basis * 1.25
+        ]
+
+        for test_cost in test_costs:
+            profit = self._determine_profit(initial_cost=test_cost,
+                                            pair_objs=pair_objs)
+            results.add_results(starting_amount=test_cost,
+                                divs_profit=profit)
+
+        return results
+
 
     def arbitrage(self):
         missing_trade_records = self.determine_missing_trade_records()

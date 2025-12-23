@@ -1,9 +1,4 @@
 from pathlib import Path
-
-import sys
-print(sys.executable)
-print(sys.version)
-
 import cv2
 import logging
 
@@ -29,5 +24,6 @@ def test_run():
     manager = _MarketDataCaptureManager(logger=logging.getLogger('testing'))
     manager.capture()
 
-test_build_supply_table()
+test_run()
+# test_build_supply_table()
 

@@ -89,10 +89,8 @@ class _KeyPressCapturer:
                 print(f"\tDetected acceptable key press for {key.char}")
                 self._captured_char = key.char
                 return False
-            else:
-                print(f"\tDetected unacceptable key press for {key.char}")
         except AttributeError:
-            print(f"\tInvalid character key press {key}")
+            pass
 
     def capture(self) -> str | None:
         from pynput import keyboard
@@ -207,6 +205,18 @@ class CurrencyPairRates:
         self._sorted_ratios = None
 
         self.atts = dict()
+
+    def determine_total_buyout_cost(self):
+        """
+        :return: The cost to buyout all posted ratios except for the very last
+        """
+        return sum(r.buyout_cost for r in self._ratios[:-1])
+
+    def determine_total_buyout_supply(self):
+        """
+        :return: The total supply of all posted ratios except for the very last
+        """
+        return sum(r.supply for r in self._ratios[:-1])
 
     def to_df(self):
         rows = {
@@ -726,6 +736,12 @@ class _MarketDataCaptureManager:
 
                 ui_element = self._ui_element_keys[char]
                 bounds = _ScreenBoundsCapturer(ui_element=ui_element).capture()
+
+                print(f"Press 't' to capture a sample screen shot.")
+                _KeyPressCapturer(acceptable_keys={'t'}).capture()
+                screen_shot = _ScreenShotCapturer.capture(bounds=bounds)
+                _ImageProcessor(screen_shot.img_array,
+                                logger=self._logger).show()
 
                 self._screen_bounds_manager.add_bounds(ui_element=ui_element, bounds=bounds)
 
