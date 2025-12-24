@@ -29,7 +29,8 @@ def test_build_supply_table():
 
 def test_run():
     cache_settings = CacheSettings()
-    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER],
+    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER,
+                                               CacheObject.SCREEN_SHOT_COLLECTION],
                                 load_from_cache=True,
                                 save_to_cache=True)
     manager = MarketDataCaptureManager(cache_settings=cache_settings)
@@ -69,10 +70,10 @@ def test_fake_cycle():
 
 def create_ui_bounds():
     creator = UiBoundsCreator()
-    creator.create_bounds(show=True)
+    creator.create_bounds(show=False)
 
 # test_fake_cycle()
-# test_run()
+test_run()
 # test_build_supply_table()
-create_ui_bounds()
+# create_ui_bounds()
 

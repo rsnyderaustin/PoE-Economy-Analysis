@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 logger = logging.getLogger(__name__)
 import pprint
@@ -150,13 +151,20 @@ class _KeyPressCapturer:
         return self._captured_key
 
 
-@dataclass(frozen=True)
 class ScreenShot:
-    img_array: np.ndarray
-    x_min: int
-    y_min: int
-    x_max: int
-    y_max: int
+
+    def __init__(self,
+                 img_array: np.ndarray,
+                 x_min: int,
+                 y_min: int,
+                 x_max: int,
+                 y_max: int):
+        self.id_ = uuid.uuid4().hex
+        self.img_array = img_array
+        self.x_min = x_min
+        self.y_min = y_min
+        self.x_max = x_max
+        self.y_max = y_max
 
 
 class _ScreenShotCapturer:
@@ -339,26 +347,27 @@ class UiBoundsCreator:
 
 class ScreenShotCollection:
 
-    def __init__(self):
-        self._screen_shots = dict()
+    def __init__(self, id_: str = None, screen_shots: dict[CurrencyExchangeUiElement: list[ScreenShot]] = None) -> None:
+        self.id_ = id_ or uuid.uuid4().hex
+        self.screen_shots = screen_shots or dict()
 
     def add_screen_shots(self, ui_element: CurrencyExchangeUiElement, screen_shots: list[ScreenShot]):
-        if ui_element not in self._screen_shots:
-            self._screen_shots[ui_element] = []
+        if ui_element not in self.screen_shots:
+            self.screen_shots[ui_element] = []
 
-        self._screen_shots[ui_element].extend(screen_shots)
+        self.screen_shots[ui_element].extend(screen_shots)
 
     def fetch_screen_shots(self, ui_element: CurrencyExchangeUiElement) -> list[ScreenShot]:
-        if ui_element not in self._screen_shots:
+        if ui_element not in self.screen_shots:
             raise ValueError(f"UiElement {ui_element} ScreenShot not in self._screen_shots")
 
-        return self._screen_shots[ui_element]
+        return self.screen_shots[ui_element]
 
     def has_screen_shot(self, ui_element: CurrencyExchangeUiElement) -> bool:
-        if ui_element not in self._screen_shots:
+        if ui_element not in self.screen_shots:
             return False
 
-        return len(self._screen_shots[ui_element]) > 0
+        return len(self.screen_shots[ui_element]) > 0
 
 
 class ScreenShotsCoordinator:

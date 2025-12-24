@@ -1,14 +1,20 @@
 
 import json
 import logging
+from uuid import uuid4
+
+from PIL import Image
+
+from currency_analysis.ui_capture import CurrencyExchangeUiElement, ScreenShotCollection
+
 logger = logging.getLogger(__name__)
 import os
 from enum import Enum
 from pathlib import Path
 
-
 class CacheObject(Enum):
     MARKET_DATA_MANAGER = 'market_data_manager'
+    SCREEN_SHOT_COLLECTION = 'screen_shot_collection'
 
 
 class CacheSettings:
@@ -31,36 +37,58 @@ class CacheSettings:
 
 
 class CacheManager:
-
-    _cache_path = Path(__file__).parent / 'cache.json'
-
-    @classmethod
-    def _ensure_cache_file(cls):
-        cls._cache_path.parent.mkdir(parents=True, exist_ok=True)
-        if not cls._cache_path.exists():
-            cls._cache_path.write_text('{}')
+    _cache_root = Path(__file__).parent / 'cache'
 
     @classmethod
-    def load_from_cache(cls, cache_object: CacheObject):
-        cls._ensure_cache_file()
-
-        with cls._cache_path.open('r') as f:
-            cache = json.load(f)
-
-        json_data = cache.get(cache_object.value)
-        if json_data is None:
-            logger.info(f"Unable to load {cache_object.value} from cache. Returning None...")
-        return json_data
+    def get_cache_dir(cls, cache_object: CacheObject) -> Path:
+        path = cls._cache_root / cache_object.value
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
     @classmethod
-    def save_to_cache(cls, d: dict, cache_object: CacheObject):
-        cls._ensure_cache_file()
+    def load_json(cls, path: Path) -> dict | None:
+        if not path.exists():
+            return None
+        with path.open("r", encoding="utf-8") as f:
+            return json.load(f)
 
-        with cls._cache_path.open('r') as f:
-            cache = json.load(f)
+    @classmethod
+    def save_json(cls, path: Path, data: dict):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
 
-        cache[cache_object.value] = d
 
-        with cls._cache_path.open('w') as f:
-            json.dump(cache, f, indent=2)
+class MarketDataImageCache:
+
+    def __init__(self):
+        self._root = CacheManager.get_cache_dir(CacheObject.MARKET_DATA_MANAGER)
+
+    def save(self, screen_shot_collection: ScreenShotCollection):
+        collection_dir = self._root / screen_shot_collection.id_
+        collection_dir.mkdir(parents=True, exist_ok=True)
+
+        for ui_element, screen_shots in screen_shot_collection.screen_shots().items():
+            images_dir = collection_dir / ui_element.value
+            images_dir.mkdir(parents=True, exist_ok=True)
+            for i, screen_shot in enumerate(screen_shots):
+                image_path = images_dir / f"{i}.png"
+                image = Image.from_array(screen_shot.ndarray)
+                image.save(image_path)
+
+            CacheManager.save_json(images_dir, {'ui_element': ui_element.value})
+
+    def load_metadata(self, image_id: str) -> dict | None:
+        return CacheManager.load_json(
+            self._root / image_id / "metadata.json"
+        )
+
+    def list_records(self) -> list[str]:
+        return [
+            p.name for p in self._root.iterdir()
+            if p.is_dir()
+        ]
+
+
+
 

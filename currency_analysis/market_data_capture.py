@@ -12,7 +12,7 @@ from functools import wraps
 import cv2
 import numpy as np
 
-from currency_analysis.cache import CacheManager, CacheObject, CacheSettings
+from currency_analysis.cache import CacheManager, CacheObject, CacheSettings, MarketDataImageCache
 from currency_analysis.ui_capture import CurrencyExchangeUiElement, ScreenShotsCoordinator, ScreenShotCollection, \
     ScreenShot, ScreenBoundsManager, _ScreenBoundsCapturer, UiBoundsCreator
 from currency_analysis.visualizing import Cv2Visualizer
@@ -512,14 +512,19 @@ class MarketDataCaptureManager:
                  cache_settings: CacheSettings):
         self._cache_settings = cache_settings
 
-        self._market_data_manager = None
-        if self._cache_settings.should_load_from_cache(CacheObject.MARKET_DATA_MANAGER):
-            self._market_data_manager = CacheManager.load_from_cache(cache_object=CacheObject.MARKET_DATA_MANAGER)
-        if not self._market_data_manager:
-            self._market_data_manager = MarketDataManager()
+        self._market_data_manager = self._create_market_data_manager()
 
         self._screen_shot_analyzer = _ScreenShotAnalyzer()
         self._market_data_manager = MarketDataManager()
+        
+    def _create_market_data_manager(self, load_from_cache: bool):
+        market_data_manager = None
+        if load_from_cache:
+            market_data_manager = CacheManager.load_json(
+                path=CacheManager.get_cache_dir(CacheObject.MARKET_DATA_MANAGER) / 'market_data_manager.json'
+            )
+        if not market_data_manager:
+            market_data_manager = MarketDataManager()
 
     def _record_market_data(
             self,
@@ -610,7 +615,8 @@ class MarketDataCaptureManager:
     def _create_market_data_manager(self) -> MarketDataManager:
         market_data_manager = None
         if self._cache_settings.should_load_from_cache(CacheObject.MARKET_DATA_MANAGER):
-            market_data_manager = CacheManager.load_from_cache(cache_object=CacheObject.MARKET_DATA_MANAGER)
+            market_data_manager_d = CacheManager.load_json(path=CacheManager.get_cache_dir(cache_object=CacheObject.MARKET_DATA_MANAGER))
+            market_data_manager = MarketDataManager.from_dict(market_data_manager_d)
         if not market_data_manager:
             market_data_manager = MarketDataManager()
         
@@ -635,9 +641,13 @@ class MarketDataCaptureManager:
 
     def capture(self) -> MarketDataManager:
         bounds_manager = UiBoundsCreator.create_bounds(show=False)
-        screen_shot_capturer = ScreenShotsCoordinator(screen_bounds_manager=bounds_manager)
+        screen_shot_coordinator = ScreenShotsCoordinator(screen_bounds_manager=bounds_manager)
 
-        for screen_shot_collection in screen_shot_capturer.capture_screen_shots():
+        for screen_shot_collection in screen_shot_coordinator.capture_screen_shots():
+            if self._cache_settings.should_save_to_cache(CacheObject.SCREEN_SHOT_COLLECTION):
+                image_cache = MarketDataImageCache()
+                image_cache.save(screen_shot_collection)
+
             self._record_market_data(screen_shot_collection=screen_shot_collection)
 
             if self._cache_settings.should_save_to_cache(CacheObject.MARKET_DATA_MANAGER):
