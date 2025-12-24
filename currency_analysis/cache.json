@@ -1,0 +1,141 @@
+{
+  "capture_bounds": {
+    "_bounds": [
+      {
+        "ui_element": "Want Currency",
+        "x_min": 857,
+        "y_min": 292,
+        "x_max": 980,
+        "y_max": 356
+      },
+      {
+        "ui_element": "Want Currency Amount",
+        "x_min": 1105,
+        "y_min": 298,
+        "x_max": 1185,
+        "y_max": 345
+      },
+      {
+        "ui_element": "Have Currency",
+        "x_min": 1519,
+        "y_min": 292,
+        "x_max": 1646,
+        "y_max": 357
+      },
+      {
+        "ui_element": "Gold Cost",
+        "x_min": 1258,
+        "y_min": 370,
+        "x_max": 1347,
+        "y_max": 401
+      },
+      {
+        "ui_element": "Available Trades",
+        "x_min": 1157,
+        "y_min": 354,
+        "x_max": 1376,
+        "y_max": 542
+      },
+      {
+        "ui_element": "Competing Trades",
+        "x_min": 1164,
+        "y_min": 618,
+        "x_max": 1377,
+        "y_max": 806
+      }
+    ]
+  },
+  "market_data_manager": {
+    "pair_objs": [
+      {
+        "have_currency": "Vivid Crysta Lifeforce",
+        "want_currency": "Divine Orb",
+        "_gold_cost_per_want": null,
+        "_ratios": [
+          {
+            "raw_ratio": "1:2724",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.0003671071953010279,
+            "supply": 95
+          },
+          {
+            "raw_ratio": "1:2725",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.0003669724770642202,
+            "supply": 41
+          },
+          {
+            "raw_ratio": "1:2730",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.0003663003663003663,
+            "supply": 594
+          },
+          {
+            "raw_ratio": "1:2740",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.000364963503649635,
+            "supply": 273
+          },
+          {
+            "raw_ratio": "1:2760",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.00036231884057971015,
+            "supply": 98
+          },
+          {
+            "raw_ratio": "1:2650",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.0003773584905660377,
+            "supply": 7950
+          },
+          {
+            "raw_ratio": "1:2635",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.0003795066413662239,
+            "supply": 1006570
+          },
+          {
+            "raw_ratio": "1:2634",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.00037965072133637056,
+            "supply": 89556
+          },
+          {
+            "raw_ratio": "1:2655.35",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.00037659818856271304,
+            "supply": 15800
+          },
+          {
+            "raw_ratio": "1:2032",
+            "ratio_type": "available",
+            "have_currency": "Vivid Crysta Lifeforce",
+            "want_currency": "Divine Orb",
+            "want_per_have": 0.0004921259842519685,
+            "supply": 11004
+          }
+        ],
+        "_sorted_ratios": null,
+        "atts": {}
+      }
+    ]
+  }
+}

@@ -39,7 +39,7 @@ class _CurrencyPairsDataManager:
                 rows['tier'].append(tier)
                 rows['want_per_have'].append(ratio_obj.want_per_have)
 
-                # For the worst posted ratio, but we just assume an infinite supply
+                # For the worst posted ratio, we just assume an infinite supply
                 if i == len(currency_pair.sorted_ratios) - 1:
                     max_have = 999e3
                     max_want = 999e3
@@ -126,15 +126,23 @@ class _Cycle:
 
     @property
     def feasibility_principal(self) -> float:
-        return self.currency_pair_objects[0].determine_total_buyout_cost() * 0.05
+        return max(1, self.currency_pair_objects[0].determine_total_buyout_cost() * 0.05)
+
+
+class _CycleIteration:
+
+    def __init__(self, cycle: _Cycle, principal: int | float):
+        self.id_ = uuid.uuid4()
+
+        self.cycle = cycle
+        self.principal = principal
 
 
 class _ArbitrageDataTracker:
 
     def __init__(self):
         self._steps_data = {
-            'cycle_start_currency': [],
-            'cycle_end_currency': [],
+            'cycle_iteration_id': [],
             'iteration_principal': [],
             'step_num': [],
             'step_start_currency': [],
@@ -144,23 +152,19 @@ class _ArbitrageDataTracker:
         }
 
         self._profit_data = {
-            'cycle_start_currency': [],
-            'cycle_end_currency': [],
-            'iteration_principal': [],
+            'cycle_iteration_id': [],
             'divs_profit': []
         }
 
     def add_step(self,
-                 cycle: _Cycle,
+                 cycle_iteration: _CycleIteration,
                  step_num: int,
                  iteration_starting_amount: float,
                  starting_currency: str,
                  starting_amount: float,
                  ending_currency: str,
                  ending_amount: float):
-        self._steps_data['cycle_start_currency'].append(cycle.start_currency)
-        self._steps_data['cycle_end_currency'].append(cycle.end_currency)
-
+        self._steps_data['cycle_iteration_id'].append(cycle_iteration.id_)
         self._steps_data['iteration_principal'].append(iteration_starting_amount)
         self._steps_data['step_num'].append(step_num)
 
@@ -169,10 +173,8 @@ class _ArbitrageDataTracker:
         self._steps_data['step_end_currency'].append(ending_currency)
         self._steps_data['step_end_supply'].append(ending_amount)
 
-    def add_profit(self, cycle: _Cycle, principal: float, divs_profit: float):
-        self._profit_data['cycle_start_currency'].append(cycle.start_currency)
-        self._profit_data['cycle_end_currency'].append(cycle.end_currency)
-        self._profit_data['iteration_principal'].append(principal)
+    def add_profit(self, cycle_iteration: _CycleIteration, divs_profit: float):
+        self._profit_data['cycle_iteration_id'].append(cycle_iteration.id_)
         self._profit_data['divs_profit'].append(divs_profit)
 
     def to_dataframe(self) -> pd.DataFrame:
@@ -181,12 +183,8 @@ class _ArbitrageDataTracker:
 
         df = steps_df.merge(profit_df,
                             how='left',
-                            left_on=['cycle_start_currency',
-                                     'cycle_end_currency',
-                                     'iteration_principal'],
-                            right_on=['cycle_start_currency',
-                                      'cycle_end_currency',
-                                      'iteration_principal']
+                            left_on=['cycle_iteration_id'],
+                            right_on=['cycle_iteration_id']
                             )
 
         return df
@@ -204,7 +202,7 @@ class _CycleAnalyzer:
         self._logger = logger
 
     def _determine_and_record_profit(self,
-                                     cycle: _Cycle,
+                                     cycle_iteration: _CycleIteration,
                                      principal,
                                      pair_objs: list[CurrencyPair]):
         prev_supply = principal
@@ -216,7 +214,7 @@ class _CycleAnalyzer:
                 have_amount=prev_supply
             )
             self._data_tracker.add_step(
-                cycle=cycle,
+                cycle_iteration=cycle_iteration,
                 step_num=i + 1,
                 iteration_starting_amount=principal,
                 starting_amount=prev_supply,
@@ -236,20 +234,21 @@ class _CycleAnalyzer:
             divs_profit = self._converter.convert(have_currency=end_currency,
                                                   want_currency='divine orb',
                                                   have_amount=profit)
-        self._data_tracker.add_profit(cycle=cycle,
-                                      principal=principal,
+        self._data_tracker.add_profit(cycle_iteration=cycle_iteration,
                                       divs_profit=divs_profit)
         return divs_profit
 
-    def analyze_cycle(self, cycle: _Cycle) -> _ArbitrageDataTracker:
-        feasibility_profit = self._determine_and_record_profit(cycle=cycle,
+    def analyze_and_record_cycle_profit(self, cycle: _Cycle):
+        feasibility_profit = self._determine_and_record_profit(cycle_iteration=_CycleIteration(cycle=cycle,
+                                                                                               principal=cycle.feasibility_principal),
                                                                principal=cycle.feasibility_principal,
                                                                pair_objs=cycle.currency_pair_objects)
         if feasibility_profit < 0:
             return self._data_tracker
 
         for test_cost in cycle.test_principals:
-            self._determine_and_record_profit(cycle=cycle,
+            self._determine_and_record_profit(cycle_iteration=_CycleIteration(cycle=cycle,
+                                                                              principal=test_cost),
                                               principal=test_cost,
                                               pair_objs=cycle.currency_pair_objects)
 
@@ -305,7 +304,7 @@ class CurrencyArbitrager:
         cycle_objs = [_Cycle(simple_cycle, graph=G) for simple_cycle in nx.simple_cycles(G=G, length_bound=5)]
         for i, cycle in enumerate(cycle_objs):
             self._logger.info(f"Analyzing cycle {i} of {len(cycle_objs)} ({i / len(cycle_objs)})")
-            self._cycle_analyzer.analyze_cycle(cycle)
+            self._cycle_analyzer.analyze_and_record_cycle_profit(cycle)
             
         return self._data_tracker.to_dataframe()
 

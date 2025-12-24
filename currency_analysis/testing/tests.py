@@ -6,8 +6,9 @@ from pathlib import Path
 import cv2
 
 from currency_analysis.arbitrage import CurrencyArbitrager
+from currency_analysis.cache import CacheSettings, CacheObject
 from currency_analysis.market_data_capture import (
-    _MarketDataCaptureManager, _ScreenShotAnalyzer, MarketDataManager, _MarketSupplyTable, RatioType
+    MarketDataCaptureManager, _ScreenShotAnalyzer, MarketDataManager, _MarketSupplyTable, RatioType
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -18,19 +19,26 @@ def test_build_supply_table():
     # table_screen_shot = _ScreenShotCapturer().capture(bounds=bounds)
     img_path = Path(__file__).resolve().parent / "available-trades.png"
     img_array = cv2.imread(str(img_path))
-    supply_table = _ScreenShotAnalyzer(logger=logging.getLogger('testing')).analyze_for_table(
+    supply_table = _ScreenShotAnalyzer().extract_supply_table(
         img_array=img_array,
         have_currency='Divination Scarab of Pilfering',
-        want_currency='Chaos Orb'
+        want_currency='Chaos Orb',
+        ratio_type=RatioType.AVAILABLE
     )
 
 def test_run():
-    manager = _MarketDataCaptureManager(logger=logging.getLogger('testing'))
+    cache_settings = CacheSettings(logger=logging.getLogger('testing'))
+    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER,
+                                               CacheObject.CAPTURE_BOUNDS],
+                                load_from_cache=True,
+                                save_to_cache=True)
+    manager = MarketDataCaptureManager(logger=logging.getLogger('testing'),
+                                       cache_settings=cache_settings)
     manager.capture()
 
 def test_fake_cycle():
-    currencies = ['exalted orb', 'divine orb', 'chaos orb']
-    market_data_manager = MarketDataManager(logger=logger)
+    currencies = ['exalted orb', 'divine orb', 'chaos orb', 'transmutation orb', 'regal orb']
+    market_data_manager = MarketDataManager()
 
     pairs = itertools.product(currencies, currencies)
     pairs = [p for p in pairs if p[0] != p[1]]
@@ -38,10 +46,11 @@ def test_fake_cycle():
         available_table = _MarketSupplyTable(ratio_type=RatioType.AVAILABLE,
                                              have_currency=have_currency,
                                              want_currency=want_currency)
-        random_ratios = random.choices(range(25, 50), k=6)
+        random_ratios = [random.uniform(0.05, 50) for _ in range(6)]
         for ratio in random_ratios:
-            available_table.add_ratio_supply(want_per_have=ratio,
-                                             stock=random.choice(range(1, 20)))
+            available_table.add_ratio_supply(raw_ratio='test',
+                                             want_per_have=ratio,
+                                             stock=random.choice(range(5, 100)))
 
         gold_cost = random.choice(range(250, 2000))
         want_currency_amount = random.choice(range(1, 10))
@@ -59,7 +68,7 @@ def test_fake_cycle():
     arbitrage_df = arbitrager.arbitrage()
     x=0
 
-test_fake_cycle()
-# test_run()
+# test_fake_cycle()
+test_run()
 # test_build_supply_table()
 

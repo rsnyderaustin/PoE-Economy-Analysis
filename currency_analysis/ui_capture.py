@@ -1,4 +1,5 @@
 import logging
+logger = logging.getLogger(__name__)
 import pprint
 import time
 from dataclasses import dataclass
@@ -30,6 +31,16 @@ class _CaptureBounds:
     x_max: int
     y_max: int
 
+    def to_dict(self) -> dict:
+        d = self.__dict__
+        d['ui_element'] = d['ui_element'].value
+        return d
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "_CaptureBounds":
+        d['ui_element'] = CurrencyExchangeUiElement(d['ui_element'])
+        return _CaptureBounds(**d)
+
     @property
     def height(self) -> int:
         return int(self.y_max - self.y_min)
@@ -39,7 +50,7 @@ class _CaptureBounds:
         return int(self.x_max - self.x_min)
 
 
-class ScreenBoundsCapturer:
+class _ScreenBoundsCapturer:
 
     def __init__(self):
         self._click_point_start = None
@@ -68,8 +79,11 @@ class ScreenBoundsCapturer:
             print(f"Click to select the bottom right capture corner")
             listener.join()
 
-        print(f"1: Take a sample screen shot\n2: Continue")
-        key = _KeyPressCapturer(acceptable_keys={'1', '2'}).capture()
+        print(f"1: Take a sample screen shot\n2: Recapture bounds\n3: Continue")
+        key = _KeyPressCapturer(acceptable_keys={'1', '2', '3'}).capture()
+
+        if key == '2':
+            self.capture(ui_element=ui_element)
 
         bounds = _CaptureBounds(
             ui_element=ui_element,
@@ -78,7 +92,7 @@ class ScreenBoundsCapturer:
             x_max=max(self._click_point_start[0], self._click_point_end[0]),
             y_max=max(self._click_point_start[1], self._click_point_end[1])
         )
-        if key == '2':
+        if key == '3':
             return bounds
 
         screen_shot = _ScreenShotCapturer.capture(bounds=bounds)
@@ -107,12 +121,14 @@ class _KeyPressCapturer:
             pass
 
         if key in self._acceptable_keys:
-            print(f"\tDetected acceptable key press for {key.char}")
+            print(f"\tDetected acceptable key press for {key}")
             self._captured_key = key
             return False
 
     def capture(self) -> str | keyboard.Key:
         print(f"\tListening for key press...")
+        self._captured_key = None
+
         listener = keyboard.Listener(on_press=self._on_press)
         listener.start()
 
@@ -156,12 +172,22 @@ class _ScreenShotCapturer:
             )
 
 
-class _ScreenBoundsManager:
+class ScreenBoundsManager:
 
-    def __init__(self,
-                 logger: logging.Logger):
-        self._bounds = dict()
-        self._logger = logger
+    def __init__(self, capture_bounds: list[_CaptureBounds] = None):
+        self._bounds = {cb.ui_element: cb for cb in capture_bounds} if capture_bounds else dict()
+        
+    def to_dict(self) -> dict:
+        d = {'_bounds': [v.to_dict() for k, v in self._bounds.items()]}
+        return d
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "ScreenBoundsManager":
+        if not d:
+            return ScreenBoundsManager()
+
+        capture_bounds = [_CaptureBounds.from_dict(d) for d in d['_bounds']]
+        return ScreenBoundsManager(capture_bounds)
 
     @property
     def captured_ui_elements(self) -> list[CurrencyExchangeUiElement]:
@@ -169,7 +195,7 @@ class _ScreenBoundsManager:
 
     def add_bounds(self, ui_element: CurrencyExchangeUiElement, bounds: _CaptureBounds):
         if ui_element in self._bounds:
-            self._logger.warning(f"Bounds {ui_element} already exists. Overwriting...")
+            logger.warning(f"Bounds {ui_element} already exists. Overwriting...")
 
         self._bounds[ui_element] = bounds
 
@@ -198,7 +224,45 @@ class ScreenShotCollection:
         return ui_element in self._screen_shots
 
 
-class ScreenShotCaptureInterface:
+class ScreenBoundsCapturer:
+
+    def __init__(self,
+                 bounds_manager: ScreenBoundsManager):
+        self.bounds_manager = bounds_manager
+
+    def capture_bounds(self,
+                       specific_ui_elements: list[CurrencyExchangeUiElement] = None) -> ScreenBoundsManager:
+        print(f"\nCaptured UI elements thus far: {self.bounds_manager.captured_ui_elements}")
+
+        if specific_ui_elements:
+            options_d = {i: ui_element for i, ui_element in enumerate(specific_ui_elements)}
+        else:
+            options_d = {i: e for i, e in enumerate(CurrencyExchangeUiElement)}
+
+        acceptable_keys = {str(k) for k in options_d.keys()}
+        acceptable_keys.add(keyboard.Key.backspace)
+        key_capturer = _KeyPressCapturer(acceptable_keys=acceptable_keys)
+
+        done = False
+        while not done:
+            print(f"\nPress a number to capture the associated UI element:")
+            pprint.pprint({k: v.value for k, v in options_d.items()})
+            print(f"Or press 'Backspace' to quit")
+
+            key = key_capturer.capture()
+
+            if key == keyboard.Key.backspace:
+                break
+
+            ui_element = options_d[int(key)]
+
+            bounds = _ScreenBoundsCapturer().capture(ui_element)
+            self.bounds_manager.add_bounds(ui_element=ui_element,
+                                           bounds=bounds)
+
+        return self.bounds_manager
+
+class ScreenShotCapturer:
 
     _screen_shot_group_1 = [
         CurrencyExchangeUiElement.WANT_CURRENCY,
@@ -211,54 +275,34 @@ class ScreenShotCaptureInterface:
         CurrencyExchangeUiElement.GOLD_COST
     ]
 
-    def __init__(self, logger: logging.Logger):
-        self._logger = logger
-
-        self._bounds_m = _ScreenBoundsManager(logger=self._logger)
-
-    def capture_bounds(self, ui_elements: list[CurrencyExchangeUiElement]):
-        print(f"\nCaptured UI elements thus far: {self._bounds_m.captured_ui_elements}")
-
-        options_d = {i: ui_element for i, ui_element in enumerate(ui_elements)}
-        acceptable_keys = {str(k) for k in options_d.keys()}
-        acceptable_keys.add(keyboard.Key.backspace)
-        key_capturer = _KeyPressCapturer(acceptable_keys=acceptable_keys)
-
-        done = False
-        while not done:
-            print(f"\nPress a number to capture the associated UI element:")
-            pprint.pprint(options_d)
-            print(f"Or press 'Backspace' to quit")
-
-            key = key_capturer.capture()
-
-            if key == keyboard.Key.backspace:
-                break
-
-            ui_element = options_d[int(key)]
-
-            bounds = ScreenBoundsCapturer().capture(ui_element)
-            self._bounds_m.add_bounds(ui_element=ui_element,
-                                      bounds=bounds)
+    def __init__(self,
+                 screen_bounds_manager: ScreenBoundsManager):
+        self.bounds_manager = screen_bounds_manager
 
     def capture_screen_shots(self):
         while True:
-            print(f"Press 'f' to finish or 't' to capture screen shots for {self.__class__._screen_shot_group_1}")
-            key = _KeyPressCapturer(acceptable_keys={'f', 't'}).capture()
-            if key == 'f':
+            print(f"Press 't' to capture screen shots for {[e.value for e in self.__class__._screen_shot_group_1]}"
+                  f"\nOr press 'Backspace' to quit capturing")
+            key = _KeyPressCapturer(acceptable_keys={keyboard.Key.backspace, 't'}).capture()
+            if key == keyboard.Key.backspace:
                 return
 
             collection = ScreenShotCollection()
             for e in self.__class__._screen_shot_group_1:
-                bounds = self._bounds_m.fetch_bounds(ui_element=e)
+                bounds = self.bounds_manager.fetch_bounds(ui_element=e)
 
                 screen_shot = _ScreenShotCapturer.capture(bounds)
                 collection.add_screen_shot(ui_element=e,
                                            screen_shot=screen_shot)
 
-            print(f"Press 't' to capture screen shots for {self.__class__._screen_shot_group_2}")
+            print(f"Press 't' to capture screen shots for {[e.value for e in self.__class__._screen_shot_group_2]}"
+                  f"\nOR 'Backspace' to quit capturing")
+            key = _KeyPressCapturer(acceptable_keys={keyboard.Key.backspace, 't'}).capture()
+            if key == keyboard.Key.backspace:
+                return
+
             for e in self.__class__._screen_shot_group_2:
-                bounds = self._bounds_m.fetch_bounds(ui_element=e)
+                bounds = self.bounds_manager.fetch_bounds(ui_element=e)
 
                 screen_shot = _ScreenShotCapturer.capture(bounds)
                 collection.add_screen_shot(ui_element=e,
