@@ -1,4 +1,5 @@
 import logging
+
 logger = logging.getLogger(__name__)
 import pprint
 import time
@@ -22,19 +23,23 @@ class CurrencyExchangeUiElement(Enum):
 
 @dataclass(frozen=True)
 class _RelativeBounds:
-    ui_element: CurrencyExchangeUiElement
-    width: float
-    height: float
-    from_x_min: float
-    from_y_min: float
+    pct_width: float
+    pct_height: float
+    pct_from_x_min: float
+    pct_from_y_min: float
 
 
-@dataclass(frozen=True)
 class _CaptureBounds:
-    x_min: int
-    y_min: int
-    x_max: int
-    y_max: int
+
+    def __init__(self,
+                 x_min: int,
+                 y_min: int,
+                 x_max: int,
+                 y_max: int):
+        self.x_min = x_min
+        self.y_min = y_min
+        self.x_max = x_max
+        self.y_max = y_max
 
     def to_dict(self) -> dict:
         d = self.__dict__
@@ -53,6 +58,14 @@ class _CaptureBounds:
     @property
     def width(self) -> int:
         return int(self.x_max - self.x_min)
+
+
+class _CaptureTableBounds(_CaptureBounds):
+
+    def __init__(self, x_min: int, y_min: int, x_max: int, y_max: int, num_rows: int = 6):
+        super().__init__(x_min, y_min, x_max, y_max)
+        self.num_rows = num_rows
+
 
 
 class _ScreenBoundsCapturer:
@@ -169,18 +182,6 @@ class _ScreenShotCapturer:
             )
 
 
-class _UiElementBoundsDeterminer:
-
-    relative_bounds = [
-        RelativeBounds(
-            width=
-    )
-    ]
-
-    def create_bounds_from_parent(self, parent_bounds: _CaptureBounds) -> _CaptureBounds:
-        return
-
-
 class ScreenBoundsManager:
 
     def __init__(self, capture_bounds: list[_CaptureBounds] = None):
@@ -204,14 +205,136 @@ class ScreenBoundsManager:
         capture_bounds = [_CaptureBounds.from_dict(d) for d in d['_bounds']]
         return ScreenBoundsManager(capture_bounds)
 
+    @property
+    def all_bounds(self) -> list[_CaptureBounds]:
+        """
+
+        :return: All CaptureBounds stored in this class. Note that this does not break CaptureTableBounds into rows.
+        """
+        return list(self._bounds.values())
+
     def add_bounds(self, ui_element: CurrencyExchangeUiElement, bounds: _CaptureBounds):
         if ui_element in self._bounds:
             logger.warning(f"Bounds {ui_element} already exists. Overwriting...")
 
         self._bounds[ui_element] = bounds
 
-    def fetch_bounds(self, ui_element: CurrencyExchangeUiElement) -> _CaptureBounds | None:
-        return self._bounds.get(ui_element, None)
+    def fetch_bounds(self, ui_element: CurrencyExchangeUiElement) -> _CaptureBounds | list[_CaptureBounds]:
+        bounds = self._bounds[ui_element]
+        if isinstance(bounds, _CaptureTableBounds):
+            row_boundaries = np.linspace(0,
+                                         bounds.y_max - bounds.y_min,
+                                         bounds.num_rows + 1,
+                                         dtype=int)
+
+            row_slices = [(row_boundaries[i], row_boundaries[i + 1]) for i in range(bounds.num_rows)]
+            return [_CaptureBounds(x_min=bounds.x_min,
+                                   y_min=row_slice[0],
+                                   x_max=bounds.x_max,
+                                   y_max=row_slice[1])
+                    for row_slice in row_slices]
+        return self._bounds[ui_element]
+
+
+class UiBoundsCreator:
+
+    _whole_screen_bounds = _CaptureBounds(
+        x_min=0,
+        y_min=0,
+        x_max=5119,
+        y_max=1439
+    )
+
+    @classmethod
+    def _create_relative_bounds(cls) -> dict[CurrencyExchangeUiElement: _RelativeBounds]:
+        bounds = dict()
+        bounds[CurrencyExchangeUiElement.WANT_CURRENCY] = _RelativeBounds(
+            pct_width=0.23,
+            pct_height=0.046,
+            pct_from_x_min=0.082,
+            pct_from_y_min=0.122
+        )
+        bounds[CurrencyExchangeUiElement.HAVE_CURRENCY] = _RelativeBounds(
+            pct_width=0.23,
+            pct_height=0.046,
+            pct_from_x_min=0.734,
+            pct_from_y_min=0.122
+        )
+        bounds[CurrencyExchangeUiElement.WANT_CURRENCY_AMOUNT] = _RelativeBounds(
+            pct_width=0.095,
+            pct_height=0.028,
+            pct_from_x_min=0.335,
+            pct_from_y_min=0.13
+        )
+        bounds[CurrencyExchangeUiElement.GOLD_COST] = _RelativeBounds(
+            pct_width=0.075,
+            pct_height=0.025,
+            pct_from_x_min=0.492,
+            pct_from_y_min=0.19
+        )
+        bounds[CurrencyExchangeUiElement.AVAILABLE_TRADES] = _RelativeBounds(
+            pct_width=0.255,
+            pct_height=0.17,
+            pct_from_x_min=0.37,
+            pct_from_y_min=0.166
+        )
+        bounds[CurrencyExchangeUiElement.COMPETING_TRADES] = _RelativeBounds(
+            pct_width=0.255,
+            pct_height=0.17,
+            pct_from_x_min=0.37,
+            pct_from_y_min=0.401
+        )
+        return bounds
+
+    @classmethod
+    def _convert_relative_to_absolute_bound(cls,
+                                            parent_bounds: _CaptureBounds,
+                                            relative_bounds: _RelativeBounds) -> _CaptureBounds:
+        parent_width = parent_bounds.x_max - parent_bounds.x_min
+        parent_height = parent_bounds.y_max - parent_bounds.y_min
+
+        x_min = int(parent_bounds.x_min + (parent_width * relative_bounds.pct_from_x_min))
+        y_min = int(parent_bounds.y_min + (parent_height * relative_bounds.pct_from_y_min))
+        x_max = int(x_min + (relative_bounds.pct_width * parent_width))
+        y_max = int(y_min + (relative_bounds.pct_height * parent_height))
+
+        return _CaptureBounds(
+            x_min=x_min,
+            y_min=y_min,
+            x_max=x_max,
+            y_max=y_max
+        )
+
+    @classmethod
+    def create_bounds(cls, show: bool = False) -> ScreenBoundsManager:
+        print("Capture the entire currency exchange screen.")
+        ui_bounds = _ScreenBoundsCapturer().capture()
+
+        relative_bounds_d = cls._create_relative_bounds()
+
+        bounds_manager = ScreenBoundsManager()
+        for ui_element, relative_bounds in relative_bounds_d.items():
+            bounds_manager.add_bounds(
+                ui_element=ui_element,
+                bounds=cls._convert_relative_to_absolute_bound(parent_bounds=ui_bounds,
+                                                               relative_bounds=relative_bounds)
+            )
+
+        if show:
+            whole_screen_shot = _ScreenShotCapturer.capture(cls._whole_screen_bounds)
+            for bounds in bounds_manager.all_bounds:
+                Cv2Visualizer.draw_rectangle(
+                    img_array=whole_screen_shot.img_array,
+                    x=bounds.x_min,
+                    y=bounds.y_min,
+                    w=bounds.x_max - bounds.x_min,
+                    h=bounds.y_max - bounds.y_min,
+                    color='blue',
+                    inplace=True
+                )
+            Cv2Visualizer.show(whole_screen_shot.img_array)
+
+        return bounds_manager
 
 
 class ScreenBoundsCoordinator:

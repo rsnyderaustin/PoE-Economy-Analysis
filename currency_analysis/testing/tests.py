@@ -10,6 +10,7 @@ from currency_analysis.cache import CacheSettings, CacheObject
 from currency_analysis.market_data_capture import (
     MarketDataCaptureManager, _ScreenShotAnalyzer, MarketDataManager, _MarketSupplyTable, RatioType
 )
+from currency_analysis.ui_capture import UiBoundsCreator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('testing')
@@ -27,13 +28,11 @@ def test_build_supply_table():
     )
 
 def test_run():
-    cache_settings = CacheSettings(logger=logging.getLogger('testing'))
-    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER,
-                                               CacheObject.CAPTURE_BOUNDS],
+    cache_settings = CacheSettings()
+    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER],
                                 load_from_cache=True,
                                 save_to_cache=True)
-    manager = MarketDataCaptureManager(logger=logging.getLogger('testing'),
-                                       cache_settings=cache_settings)
+    manager = MarketDataCaptureManager(cache_settings=cache_settings)
     manager.capture()
 
 def test_fake_cycle():
@@ -68,7 +67,12 @@ def test_fake_cycle():
     arbitrage_df = arbitrager.arbitrage()
     x=0
 
+def create_ui_bounds():
+    creator = UiBoundsCreator()
+    creator.create_bounds(show=True)
+
 # test_fake_cycle()
-test_run()
+# test_run()
 # test_build_supply_table()
+create_ui_bounds()
 

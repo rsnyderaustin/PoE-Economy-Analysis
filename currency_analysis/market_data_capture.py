@@ -1,9 +1,9 @@
 import logging
+logger = logging.getLogger(__name__)
+
 import string
 
 import pandas as pd
-
-logger = logging.getLogger(__name__)
 import re
 from dataclasses import dataclass
 from enum import Enum
@@ -14,7 +14,7 @@ import numpy as np
 
 from currency_analysis.cache import CacheManager, CacheObject, CacheSettings
 from currency_analysis.ui_capture import CurrencyExchangeUiElement, ScreenShotsCoordinator, ScreenShotCollection, \
-    ScreenShot, ScreenBoundsManager, _ScreenBoundsCapturer, ScreenBoundsCapturer
+    ScreenShot, ScreenBoundsManager, _ScreenBoundsCapturer, UiBoundsCreator
 from currency_analysis.visualizing import Cv2Visualizer
 
 
@@ -509,7 +509,6 @@ class MarketDataManager:
 class MarketDataCaptureManager:
 
     def __init__(self,
-                 logger: logging.Logger,
                  cache_settings: CacheSettings):
         self._cache_settings = cache_settings
 
@@ -521,8 +520,6 @@ class MarketDataCaptureManager:
 
         self._screen_shot_analyzer = _ScreenShotAnalyzer()
         self._market_data_manager = MarketDataManager()
-
-        logger = logger
 
     def _record_market_data(
             self,
@@ -619,7 +616,7 @@ class MarketDataCaptureManager:
         
         return market_data_manager
             
-    def _create_bounds_manager(self) -> ScreenBoundsManager:
+    """def _create_bounds_manager(self) -> ScreenBoundsManager:
         bounds_manager = None
         if self._cache_settings.should_load_from_cache(cache_object=CacheObject.CAPTURE_BOUNDS):
             bounds_manager_data = CacheManager.load_from_cache(cache_object=CacheObject.CAPTURE_BOUNDS)
@@ -634,10 +631,10 @@ class MarketDataCaptureManager:
                 CacheManager.save_to_cache(d=bounds_manager.to_dict(),
                                            cache_object=CacheObject.CAPTURE_BOUNDS)
 
-        return bounds_manager
+        return bounds_manager"""
 
     def capture(self) -> MarketDataManager:
-        bounds_manager = self._create_bounds_manager()
+        bounds_manager = UiBoundsCreator.create_bounds(show=False)
         screen_shot_capturer = ScreenShotsCoordinator(screen_bounds_manager=bounds_manager)
 
         for screen_shot_collection in screen_shot_capturer.capture_screen_shots():

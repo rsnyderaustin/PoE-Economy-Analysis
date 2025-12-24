@@ -9,13 +9,11 @@ from pathlib import Path
 
 class CacheObject(Enum):
     MARKET_DATA_MANAGER = 'market_data_manager'
-    CAPTURE_BOUNDS = 'capture_bounds'
 
 
 class CacheSettings:
 
-    def __init__(self, logger: logging.Logger):
-        self._logger = logger
+    def __init__(self):
         self._settings = dict()
 
     def add_settings(self,
