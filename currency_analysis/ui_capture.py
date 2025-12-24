@@ -337,39 +337,28 @@ class UiBoundsCreator:
         return bounds_manager
 
 
-class ScreenBoundsCoordinator:
-
-    def __init__(self, screen_bounds_manager: ScreenBoundsManager = None):
-        self._screen_bounds_manager = screen_bounds_manager
-
-    def determine_ui_element_bounds(self) -> ScreenBoundsManager:
-        if self._screen_bounds_manager.filled:
-            return self._screen_bounds_manager
-
-        print("Capture Currency Exchange panel bounds")
-        ui_bounds = _ScreenBoundsCapturer().capture()
-
-
-
 class ScreenShotCollection:
 
     def __init__(self):
         self._screen_shots = dict()
 
-    def add_screen_shot(self, ui_element: CurrencyExchangeUiElement, screen_shot: ScreenShot):
-        if ui_element in self._screen_shots:
-            print(f"Warning: screen shot for {ui_element} already exists. Overwriting...")
+    def add_screen_shots(self, ui_element: CurrencyExchangeUiElement, screen_shots: list[ScreenShot]):
+        if ui_element not in self._screen_shots:
+            self._screen_shots[ui_element] = []
 
-        self._screen_shots[ui_element] = screen_shot
+        self._screen_shots[ui_element].extend(screen_shots)
 
-    def fetch_screen_shot(self, ui_element: CurrencyExchangeUiElement) -> ScreenShot:
+    def fetch_screen_shots(self, ui_element: CurrencyExchangeUiElement) -> list[ScreenShot]:
         if ui_element not in self._screen_shots:
             raise ValueError(f"UiElement {ui_element} ScreenShot not in self._screen_shots")
 
         return self._screen_shots[ui_element]
 
     def has_screen_shot(self, ui_element: CurrencyExchangeUiElement) -> bool:
-        return ui_element in self._screen_shots
+        if ui_element not in self._screen_shots:
+            return False
+
+        return len(self._screen_shots[ui_element]) > 0
 
 
 class ScreenShotsCoordinator:
