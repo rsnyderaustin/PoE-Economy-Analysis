@@ -20,12 +20,17 @@ class CurrencyExchangeUiElement(Enum):
     COMPETING_TRADES = 'Competing Trades'
 
 
-ui_element_enums = set(e for e in CurrencyExchangeUiElement)
+@dataclass(frozen=True)
+class _RelativeBounds:
+    ui_element: CurrencyExchangeUiElement
+    width: float
+    height: float
+    from_x_min: float
+    from_y_min: float
 
 
 @dataclass(frozen=True)
 class _CaptureBounds:
-    ui_element: CurrencyExchangeUiElement
     x_min: int
     y_min: int
     x_max: int
@@ -68,7 +73,7 @@ class _ScreenBoundsCapturer:
 
         return True
 
-    def capture(self, ui_element: CurrencyExchangeUiElement) -> _CaptureBounds:
+    def capture(self) -> _CaptureBounds:
         from pynput import mouse
 
         with mouse.Listener(on_click=self._on_click) as listener:
@@ -79,32 +84,24 @@ class _ScreenBoundsCapturer:
             print(f"Click to select the bottom right capture corner")
             listener.join()
 
-        print(f"1: Take a sample screen shot\n2: Recapture bounds\n3: Continue")
-        key = _KeyPressCapturer(acceptable_keys={'1', '2', '3'}).capture()
+        while True:
+            print(f"1: Take a sample screen shot\n2: Recapture bounds\n3: Continue")
+            key = _KeyPressCapturer(acceptable_keys={'1', '2', '3'}).capture()
 
-        if key == '2':
-            self.capture(ui_element=ui_element)
+            if key == '2':
+                self.capture()
 
-        bounds = _CaptureBounds(
-            ui_element=ui_element,
-            x_min=min(self._click_point_start[0], self._click_point_end[0]),
-            y_min=min(self._click_point_start[1], self._click_point_end[1]),
-            x_max=max(self._click_point_start[0], self._click_point_end[0]),
-            y_max=max(self._click_point_start[1], self._click_point_end[1])
-        )
-        if key == '3':
-            return bounds
+            bounds = _CaptureBounds(
+                x_min=min(self._click_point_start[0], self._click_point_end[0]),
+                y_min=min(self._click_point_start[1], self._click_point_end[1]),
+                x_max=max(self._click_point_start[0], self._click_point_end[0]),
+                y_max=max(self._click_point_start[1], self._click_point_end[1])
+            )
+            if key == '3':
+                return bounds
 
-        screen_shot = _ScreenShotCapturer.capture(bounds=bounds)
-        Cv2Visualizer.show(img_array=screen_shot.img_array)
-
-        print(f"1: Recapture bounds\n2: Continue")
-        key = _KeyPressCapturer(acceptable_keys={'1', '2'}).capture()
-
-        if key == '1':
-            return self.capture(ui_element=ui_element)
-
-        return bounds
+            screen_shot = _ScreenShotCapturer.capture(bounds=bounds)
+            Cv2Visualizer.show(img_array=screen_shot.img_array)
 
 
 class _KeyPressCapturer:
@@ -172,11 +169,29 @@ class _ScreenShotCapturer:
             )
 
 
+class _UiElementBoundsDeterminer:
+
+    relative_bounds = [
+        RelativeBounds(
+            width=
+    )
+    ]
+
+    def create_bounds_from_parent(self, parent_bounds: _CaptureBounds) -> _CaptureBounds:
+        return
+
+
 class ScreenBoundsManager:
 
     def __init__(self, capture_bounds: list[_CaptureBounds] = None):
         self._bounds = {cb.ui_element: cb for cb in capture_bounds} if capture_bounds else dict()
-        
+
+    @property
+    def filled(self):
+        self_ui_elements = set(self._bounds.keys())
+        all_ui_elements = {e for e in CurrencyExchangeUiElement}
+        return bool(all_ui_elements - self_ui_elements)
+
     def to_dict(self) -> dict:
         d = {'_bounds': [v.to_dict() for k, v in self._bounds.items()]}
         return d
@@ -189,10 +204,6 @@ class ScreenBoundsManager:
         capture_bounds = [_CaptureBounds.from_dict(d) for d in d['_bounds']]
         return ScreenBoundsManager(capture_bounds)
 
-    @property
-    def captured_ui_elements(self) -> list[CurrencyExchangeUiElement]:
-        return list(self._bounds.keys())
-
     def add_bounds(self, ui_element: CurrencyExchangeUiElement, bounds: _CaptureBounds):
         if ui_element in self._bounds:
             logger.warning(f"Bounds {ui_element} already exists. Overwriting...")
@@ -201,6 +212,20 @@ class ScreenBoundsManager:
 
     def fetch_bounds(self, ui_element: CurrencyExchangeUiElement) -> _CaptureBounds | None:
         return self._bounds.get(ui_element, None)
+
+
+class ScreenBoundsCoordinator:
+
+    def __init__(self, screen_bounds_manager: ScreenBoundsManager = None):
+        self._screen_bounds_manager = screen_bounds_manager
+
+    def determine_ui_element_bounds(self) -> ScreenBoundsManager:
+        if self._screen_bounds_manager.filled:
+            return self._screen_bounds_manager
+
+        print("Capture Currency Exchange panel bounds")
+        ui_bounds = _ScreenBoundsCapturer().capture()
+
 
 
 class ScreenShotCollection:
@@ -224,45 +249,7 @@ class ScreenShotCollection:
         return ui_element in self._screen_shots
 
 
-class ScreenBoundsCapturer:
-
-    def __init__(self,
-                 bounds_manager: ScreenBoundsManager):
-        self.bounds_manager = bounds_manager
-
-    def capture_bounds(self,
-                       specific_ui_elements: list[CurrencyExchangeUiElement] = None) -> ScreenBoundsManager:
-        print(f"\nCaptured UI elements thus far: {self.bounds_manager.captured_ui_elements}")
-
-        if specific_ui_elements:
-            options_d = {i: ui_element for i, ui_element in enumerate(specific_ui_elements)}
-        else:
-            options_d = {i: e for i, e in enumerate(CurrencyExchangeUiElement)}
-
-        acceptable_keys = {str(k) for k in options_d.keys()}
-        acceptable_keys.add(keyboard.Key.backspace)
-        key_capturer = _KeyPressCapturer(acceptable_keys=acceptable_keys)
-
-        done = False
-        while not done:
-            print(f"\nPress a number to capture the associated UI element:")
-            pprint.pprint({k: v.value for k, v in options_d.items()})
-            print(f"Or press 'Backspace' to quit")
-
-            key = key_capturer.capture()
-
-            if key == keyboard.Key.backspace:
-                break
-
-            ui_element = options_d[int(key)]
-
-            bounds = _ScreenBoundsCapturer().capture(ui_element)
-            self.bounds_manager.add_bounds(ui_element=ui_element,
-                                           bounds=bounds)
-
-        return self.bounds_manager
-
-class ScreenShotCapturer:
+class ScreenShotsCoordinator:
 
     _screen_shot_group_1 = [
         CurrencyExchangeUiElement.WANT_CURRENCY,
