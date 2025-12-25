@@ -13,7 +13,7 @@ import cv2
 import numpy as np
 
 from currency_analysis.cache import CacheManager, CacheObject, CacheSettings, MarketDataImageCache
-from currency_analysis.ui_capture import CurrencyExchangeUiElement, ScreenShotsCoordinator, ScreenShotCollection, \
+from currency_analysis.ui_capture import CurrencyExchangeUiElement, ScreenShotsCoordinator, UiImageCollection, \
     ScreenShot, ScreenBoundsManager, _ScreenBoundsCapturer, UiBoundsCreator
 from currency_analysis.visualizing import Cv2Visualizer
 
@@ -528,7 +528,7 @@ class MarketDataCaptureManager:
 
     def _record_market_data(
             self,
-            screen_shot_collection: ScreenShotCollection
+            screen_shot_collection: UiImageCollection
     ):
         print("Recording market data...")
         a = self._screen_shot_analyzer

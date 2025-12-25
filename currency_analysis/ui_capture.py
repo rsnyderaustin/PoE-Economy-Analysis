@@ -151,26 +151,26 @@ class _KeyPressCapturer:
         return self._captured_key
 
 
-class ScreenShot:
+class ImageAsset:
 
     def __init__(self,
                  img_array: np.ndarray,
-                 x_min: int,
-                 y_min: int,
-                 x_max: int,
-                 y_max: int):
-        self.id_ = uuid.uuid4().hex
+                 id_: uuid.UUID = None):
         self.img_array = img_array
-        self.x_min = x_min
-        self.y_min = y_min
-        self.x_max = x_max
-        self.y_max = y_max
+        self.id_ = id_ or uuid.uuid4().hex
+
+
+class RowImageAsset(ImageAsset):
+
+    def __init__(self, img_array: np.ndarray, row_idx: int, id_: uuid.UUID = None):
+        super().__init__(img_array, id_)
+        self.row_idx = row_idx
 
 
 class _ScreenShotCapturer:
 
     @staticmethod
-    def capture(bounds: _CaptureBounds) -> ScreenShot:
+    def capture(bounds: _CaptureBounds) -> HashedImage:
         import mss
         with mss.mss() as sct:
             region = {
@@ -181,13 +181,7 @@ class _ScreenShotCapturer:
             }
             img = np.array(sct.grab(region))
 
-            return ScreenShot(
-                img_array=img,
-                x_min=bounds.x_min,
-                y_min=bounds.y_min,
-                x_max=bounds.x_max,
-                y_max=bounds.y_max
-            )
+            return HashedImage(img_array=img)
 
 
 class ScreenBoundsManager:
@@ -345,29 +339,37 @@ class UiBoundsCreator:
         return bounds_manager
 
 
-class ScreenShotCollection:
+class UiImageCollection:
 
-    def __init__(self, id_: str = None, screen_shots: dict[CurrencyExchangeUiElement: list[ScreenShot]] = None) -> None:
+    def __init__(self,
+                 date_taken: datetime.datetime,
+                 id_: str = None,
+                 image_assets: dict[CurrencyExchangeUiElement: list[np.ndarray]] = None) -> None:
+        self.date_taken = date_taken.isoformat()
         self.id_ = id_ or uuid.uuid4().hex
-        self.screen_shots = screen_shots or dict()
+        self.images_d = images or dict()
 
-    def add_screen_shots(self, ui_element: CurrencyExchangeUiElement, screen_shots: list[ScreenShot]):
+    @property
+    def stored_ui_elements(self) -> list[CurrencyExchangeUiElement]:
+        return list(self.images_d.values())
+
+    def add_images(self, ui_element: CurrencyExchangeUiElement, images: list[np.ndarray]):
         if ui_element not in self.screen_shots:
             self.screen_shots[ui_element] = []
 
-        self.screen_shots[ui_element].extend(screen_shots)
+        self.images_d[ui_element].extend(images)
 
-    def fetch_screen_shots(self, ui_element: CurrencyExchangeUiElement) -> list[ScreenShot]:
-        if ui_element not in self.screen_shots:
-            raise ValueError(f"UiElement {ui_element} ScreenShot not in self._screen_shots")
+    def fetch_images(self, ui_element: CurrencyExchangeUiElement) -> list[np.ndarray]:
+        if ui_element not in self.images_d:
+            raise ValueError(f"UiElement {ui_element} image not in self.images_d")
 
-        return self.screen_shots[ui_element]
+        return self.images_d[ui_element]
 
-    def has_screen_shot(self, ui_element: CurrencyExchangeUiElement) -> bool:
-        if ui_element not in self.screen_shots:
+    def has_image(self, ui_element: CurrencyExchangeUiElement) -> bool:
+        if ui_element not in self.images_d:
             return False
 
-        return len(self.screen_shots[ui_element]) > 0
+        return len(self.images_d[ui_element]) > 0
 
 
 class ScreenShotsCoordinator:
@@ -395,7 +397,7 @@ class ScreenShotsCoordinator:
             if key == keyboard.Key.backspace:
                 return
 
-            collection = ScreenShotCollection()
+            collection = UiImageCollection()
             for e in self.__class__._screen_shot_group_1:
                 bounds = self.bounds_manager.fetch_bounds(ui_element=e)
 

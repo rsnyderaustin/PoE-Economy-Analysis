@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from PIL import Image
 
-from currency_analysis.ui_capture import CurrencyExchangeUiElement, ScreenShotCollection
+from currency_analysis.ui_capture import CurrencyExchangeUiElement, UiImageCollection
 
 logger = logging.getLogger(__name__)
 import os
@@ -64,19 +64,54 @@ class MarketDataImageCache:
     def __init__(self):
         self._root = CacheManager.get_cache_dir(CacheObject.MARKET_DATA_MANAGER)
 
-    def save(self, screen_shot_collection: ScreenShotCollection):
-        collection_dir = self._root / screen_shot_collection.id_
+    def save(self, image_collection: UiImageCollection):
+        collection_dir = self._root / image_collection.id_
         collection_dir.mkdir(parents=True, exist_ok=True)
 
-        for ui_element, screen_shots in screen_shot_collection.screen_shots().items():
-            images_dir = collection_dir / ui_element.value
-            images_dir.mkdir(parents=True, exist_ok=True)
-            for i, screen_shot in enumerate(screen_shots):
-                image_path = images_dir / f"{i}.png"
-                image = Image.from_array(screen_shot.ndarray)
+        metadata = {
+            'collection_id': str(uuid4()),
+            'date_taken': image_collection.date_taken,
+            'stored_ui_elements': image_collection.stored_ui_elements,
+        }
+        for ui_element, images in image_collection.images_d.items():
+            metadata[ui_element.value] = list()
+            for image in images:
+                image_path = collection_dir / f"{image.id_}.png"
+                image = Image.fromarray(image.ndarray)
                 image.save(image_path)
 
-            CacheManager.save_json(images_dir, {'ui_element': ui_element.value})
+                metadata[ui_element.value].append(screen_shot.id_)
+
+        CacheManager.save_json(path=collection_dir / 'metadata.json',
+                               data=metadata)
+
+    def load(self) -> list[UiImageCollection]:
+        collections = []
+        for subdir in self._root.iterdir():
+            if not subdir.is_dir():
+                continue
+
+            metadata = CacheManager.load_json(path=subdir / 'metadata.json')
+
+            collection = UiImageCollection(date_taken=metadata['date_taken'])
+
+            ui_enum_strings = {e.value for e in CurrencyExchangeUiElement}
+            for k, v in metadata.items():
+                if k not in ui_enum_strings:
+                    continue
+
+                ui_element = CurrencyExchangeUiElement(k)
+                images = [
+                    cv2.imread(str(subdir / f"{image_id}.png"), cv2.IMREAD_UNCHANGED)
+                    for image_id in v
+                ]
+                collection.add_images(ui_element=ui_element,
+                                      images=images)
+
+            collections.append(collection)
+
+        return collections
+
 
     def load_metadata(self, image_id: str) -> dict | None:
         return CacheManager.load_json(
