@@ -7,6 +7,7 @@ import cv2
 from PIL import Image
 
 from currency_analysis.data_management import MarketDataManager
+from currency_analysis.data_objects import Currency
 from currency_analysis.ui_capture import UiElement, UiImageCollection
 
 logger = logging.getLogger(__name__)
@@ -64,16 +65,18 @@ class CacheManager:
             json.dump(data, f, indent=2)
 
 
-class MarketDataImageCache:
+class UiImageCollectionsCache:
 
     def __init__(self):
-        self._root = CacheManager.get_cache_dir(CacheObject.MARKET_DATA_MANAGER)
+        self._root = CacheManager.get_cache_dir(CacheObject.UI_IMAGE_COLLECTION)
 
     def save(self, image_collection: UiImageCollection):
         collection_dir = self._root / image_collection.id_
         collection_dir.mkdir(parents=True, exist_ok=True)
 
         metadata = {
+            'have_currency': image_collection.have_currency.value,
+            'want_currency': image_collection.want_currency.value,
             'collection_id': str(uuid4()),
             'date_taken': image_collection.date_taken.isoformat(),
             'stored_ui_elements': [e.value for e in image_collection.stored_ui_elements],
@@ -99,7 +102,9 @@ class MarketDataImageCache:
 
             metadata = CacheManager.load_json(path=subdir / 'metadata.json')
 
-            collection = UiImageCollection(date_taken=metadata['date_taken'])
+            collection = UiImageCollection(have_currency=Currency(metadata['have_currency']),
+                                           want_currency=Currency(metadata['want_currency']),
+                                           date_taken=metadata['date_taken'])
 
             for ui_enum_str, ui_element_ids in metadata['ui_element_image_ids'].items():
                 ui_element = UiElement(ui_enum_str)

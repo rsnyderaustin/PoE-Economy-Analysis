@@ -4,7 +4,7 @@ from functools import wraps
 import cv2
 import numpy as np
 
-from currency_analysis.data_objects import RatioType, MarketSupplyTable
+from currency_analysis.data_objects import RatioType, MarketSupplyTable, Currency
 from currency_analysis.visualizing import Cv2Visualizer
 
 
@@ -194,9 +194,8 @@ class ScreenShotAnalyzer:
     def extract_supply_table(cls,
                              img_arrays: list[np.ndarray],
                              ratio_type: RatioType,
-                             have_currency: str,
-                             want_currency: str,
-                             num_rows: int = 6,
+                             have_currency: Currency,
+                             want_currency: Currency,
                              show_steps: bool = False) -> MarketSupplyTable | None:
         """
         draw_img_array = img_array.copy()
@@ -217,6 +216,9 @@ class ScreenShotAnalyzer:
         table = MarketSupplyTable(ratio_type=ratio_type,
                                   have_currency=have_currency,
                                   want_currency=want_currency)
+        reverse_table = MarketSupplyTable(ratio_type=RatioType.AVAILABLE if ratio_type == RatioType.COMPETING else RatioType.COMPETING,
+                                          have_currency=want_currency,
+                                          want_currency=have_currency)
 
         for row_array in img_arrays:
             row_array = (
@@ -262,7 +264,10 @@ class ScreenShotAnalyzer:
 
             table.add_ratio_supply(raw_ratio=raw_ratio,
                                    want_per_have=ratio[0]/ratio[1],
-                                   stock=int(supply))
+                                   want_supply=int(supply * ratio[0]))
+            reverse_table.add_ratio_supply(raw_ratio=raw_ratio,
+                                           want_per_have=ratio[1]/ratio[0],
+                                           want_supply=int(supply * ratio[1]))
 
         print("Extracted supply table:")
         table.print()

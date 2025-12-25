@@ -1,4 +1,4 @@
-from currency_analysis.data_objects import CurrencyPair, MarketSupplyTable
+from currency_analysis.data_objects import CurrencyPair, MarketSupplyTable, Currency
 
 
 class MarketDataManager:
@@ -20,8 +20,8 @@ class MarketDataManager:
         return list(self._pair_objs.values())
 
     def record_market_data(self,
-                           want_currency: str,
-                           have_currency: str,
+                           want_currency: Currency,
+                           have_currency: Currency,
                            gold_cost: int = None,
                            want_currency_amount: int = None,
                            available_trades_table: MarketSupplyTable | None = None,

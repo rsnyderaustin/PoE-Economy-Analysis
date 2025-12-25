@@ -2,6 +2,8 @@ import datetime
 import logging
 import uuid
 
+from currency_analysis.data_objects import Currency
+
 logger = logging.getLogger(__name__)
 import time
 from dataclasses import dataclass
@@ -14,9 +16,7 @@ from currency_analysis.visualizing import Cv2Visualizer
 
 
 class UiElement(Enum):
-    WANT_CURRENCY = 'Want Currency'
     WANT_CURRENCY_AMOUNT = 'Want Currency Amount'
-    HAVE_CURRENCY = 'Have Currency'
     GOLD_COST = 'Gold Cost'
     AVAILABLE_TRADES = 'Available Trades'
     COMPETING_TRADES = 'Competing Trades'
@@ -263,18 +263,6 @@ class UiBoundsCreator:
     @classmethod
     def _create_relative_bounds(cls) -> dict[UiElement: RelativeBounds]:
         bounds = dict()
-        bounds[UiElement.WANT_CURRENCY] = RelativeBounds(
-            pct_width=0.23,
-            pct_height=0.046,
-            pct_from_x_min=0.082,
-            pct_from_y_min=0.122
-        )
-        bounds[UiElement.HAVE_CURRENCY] = RelativeBounds(
-            pct_width=0.23,
-            pct_height=0.046,
-            pct_from_x_min=0.734,
-            pct_from_y_min=0.122
-        )
         bounds[UiElement.WANT_CURRENCY_AMOUNT] = RelativeBounds(
             pct_width=0.095,
             pct_height=0.028,
@@ -361,9 +349,13 @@ class UiBoundsCreator:
 class UiImageCollection:
 
     def __init__(self,
+                 have_currency: Currency,
+                 want_currency: Currency,
                  date_taken: datetime.datetime,
                  id_: str = None,
                  images: dict[UiElement: list[Image]] = None) -> None:
+        self.have_currency = have_currency
+        self.want_currency = want_currency
         self.date_taken = date_taken
         self.id_ = id_ or uuid.uuid4().hex
         self.images_d = images or dict()
@@ -428,8 +420,10 @@ class ScreenShotsCoordinator:
             collection.add_images(ui_element=e,
                                   images=screen_shots)
 
-    def capture_screen_shots(self):
-        while True:
+    def capture_screen_shots(self, currency_pairs_to_capture: set[tuple[Currency, Currency]]):
+        for currency_pair in currency_pairs_to_capture:
+            print(f"\n\n--- Capture screen shots for {currency_pair[0]} and {currency_pair[1]} ---")
+
             collection = UiImageCollection(date_taken=datetime.datetime.now())
 
             self._prompt_user(ui_elements=self.__class__._screen_shot_group_1)

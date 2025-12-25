@@ -1,14 +1,15 @@
+import itertools
 import logging
 from typing import Iterable
 
 from currency_analysis.data_management import MarketDataManager
-from currency_analysis.data_objects import RatioType
+from currency_analysis.data_objects import RatioType, Currency
 
 logger = logging.getLogger(__name__)
 
 import string
 
-from currency_analysis.cache import CacheObject, CacheSettings, MarketDataImageCache, MarketDataManagerCache
+from currency_analysis.cache import CacheObject, CacheSettings, UiImageCollectionsCache, MarketDataManagerCache
 from currency_analysis.ui_capture import UiElement, ScreenShotsCoordinator, UiImageCollection, UiBoundsCreator
 from currency_analysis.visual_analysis import ScreenShotAnalyzer
 
@@ -22,33 +23,14 @@ class MarketDataCaptureManager:
         self._market_data_manager_cache = MarketDataManagerCache()
         self._market_data_manager = self._create_market_data_manager(self._market_data_manager_cache)
 
-        self._image_cache = MarketDataImageCache()
+        self._image_cache = UiImageCollectionsCache()
         self._screen_shot_analyzer = ScreenShotAnalyzer()
         self._market_data_manager = MarketDataManager()
 
-    def _record_market_data(
-            self,
-            ui_image_collection: UiImageCollection
-    ):
+    def _record_market_data(self, ui_image_collection: UiImageCollection):
         print("Recording market data...")
         a = self._screen_shot_analyzer
         c = ui_image_collection
-
-        currency_allowed_chars = f"{string.ascii_letters} "
-        # --- Required fields ---
-        print("\tExtracting Want Currency string...")
-        want_currency_strings = a.extract_strings(
-            img_array=c.fetch_images(ui_element=UiElement.WANT_CURRENCY)[0].img_array,
-            allowed_chars=currency_allowed_chars
-        )
-        want_currency = ''.join(want_currency_strings)
-
-        print("\tExtracting Have Currency string...")
-        have_currency_strings = a.extract_strings(
-            img_array=c.fetch_images(ui_element=UiElement.HAVE_CURRENCY)[0].img_array,
-            allowed_chars=currency_allowed_chars
-        )
-        have_currency = ''.join(have_currency_strings)
 
         if c.has_images(UiElement.WANT_CURRENCY_AMOUNT):
             print("\tExtracting Want Currency Amount string...")
@@ -84,8 +66,8 @@ class MarketDataCaptureManager:
             available_trades_table = self._screen_shot_analyzer.extract_supply_table(
                 img_arrays=[i.img_array for i in c.fetch_images(ui_element=UiElement.AVAILABLE_TRADES)],
                 ratio_type=RatioType.AVAILABLE,
-                have_currency=have_currency,
-                want_currency=want_currency
+                have_currency=ui_image_collection.have_currency,
+                want_currency=ui_image_collection.want_currency
             )
         else:
             available_trades_table = None
@@ -95,15 +77,15 @@ class MarketDataCaptureManager:
             competing_trades_table = self._screen_shot_analyzer.extract_supply_table(
                 img_arrays=[i.img_array for i in c.fetch_images(ui_element=UiElement.COMPETING_TRADES)],
                 ratio_type=RatioType.AVAILABLE,
-                have_currency=have_currency,
-                want_currency=want_currency
+                have_currency=ui_image_collection.have_currency,
+                want_currency=ui_image_collection.want_currency
             )
         else:
             competing_trades_table = None
 
         self._market_data_manager.record_market_data(
-            want_currency=want_currency,
-            have_currency=have_currency,
+            want_currency=ui_image_collection.want_currency,
+            have_currency=ui_image_collection.have_currency,
             want_currency_amount=want_currency_amount,
             gold_cost=gold_cost,
             available_trades_table=available_trades_table,
@@ -121,22 +103,41 @@ class MarketDataCaptureManager:
         
         return market_data_manager
 
-    def _create_ui_image_collections(self) -> Iterable[UiImageCollection]:
+    def _create_ui_image_collections(self,
+                                     currency_pairs: set[tuple[Currency, Currency]]
+                                     ) -> Iterable[UiImageCollection]:
         screen_shot_collections = None
         if self._cache_settings.should_load_from_cache(CacheObject.UI_IMAGE_COLLECTION):
             screen_shot_collections = self._image_cache.load(
                 missing_ok=self._cache_settings.missing_ok(CacheObject.UI_IMAGE_COLLECTION)
             )
+        existing_pairs = {
+            pair
+            for collection in screen_shot_collections
+            for pair in [(collection.have_currency, collection.want_currency), (collection.want_currency, collection.have_currency)]
+        }
+        pairs_to_capture = {pair for pair in currency_pairs if pair not in existing_pairs}
 
-        if not screen_shot_collections:
+        if pairs_to_capture:
             bounds_manager = UiBoundsCreator.create_bounds(show=False)
             screen_shot_coordinator = ScreenShotsCoordinator(screen_bounds_manager=bounds_manager)
-            screen_shot_collections = screen_shot_coordinator.capture_screen_shots()
+            screen_shot_collections = screen_shot_coordinator.capture_screen_shots(currency_pairs_to_capture=pairs_to_capture)
 
         return screen_shot_collections
 
-    def capture(self) -> MarketDataManager:
-        ui_image_collections = self._create_ui_image_collections()
+    def _create_currency_pairs(self, currencies: list[Currency]) -> set[tuple[Currency, Currency]]:
+        pairs = set()
+        n = len(currencies)
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                pairs.add((currencies[i], currencies[j]))
+
+        return pairs
+
+    def capture(self, currencies: list[Currency]) -> MarketDataManager:
+        currency_pairs = self._create_currency_pairs(currencies)
+        ui_image_collections = self._create_ui_image_collections(currency_pairs)
 
         for ui_image_collection in ui_image_collections:
             if self._cache_settings.should_save_to_cache(CacheObject.UI_IMAGE_COLLECTION):
