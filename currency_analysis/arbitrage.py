@@ -1,11 +1,11 @@
 import logging
-import pprint
 import uuid
 
 import networkx as nx
 import pandas as pd
 
-from currency_analysis.market_data_capture import MarketDataManager, CurrencyPair
+from currency_analysis.market_data_capture import MarketDataManager
+from currency_analysis.data_objects import CurrencyPair
 
 
 class _CurrencyPairsDataManager:
