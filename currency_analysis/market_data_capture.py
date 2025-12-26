@@ -89,31 +89,29 @@ class MarketDataCaptureManager:
     def _process_image_collections(self, image_collections: Iterable[ImageCollection]):
         for collection in image_collections:
             if isinstance(collection, MarketDataImages):
-                if collection.available_currency_images:
-                    available_table = ScreenShotAnalyzer.extract_supply_table(
-                        img_arrays=[img.img_array for img in collection.available_currency_images],
-                        ratio_type=RatioType.AVAILABLE,
-                        have_currency=collection.have_currency,
-                        want_currency=collection.want_currency
-                    )
-                    self._market_data_manager.record_market_data(
-                        want_currency=collection.want_currency,
-                        have_currency=collection.have_currency,
-                        available_trades_table=available_table
-                    )
+                available_table = ScreenShotAnalyzer.extract_supply_table(
+                    img_arrays=[img.img_array for img in collection.available_currency_images],
+                    ratio_type=RatioType.AVAILABLE,
+                    have_currency=collection.have_currency,
+                    want_currency=collection.want_currency
+                ) if collection.available_currency_images else None
+                self._market_data_manager.record_market_data(
+                    want_currency=collection.want_currency,
+                    have_currency=collection.have_currency,
+                    available_trades_table=available_table
+                )
 
-                if collection.competing_currency_images:
-                    competing_table = ScreenShotAnalyzer.extract_supply_table(
-                        img_arrays=[img.img_array for img in collection.competing_currency_images],
-                        ratio_type=RatioType.AVAILABLE,
-                        have_currency=collection.have_currency,
-                        want_currency=collection.want_currency
-                    )
-                    self._market_data_manager.record_market_data(
-                        want_currency=collection.have_currency,
-                        have_currency=collection.want_currency,
-                        available_trades_table=competing_table
-                    )
+                competing_table = ScreenShotAnalyzer.extract_supply_table(
+                    img_arrays=[img.img_array for img in collection.competing_currency_images],
+                    ratio_type=RatioType.AVAILABLE,
+                    have_currency=collection.have_currency,
+                    want_currency=collection.want_currency
+                ) if collection.competing_currency_images else None
+                self._market_data_manager.record_market_data(
+                    want_currency=collection.have_currency,
+                    have_currency=collection.want_currency,
+                    available_trades_table=competing_table
+                )
             elif isinstance(collection, GoldCostImages):
                 gold_cost = ScreenShotAnalyzer.extract_number(
                     img_array=collection.gold_cost_image.img_array,
