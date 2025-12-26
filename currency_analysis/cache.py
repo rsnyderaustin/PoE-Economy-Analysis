@@ -6,9 +6,9 @@ from uuid import uuid4
 import cv2
 from PIL import Image
 
-from currency_analysis.data_management import MarketDataManager
+from currency_analysis.data_management import MarketDataManager, GoldCostManager
 from currency_analysis.data_objects import Currency
-from currency_analysis.ui_capture import UiElement, UiImageCollection
+from currency_analysis.ui_capture import UiElement, ImageCollection, MarketDataImages
 
 logger = logging.getLogger(__name__)
 from enum import Enum
@@ -16,7 +16,8 @@ from pathlib import Path
 
 class CacheObject(Enum):
     MARKET_DATA_MANAGER = 'market_data_manager'
-    UI_IMAGE_COLLECTION = 'ui_image_collection'
+    IMAGE_COLLECTIONS_MANAGER = 'image_collections_manager'
+    GOLD_COST_MANAGER = 'gold_cost_manager'
 
 
 class CacheSettings:
@@ -65,14 +66,27 @@ class CacheManager:
             json.dump(data, f, indent=2)
 
 
-class UiImageCollectionsCache:
+class ImageCollectionsManagerCache:
 
     def __init__(self):
-        self._root = CacheManager.get_cache_dir(CacheObject.UI_IMAGE_COLLECTION)
+        self._root = CacheManager.get_cache_dir(CacheObject.IMAGE_COLLECTIONS_MANAGER)
 
-    def save(self, image_collection: UiImageCollection):
+    def save(self, image_collection: ImageCollection):
         collection_dir = self._root / image_collection.id_
         collection_dir.mkdir(parents=True, exist_ok=True)
+
+        if isinstance(image_collection, MarketDataImages):
+            metadata = {
+                'have_currency': image_collection.have_currency,
+                'want_currency': image_collection.want_currency,
+                'collection_id': image_collection.id_,
+                'date_taken': image_collection.date_taken.isoformat(),
+                'available_currency_images': [i.to_dict() for i in image_collection.available_currency_images],
+                'competing_currency_images':
+            }
+        elif isinstance(image_collection, GoldCostManager):
+        else:
+            raise NotImplementedError
 
         metadata = {
             'have_currency': image_collection.have_currency.value,
@@ -94,7 +108,7 @@ class UiImageCollectionsCache:
         CacheManager.save_json(path=collection_dir / 'metadata.json',
                                data=metadata)
 
-    def load(self, missing_ok: bool) -> list[UiImageCollection]:
+    def load(self, missing_ok: bool) -> list[ImageCollection]:
         collections = []
         for subdir in self._root.iterdir():
             if not subdir.is_dir():
@@ -102,9 +116,9 @@ class UiImageCollectionsCache:
 
             metadata = CacheManager.load_json(path=subdir / 'metadata.json')
 
-            collection = UiImageCollection(have_currency=Currency(metadata['have_currency']),
-                                           want_currency=Currency(metadata['want_currency']),
-                                           date_taken=metadata['date_taken'])
+            collection = ImageCollection(have_currency=Currency(metadata['have_currency']),
+                                         want_currency=Currency(metadata['want_currency']),
+                                         date_taken=metadata['date_taken'])
 
             for ui_enum_str, ui_element_ids in metadata['ui_element_image_ids'].items():
                 ui_element = UiElement(ui_enum_str)
@@ -150,5 +164,29 @@ class MarketDataManagerCache:
         return manager
 
 
+class GoldCostManagerCache:
 
+    def __init__(self):
+        self._path = CacheManager.get_cache_dir(CacheObject.GOLD_COST) / 'data.json'
+
+    def save(self, gold_cost_manager: GoldCostManager):
+        logger.info("Saving GoldCostManager to cache...")
+        d = gold_cost_manager.to_dict()
+        CacheManager.save_json(data=d, path=self._path)
+        logger.info("\tFinished saving to cache")
+
+    def load(self, missing_ok: bool) -> GoldCostManager | None:
+        logger.info("Loading GoldCostManager from cache...")
+        d = CacheManager.load_json(path=self._path)
+
+        if not d:
+            if not missing_ok:
+                raise ValueError(f"No GoldCostManager data loaded when missing_ok is False")
+
+            logger.info("\tNo cache data found. Returning None...")
+            return None
+
+        manager = GoldCostManager.from_dict(d)
+        logger.info("\tFinished loading from cache")
+        return manager
 

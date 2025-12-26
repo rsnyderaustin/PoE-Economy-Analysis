@@ -135,6 +135,9 @@ class ImageProcessor:
             curr_height, curr_width = shape
         elif len(shape) == 3:  # color
             curr_height, curr_width = shape[:2]
+        else:
+            raise ValueError(f"Invalid img array shape: {shape}")
+
         scale_factor = new_size / curr_width
         self._img_array = cv2.resize(
             self._img_array,
@@ -274,11 +277,11 @@ class ScreenShotAnalyzer:
         return table
 
     @classmethod
-    def extract_strings(cls,
-                        allowed_chars: str,
-                        img_array: np.ndarray,
-                        white_threshold: int = None,
-                        show_steps: bool = False) -> list[str]:
+    def extract_number(cls,
+                       img_array: np.ndarray,
+                       num_type: type,
+                       white_threshold: int = None,
+                       show_steps: bool = False) -> list[str]:
         strings = (
             ImageProcessor(img_array)
             .grayscale()
@@ -287,8 +290,20 @@ class ScreenShotAnalyzer:
             .show(skip=not show_steps)
             .resize(new_size=600)
             .show(skip=not show_steps)
-            .to_strings(allowed_chars=allowed_chars)
+            .to_strings(allowed_chars='0123456789,')
         )
-        print(f"Extracted {strings}")
-        return strings
+
+        if len(strings) == 0:
+            print("Did not get any strings when analyzing image. Displaying image...")
+            Cv2Visualizer.show(img_array=img_array)
+            s = input("Enter number:")
+        elif len(strings) == 1:
+            s = strings[0]
+        else:
+            s = input(f"Could not parse gold cost from strings {strings}. Enter it here:")
+        s = s.strip().replace(',', '')
+        print(f"Extracted {s} from strings {strings}")
+
+        num = num_type(s)
+        return num
 

@@ -10,6 +10,7 @@ from enum import Enum
 
 
 class Currency(Enum):
+    EXALTED_ORB = 'Exalted Orb'
     DIVINE_ORB = 'Divine Orb'
     CHAOS_ORB = 'Chaos Orb'
     VIVID_CRYSTALLISED_LIFEFORCE = 'Vivid Crystallised Lifeforce'
@@ -51,8 +52,12 @@ class RatioSupply:
     def buyout_cost(self) -> float:
         return (1 / self.want_per_have) * self.want_supply
 
-
+@dataclass(frozen=True)
 class CurrencyPair:
+    have_currency: Currency
+    want_currency: Currency
+
+class CurrencyPairMarketData:
     _max_rows = 6
 
     def __init__(self,
@@ -64,7 +69,7 @@ class CurrencyPair:
         self.have_currency = have_currency
         self.want_currency = want_currency
 
-        self._gold_cost_per_want = gold_cost_per_want
+        self.gold_cost_per_want = gold_cost_per_want
 
         self._ratios = ratios or []
         self._sorted_ratios = None
@@ -117,11 +122,6 @@ class CurrencyPair:
                 raise ValueError(f"Invalid want currency: {ratio_supply.want_currency}")
 
             self._ratios.append(ratio_supply)
-
-    def add_gold_cost(self, gold_cost: int, want_amount: int):
-        self._gold_cost_per_want = gold_cost / want_amount
-
-
 
 
 class MarketSupplyTable:

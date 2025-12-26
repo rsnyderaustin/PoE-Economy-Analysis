@@ -4,21 +4,21 @@ import uuid
 import networkx as nx
 import pandas as pd
 
+from currency_analysis.data_objects import CurrencyPairMarketData
 from currency_analysis.market_data_capture import MarketDataManager
-from currency_analysis.data_objects import CurrencyPair
 
 
 class _CurrencyPairsDataManager:
 
     def __init__(self,
                  logger: logging.Logger,
-                 currency_pairs: list[CurrencyPair]):
+                 currency_pairs: list[CurrencyPairMarketData]):
         self._logger = logger
         self._currency_pairs = currency_pairs
 
         self._indexed_dfs = self._build_indexed_dfs(currency_pairs)
 
-    def _build_indexed_dfs(self, currency_pairs: list[CurrencyPair]) -> dict:
+    def _build_indexed_dfs(self, currency_pairs: list[CurrencyPairMarketData]) -> dict:
         indexed_pair_dfs = dict()
         for currency_pair in currency_pairs:
             rows = {
@@ -204,7 +204,7 @@ class _CycleAnalyzer:
     def _determine_and_record_profit(self,
                                      cycle_iteration: _CycleIteration,
                                      principal,
-                                     pair_objs: list[CurrencyPair]):
+                                     pair_objs: list[CurrencyPairMarketData]):
         prev_supply = principal
         prev_currency = pair_objs[0].have_currency
         for i, pair_obj in enumerate(pair_objs):

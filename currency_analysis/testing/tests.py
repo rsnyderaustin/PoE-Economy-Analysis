@@ -1,4 +1,3 @@
-import itertools
 import logging
 import random
 from pathlib import Path
@@ -7,7 +6,7 @@ import cv2
 
 from currency_analysis.arbitrage import CurrencyArbitrager
 from currency_analysis.cache import CacheSettings, CacheObject
-from currency_analysis.data_objects import RatioType, MarketSupplyTable
+from currency_analysis.data_objects import RatioType, MarketSupplyTable, Currency
 from currency_analysis.market_data_capture import MarketDataCaptureManager, MarketDataManager
 from currency_analysis.ui_capture import UiBoundsCreator
 from currency_analysis.visual_analysis import ScreenShotAnalyzer
@@ -28,6 +27,12 @@ def test_build_supply_table():
     )
 
 def test_run():
+    currencies = [Currency.EXALTED_ORB,
+                  Currency.DIVINE_ORB,
+                  Currency.CHAOS_ORB,
+                  Currency.REGAL_ORB,
+                  Currency.ORB_OF_SCOURING]
+
     cache_settings = CacheSettings()
     cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER,
                                                CacheObject.UI_IMAGE_COLLECTION],
@@ -35,14 +40,16 @@ def test_run():
                                 save_to_cache=True,
                                 missing_ok=True)
     manager = MarketDataCaptureManager(cache_settings=cache_settings)
-    manager.capture()
+    manager.capture(currencies)
 
 def test_fake_cycle():
-    currencies = ['exalted orb', 'divine orb', 'chaos orb', 'transmutation orb', 'regal orb']
+    currencies = [Currency.EXALTED_ORB,
+                  Currency.DIVINE_ORB,
+                  Currency.CHAOS_ORB,
+                  Currency.REGAL_ORB,
+                  Currency.ORB_OF_SCOURING]
+    pairs = []
     market_data_manager = MarketDataManager()
-
-    pairs = itertools.product(currencies, currencies)
-    pairs = [p for p in pairs if p[0] != p[1]]
     for have_currency, want_currency in pairs:
         available_table = MarketSupplyTable(ratio_type=RatioType.AVAILABLE,
                                             have_currency=have_currency,
