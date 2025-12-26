@@ -52,27 +52,25 @@ class MarketDataCaptureManager:
                  cache_settings: CacheSettings):
         self._cache_settings = cache_settings
 
+        self._market_data_manager_cache = MarketDataManagerCache()
         if cache_settings.should_load_from_cache(CacheObject.MARKET_DATA_MANAGER):
-            self._market_data_manager_cache = MarketDataManagerCache()
             self._market_data_manager = self._create_manager_from_cache(
                 cache=self._market_data_manager_cache,
                 cache_object=CacheObject.MARKET_DATA_MANAGER,
                 manager_cls=MarketDataManager
             )
         else:
-            self._market_data_manager = None
-            self._market_data_manager_cache = None
+            self._market_data_manager = MarketDataManager()
 
+        self._gold_cost_manager_cache = GoldCostManagerCache()
         if cache_settings.should_load_from_cache(CacheObject.GOLD_COST_MANAGER):
-            self._gold_cost_manager_cache = GoldCostManagerCache()
             self._gold_cost_manager = self._create_manager_from_cache(
                 cache=self._gold_cost_manager_cache,
                 cache_object=CacheObject.GOLD_COST_MANAGER,
                 manager_cls=GoldCostManager
             )
         else:
-            self._gold_cost_manager = None
-            self._gold_cost_manager_cache = None
+            self._gold_cost_manager = GoldCostManager()
 
     def _create_manager_from_cache(self, cache, cache_object: CacheObject, manager_cls):
         manager = None
@@ -101,9 +99,14 @@ class MarketDataCaptureManager:
                     available_trades_table=available_table
                 )
 
+                """
+                ScreenShotAnalyzer.extract_supply_table() properly handles reversing the competing table for us,
+                so we feed it the correct have and want Currencies. But then we do have to flip it for
+                record_market_data()
+                """
                 competing_table = ScreenShotAnalyzer.extract_supply_table(
                     img_arrays=[img.img_array for img in collection.competing_currency_images],
-                    ratio_type=RatioType.AVAILABLE,
+                    ratio_type=RatioType.COMPETING,
                     have_currency=collection.have_currency,
                     want_currency=collection.want_currency
                 ) if collection.competing_currency_images else None
@@ -124,8 +127,8 @@ class MarketDataCaptureManager:
                 )
 
                 self._gold_cost_manager.record_gold_cost(gold_cost=gold_cost,
-                                                         currency=collection.currency,
-                                                         currency_amount=currency_amount)
+                                                         want_currency=collection.currency,
+                                                         want_supply=currency_amount)
 
         if self._cache_settings.should_save_to_cache(cache_object=CacheObject.MARKET_DATA_MANAGER):
             self._market_data_manager_cache.save(self._market_data_manager)

@@ -6,6 +6,7 @@ import numpy as np
 
 from currency_analysis.data_objects import RatioType, MarketSupplyTable, Currency
 from currency_analysis.visualizing import Cv2Visualizer
+from currency_analysis import utils
 
 
 def skippable(func):
@@ -185,6 +186,7 @@ class ScreenShotAnalyzer:
 
         is_valid_ratio = cls._is_valid_ratio(raw_ratio)
         while not is_valid_ratio:
+            utils.flush_stdin()
             raw_ratio = input(f"Cannot parse raw ratio {raw_ratio}. Type the correct version here:")
 
             is_valid_ratio = cls._is_valid_ratio(raw_ratio)
@@ -216,12 +218,14 @@ class ScreenShotAnalyzer:
             )
         _Cv2Visualizer.show(img_array=draw_img_array)"""
 
-        table = MarketSupplyTable(ratio_type=ratio_type,
-                                  have_currency=have_currency,
-                                  want_currency=want_currency)
-        reverse_table = MarketSupplyTable(ratio_type=RatioType.AVAILABLE if ratio_type == RatioType.COMPETING else RatioType.COMPETING,
-                                          have_currency=want_currency,
-                                          want_currency=have_currency)
+        if ratio_type == RatioType.AVAILABLE:
+            table = MarketSupplyTable(have_currency=have_currency,
+                                      want_currency=want_currency)
+        elif ratio_type == RatioType.COMPETING:
+            table = MarketSupplyTable(have_currency=want_currency,
+                                      want_currency=have_currency)
+        else:
+            raise NotImplementedError
 
         for row_array in img_arrays:
             row_array = (
@@ -249,10 +253,27 @@ class ScreenShotAnalyzer:
                 .show(skip=not show_steps)
                 .to_strings(allowed_chars='0123456789:,.<>')
             )
-            if not row_strings:
+            if len(row_strings) == 0:
                 continue
+            elif len(row_strings) == 1:
+                s = row_strings[0]
 
-            supply = row_strings[-1].replace(',', '')
+                utils.flush_stdin()
+                if ':' in s:
+                    supply = input(f"Could not determine supply for ratio {s}. Enter here:")
+                    row_strings.append(supply)
+                else:
+                    print(f"Could not determine ratio and supply given row: {s}")
+                    ratio_str = input("Enter ratio: ")
+                    supply_str = input("Enter supply: ")
+                    row_strings = [ratio_str, supply_str]
+
+            if ':' in row_strings[1]:
+                row_strings[0] = ''.join([row_strings[0], row_strings[1]])
+                row_strings.pop(1)
+
+            supply = int(row_strings[-1].replace(',', ''))
+
             if len(row_strings) == 3:
                 raw_ratio = f"{row_strings[0]}:{row_strings[1]}"
             else:
@@ -265,12 +286,16 @@ class ScreenShotAnalyzer:
             ratio = cls._attempt_to_parse_ratio(raw_ratio)
             print(f"\tParsed into {ratio}")
 
-            table.add_ratio_supply(raw_ratio=raw_ratio,
-                                   want_per_have=ratio[0]/ratio[1],
-                                   want_supply=int(supply * ratio[0]))
-            reverse_table.add_ratio_supply(raw_ratio=raw_ratio,
-                                           want_per_have=ratio[1]/ratio[0],
-                                           want_supply=int(supply * ratio[1]))
+            if ratio_type == RatioType.AVAILABLE:
+                table.add_ratio_supply(raw_ratio=raw_ratio,
+                                       want_per_have=ratio[0]/ratio[1],
+                                       want_supply=supply)
+            elif ratio_type == RatioType.COMPETING:
+                want, have = raw_ratio.split(":", 1)
+                flipped = f"{have}:{want}"
+                table.add_ratio_supply(raw_ratio=flipped,
+                                       want_per_have=ratio[1]/ratio[0],
+                                       want_supply=int(supply * ratio[1]))
 
         print("Extracted supply table:")
         table.print()
@@ -281,7 +306,7 @@ class ScreenShotAnalyzer:
                        img_array: np.ndarray,
                        num_type: type,
                        white_threshold: int = None,
-                       show_steps: bool = False) -> list[str]:
+                       show_steps: bool = False):
         strings = (
             ImageProcessor(img_array)
             .grayscale()

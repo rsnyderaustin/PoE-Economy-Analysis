@@ -201,6 +201,9 @@ class RowUiImage(UiImage):
                          id_=id_)
         self.row_idx = row_idx
 
+    def to_dict(self):
+        d = super().to_dict()
+
 
 class _ScreenShotCapturer:
 
@@ -272,7 +275,7 @@ class UiBoundsCreator:
     _table_ui_elements = {UiElement.AVAILABLE_TRADES, UiElement.COMPETING_TRADES}
 
     @classmethod
-    def _create_relative_bounds(cls) -> dict[UiElement: RelativeBounds]:
+    def _create_relative_bounds(cls) -> dict[UiElement, RelativeBounds]:
         bounds = dict()
         bounds[UiElement.WANT_CURRENCY_AMOUNT] = RelativeBounds(
             pct_width=0.095,
@@ -291,6 +294,12 @@ class UiBoundsCreator:
             pct_height=0.17,
             pct_from_x_min=0.37,
             pct_from_y_min=0.166
+        )
+        bounds[UiElement.AVAILABLE_TRADES_SOLO] = RelativeBounds(
+            pct_width=0.255,
+            pct_height=0.17,
+            pct_from_x_min=0.37,
+            pct_from_y_min=0.135
         )
         bounds[UiElement.COMPETING_TRADES] = RelativeBounds(
             pct_width=0.255,
@@ -483,11 +492,12 @@ class ScreenShotsCoordinator:
                              currency_pairs_to_capture: set[tuple[Currency, Currency]],
                              gold_costs_to_capture: set[Currency]) -> Iterable[ImageCollection]:
         gold_costs_to_capture = gold_costs_to_capture.copy()
-        for currency_pair in currency_pairs_to_capture:
+        ordered_pairs = sorted(list(currency_pairs_to_capture), key=lambda p: (p[1].value, p[0].value))
+        for currency_pair in ordered_pairs:
             have_currency = currency_pair[0]
             want_currency = currency_pair[1]
-            print(f"\n\n--- Capture market data screen shots for have Currency {have_currency.value} and "
-                  f"want Currency {want_currency.value} ---")
+            print(f"\n\n--- Capture market data screen shots for want {want_currency.value} and "
+                  f"have {have_currency.value} ---")
             market_images = self._capture_market_data_images(have_currency=have_currency,
                                                              want_currency=want_currency)
             if not market_images:

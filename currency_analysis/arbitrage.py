@@ -1,19 +1,19 @@
 import logging
+logger = logging.getLogger(__name__)
+
 import uuid
 
 import networkx as nx
 import pandas as pd
 
-from currency_analysis.data_objects import CurrencyPairMarketData
+from currency_analysis.data_objects import CurrencyPairMarketData, Currency
 from currency_analysis.market_data_capture import MarketDataManager
+from currency_analysis.data_management import GoldCostManager
 
 
 class _CurrencyPairsDataManager:
 
-    def __init__(self,
-                 logger: logging.Logger,
-                 currency_pairs: list[CurrencyPairMarketData]):
-        self._logger = logger
+    def __init__(self, currency_pairs: list[CurrencyPairMarketData]):
         self._currency_pairs = currency_pairs
 
         self._indexed_dfs = self._build_indexed_dfs(currency_pairs)
@@ -44,8 +44,8 @@ class _CurrencyPairsDataManager:
                     max_have = 999e3
                     max_want = 999e3
                 else:
-                    max_have = (1 / ratio_obj.want_per_have) * ratio_obj.supply
-                    max_want = ratio_obj.supply
+                    max_have = (1 / ratio_obj.want_per_have) * ratio_obj.want_supply
+                    max_want = ratio_obj.want_supply
 
                 rows['max_have'].append(max_have)
                 rows['max_want'].append(max_want)
@@ -53,7 +53,7 @@ class _CurrencyPairsDataManager:
 
                 cum_have += max_have
 
-                cum_have += ratio_obj.supply
+                cum_have += ratio_obj.want_supply
                 tier += 1
 
             k = currency_pair.have_currency, currency_pair.want_currency
@@ -61,10 +61,10 @@ class _CurrencyPairsDataManager:
 
         return indexed_pair_dfs
 
-    def fetch_dataframe(self, have_currency: str, want_currency: str) -> pd.DataFrame:
+    def fetch_dataframe(self, have_currency: Currency, want_currency: Currency) -> pd.DataFrame:
         k = have_currency, want_currency
         if k not in self._indexed_dfs:
-            raise ValueError(f"Could not find {have_currency} -> {want_currency} dataframe in "
+            raise ValueError(f"Could not find {have_currency.value} -> {want_currency.value} dataframe in "
                              f"_CurrencyPairDataManager")
 
         return self._indexed_dfs[k]
@@ -72,15 +72,12 @@ class _CurrencyPairsDataManager:
 
 class _CurrencyConverter:
 
-    def __init__(self,
-                 currency_pairs_data_manager: _CurrencyPairsDataManager,
-                 logger: logging.Logger):
-        self._logger = logger
+    def __init__(self, currency_pairs_data_manager: _CurrencyPairsDataManager):
         self._data_m = currency_pairs_data_manager
 
     def convert(self,
-                have_currency: str,
-                want_currency: str,
+                have_currency: Currency,
+                want_currency: Currency,
                 have_amount: int) -> float:
         c_df = self._data_m.fetch_dataframe(have_currency=have_currency,
                                             want_currency=want_currency)
@@ -160,17 +157,18 @@ class _ArbitrageDataTracker:
                  cycle_iteration: _CycleIteration,
                  step_num: int,
                  iteration_starting_amount: float,
-                 starting_currency: str,
+                 starting_currency: Currency,
                  starting_amount: float,
-                 ending_currency: str,
-                 ending_amount: float):
+                 ending_currency: Currency,
+                 ending_amount: float,
+                 gold_cost: float):
         self._steps_data['cycle_iteration_id'].append(cycle_iteration.id_)
         self._steps_data['iteration_principal'].append(iteration_starting_amount)
         self._steps_data['step_num'].append(step_num)
 
-        self._steps_data['step_start_currency'].append(starting_currency)
+        self._steps_data['step_start_currency'].append(starting_currency.value)
         self._steps_data['step_start_cost'].append(starting_amount)
-        self._steps_data['step_end_currency'].append(ending_currency)
+        self._steps_data['step_end_currency'].append(ending_currency.value)
         self._steps_data['step_end_supply'].append(ending_amount)
 
     def add_profit(self, cycle_iteration: _CycleIteration, divs_profit: float):
@@ -196,10 +194,10 @@ class _CycleAnalyzer:
     def __init__(self,
                  currency_converter: _CurrencyConverter,
                  data_tracker: _ArbitrageDataTracker,
-                 logger: logging.Logger):
+                 gold_cost_manager: GoldCostManager):
         self._converter = currency_converter
         self._data_tracker = data_tracker
-        self._logger = logger
+        self._gold_cost_manager = gold_cost_manager
 
     def _determine_and_record_profit(self,
                                      cycle_iteration: _CycleIteration,
@@ -220,7 +218,8 @@ class _CycleAnalyzer:
                 starting_amount=prev_supply,
                 starting_currency=prev_currency,
                 ending_amount=conversion_amount,
-                ending_currency=pair_obj.want_currency
+                ending_currency=pair_obj.want_currency,
+                gold_cost=self._gold_cost_manager.fetch_gold_cost(pair_obj.want_currency) * conversion_amount
             )
             prev_currency = pair_obj.want_currency
             prev_supply = conversion_amount
@@ -232,7 +231,7 @@ class _CycleAnalyzer:
             divs_profit = profit
         else:
             divs_profit = self._converter.convert(have_currency=end_currency,
-                                                  want_currency='divine orb',
+                                                  want_currency=Currency.DIVINE_ORB,
                                                   have_amount=profit)
         self._data_tracker.add_profit(cycle_iteration=cycle_iteration,
                                       divs_profit=divs_profit)
@@ -257,29 +256,24 @@ class CurrencyArbitrager:
 
     def __init__(self,
                  market_data_manager: MarketDataManager,
-                 logger: logging.Logger):
+                 gold_cost_manager: GoldCostManager):
         self._market_data_manager = market_data_manager
-        self._logger = logger
 
         self._currency_pair_objs = self._market_data_manager.fetch_currency_pair_objs()
-        self._data_m = _CurrencyPairsDataManager(currency_pairs=self._currency_pair_objs,
-                                                 logger=logger)
+        self._data_m = _CurrencyPairsDataManager(currency_pairs=self._currency_pair_objs)
         self._data_tracker = _ArbitrageDataTracker()
         self._cycle_analyzer = _CycleAnalyzer(
-            currency_converter=_CurrencyConverter(
-                currency_pairs_data_manager=self._data_m,
-                logger=logger
-            ),
+            currency_converter=_CurrencyConverter(currency_pairs_data_manager=self._data_m),
             data_tracker=self._data_tracker,
-            logger=logger
+            gold_cost_manager=gold_cost_manager
         )
 
     def _verify_currency_pairs(self):
         all_currencies = {c for p in self._currency_pair_objs for c in (p.have_currency, p.want_currency)}
         to_div_currencies = {p.have_currency for p in self._currency_pair_objs
-                             if p.want_currency == 'divine orb'}
+                             if p.want_currency == Currency.DIVINE_ORB}
         missing_currencies = all_currencies - to_div_currencies
-        missing_currencies = missing_currencies - {'divine orb'}
+        missing_currencies = missing_currencies - {Currency.DIVINE_ORB}
 
         if missing_currencies:
             raise RuntimeError(f"Missing 'currency' -> 'divine orb' for: {missing_currencies}")
@@ -303,7 +297,7 @@ class CurrencyArbitrager:
         G = self._build_graph()
         cycle_objs = [_Cycle(simple_cycle, graph=G) for simple_cycle in nx.simple_cycles(G=G, length_bound=5)]
         for i, cycle in enumerate(cycle_objs):
-            self._logger.info(f"Analyzing cycle {i} of {len(cycle_objs)} ({i / len(cycle_objs)})")
+            logger.info(f"Analyzing cycle {i} of {len(cycle_objs)} ({i / len(cycle_objs)})")
             self._cycle_analyzer.analyze_and_record_cycle_profit(cycle)
             
         return self._data_tracker.to_dataframe()

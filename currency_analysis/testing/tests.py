@@ -27,15 +27,16 @@ def test_build_supply_table():
     )
 
 def test_run():
-    currencies = [Currency.EXALTED_ORB,
+    currencies = {Currency.EXALTED_ORB,
                   Currency.DIVINE_ORB,
                   Currency.CHAOS_ORB,
                   Currency.REGAL_ORB,
-                  Currency.ORB_OF_SCOURING]
+                  Currency.ORB_OF_SCOURING}
 
     cache_settings = CacheSettings()
     cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER,
-                                               CacheObject.UI_IMAGE_COLLECTION],
+                                               CacheObject.IMAGE_COLLECTIONS_MANAGER,
+                                               CacheObject.GOLD_COST_MANAGER],
                                 load_from_cache=False,
                                 save_to_cache=True,
                                 missing_ok=True)

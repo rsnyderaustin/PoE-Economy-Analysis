@@ -32,7 +32,6 @@ class RatioType(Enum):
 @dataclass
 class RatioSupply:
     raw_ratio: str
-    ratio_type: RatioType
     have_currency: Currency
     want_currency: Currency
     want_per_have: float
@@ -40,7 +39,6 @@ class RatioSupply:
 
     def to_dict(self):
         d = self.__dict__
-        d['ratio_type'] = d['ratio_type'].value
         return d
 
     @classmethod
@@ -63,13 +61,10 @@ class CurrencyPairMarketData:
     def __init__(self,
                  have_currency: Currency,
                  want_currency: Currency,
-                 gold_cost_per_want: float = None,
                  ratios: list[RatioSupply] = None,
                  atts: dict = None):
         self.have_currency = have_currency
         self.want_currency = want_currency
-
-        self.gold_cost_per_want = gold_cost_per_want
 
         self._ratios = ratios or []
         self._sorted_ratios = None
@@ -78,6 +73,8 @@ class CurrencyPairMarketData:
 
     def to_dict(self) -> dict:
         d = self.__dict__.copy()
+        d['have_currency'] = d['have_currency'].value
+        d['want_currency'] = d['want_currency'].value
         d['_ratios'] = [r.to_dict() for r in self._ratios]
         return d
 
@@ -86,7 +83,6 @@ class CurrencyPairMarketData:
         return cls(
             have_currency=d['have_currency'],
             want_currency=d['want_currency'],
-            gold_cost_per_want=d.get('gold_cost_per_want'),
             ratios=[RatioSupply.from_dict(ratio_d) for ratio_d in d['ratios']],
             atts=d.get('atts', dict())
         )
@@ -127,10 +123,8 @@ class CurrencyPairMarketData:
 class MarketSupplyTable:
 
     def __init__(self,
-                 ratio_type: RatioType,
                  have_currency: Currency,
                  want_currency: Currency):
-        self.ratio_type = ratio_type
         self.have_currency = have_currency
         self.want_currency = want_currency
 
@@ -145,9 +139,9 @@ class MarketSupplyTable:
         for ratio in self._ratios.values():
             ratio_rows['ratio'].append(ratio.raw_ratio)
             ratio_rows['want_per_have'].append(ratio.want_per_have)
-            ratio_rows['supply'].append(ratio.supply)
+            ratio_rows['supply'].append(ratio.want_supply)
         df = pd.DataFrame(ratio_rows)
-        print(f"Type: {self.ratio_type.value}\nHave: {self.have_currency}\tWant: {self.want_currency}")
+        print(f"Have: {self.have_currency}\tWant: {self.want_currency}")
         print(df)
 
     @property
@@ -165,7 +159,6 @@ class MarketSupplyTable:
             r.want_supply = r.supply or want_supply
         else:
             self._ratios[k] = RatioSupply(raw_ratio=raw_ratio,
-                                          ratio_type=self.ratio_type,
                                           have_currency=self.have_currency,
                                           want_currency=self.want_currency,
                                           want_per_have=want_per_have,
