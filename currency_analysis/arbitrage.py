@@ -49,11 +49,9 @@ class _CurrencyPairsDataManager:
 
                 rows['max_have'].append(max_have)
                 rows['max_want'].append(max_want)
-                rows['prev_cum_have'] = cum_have
+                rows['prev_cum_have'].append(cum_have)
 
                 cum_have += max_have
-
-                cum_have += ratio_obj.want_supply
                 tier += 1
 
             k = currency_pair.have_currency, currency_pair.want_currency
@@ -150,7 +148,9 @@ class _ArbitrageDataTracker:
 
         self._profit_data = {
             'cycle_iteration_id': [],
-            'divs_profit': []
+            'divs_profit': [],
+            'total_gold_cost': [],
+            'divs_profit_per_gold_cost': []
         }
 
     def add_step(self,
@@ -171,9 +171,14 @@ class _ArbitrageDataTracker:
         self._steps_data['step_end_currency'].append(ending_currency.value)
         self._steps_data['step_end_supply'].append(ending_amount)
 
-    def add_profit(self, cycle_iteration: _CycleIteration, divs_profit: float):
+    def add_profit(self,
+                   cycle_iteration: _CycleIteration,
+                   divs_profit: float,
+                   total_gold_cost: int):
         self._profit_data['cycle_iteration_id'].append(cycle_iteration.id_)
         self._profit_data['divs_profit'].append(divs_profit)
+        self._profit_data['total_gold_cost'].append(total_gold_cost)
+        self._profit_data['divs_profit_per_gold_cost'].append(divs_profit / total_gold_cost)
 
     def to_dataframe(self) -> pd.DataFrame:
         steps_df = pd.DataFrame(self._steps_data)
@@ -184,6 +189,8 @@ class _ArbitrageDataTracker:
                             left_on=['cycle_iteration_id'],
                             right_on=['cycle_iteration_id']
                             )
+        df = df.sort_values(by=['divs_profit', 'cycle_iteration_id', 'step_num'],
+                            ascending=[False, True, True])
 
         return df
 
@@ -203,6 +210,7 @@ class _CycleAnalyzer:
                                      cycle_iteration: _CycleIteration,
                                      principal,
                                      pair_objs: list[CurrencyPairMarketData]):
+        cum_gold_cost = 0
         prev_supply = principal
         prev_currency = pair_objs[0].have_currency
         for i, pair_obj in enumerate(pair_objs):
@@ -211,6 +219,7 @@ class _CycleAnalyzer:
                 want_currency=pair_obj.want_currency,
                 have_amount=prev_supply
             )
+            gold_cost = self._gold_cost_manager.fetch_gold_cost(pair_obj.want_currency) * conversion_amount
             self._data_tracker.add_step(
                 cycle_iteration=cycle_iteration,
                 step_num=i + 1,
@@ -219,22 +228,24 @@ class _CycleAnalyzer:
                 starting_currency=prev_currency,
                 ending_amount=conversion_amount,
                 ending_currency=pair_obj.want_currency,
-                gold_cost=self._gold_cost_manager.fetch_gold_cost(pair_obj.want_currency) * conversion_amount
+                gold_cost=gold_cost
             )
+            cum_gold_cost += gold_cost
             prev_currency = pair_obj.want_currency
             prev_supply = conversion_amount
 
         profit = prev_supply - principal
 
         end_currency = pair_objs[-1].want_currency
-        if end_currency == 'divine orb':
+        if end_currency == Currency.DIVINE_ORB:
             divs_profit = profit
         else:
             divs_profit = self._converter.convert(have_currency=end_currency,
                                                   want_currency=Currency.DIVINE_ORB,
                                                   have_amount=profit)
         self._data_tracker.add_profit(cycle_iteration=cycle_iteration,
-                                      divs_profit=divs_profit)
+                                      divs_profit=divs_profit,
+                                      total_gold_cost=cum_gold_cost)
         return divs_profit
 
     def analyze_and_record_cycle_profit(self, cycle: _Cycle):
@@ -259,8 +270,7 @@ class CurrencyArbitrager:
                  gold_cost_manager: GoldCostManager):
         self._market_data_manager = market_data_manager
 
-        self._currency_pair_objs = self._market_data_manager.fetch_currency_pair_objs()
-        self._data_m = _CurrencyPairsDataManager(currency_pairs=self._currency_pair_objs)
+        self._data_m = _CurrencyPairsDataManager(currency_pairs=self._market_data_manager.currency_pair_objs)
         self._data_tracker = _ArbitrageDataTracker()
         self._cycle_analyzer = _CycleAnalyzer(
             currency_converter=_CurrencyConverter(currency_pairs_data_manager=self._data_m),
@@ -269,8 +279,9 @@ class CurrencyArbitrager:
         )
 
     def _verify_currency_pairs(self):
-        all_currencies = {c for p in self._currency_pair_objs for c in (p.have_currency, p.want_currency)}
-        to_div_currencies = {p.have_currency for p in self._currency_pair_objs
+        currency_pair_objs = self._market_data_manager.currency_pair_objs
+        all_currencies = {c for p in currency_pair_objs for c in (p.have_currency, p.want_currency)}
+        to_div_currencies = {p.have_currency for p in currency_pair_objs
                              if p.want_currency == Currency.DIVINE_ORB}
         missing_currencies = all_currencies - to_div_currencies
         missing_currencies = missing_currencies - {Currency.DIVINE_ORB}
@@ -282,7 +293,7 @@ class CurrencyArbitrager:
     def _build_graph(self) -> nx.DiGraph:
         G = nx.DiGraph()
 
-        for pair_obj in self._currency_pair_objs:
+        for pair_obj in self._market_data_manager.currency_pair_objs:
             G.add_edge(
                 pair_obj.have_currency,
                 pair_obj.want_currency,
@@ -300,5 +311,6 @@ class CurrencyArbitrager:
             logger.info(f"Analyzing cycle {i} of {len(cycle_objs)} ({i / len(cycle_objs)})")
             self._cycle_analyzer.analyze_and_record_cycle_profit(cycle)
             
-        return self._data_tracker.to_dataframe()
+        df = self._data_tracker.to_dataframe()
 
+        return df

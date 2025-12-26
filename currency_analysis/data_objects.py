@@ -1,6 +1,8 @@
 
 
 import logging
+import math
+from decimal import Decimal, ROUND_DOWN
 
 logger = logging.getLogger(__name__)
 
@@ -133,12 +135,6 @@ class CurrencyPairMarketData:
 
             self._ratios.append(ratio_supply)
 
-
-@dataclass
-class Base10Check:
-    digits: int
-    confirmed: bool = False
-
 class MarketSupplyTable:
 
     def __init__(self,
@@ -147,10 +143,7 @@ class MarketSupplyTable:
         self.have_currency = have_currency
         self.want_currency = want_currency
 
-        self._ratios = dict()
-
-        self._have_base_10_check
-        self._want_base_10_digits = None
+        self.supply_ratios = []
 
     def print(self):
         ratio_rows = {
@@ -158,7 +151,7 @@ class MarketSupplyTable:
             'want_per_have': [],
             'supply': []
         }
-        for ratio in self._ratios.values():
+        for ratio in self.supply_ratios:
             ratio_rows['ratio'].append(ratio.raw_ratio)
             ratio_rows['want_per_have'].append(ratio.want_per_have)
             ratio_rows['supply'].append(ratio.want_supply)
@@ -166,22 +159,38 @@ class MarketSupplyTable:
         print(f"Have: {self.have_currency}\tWant: {self.want_currency}")
         print(df)
 
-    @property
-    def supply_ratios(self) -> list[RatioSupply]:
-        return list(self._ratios.values())
-
     def add_ratio_supply(self,
                          raw_ratio: str,
                          want_per_have: float,
-                         want_supply: int):
-        k = want_per_have, want_supply
-        if k in self._ratios:
-            r = self._ratios[k]
-            r.want_per_have = r.want_per_have or want_per_have
-            r.want_supply = r.supply or want_supply
-        else:
-            self._ratios[k] = RatioSupply(raw_ratio=raw_ratio,
-                                          have_currency=self.have_currency,
-                                          want_currency=self.want_currency,
-                                          want_per_have=want_per_have,
-                                          want_supply=want_supply)
+                         want_supply: int,
+                         check_for_ratio_imbalance: bool = True):
+        if self.supply_ratios and check_for_ratio_imbalance:
+            current_ratios = [r.want_per_have for r in self.supply_ratios]
+
+            portion_from_range = min(
+                want_per_have / min(current_ratios),
+                want_per_have / max(current_ratios)
+            )
+            if portion_from_range < 0.5 or portion_from_range > 1.5:
+                print(f"\n\nFound significant difference in ratios:"
+                      f"\n\tPassed ratio {want_per_have}"
+                      f"\n\tPrevious ratios: {current_ratios}")
+                i = input("Select an option:"
+                      "\n\t1: Change the passed ratio"
+                      "\n\t2: Change the previous ratios")
+                i = int(i.replace(' ', ''))
+                if i == 1:
+                    want_per_have = float(input("Enter the new ratio here:"))
+                elif i == 2:
+                    for ratio_obj in self.supply_ratios:
+                        new_ratio = input(f"Enter new ratio to replace {ratio_obj.want_per_have}:")
+                        new_ratio = float(new_ratio)
+                        ratio_obj.want_per_have = new_ratio
+                else:
+                    raise ValueError("Invalid option")
+
+        self.supply_ratios.append(RatioSupply(raw_ratio=raw_ratio,
+                                              have_currency=self.have_currency,
+                                              want_currency=self.want_currency,
+                                              want_per_have=want_per_have,
+                                              want_supply=want_supply))

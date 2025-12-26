@@ -23,8 +23,8 @@ class MarketDataManager:
         pair_objs = [CurrencyPairMarketData.from_dict(pair_d) for pair_d in d['pair_objs']]
         return MarketDataManager(currency_pairs=pair_objs)
 
-
-    def fetch_currency_pair_objs(self) -> list[CurrencyPairMarketData]:
+    @property
+    def currency_pair_objs(self) -> list[CurrencyPairMarketData]:
         return list(self._pair_objs.values())
 
     def record_market_data(self,
@@ -55,10 +55,10 @@ class GoldCostManager:
         d = {Currency(k): v for k, v in d['gold_costs'].items()}
         return GoldCostManager(gold_costs=d)
 
-    def record_gold_cost(self,
-                         want_currency: Currency,
-                         want_supply: int,
-                         gold_cost: int):
+    def add_gold_cost(self,
+                      want_currency: Currency,
+                      want_supply: int,
+                      gold_cost: int):
         if want_currency in self._gold_costs:
             logger.warning(f"{want_currency} already exists in self._gold_costs. Overwriting...")
 

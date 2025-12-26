@@ -24,7 +24,8 @@ class RequiredDataDeterminer:
 
     @classmethod
     def _create_currency_pairs(cls, currencies: set[Currency]) -> set[frozenset[Currency]]:
-        return {frozenset(pair) for pair in itertools.combinations(currencies, 2)}
+        return {frozenset(pair) for pair in itertools.combinations(currencies, 2)
+                if pair[0] != pair[1]}
 
     @classmethod
     def determine_required_data(cls,
@@ -126,9 +127,9 @@ class MarketDataCaptureManager:
                     num_type=int
                 )
 
-                self._gold_cost_manager.record_gold_cost(gold_cost=gold_cost,
-                                                         want_currency=collection.currency,
-                                                         want_supply=currency_amount)
+                self._gold_cost_manager.add_gold_cost(gold_cost=gold_cost,
+                                                      want_currency=collection.currency,
+                                                      want_supply=currency_amount)
 
         if self._cache_settings.should_save_to_cache(cache_object=CacheObject.MARKET_DATA_MANAGER):
             self._market_data_manager_cache.save(self._market_data_manager)
