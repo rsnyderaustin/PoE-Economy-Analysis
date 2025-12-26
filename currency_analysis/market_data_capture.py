@@ -134,7 +134,7 @@ class MarketDataCaptureManager:
             self._market_data_manager_cache.save(self._market_data_manager)
 
         if self._cache_settings.should_save_to_cache(cache_object=CacheObject.GOLD_COST_MANAGER):
-            self._market_data_manager_cache.save(self._gold_cost_manager)
+            self._gold_cost_manager_cache.save(self._gold_cost_manager)
 
 
 

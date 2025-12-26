@@ -24,6 +24,9 @@ class Currency(Enum):
     ORB_OF_SCOURING = 'Orb of Scouring'
     ORB_OF_ALTERATION = 'Orb of Alteration'
     ORB_OF_CHANCE = 'Orb of Chance'
+    HARVEST_SCARAB_OF_DOUBLING = 'Harvest Scarab of Doubling'
+    ULTIMATUM_SCARAB_OF_CATALYSING = 'Ultimatum Scarab of Catalysing'
+    DIVINATION_SCARAB_OF_THE_CLOISTER = 'Divination Scarab of the Cloister'
 
 class RatioType(Enum):
     AVAILABLE = 'available'
@@ -37,13 +40,24 @@ class RatioSupply:
     want_per_have: float
     want_supply: int
 
+    def __post_init__(self):
+        if not isinstance(self.have_currency, Currency):
+            raise TypeError(f"Invalid type for have_currency: {type(self.have_currency)}")
+
+        if not isinstance(self.want_currency, Currency):
+            raise TypeError(f"Invalid type for have_currency: {type(self.want_currency)}")
+
     def to_dict(self):
-        d = self.__dict__
+        d = self.__dict__.copy()
+        d['have_currency'] = d['have_currency'].value
+        d['want_currency'] = d['want_currency'].value
         return d
 
     @classmethod
     def from_dict(cls, d: dict):
         d['ratio_type'] = RatioType(d['ratio_type'])
+        d['have_currency'] = Currency(d['have_currency'])
+        d['want_currency'] = Currency(d['want_currency'])
         return cls(**d)
 
     @property
@@ -81,8 +95,8 @@ class CurrencyPairMarketData:
     @classmethod
     def from_dict(cls, d: dict):
         return cls(
-            have_currency=d['have_currency'],
-            want_currency=d['want_currency'],
+            have_currency=Currency(d['have_currency']),
+            want_currency=Currency(d['want_currency']),
             ratios=[RatioSupply.from_dict(ratio_d) for ratio_d in d['ratios']],
             atts=d.get('atts', dict())
         )
@@ -120,6 +134,11 @@ class CurrencyPairMarketData:
             self._ratios.append(ratio_supply)
 
 
+@dataclass
+class Base10Check:
+    digits: int
+    confirmed: bool = False
+
 class MarketSupplyTable:
 
     def __init__(self,
@@ -129,6 +148,9 @@ class MarketSupplyTable:
         self.want_currency = want_currency
 
         self._ratios = dict()
+
+        self._have_base_10_check
+        self._want_base_10_digits = None
 
     def print(self):
         ratio_rows = {

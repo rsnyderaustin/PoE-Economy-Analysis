@@ -30,7 +30,9 @@ def test_run():
     currencies = {Currency.EXALTED_ORB,
                   Currency.DIVINE_ORB,
                   Currency.CHAOS_ORB,
-                  Currency.REGAL_ORB,
+                  Currency.DIVINATION_SCARAB_OF_THE_CLOISTER,
+                  Currency.HARVEST_SCARAB_OF_DOUBLING,
+                  Currency.ULTIMATUM_SCARAB_OF_CATALYSING,
                   Currency.ORB_OF_SCOURING}
 
     cache_settings = CacheSettings()

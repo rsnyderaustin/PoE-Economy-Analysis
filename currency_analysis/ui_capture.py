@@ -46,7 +46,7 @@ class CaptureBounds:
         self.y_max = y_max
 
     def to_dict(self) -> dict:
-        d = self.__dict__
+        d = self.__dict__.copy()
         d['ui_element'] = d['ui_element'].value
         return d
 
@@ -126,8 +126,7 @@ class _ScreenBoundsCapturer:
             listener.join()
 
         while True:
-            print(f"1: Take a sample screen shot\n2: Recapture bounds\n3: Continue")
-            key = _KeyPressCapturer(acceptable_keys={'1', '2', '3'}).capture()
+            key = input(f"1: Take a sample screen shot\n2: Recapture bounds\n3: Continue\nEnter choice:")
 
             if key == '2':
                 self.capture()
@@ -156,12 +155,14 @@ class _KeyPressCapturer:
         try:
             key = key.char
         except AttributeError:
-            pass
+            key = key
 
         if key in self._acceptable_keys:
             print(f"\tDetected acceptable key press for {key}")
             self._captured_key = key
             return False
+
+        return True
 
     def capture(self) -> str | keyboard.Key:
         print(f"\tListening for key press...")
@@ -171,10 +172,9 @@ class _KeyPressCapturer:
         listener.start()
 
         while self._captured_key is None:
-            time.sleep(0.1)
+            time.sleep(0.05)
 
         listener.stop()
-
         return self._captured_key
 
 
@@ -496,8 +496,8 @@ class ScreenShotsCoordinator:
         for currency_pair in ordered_pairs:
             have_currency = currency_pair[0]
             want_currency = currency_pair[1]
-            print(f"\n\n--- Capture market data screen shots for want {want_currency.value} and "
-                  f"have {have_currency.value} ---")
+            print(f"\n\n---\nCapture market data screen shots for:\nWant: {want_currency.value}"
+                  f"\nHave: {have_currency.value}\n---")
             market_images = self._capture_market_data_images(have_currency=have_currency,
                                                              want_currency=want_currency)
             if not market_images:
@@ -506,17 +506,21 @@ class ScreenShotsCoordinator:
             yield market_images
 
             if want_currency in gold_costs_to_capture:
-                print(f"\n\n--- Capture gold cost screen shots for want Currency {want_currency.value} ---")
+                print(f"\n\n---\nCapture gold cost screen shots for:\nWant: {want_currency.value}\n---")
                 gold_cost_images = self._capture_gold_cost_images(currency=want_currency)
                 if not gold_cost_images:
                     return
 
+                gold_costs_to_capture.discard(want_currency)
+
                 yield gold_cost_images
 
             if have_currency in gold_costs_to_capture:
-                print(f"\n\n--- Capture gold cost screen shots for want Currency {have_currency.value} ---")
+                print(f"\n\n---\nCapture gold cost screen shots for:\nWant: {have_currency.value}\n---")
                 gold_cost_images = self._capture_gold_cost_images(currency=have_currency)
                 if not gold_cost_images:
                     return
+
+                gold_costs_to_capture.discard(have_currency)
 
                 yield gold_cost_images

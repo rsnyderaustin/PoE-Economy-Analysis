@@ -47,11 +47,13 @@ class GoldCostManager:
         self._gold_costs = gold_costs or dict()
 
     def to_dict(self) -> dict:
-        return {'gold_costs': self._gold_costs}
+        d = self._gold_costs.copy()
+        return {'gold_costs': {c_enum.value: v for c_enum, v in d.items()}}
 
     @classmethod
     def from_dict(cls, d: dict) -> "GoldCostManager":
-        return GoldCostManager(gold_costs=d['gold_costs'])
+        d = {Currency(k): v for k, v in d['gold_costs'].items()}
+        return GoldCostManager(gold_costs=d)
 
     def record_gold_cost(self,
                          want_currency: Currency,
