@@ -21,7 +21,7 @@ class UiElement(Enum):
     WANT_CURRENCY_AMOUNT = 'Want Currency Amount'
     GOLD_COST = 'Gold Cost'
     AVAILABLE_TRADES = 'Available Trades'
-    AVAILABLE_TRADES_SOLO = 'Available Trades Solo'
+    TRADES_SOLO_TABLE = 'Trades Solo Table'
     COMPETING_TRADES = 'Competing Trades'
 
 
@@ -295,7 +295,7 @@ class UiBoundsCreator:
             pct_from_x_min=0.37,
             pct_from_y_min=0.166
         )
-        bounds[UiElement.AVAILABLE_TRADES_SOLO] = RelativeBounds(
+        bounds[UiElement.TRADES_SOLO_TABLE] = RelativeBounds(
             pct_width=0.255,
             pct_height=0.17,
             pct_from_x_min=0.37,
@@ -371,6 +371,10 @@ class ImageCollection(ABC):
     def __init__(self, id_: str = None):
         self.id_ = id_ or uuid.uuid4().hex
 
+    @property
+    def all_images(self) -> list:
+        pass
+
 class GoldCostImages(ImageCollection):
 
     def __init__(self,
@@ -386,6 +390,10 @@ class GoldCostImages(ImageCollection):
         self.id_ = id_ or uuid.uuid4().hex
         self.currency_amount_image = currency_amount_image
         self.gold_cost_image = gold_cost_image
+
+    @property
+    def all_images(self) -> list:
+        return [img for img in [self.currency_amount_image, self.gold_cost_image] if img]
 
 class MarketDataImages(ImageCollection):
 
@@ -404,6 +412,10 @@ class MarketDataImages(ImageCollection):
         self.id_ = id_ or uuid.uuid4().hex
         self.available_currency_images = available_currency_images
         self.competing_currency_images = competing_currency_images
+
+    @property
+    def all_images(self) -> list:
+        return (self.available_currency_images or []) + (self.competing_currency_images or [])
 
 
 class ScreenShotsCoordinator:
@@ -444,49 +456,66 @@ class ScreenShotsCoordinator:
                                 gold_cost_image=gold_cost_img)
         return images
 
+    def _create_table_row_images(self, solo_table: bool, available_or_competing: UiElement):
+        if solo_table:
+            bounds = self.bounds_manager.fetch_bounds(UiElement.SOLO_TABLE)
+        else:
+            bounds = self.bounds_manager.fetch_bounds(available_or_competing)
+
+        row_bounds = bounds.split_into_row_bounds()
+        img_arrays = [_ScreenShotCapturer.capture(row_bound) for row_bound in row_bounds]
+        row_imgs = [RowUiImage(ui_element=available_or_competing,
+                               img_array=img_array,
+                               row_idx=i) for i, img_array in enumerate(img_arrays)]
+
+        return row_imgs
+
 
     def _capture_market_data_images(self,
                                     have_currency: Currency,
                                     want_currency: Currency) -> MarketDataImages | None:
-        while True:
-            print(f"Press a key:\n\t't': Capture screen shots\n\t1: No market data exists"
+        should_capture = False
+        available_trades_exist = True
+        competing_trades_exist = True
+        while not should_capture:
+            if not available_trades_exist and not competing_trades_exist:
+                return MarketDataImages(want_currency=want_currency,
+                                        have_currency=have_currency,
+                                        date_taken=datetime.datetime.now())
+
+            print(f"Press a key:\n\t't': Capture screen shots\n\t1: Available trades do not exist"
                   f"\n\t2: Competing trades do not exist\n\tBackspace: Quit capturing")
             key = _KeyPressCapturer(acceptable_keys={'t', '1', '2', keyboard.Key.backspace}).capture()
 
-            competing_trades_exist = True
             match key:
+                case 't':
+                    should_capture = True
                 case '1':
-                    return MarketDataImages(want_currency=want_currency,
-                                            have_currency=have_currency,
-                                            date_taken=datetime.datetime.now())
+                    available_trades_exist = False
                 case '2':
                     competing_trades_exist = False
                 case keyboard.Key.backspace:
                     return None
 
-            available_trades_ui_element = UiElement.AVAILABLE_TRADES if competing_trades_exist else UiElement.AVAILABLE_TRADES_SOLO
-            available_bounds = self.bounds_manager.fetch_bounds(available_trades_ui_element)
-            available_row_bounds = available_bounds.split_into_row_bounds()
-            available_img_arrays = [_ScreenShotCapturer.capture(row_bound) for row_bound in available_row_bounds]
-            available_row_imgs = [RowUiImage(ui_element=UiElement.AVAILABLE_TRADES,
-                                             img_array=img_array,
-                                             row_idx=i) for i, img_array in enumerate(available_img_arrays)]
+        available_imgs = None
+        competing_imgs = None
+        if available_trades_exist and not competing_trades_exist:
+            available_imgs = self._create_table_row_images(solo_table=True,
+                                                           available_or_competing=UiElement.AVAILABLE_TRADES)
+        elif not available_trades_exist and competing_trades_exist:
+            competing_imgs = self._create_table_row_images(solo_table=True,
+                                                           available_or_competing=UiElement.COMPETING_TRADES)
+        elif available_trades_exist and competing_trades_exist:
+            available_imgs = self._create_table_row_images(solo_table=False,
+                                                           available_or_competing=UiElement.AVAILABLE_TRADES)
+            competing_imgs = self._create_table_row_images(solo_table=False,
+                                                           available_or_competing=UiElement.COMPETING_TRADES)
 
-            if competing_trades_exist:
-                competing_bounds = self.bounds_manager.fetch_bounds(UiElement.COMPETING_TRADES)
-                competing_row_bounds = competing_bounds.split_into_row_bounds()
-                competing_img_arrays = [_ScreenShotCapturer.capture(row_bound) for row_bound in competing_row_bounds]
-                competing_row_imgs = [RowUiImage(ui_element=UiElement.COMPETING_TRADES,
-                                                 img_array=img_array,
-                                                 row_idx=i) for i, img_array in enumerate(competing_img_arrays)]
-            else:
-                competing_row_imgs = None
-
-            return MarketDataImages(have_currency=have_currency,
-                                    want_currency=want_currency,
-                                    date_taken=datetime.datetime.now(),
-                                    available_currency_images=available_row_imgs,
-                                    competing_currency_images=competing_row_imgs)
+        return MarketDataImages(have_currency=have_currency,
+                                want_currency=want_currency,
+                                date_taken=datetime.datetime.now(),
+                                available_currency_images=available_imgs,
+                                competing_currency_images=competing_imgs)
 
     def capture_screen_shots(self,
                              currency_pairs_to_capture: set[tuple[Currency, Currency]],
@@ -501,6 +530,11 @@ class ScreenShotsCoordinator:
                   f"\nHave: {have_currency.value}\n---")
             market_images = self._capture_market_data_images(have_currency=have_currency,
                                                              want_currency=want_currency)
+            if show:
+                all_imgs = market_images.available_currency_images + market_images.competing_currency_images
+                for img in all_imgs:
+                    Cv2Visualizer.show(img_array=img.img_array)
+
             if not market_images:
                 return
 
@@ -512,6 +546,11 @@ class ScreenShotsCoordinator:
                 if not gold_cost_images:
                     return
 
+                if show:
+                    all_imgs = [gold_cost_images.gold_cost_image , gold_cost_images.currency_amount_image]
+                    for img in all_imgs:
+                        Cv2Visualizer.show(img_array=img.img_array)
+
                 gold_costs_to_capture.discard(want_currency)
 
                 yield gold_cost_images
@@ -521,6 +560,11 @@ class ScreenShotsCoordinator:
                 gold_cost_images = self._capture_gold_cost_images(currency=have_currency)
                 if not gold_cost_images:
                     return
+
+                if show:
+                    all_imgs = [gold_cost_images.gold_cost_image , gold_cost_images.currency_amount_image]
+                    for img in all_imgs:
+                        Cv2Visualizer.show(img_array=img.img_array)
 
                 gold_costs_to_capture.discard(have_currency)
 

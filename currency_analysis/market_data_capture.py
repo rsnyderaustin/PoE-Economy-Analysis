@@ -161,6 +161,7 @@ class MarketDataCaptureManager:
         screen_shot_coordinator = ScreenShotsCoordinator(screen_bounds_manager=bounds_manager)
         for ui_image_collection in screen_shot_coordinator.capture_screen_shots(
             currency_pairs_to_capture=set(required_data.currency_pair_market_data),
-            gold_costs_to_capture=set(required_data.currency_gold_costs)
+            gold_costs_to_capture=set(required_data.currency_gold_costs),
+            show=False
         ):
             self._process_image_collections(image_collections=[ui_image_collection])

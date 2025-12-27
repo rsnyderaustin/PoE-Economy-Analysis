@@ -298,10 +298,13 @@ class CurrencyArbitrager:
             raise RuntimeError(f"Missing 'currency' -> 'divine orb' for: {missing_currencies}")
 
 
-    def _build_graph(self) -> nx.DiGraph:
+    def _create_graph(self) -> nx.DiGraph:
         G = nx.DiGraph()
 
         for pair_obj in self._market_data_manager.currency_pair_objs:
+            if not pair_obj.sorted_ratios:
+                continue
+
             G.add_edge(
                 pair_obj.have_currency,
                 pair_obj.want_currency,
@@ -313,7 +316,7 @@ class CurrencyArbitrager:
     def arbitrage(self) -> pd.DataFrame:
         self._verify_currency_pairs()
 
-        G = self._build_graph()
+        G = self._create_graph()
         cycle_objs = [_Cycle(simple_cycle, graph=G) for simple_cycle in nx.simple_cycles(G=G, length_bound=5)]
         for i, cycle in enumerate(cycle_objs):
             logger.info(f"Analyzing cycle {i} of {len(cycle_objs)} ({i / len(cycle_objs)})")

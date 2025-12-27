@@ -184,16 +184,16 @@ class ScreenShotAnalyzer:
         raw_ratio = re.sub(r'[<>,]', '', raw_ratio)
         raw_ratio = re.sub(r':+', ':', raw_ratio)
 
-        is_valid_ratio = cls._is_valid_ratio(raw_ratio)
-        while not is_valid_ratio:
-            utils.flush_stdin()
-            raw_ratio = input(f"Cannot parse raw ratio {raw_ratio}. Type the correct version here:")
-
-            is_valid_ratio = cls._is_valid_ratio(raw_ratio)
-
         groups = re.findall(r"([^:]+)", raw_ratio)
         return float(groups[0]), float(groups[1])
 
+    @classmethod
+    def _prompt_for_ratio_and_stock(cls, row_strings: list[str]) -> tuple[str, str]:
+        print(f"Could not determine ratio and stock given row: {row_strings}")
+        ratio_str = input("Enter ratio: ")
+        stock_str = input("Enter stock: ")
+
+        return ratio_str, stock_str
 
     @classmethod
     def extract_supply_table(cls,
@@ -253,26 +253,30 @@ class ScreenShotAnalyzer:
                 .show(skip=not show_steps)
                 .to_strings(allowed_chars='0123456789:,.<>')
             )
+
             if len(row_strings) == 0:
                 continue
-            elif len(row_strings) == 1:
+
+            if len(row_strings) >= 2 and ':' in row_strings[1]:
+                row_strings[0] = ''.join([row_strings[0], row_strings[1]])
+                row_strings.pop(1)
+
+            if len(row_strings) == 1:
                 s = row_strings[0]
 
                 utils.flush_stdin()
                 if ':' in s:
-                    supply = input(f"Could not determine supply for ratio {s}. Enter here:")
-                    row_strings.append(supply)
+                    stock = input(f"Could not determine stock for ratio {s}. Enter here:")
+                    row_strings.append(stock)
                 else:
-                    print(f"Could not determine ratio and supply given row: {s}")
-                    ratio_str = input("Enter ratio: ")
-                    supply_str = input("Enter supply: ")
-                    row_strings = [ratio_str, supply_str]
+                    ratio_str, stock_str = self._prompt_for_ratio_and_stock(row_strings=row_strings)
+                    row_strings = [ratio_str, stock_str]
 
-            if ':' in row_strings[1]:
-                row_strings[0] = ''.join([row_strings[0], row_strings[1]])
-                row_strings.pop(1)
-
-            supply = int(row_strings[-1].replace(',', ''))
+            try:
+                stock = int(row_strings[-1].replace(',', ''))
+            except ValueError:
+                ratio_str, stock_str =self._prompt_for_ratio_and_stock(row_strings=row_strings)
+                row_strings = [ratio_str, stock_str]
 
             if len(row_strings) == 3:
                 raw_ratio = f"{row_strings[0]}:{row_strings[1]}"
@@ -282,20 +286,24 @@ class ScreenShotAnalyzer:
             if not bool(raw_ratio.strip()):
                 continue
 
-            print(f"Parsing raw ratio {raw_ratio}")
-            ratio = cls._attempt_to_parse_ratio(raw_ratio)
-            print(f"\tParsed into {ratio}")
+            is_valid_ratio = cls._is_valid_ratio(raw_ratio)
+            while not is_valid_ratio:
+                utils.flush_stdin()
+                raw_ratio = input(f"Cannot parse raw ratio {raw_ratio}. Type the correct version here:")
 
-            if ratio_type == RatioType.AVAILABLE:
-                table.add_ratio_supply(raw_ratio=raw_ratio,
-                                       want_per_have=ratio[0]/ratio[1],
-                                       want_supply=supply)
-            elif ratio_type == RatioType.COMPETING:
-                want, have = raw_ratio.split(":", 1)
-                flipped = f"{have}:{want}"
-                table.add_ratio_supply(raw_ratio=flipped,
-                                       want_per_have=ratio[1]/ratio[0],
-                                       want_supply=int(supply * ratio[1]))
+                is_valid_ratio = cls._is_valid_ratio(raw_ratio)
+
+            print(f"Parsing raw ratio {raw_ratio}")
+            want, have = cls._attempt_to_parse_ratio(raw_ratio)
+            print(f"\tParsed into {want}:{have}")
+
+            if ratio_type == RatioType.COMPETING:
+                want, have = have, want
+                raw_ratio = f"{have}:{want}"
+
+            table.add_ratio_supply(raw_ratio=raw_ratio,
+                                   want_per_have=want/have,
+                                   want_supply=stock)
 
         print("Extracted supply table:")
         table.print()

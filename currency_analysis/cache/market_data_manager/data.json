@@ -1,50 +1,150 @@
 {
   "pair_objs": [
     {
+      "have_currency": "Divination Scarab of the Cloister",
+      "want_currency": "Chaos Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "8.48:1",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 8.48,
+          "want_supply": 10502
+        },
+        {
+          "raw_ratio": "8.33:1",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 8.33,
+          "want_supply": 1075
+        },
+        {
+          "raw_ratio": "8.33:1",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 8.33,
+          "want_supply": 833
+        },
+        {
+          "raw_ratio": "8:1",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 8.0,
+          "want_supply": 288
+        },
+        {
+          "raw_ratio": "7.50:1",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 7.5,
+          "want_supply": 9150
+        },
+        {
+          "raw_ratio": "7.50:1",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 7.5,
+          "want_supply": 12830
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Chaos Orb",
+      "want_currency": "Divination Scarab of the Cloister",
+      "_ratios": [
+        {
+          "raw_ratio": "1:8.53",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 0.1172332942555686,
+          "want_supply": 17
+        },
+        {
+          "raw_ratio": "1:8.57",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 0.11668611435239207,
+          "want_supply": 14
+        },
+        {
+          "raw_ratio": "1:8.67",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 0.11534025374855825,
+          "want_supply": 45
+        },
+        {
+          "raw_ratio": "1:8.75",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 0.11428571428571428,
+          "want_supply": 8
+        },
+        {
+          "raw_ratio": "1:9",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 0.1111111111111111,
+          "want_supply": 943
+        },
+        {
+          "raw_ratio": "1:>9",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 0.1111111111111111,
+          "want_supply": 4688
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
       "have_currency": "Divine Orb",
       "want_currency": "Chaos Orb",
       "_ratios": [
+        {
+          "raw_ratio": "146:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 146.0,
+          "want_supply": 292
+        },
+        {
+          "raw_ratio": "145:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 145.0,
+          "want_supply": 3480
+        },
         {
           "raw_ratio": "144:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
           "want_per_have": 144.0,
-          "want_supply": 14832
-        },
-        {
-          "raw_ratio": "143.50:1",
-          "have_currency": "Divine Orb",
-          "want_currency": "Chaos Orb",
-          "want_per_have": 143.5,
-          "want_supply": 41328
+          "want_supply": 12528
         },
         {
           "raw_ratio": "143:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
           "want_per_have": 143.0,
-          "want_supply": 96382
-        },
-        {
-          "raw_ratio": "142.86:1",
-          "have_currency": "Divine Orb",
-          "want_currency": "Chaos Orb",
-          "want_per_have": 142.86,
-          "want_supply": 20000
+          "want_supply": 6149
         },
         {
           "raw_ratio": "142:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
           "want_per_have": 142.0,
-          "want_supply": 29536
+          "want_supply": 9940
         },
         {
           "raw_ratio": "142:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
           "want_per_have": 142.0,
-          "want_supply": 474136
+          "want_supply": 440184
         }
       ],
       "_sorted_ratios": null,
@@ -55,46 +155,46 @@
       "want_currency": "Divine Orb",
       "_ratios": [
         {
-          "raw_ratio": "1:145",
+          "raw_ratio": "1:147",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.006896551724137931,
-          "want_supply": 5
-        },
-        {
-          "raw_ratio": "1:146",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Divine Orb",
-          "want_per_have": 0.00684931506849315,
-          "want_supply": 632
-        },
-        {
-          "raw_ratio": "1:147.06",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Divine Orb",
-          "want_per_have": 0.006799945600435196,
-          "want_supply": 34
+          "want_per_have": 0.006802721088435374,
+          "want_supply": 363
         },
         {
           "raw_ratio": "1:148",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
           "want_per_have": 0.006756756756756757,
-          "want_supply": 572
+          "want_supply": 326
         },
         {
           "raw_ratio": "1:149",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
           "want_per_have": 0.006711409395973154,
-          "want_supply": 413
+          "want_supply": 115
         },
         {
-          "raw_ratio": "1:149",
+          "raw_ratio": "1:149.50",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.006711409395973154,
-          "want_supply": 3494
+          "want_per_have": 0.006688963210702341,
+          "want_supply": 10
+        },
+        {
+          "raw_ratio": "1:149.90",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.0066711140760507,
+          "want_supply": 70
+        },
+        {
+          "raw_ratio": "1:149.90",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.0066711140760507,
+          "want_supply": 4006
         }
       ],
       "_sorted_ratios": null,
@@ -109,14 +209,21 @@
           "have_currency": "Exalted Orb",
           "want_currency": "Chaos Orb",
           "want_per_have": 12.0,
-          "want_supply": 818
+          "want_supply": 3114
+        },
+        {
+          "raw_ratio": "11.220:1",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 11.22,
+          "want_supply": 4984
         },
         {
           "raw_ratio": "11:1",
           "have_currency": "Exalted Orb",
           "want_currency": "Chaos Orb",
           "want_per_have": 11.0,
-          "want_supply": 10934
+          "want_supply": 1441
         },
         {
           "raw_ratio": "10.84:1",
@@ -133,18 +240,11 @@
           "want_supply": 424
         },
         {
-          "raw_ratio": "10.50:1",
+          "raw_ratio": "10.60:1",
           "have_currency": "Exalted Orb",
           "want_currency": "Chaos Orb",
-          "want_per_have": 10.5,
-          "want_supply": 30492
-        },
-        {
-          "raw_ratio": "10.50:1",
-          "have_currency": "Exalted Orb",
-          "want_currency": "Chaos Orb",
-          "want_per_have": 10.5,
-          "want_supply": 18537
+          "want_per_have": 10.6,
+          "want_supply": 39697
         }
       ],
       "_sorted_ratios": null,
@@ -155,46 +255,438 @@
       "want_currency": "Exalted Orb",
       "_ratios": [
         {
-          "raw_ratio": "1:12.14",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Exalted Orb",
-          "want_per_have": 0.08237232289950576,
-          "want_supply": 14
-        },
-        {
           "raw_ratio": "1:12.50",
           "have_currency": "Chaos Orb",
           "want_currency": "Exalted Orb",
           "want_per_have": 0.08,
-          "want_supply": 102
+          "want_supply": 232
         },
         {
-          "raw_ratio": "1:12.80",
+          "raw_ratio": "1:12.93",
           "have_currency": "Chaos Orb",
           "want_currency": "Exalted Orb",
-          "want_per_have": 0.078125,
-          "want_supply": 27
+          "want_per_have": 0.07733952049497293,
+          "want_supply": 30
         },
         {
           "raw_ratio": "1:13",
           "have_currency": "Chaos Orb",
           "want_currency": "Exalted Orb",
           "want_per_have": 0.07692307692307693,
-          "want_supply": 200
+          "want_supply": 152
         },
         {
-          "raw_ratio": "1:13.62",
+          "raw_ratio": "1:14",
           "have_currency": "Chaos Orb",
           "want_currency": "Exalted Orb",
-          "want_per_have": 0.07342143906020558,
-          "want_supply": 200
+          "want_per_have": 0.07142857142857142,
+          "want_supply": 808
         },
         {
-          "raw_ratio": "1:13.62",
+          "raw_ratio": "1:14.50",
           "have_currency": "Chaos Orb",
           "want_currency": "Exalted Orb",
-          "want_per_have": 0.07342143906020558,
-          "want_supply": 470
+          "want_per_have": 0.06896551724137931,
+          "want_supply": 114
+        },
+        {
+          "raw_ratio": "1:14.50",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 0.06896551724137931,
+          "want_supply": 79
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Harvest Scarab of Doubling",
+      "want_currency": "Chaos Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "31:1",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 31.0,
+          "want_supply": 155
+        },
+        {
+          "raw_ratio": "29.50:1",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 29.5,
+          "want_supply": 2832
+        },
+        {
+          "raw_ratio": "29.10:1",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 29.1,
+          "want_supply": 291
+        },
+        {
+          "raw_ratio": "29:1",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 29.0,
+          "want_supply": 22795
+        },
+        {
+          "raw_ratio": "28.50:1",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 28.5,
+          "want_supply": 5700
+        },
+        {
+          "raw_ratio": "28.50:1",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 28.5,
+          "want_supply": 37991
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Chaos Orb",
+      "want_currency": "Harvest Scarab of Doubling",
+      "_ratios": [
+        {
+          "raw_ratio": "1:32",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 0.03125,
+          "want_supply": 138
+        },
+        {
+          "raw_ratio": "1:33",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 0.030303030303030304,
+          "want_supply": 214
+        },
+        {
+          "raw_ratio": "1:33.20",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 0.03012048192771084,
+          "want_supply": 15
+        },
+        {
+          "raw_ratio": "1:33.40",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 0.029940119760479042,
+          "want_supply": 56
+        },
+        {
+          "raw_ratio": "1:33.50",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 0.029850746268656716,
+          "want_supply": 136
+        },
+        {
+          "raw_ratio": "1:33.50",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 0.029850746268656716,
+          "want_supply": 2819
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Ultimatum Scarab of Catalysing",
+      "want_currency": "Chaos Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "155:1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 155.0,
+          "want_supply": 34720
+        },
+        {
+          "raw_ratio": "151:1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 151.0,
+          "want_supply": 755
+        },
+        {
+          "raw_ratio": "141:1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 141.0,
+          "want_supply": 1410
+        },
+        {
+          "raw_ratio": "134:1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 134.0,
+          "want_supply": 4288
+        },
+        {
+          "raw_ratio": "133:1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 133.0,
+          "want_supply": 1729
+        },
+        {
+          "raw_ratio": "133:1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 133.0,
+          "want_supply": 3739
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Chaos Orb",
+      "want_currency": "Ultimatum Scarab of Catalysing",
+      "_ratios": [
+        {
+          "raw_ratio": "158.75:1.0",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.006299212598425197,
+          "want_supply": 12
+        },
+        {
+          "raw_ratio": "160.0:1.0",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.00625,
+          "want_supply": 1
+        },
+        {
+          "raw_ratio": "162.0:1.0",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.006172839506172839,
+          "want_supply": 2
+        },
+        {
+          "raw_ratio": "163.0:1.0",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.006134969325153374,
+          "want_supply": 16
+        },
+        {
+          "raw_ratio": "164.0:1.0",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.006097560975609756,
+          "want_supply": 1
+        },
+        {
+          "raw_ratio": "164.0:1.0",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.006097560975609756,
+          "want_supply": 83
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divine Orb",
+      "want_currency": "Divination Scarab of the Cloister",
+      "_ratios": [
+        {
+          "raw_ratio": "16.78:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 16.78,
+          "want_supply": 151
+        },
+        {
+          "raw_ratio": "16.50:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 16.5,
+          "want_supply": 891
+        },
+        {
+          "raw_ratio": "16.36:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 16.36,
+          "want_supply": 180
+        },
+        {
+          "raw_ratio": "16:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 16.0,
+          "want_supply": 4224
+        },
+        {
+          "raw_ratio": "15.60:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 15.6,
+          "want_supply": 390
+        },
+        {
+          "raw_ratio": "15.60:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Divination Scarab of the Cloister",
+          "want_per_have": 15.6,
+          "want_supply": 1708
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divination Scarab of the Cloister",
+      "want_currency": "Divine Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "16.8:1.0",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.05952380952380952,
+          "want_supply": 5
+        },
+        {
+          "raw_ratio": "17.0:1.0",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.058823529411764705,
+          "want_supply": 7
+        },
+        {
+          "raw_ratio": "18.0:1.0",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.05555555555555555,
+          "want_supply": 22
+        },
+        {
+          "raw_ratio": "37.0:1.0",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.02702702702702703,
+          "want_supply": 8
+        },
+        {
+          "raw_ratio": "38.0:1.0",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.02631578947368421,
+          "want_supply": 2
+        },
+        {
+          "raw_ratio": "38.0:1.0",
+          "have_currency": "Divination Scarab of the Cloister",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.02631578947368421,
+          "want_supply": 2
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Exalted Orb",
+      "want_currency": "Divination Scarab of the Cloister",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divination Scarab of the Cloister",
+      "want_currency": "Exalted Orb",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Harvest Scarab of Doubling",
+      "want_currency": "Divination Scarab of the Cloister",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divination Scarab of the Cloister",
+      "want_currency": "Harvest Scarab of Doubling",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Ultimatum Scarab of Catalysing",
+      "want_currency": "Divination Scarab of the Cloister",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divination Scarab of the Cloister",
+      "want_currency": "Ultimatum Scarab of Catalysing",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divine Orb",
+      "want_currency": "Exalted Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "12:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 12.0,
+          "want_supply": 108
+        },
+        {
+          "raw_ratio": "11.50:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 11.5,
+          "want_supply": 8855
+        },
+        {
+          "raw_ratio": "11:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 11.0,
+          "want_supply": 2464
+        },
+        {
+          "raw_ratio": "10.75:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 10.75,
+          "want_supply": 86
+        },
+        {
+          "raw_ratio": "10.50:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 10.5,
+          "want_supply": 21
+        },
+        {
+          "raw_ratio": "10.50:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 10.5,
+          "want_supply": 2222
         }
       ],
       "_sorted_ratios": null,
@@ -205,46 +697,96 @@
       "want_currency": "Divine Orb",
       "_ratios": [
         {
-          "raw_ratio": "1:14",
+          "raw_ratio": "13.0:1.0",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.07692307692307693,
+          "want_supply": 1
+        },
+        {
+          "raw_ratio": "13.8:1.0",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.07246376811594203,
+          "want_supply": 10
+        },
+        {
+          "raw_ratio": "14.0:1.0",
           "have_currency": "Exalted Orb",
           "want_currency": "Divine Orb",
           "want_per_have": 0.07142857142857142,
-          "want_supply": 1
+          "want_supply": 25
         },
         {
-          "raw_ratio": "1:15",
+          "raw_ratio": "15.0:1.0",
           "have_currency": "Exalted Orb",
           "want_currency": "Divine Orb",
           "want_per_have": 0.06666666666666667,
-          "want_supply": 10
+          "want_supply": 2
         },
         {
-          "raw_ratio": "1:16",
+          "raw_ratio": "16.0:1.0",
           "have_currency": "Exalted Orb",
           "want_currency": "Divine Orb",
           "want_per_have": 0.0625,
-          "want_supply": 5
+          "want_supply": 100
         },
         {
-          "raw_ratio": "1:21",
+          "raw_ratio": "16.0:1.0",
           "have_currency": "Exalted Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.047619047619047616,
-          "want_supply": 1
+          "want_per_have": 0.0625,
+          "want_supply": 21
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Harvest Scarab of Doubling",
+      "want_currency": "Divine Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "1:4.50",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.2222222222222222,
+          "want_supply": 30
         },
         {
-          "raw_ratio": "1:21.90",
-          "have_currency": "Exalted Orb",
+          "raw_ratio": "1:4.88",
+          "have_currency": "Harvest Scarab of Doubling",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.04566210045662101,
+          "want_per_have": 0.20491803278688525,
+          "want_supply": 8
+        },
+        {
+          "raw_ratio": "1:4.90",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.2040816326530612,
           "want_supply": 10
         },
         {
-          "raw_ratio": "1:21.90",
-          "have_currency": "Exalted Orb",
+          "raw_ratio": "1:5",
+          "have_currency": "Harvest Scarab of Doubling",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.04566210045662101,
-          "want_supply": 5
+          "want_per_have": 0.2,
+          "want_supply": 146
+        },
+        {
+          "raw_ratio": "1:5.40",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.18518518518518517,
+          "want_supply": 20
+        },
+        {
+          "raw_ratio": "1:5.40",
+          "have_currency": "Harvest Scarab of Doubling",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.18518518518518517,
+          "want_supply": 224
         }
       ],
       "_sorted_ratios": null,
@@ -252,51 +794,193 @@
     },
     {
       "have_currency": "Divine Orb",
-      "want_currency": "Exalted Orb",
+      "want_currency": "Harvest Scarab of Doubling",
       "_ratios": [
         {
-          "raw_ratio": "12.33:1",
+          "raw_ratio": "1.0:4.29",
           "have_currency": "Divine Orb",
-          "want_currency": "Exalted Orb",
-          "want_per_have": 12.33,
-          "want_supply": 456
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 4.29,
+          "want_supply": 30
         },
         {
-          "raw_ratio": "12:1",
+          "raw_ratio": "1.0:4.0",
           "have_currency": "Divine Orb",
-          "want_currency": "Exalted Orb",
-          "want_per_have": 12.0,
-          "want_supply": 8496
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 4.0,
+          "want_supply": 2404
         },
         {
-          "raw_ratio": "11.50:1",
+          "raw_ratio": "1.0:3.96",
           "have_currency": "Divine Orb",
-          "want_currency": "Exalted Orb",
-          "want_per_have": 11.5,
-          "want_supply": 20102
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 3.96,
+          "want_supply": 107
         },
         {
-          "raw_ratio": "11:1",
+          "raw_ratio": "1.0:3.83",
           "have_currency": "Divine Orb",
-          "want_currency": "Exalted Orb",
-          "want_per_have": 11.0,
-          "want_supply": 53361
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 3.83,
+          "want_supply": 46
         },
         {
-          "raw_ratio": "10.75:1",
+          "raw_ratio": "1.0:3.75",
           "have_currency": "Divine Orb",
-          "want_currency": "Exalted Orb",
-          "want_per_have": 10.75,
-          "want_supply": 924
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 3.75,
+          "want_supply": 30
         },
         {
-          "raw_ratio": "10.75:1",
+          "raw_ratio": "1.0:3.75",
           "have_currency": "Divine Orb",
-          "want_currency": "Exalted Orb",
-          "want_per_have": 10.75,
-          "want_supply": 22682
+          "want_currency": "Harvest Scarab of Doubling",
+          "want_per_have": 3.75,
+          "want_supply": 1003
         }
       ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Exalted Orb",
+      "want_currency": "Harvest Scarab of Doubling",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Harvest Scarab of Doubling",
+      "want_currency": "Exalted Orb",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divine Orb",
+      "want_currency": "Ultimatum Scarab of Catalysing",
+      "_ratios": [
+        {
+          "raw_ratio": "1:1.25",
+          "have_currency": "Divine Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.8,
+          "want_supply": 1220
+        },
+        {
+          "raw_ratio": "1:1.29",
+          "have_currency": "Divine Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.7751937984496123,
+          "want_supply": 100
+        },
+        {
+          "raw_ratio": "1:1.30",
+          "have_currency": "Divine Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.7692307692307692,
+          "want_supply": 260
+        },
+        {
+          "raw_ratio": "1:1.33",
+          "have_currency": "Divine Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.7518796992481203,
+          "want_supply": 39
+        },
+        {
+          "raw_ratio": "1:1.35",
+          "have_currency": "Divine Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.7407407407407407,
+          "want_supply": 49
+        },
+        {
+          "raw_ratio": "1:1.35",
+          "have_currency": "Divine Orb",
+          "want_currency": "Ultimatum Scarab of Catalysing",
+          "want_per_have": 0.7407407407407407,
+          "want_supply": 1866
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Ultimatum Scarab of Catalysing",
+      "want_currency": "Divine Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "1.0:1.2",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Divine Orb",
+          "want_per_have": 1.2,
+          "want_supply": 720
+        },
+        {
+          "raw_ratio": "1.0:1.19",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Divine Orb",
+          "want_per_have": 1.19,
+          "want_supply": 80
+        },
+        {
+          "raw_ratio": "1.0:1.15",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Divine Orb",
+          "want_per_have": 1.15,
+          "want_supply": 23
+        },
+        {
+          "raw_ratio": "1.0:1.1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Divine Orb",
+          "want_per_have": 1.1,
+          "want_supply": 30
+        },
+        {
+          "raw_ratio": "1.0:1.1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Divine Orb",
+          "want_per_have": 1.1,
+          "want_supply": 275
+        },
+        {
+          "raw_ratio": "1.0:1.1",
+          "have_currency": "Ultimatum Scarab of Catalysing",
+          "want_currency": "Divine Orb",
+          "want_per_have": 1.1,
+          "want_supply": 435
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Exalted Orb",
+      "want_currency": "Ultimatum Scarab of Catalysing",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Ultimatum Scarab of Catalysing",
+      "want_currency": "Exalted Orb",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Harvest Scarab of Doubling",
+      "want_currency": "Ultimatum Scarab of Catalysing",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Ultimatum Scarab of Catalysing",
+      "want_currency": "Harvest Scarab of Doubling",
+      "_ratios": [],
       "_sorted_ratios": null,
       "atts": {}
     }

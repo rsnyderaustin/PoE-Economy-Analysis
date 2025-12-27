@@ -47,7 +47,7 @@ def test_run():
     cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER,
                                                CacheObject.GOLD_COST_MANAGER],
                                 load_from_cache=True,
-                                save_to_cache=False,
+                                save_to_cache=True,
                                 missing_ok=False)
     cache_settings.add_settings(cache_objects=[CacheObject.IMAGE_COLLECTIONS_MANAGER],
                                 load_from_cache=False,
@@ -144,7 +144,7 @@ def create_ui_bounds():
     creator.create_bounds(show=True)
 
 # test_fake_cycle()
-# test_run()
+test_run()
 # test_build_supply_table()
-create_ui_bounds()
+# create_ui_bounds()
 

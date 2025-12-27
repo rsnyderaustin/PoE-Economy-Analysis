@@ -1,7 +1,10 @@
 {
   "gold_costs": {
     "Chaos Orb": 15.0,
+    "Divination Scarab of the Cloister": 75.0,
     "Divine Orb": 250.0,
-    "Exalted Orb": 250.0
+    "Exalted Orb": 250.0,
+    "Harvest Scarab of Doubling": 125.0,
+    "Ultimatum Scarab of Catalysing": 500.0
   }
 }
