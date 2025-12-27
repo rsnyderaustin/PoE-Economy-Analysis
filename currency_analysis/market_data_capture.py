@@ -87,56 +87,37 @@ class MarketDataCaptureManager:
 
     def _process_image_collections(self, image_collections: Iterable[ImageCollection]):
         for collection in image_collections:
-            if isinstance(collection, MarketDataImages):
-                available_table = ScreenShotAnalyzer.extract_supply_table(
-                    img_arrays=[img.img_array for img in collection.available_currency_images],
-                    ratio_type=RatioType.AVAILABLE,
-                    have_currency=collection.have_currency,
-                    want_currency=collection.want_currency
-                ) if collection.available_currency_images else None
-                self.market_data_manager.record_market_data(
-                    want_currency=collection.want_currency,
-                    have_currency=collection.have_currency,
-                    available_trades_table=available_table
-                )
+            available_table = ScreenShotAnalyzer.extract_supply_table(
+                img_arrays=[img.img_array for img in collection.available_currency_images],
+                ratio_type=RatioType.AVAILABLE,
+                have_currency=collection.have_currency,
+                want_currency=collection.want_currency
+            ) if collection.available_currency_images else None
+            self.market_data_manager.record_market_data(
+                want_currency=collection.want_currency,
+                have_currency=collection.have_currency,
+                available_trades_table=available_table
+            )
 
-                """
-                ScreenShotAnalyzer.extract_supply_table() properly handles reversing the competing table for us,
-                so we feed it the correct have and want Currencies. But then we do have to flip it for
-                record_market_data()
-                """
-                competing_table = ScreenShotAnalyzer.extract_supply_table(
-                    img_arrays=[img.img_array for img in collection.competing_currency_images],
-                    ratio_type=RatioType.COMPETING,
-                    have_currency=collection.have_currency,
-                    want_currency=collection.want_currency
-                ) if collection.competing_currency_images else None
-                self.market_data_manager.record_market_data(
-                    want_currency=collection.have_currency,
-                    have_currency=collection.want_currency,
-                    available_trades_table=competing_table
-                )
-            elif isinstance(collection, GoldCostImages):
-                gold_cost = ScreenShotAnalyzer.extract_number(
-                    img_array=collection.gold_cost_image.img_array,
-                    num_type=int,
-                    white_threshold=100
-                )
-                currency_amount = ScreenShotAnalyzer.extract_number(
-                    img_array=collection.currency_amount_image.img_array,
-                    num_type=int
-                )
-
-                self.gold_cost_manager.add_gold_cost(gold_cost=gold_cost,
-                                                     want_currency=collection.currency,
-                                                     want_supply=currency_amount)
+            """
+            ScreenShotAnalyzer.extract_supply_table() properly handles reversing the competing table for us,
+            so we feed it the correct have and want Currencies. But then we do have to flip it for
+            record_market_data()
+            """
+            competing_table = ScreenShotAnalyzer.extract_supply_table(
+                img_arrays=[img.img_array for img in collection.competing_currency_images],
+                ratio_type=RatioType.COMPETING,
+                have_currency=collection.have_currency,
+                want_currency=collection.want_currency
+            ) if collection.competing_currency_images else None
+            self.market_data_manager.record_market_data(
+                want_currency=collection.have_currency,
+                have_currency=collection.want_currency,
+                available_trades_table=competing_table
+            )
 
         if self._cache_settings.should_save_to_cache(cache_object=CacheObject.MARKET_DATA_MANAGER):
             self._market_data_manager_cache.save(self.market_data_manager)
-
-        if self._cache_settings.should_save_to_cache(cache_object=CacheObject.GOLD_COST_MANAGER):
-            self._gold_cost_manager_cache.save(self.gold_cost_manager)
-
 
 
     def capture(self, currencies: set[Currency]):
@@ -153,15 +134,24 @@ class MarketDataCaptureManager:
             gold_cost_manager=self.gold_cost_manager,
             market_data_manager=self.market_data_manager
         )
+        gold_costs_to_record = required_data.currency_gold_costs
 
         if not required_data.currency_gold_costs and not required_data.currency_pair_market_data:
             return
 
         bounds_manager = UiBoundsCreator.create_bounds(show=False)
         screen_shot_coordinator = ScreenShotsCoordinator(screen_bounds_manager=bounds_manager)
-        for ui_image_collection in screen_shot_coordinator.capture_screen_shots(
+        for market_data_image_collection in screen_shot_coordinator.capture_screen_shots(
             currency_pairs_to_capture=set(required_data.currency_pair_market_data),
-            gold_costs_to_capture=set(required_data.currency_gold_costs),
             show=False
         ):
-            self._process_image_collections(image_collections=[ui_image_collection])
+            if market_data_image_collection.have_currency in gold_costs_to_record:
+                gold_cost = input(f"Enter gold cost per currency for {market_data_image_collection.have_currency.value}: ")
+                self.gold_cost_manager.add_gold_cost(currency=market_data_image_collection.have_currency,
+                                                     gold_cost_per_currency=gold_cost)
+            if market_data_image_collection.want_currency in gold_costs_to_record:
+                gold_cost = input(f"Enter gold cost per currency for {market_data_image_collection.want_currency.value}: ")
+                self.gold_cost_manager.add_gold_cost(currency=market_data_image_collection.want_currency,
+                                                     gold_cost_per_currency=gold_cost)
+
+            self._process_image_collections(image_collections=[market_data_image_collection])

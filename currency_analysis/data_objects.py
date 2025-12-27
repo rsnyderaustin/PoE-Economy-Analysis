@@ -29,6 +29,11 @@ class Currency(Enum):
     HARVEST_SCARAB_OF_DOUBLING = 'Harvest Scarab of Doubling'
     ULTIMATUM_SCARAB_OF_CATALYSING = 'Ultimatum Scarab of Catalysing'
     DIVINATION_SCARAB_OF_THE_CLOISTER = 'Divination Scarab of the Cloister'
+    ENKINDLING_ORB = 'Enkindling Orb'
+    CHROMATIC_ORB = 'Chromatic Orb'
+    ORB_OF_ANNULMENT = 'Orb of Annulment'
+
+
 
 class RatioType(Enum):
     AVAILABLE = 'available'

@@ -28,27 +28,31 @@ def test_build_supply_table():
     )
 
 def test_run():
-    """currencies = {Currency.EXALTED_ORB,
-                  Currency.DIVINE_ORB,
-                  Currency.CHAOS_ORB,
-                  Currency.DIVINATION_SCARAB_OF_THE_CLOISTER,
-                  Currency.HARVEST_SCARAB_OF_DOUBLING,
-                  Currency.ULTIMATUM_SCARAB_OF_CATALYSING,
-                  Currency.ORB_OF_SCOURING}"""
 
     currencies = {Currency.EXALTED_ORB,
                   Currency.DIVINE_ORB,
                   Currency.CHAOS_ORB,
-                  Currency.DIVINATION_SCARAB_OF_THE_CLOISTER,
-                  Currency.HARVEST_SCARAB_OF_DOUBLING,
-                  Currency.ULTIMATUM_SCARAB_OF_CATALYSING}
+                  Currency.STACKED_DECK,
+                  Currency.ORB_OF_ALCHEMY,
+                  Currency.ORB_OF_FUSING,
+                  Currency.VAAL_ORB,
+                  Currency.ORB_OF_SCOURING,
+                  Currency.ORB_OF_CHANCE,
+                  Currency.ANCIENT_ORB,
+                  Currency.ORB_OF_ALTERATION,
+                  Currency.ENKINDLING_ORB,
+                  Currency.CHROMATIC_ORB,
+                  Currency.ORB_OF_ANNULMENT}
 
     cache_settings = CacheSettings()
-    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER,
-                                               CacheObject.GOLD_COST_MANAGER],
+    cache_settings.add_settings(cache_objects=[CacheObject.GOLD_COST_MANAGER],
                                 load_from_cache=True,
                                 save_to_cache=True,
                                 missing_ok=False)
+    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER],
+                                load_from_cache=False,
+                                save_to_cache=True,
+                                missing_ok=True)
     cache_settings.add_settings(cache_objects=[CacheObject.IMAGE_COLLECTIONS_MANAGER],
                                 load_from_cache=False,
                                 save_to_cache=False,
@@ -107,12 +111,12 @@ def test_fake_cycle():
     gold_cost_manager = GoldCostManager()
     for have_currency, want_currency in currency_pairs:
         gold_cost_manager.add_gold_cost(
-            want_currency=want_currency,
+            currency=want_currency,
             want_supply=1,
             gold_cost=random.choice(range(50, 250))
         )
         gold_cost_manager.add_gold_cost(
-            want_currency=have_currency,
+            currency=have_currency,
             want_supply=1,
             gold_cost=random.choice(range(50, 250))
         )
@@ -125,10 +129,10 @@ def test_fake_cycle():
                                                want_currency=have_currency,
                                                available_trades_table=reverse_table)
 
-        gold_cost_manager.add_gold_cost(want_currency=want_currency,
+        gold_cost_manager.add_gold_cost(currency=want_currency,
                                         gold_cost=random.choice(range(250, 2000)),
                                         want_supply=random.choice(range(1, 10)))
-        gold_cost_manager.add_gold_cost(want_currency=have_currency,
+        gold_cost_manager.add_gold_cost(currency=have_currency,
                                         gold_cost=random.choice(range(250, 2000)),
                                         want_supply=random.choice(range(1, 10)))
 

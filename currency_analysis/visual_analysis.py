@@ -275,7 +275,7 @@ class ScreenShotAnalyzer:
             try:
                 stock = int(row_strings[-1].replace(',', ''))
             except ValueError:
-                ratio_str, stock_str =self._prompt_for_ratio_and_stock(row_strings=row_strings)
+                ratio_str, stock_str = cls._prompt_for_ratio_and_stock(row_strings=row_strings)
                 row_strings = [ratio_str, stock_str]
 
             if len(row_strings) == 3:

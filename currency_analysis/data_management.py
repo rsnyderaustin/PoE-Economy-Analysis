@@ -56,13 +56,12 @@ class GoldCostManager:
         return GoldCostManager(gold_costs=d)
 
     def add_gold_cost(self,
-                      want_currency: Currency,
-                      want_supply: int,
-                      gold_cost: int):
-        if want_currency in self._gold_costs:
-            logger.warning(f"{want_currency} already exists in self._gold_costs. Overwriting...")
+                      currency: Currency,
+                      gold_cost_per_currency: int):
+        if currency in self._gold_costs:
+            logger.warning(f"{currency} already exists in self._gold_costs. Overwriting...")
 
-        self._gold_costs[want_currency] = gold_cost / want_supply
+        self._gold_costs[currency] = gold_cost_per_currency
 
     def fetch_gold_cost(self, want_currency: Currency):
         return self._gold_costs[want_currency]
