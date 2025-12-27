@@ -55,23 +55,23 @@ class MarketDataCaptureManager:
 
         self._market_data_manager_cache = MarketDataManagerCache()
         if cache_settings.should_load_from_cache(CacheObject.MARKET_DATA_MANAGER):
-            self._market_data_manager = self._create_manager_from_cache(
+            self.market_data_manager = self._create_manager_from_cache(
                 cache=self._market_data_manager_cache,
                 cache_object=CacheObject.MARKET_DATA_MANAGER,
                 manager_cls=MarketDataManager
             )
         else:
-            self._market_data_manager = MarketDataManager()
+            self.market_data_manager = MarketDataManager()
 
         self._gold_cost_manager_cache = GoldCostManagerCache()
         if cache_settings.should_load_from_cache(CacheObject.GOLD_COST_MANAGER):
-            self._gold_cost_manager = self._create_manager_from_cache(
+            self.gold_cost_manager = self._create_manager_from_cache(
                 cache=self._gold_cost_manager_cache,
                 cache_object=CacheObject.GOLD_COST_MANAGER,
                 manager_cls=GoldCostManager
             )
         else:
-            self._gold_cost_manager = GoldCostManager()
+            self.gold_cost_manager = GoldCostManager()
 
     def _create_manager_from_cache(self, cache, cache_object: CacheObject, manager_cls):
         manager = None
@@ -94,7 +94,7 @@ class MarketDataCaptureManager:
                     have_currency=collection.have_currency,
                     want_currency=collection.want_currency
                 ) if collection.available_currency_images else None
-                self._market_data_manager.record_market_data(
+                self.market_data_manager.record_market_data(
                     want_currency=collection.want_currency,
                     have_currency=collection.have_currency,
                     available_trades_table=available_table
@@ -111,7 +111,7 @@ class MarketDataCaptureManager:
                     have_currency=collection.have_currency,
                     want_currency=collection.want_currency
                 ) if collection.competing_currency_images else None
-                self._market_data_manager.record_market_data(
+                self.market_data_manager.record_market_data(
                     want_currency=collection.have_currency,
                     have_currency=collection.want_currency,
                     available_trades_table=competing_table
@@ -127,15 +127,15 @@ class MarketDataCaptureManager:
                     num_type=int
                 )
 
-                self._gold_cost_manager.add_gold_cost(gold_cost=gold_cost,
-                                                      want_currency=collection.currency,
-                                                      want_supply=currency_amount)
+                self.gold_cost_manager.add_gold_cost(gold_cost=gold_cost,
+                                                     want_currency=collection.currency,
+                                                     want_supply=currency_amount)
 
         if self._cache_settings.should_save_to_cache(cache_object=CacheObject.MARKET_DATA_MANAGER):
-            self._market_data_manager_cache.save(self._market_data_manager)
+            self._market_data_manager_cache.save(self.market_data_manager)
 
         if self._cache_settings.should_save_to_cache(cache_object=CacheObject.GOLD_COST_MANAGER):
-            self._gold_cost_manager_cache.save(self._gold_cost_manager)
+            self._gold_cost_manager_cache.save(self.gold_cost_manager)
 
 
 
@@ -150,9 +150,12 @@ class MarketDataCaptureManager:
 
         required_data = RequiredDataDeterminer.determine_required_data(
             currencies_to_record=currencies,
-            gold_cost_manager=self._gold_cost_manager,
-            market_data_manager=self._market_data_manager
+            gold_cost_manager=self.gold_cost_manager,
+            market_data_manager=self.market_data_manager
         )
+
+        if not required_data.currency_gold_costs and not required_data.currency_pair_market_data:
+            return
 
         bounds_manager = UiBoundsCreator.create_bounds(show=False)
         screen_shot_coordinator = ScreenShotsCoordinator(screen_bounds_manager=bounds_manager)

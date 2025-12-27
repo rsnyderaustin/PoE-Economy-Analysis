@@ -5,46 +5,46 @@
       "want_currency": "Chaos Orb",
       "_ratios": [
         {
-          "raw_ratio": "149:1",
+          "raw_ratio": "144:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
-          "want_per_have": 149.0,
-          "want_supply": 3576
+          "want_per_have": 144.0,
+          "want_supply": 14832
         },
         {
-          "raw_ratio": "148:1",
+          "raw_ratio": "143.50:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
-          "want_per_have": 148.0,
-          "want_supply": 2960
+          "want_per_have": 143.5,
+          "want_supply": 41328
         },
         {
-          "raw_ratio": "147:1",
+          "raw_ratio": "143:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
-          "want_per_have": 147.0,
-          "want_supply": 9702
+          "want_per_have": 143.0,
+          "want_supply": 96382
         },
         {
-          "raw_ratio": "146.43:1",
+          "raw_ratio": "142.86:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
-          "want_per_have": 146.43,
-          "want_supply": 2050
+          "want_per_have": 142.86,
+          "want_supply": 20000
         },
         {
-          "raw_ratio": "146:1",
+          "raw_ratio": "142:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
-          "want_per_have": 146.0,
-          "want_supply": 28616
+          "want_per_have": 142.0,
+          "want_supply": 29536
         },
         {
-          "raw_ratio": "146:1",
+          "raw_ratio": "142:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
-          "want_per_have": 146.0,
-          "want_supply": 450492
+          "want_per_have": 142.0,
+          "want_supply": 474136
         }
       ],
       "_sorted_ratios": null,
@@ -55,46 +55,246 @@
       "want_currency": "Divine Orb",
       "_ratios": [
         {
-          "raw_ratio": "1:150",
+          "raw_ratio": "1:145",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.006666666666666667,
-          "want_supply": 56
+          "want_per_have": 0.006896551724137931,
+          "want_supply": 5
         },
         {
-          "raw_ratio": "1:151",
+          "raw_ratio": "1:146",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.006622516556291391,
-          "want_supply": 199
+          "want_per_have": 0.00684931506849315,
+          "want_supply": 632
         },
         {
-          "raw_ratio": "1:151.26",
+          "raw_ratio": "1:147.06",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.006611133148221606,
-          "want_supply": 46
+          "want_per_have": 0.006799945600435196,
+          "want_supply": 34
         },
         {
-          "raw_ratio": "1:152",
+          "raw_ratio": "1:148",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.006578947368421052,
-          "want_supply": 85
+          "want_per_have": 0.006756756756756757,
+          "want_supply": 572
         },
         {
-          "raw_ratio": "1:153",
+          "raw_ratio": "1:149",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.006535947712418301,
-          "want_supply": 152
+          "want_per_have": 0.006711409395973154,
+          "want_supply": 413
         },
         {
-          "raw_ratio": "1:153",
+          "raw_ratio": "1:149",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.006535947712418301,
-          "want_supply": 2672
+          "want_per_have": 0.006711409395973154,
+          "want_supply": 3494
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Exalted Orb",
+      "want_currency": "Chaos Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "12:1",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 12.0,
+          "want_supply": 818
+        },
+        {
+          "raw_ratio": "11:1",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 11.0,
+          "want_supply": 10934
+        },
+        {
+          "raw_ratio": "10.84:1",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 10.84,
+          "want_supply": 900
+        },
+        {
+          "raw_ratio": "10.60:1",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 10.6,
+          "want_supply": 424
+        },
+        {
+          "raw_ratio": "10.50:1",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 10.5,
+          "want_supply": 30492
+        },
+        {
+          "raw_ratio": "10.50:1",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 10.5,
+          "want_supply": 18537
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Chaos Orb",
+      "want_currency": "Exalted Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "1:12.14",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 0.08237232289950576,
+          "want_supply": 14
+        },
+        {
+          "raw_ratio": "1:12.50",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 0.08,
+          "want_supply": 102
+        },
+        {
+          "raw_ratio": "1:12.80",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 0.078125,
+          "want_supply": 27
+        },
+        {
+          "raw_ratio": "1:13",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 0.07692307692307693,
+          "want_supply": 200
+        },
+        {
+          "raw_ratio": "1:13.62",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 0.07342143906020558,
+          "want_supply": 200
+        },
+        {
+          "raw_ratio": "1:13.62",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 0.07342143906020558,
+          "want_supply": 470
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Exalted Orb",
+      "want_currency": "Divine Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "1:14",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.07142857142857142,
+          "want_supply": 1
+        },
+        {
+          "raw_ratio": "1:15",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.06666666666666667,
+          "want_supply": 10
+        },
+        {
+          "raw_ratio": "1:16",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.0625,
+          "want_supply": 5
+        },
+        {
+          "raw_ratio": "1:21",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.047619047619047616,
+          "want_supply": 1
+        },
+        {
+          "raw_ratio": "1:21.90",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.04566210045662101,
+          "want_supply": 10
+        },
+        {
+          "raw_ratio": "1:21.90",
+          "have_currency": "Exalted Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.04566210045662101,
+          "want_supply": 5
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divine Orb",
+      "want_currency": "Exalted Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "12.33:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 12.33,
+          "want_supply": 456
+        },
+        {
+          "raw_ratio": "12:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 12.0,
+          "want_supply": 8496
+        },
+        {
+          "raw_ratio": "11.50:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 11.5,
+          "want_supply": 20102
+        },
+        {
+          "raw_ratio": "11:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 11.0,
+          "want_supply": 53361
+        },
+        {
+          "raw_ratio": "10.75:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 10.75,
+          "want_supply": 924
+        },
+        {
+          "raw_ratio": "10.75:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Exalted Orb",
+          "want_per_have": 10.75,
+          "want_supply": 22682
         }
       ],
       "_sorted_ratios": null,

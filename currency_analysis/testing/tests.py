@@ -28,23 +28,40 @@ def test_build_supply_table():
     )
 
 def test_run():
-    currencies = {Currency.EXALTED_ORB,
+    """currencies = {Currency.EXALTED_ORB,
                   Currency.DIVINE_ORB,
                   Currency.CHAOS_ORB,
                   Currency.DIVINATION_SCARAB_OF_THE_CLOISTER,
                   Currency.HARVEST_SCARAB_OF_DOUBLING,
                   Currency.ULTIMATUM_SCARAB_OF_CATALYSING,
-                  Currency.ORB_OF_SCOURING}
+                  Currency.ORB_OF_SCOURING}"""
+
+    currencies = {Currency.EXALTED_ORB,
+                  Currency.DIVINE_ORB,
+                  Currency.CHAOS_ORB,
+                  Currency.DIVINATION_SCARAB_OF_THE_CLOISTER,
+                  Currency.HARVEST_SCARAB_OF_DOUBLING,
+                  Currency.ULTIMATUM_SCARAB_OF_CATALYSING}
 
     cache_settings = CacheSettings()
     cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER,
-                                               CacheObject.IMAGE_COLLECTIONS_MANAGER,
                                                CacheObject.GOLD_COST_MANAGER],
+                                load_from_cache=True,
+                                save_to_cache=False,
+                                missing_ok=False)
+    cache_settings.add_settings(cache_objects=[CacheObject.IMAGE_COLLECTIONS_MANAGER],
                                 load_from_cache=False,
-                                save_to_cache=True,
+                                save_to_cache=False,
                                 missing_ok=True)
     manager = MarketDataCaptureManager(cache_settings=cache_settings)
     manager.capture(currencies)
+
+    arbitrager = CurrencyArbitrager(
+        market_data_manager=manager.market_data_manager,
+        gold_cost_manager=manager.gold_cost_manager
+    )
+    arbitrage_df = arbitrager.arbitrage()
+    x = 0
 
 def _create_randomized_tables(have_currency: Currency,
                               want_currency: Currency) -> tuple[MarketSupplyTable, MarketSupplyTable]:
@@ -126,8 +143,8 @@ def create_ui_bounds():
     creator = UiBoundsCreator()
     creator.create_bounds(show=True)
 
-test_fake_cycle()
+# test_fake_cycle()
 # test_run()
 # test_build_supply_table()
-# create_ui_bounds()
+create_ui_bounds()
 

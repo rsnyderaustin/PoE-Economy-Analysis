@@ -490,7 +490,8 @@ class ScreenShotsCoordinator:
 
     def capture_screen_shots(self,
                              currency_pairs_to_capture: set[tuple[Currency, Currency]],
-                             gold_costs_to_capture: set[Currency]) -> Iterable[ImageCollection]:
+                             gold_costs_to_capture: set[Currency],
+                             show: bool = False) -> Iterable[ImageCollection]:
         gold_costs_to_capture = gold_costs_to_capture.copy()
         ordered_pairs = sorted(list(currency_pairs_to_capture), key=lambda p: (p[1].value, p[0].value))
         for currency_pair in ordered_pairs:

@@ -77,6 +77,11 @@ class _CurrencyConverter:
                 have_currency: Currency,
                 want_currency: Currency,
                 have_amount: int) -> float:
+        neg = False
+        if have_amount < 0:
+            neg = True
+            have_amount = -have_amount
+
         c_df = self._data_m.fetch_dataframe(have_currency=have_currency,
                                             want_currency=want_currency)
         if c_df.empty:
@@ -89,6 +94,9 @@ class _CurrencyConverter:
         )
 
         want = (used * c_df["want_per_have"]).sum()
+
+        if neg:
+            want = -want
         return want
 
 

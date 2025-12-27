@@ -57,7 +57,6 @@ class RatioSupply:
 
     @classmethod
     def from_dict(cls, d: dict):
-        d['ratio_type'] = RatioType(d['ratio_type'])
         d['have_currency'] = Currency(d['have_currency'])
         d['want_currency'] = Currency(d['want_currency'])
         return cls(**d)
@@ -99,7 +98,7 @@ class CurrencyPairMarketData:
         return cls(
             have_currency=Currency(d['have_currency']),
             want_currency=Currency(d['want_currency']),
-            ratios=[RatioSupply.from_dict(ratio_d) for ratio_d in d['ratios']],
+            ratios=[RatioSupply.from_dict(ratio_d) for ratio_d in d['_ratios']],
             atts=d.get('atts', dict())
         )
 
@@ -171,13 +170,14 @@ class MarketSupplyTable:
                 want_per_have / min(current_ratios),
                 want_per_have / max(current_ratios)
             )
-            if portion_from_range < 0.5 or portion_from_range > 1.5:
+            if portion_from_range < 0.2 or portion_from_range > 5.0:
                 print(f"\n\nFound significant difference in ratios:"
                       f"\n\tPassed ratio {want_per_have}"
                       f"\n\tPrevious ratios: {current_ratios}")
                 i = input("Select an option:"
                       "\n\t1: Change the passed ratio"
-                      "\n\t2: Change the previous ratios")
+                      "\n\t2: Change the previous ratios"
+                      "\n\t3: No changes")
                 i = int(i.replace(' ', ''))
                 if i == 1:
                     want_per_have = float(input("Enter the new ratio here:"))
@@ -186,6 +186,8 @@ class MarketSupplyTable:
                         new_ratio = input(f"Enter new ratio to replace {ratio_obj.want_per_have}:")
                         new_ratio = float(new_ratio)
                         ratio_obj.want_per_have = new_ratio
+                elif i == 3:
+                    pass
                 else:
                     raise ValueError("Invalid option")
 
