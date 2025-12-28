@@ -360,10 +360,9 @@ class CurrencyArbitrager:
                  gold_cost_manager: GoldCostManager):
         self._market_data_manager = market_data_manager
 
-        self._data_m = _CurrencyPairsDataManager(currency_pairs=self._market_data_manager.currency_pair_objs)
         self._data_tracker = _ArbitrageDataTracker()
         self._cycle_analyzer = _CycleAnalyzer(
-            currency_converter=_CurrencyConverter(currency_pairs_data_manager=self._data_m),
+            currency_converter=_CurrencyConverter(currency_pair_objects=self._market_data_manager.currency_pair_objs),
             data_tracker=self._data_tracker,
             gold_cost_manager=gold_cost_manager
         )
