@@ -124,10 +124,7 @@ class CurrencyPairMarketData:
 
     @property
     def sorted_ratios(self) -> list[RatioSupply]:
-        if 'sorted_ratios' not in self.atts:
-            self.atts['sorted_ratios'] = sorted(list(self._ratios), key=lambda r: r.want_per_have, reverse=True)
-
-        return self.atts['sorted_ratios']
+        return sorted(list(self._ratios), key=lambda r: [r.want_per_have, r.want_supply], reverse=True)
 
     def add_ratios(self, ratio_supplies: list[RatioSupply]):
         for ratio_supply in ratio_supplies:

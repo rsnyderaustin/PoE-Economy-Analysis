@@ -15,12 +15,24 @@ from currency_analysis.market_data_capture import MarketDataManager
 from currency_analysis.data_management import GoldCostManager
 
 
-class _CurrencyPairsDataManager:
+class _ConversionResult:
 
-    def __init__(self, currency_pairs: list[CurrencyPairMarketData]):
-        self._currency_pairs = currency_pairs
+    def __init__(self,
+                 start_currency: Currency,
+                 end_currency: Currency,
+                 start_supply: float,
+                 end_supply: float,
+                 average_ratio_used: str):
+        self.start_currency = start_currency
+        self.end_currency = end_currency
+        self.start_supply = start_supply
+        self.end_supply = end_supply
+        self.average_ratio_used = average_ratio_used
 
-        self._indexed_dfs = self._build_indexed_dfs(currency_pairs)
+class _CurrencyConverter:
+
+    def __init__(self, currency_pair_objects: list[CurrencyPairMarketData]):
+        self._dfs = self._build_indexed_dfs(currency_pairs=currency_pair_objects)
 
     def _build_indexed_dfs(self, currency_pairs: list[CurrencyPairMarketData]) -> dict:
         indexed_pair_dfs = dict()
@@ -63,34 +75,6 @@ class _CurrencyPairsDataManager:
 
         return indexed_pair_dfs
 
-    def fetch_dataframe(self, have_currency: Currency, want_currency: Currency) -> pd.DataFrame:
-        k = have_currency, want_currency
-        if k not in self._indexed_dfs:
-            raise ValueError(f"Could not find {have_currency.value} -> {want_currency.value} dataframe in "
-                             f"_CurrencyPairDataManager")
-
-        return self._indexed_dfs[k]
-
-
-class _ConversionResult:
-
-    def __init__(self,
-                 start_currency: Currency,
-                 end_currency: Currency,
-                 start_supply: float,
-                 end_supply: float,
-                 average_ratio_used: str):
-        self.start_currency = start_currency
-        self.end_currency = end_currency
-        self.start_supply = start_supply
-        self.end_supply = end_supply
-        self.average_ratio_used = average_ratio_used
-
-class _CurrencyConverter:
-
-    def __init__(self, currency_pairs_data_manager: _CurrencyPairsDataManager):
-        self._data_m = currency_pairs_data_manager
-
     def _convert_want_per_have_to_str(self, want_per_have: float) -> str:
         base = 1
         if want_per_have == 1:
@@ -113,8 +97,7 @@ class _CurrencyConverter:
         neg = have_amount < 0
         have_amount = -have_amount if neg else have_amount
 
-        c_df = self._data_m.fetch_dataframe(have_currency=have_currency,
-                                            want_currency=want_currency)
+        c_df = self._dfs[have_currency, want_currency]
         if c_df.empty:
             raise RuntimeError(f"Found no conversion data for {have_currency} -> {want_currency}")
 
@@ -143,7 +126,7 @@ class _CurrencyConverter:
 
 
 class _Cycle:
-    def __init__(self, nodes, graph):
+    def __init__(self, nodes: list, graph: nx.DiGraph):
         self.nodes = nodes
 
         self.currency_pair_objects = [
@@ -151,10 +134,22 @@ class _Cycle:
             for u, v in zip(nodes, nodes[1:] + [nodes[0]])
         ]
 
-        self.start_currency = self.currency_pair_objects[0].have_currency
-        self.end_currency = self.currency_pair_objects[-1].want_currency
+        self.endpoint_currency = self.currency_pair_objects[0].have_currency
 
-        self._starting_amounts = None
+    @property
+    def currencies_order(self) -> list[str]:
+        cycle_currencies_order = [
+            currency
+            for pair_obj in self.cycle.currency_pair_objects
+            for currency in [pair_obj.have_currency, pair_obj.want_currency]
+        ]
+        return cycle_currencies_order
+
+    def __key(self):
+        return set(self.currencies_order)
+
+    def __hash__(self):
+        return hash(self.__key())
 
     @property
     def test_principals(self) -> list:
@@ -181,6 +176,45 @@ class _CycleIteration:
 
         self.cycle = cycle
         self.principal = principal
+
+    def __key(self):
+        return tuple(self.cycle.currencies_order), self.principal
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other):
+        if not isinstance(other, _CycleIteration):
+            return NotImplemented
+
+        return self.__key() == other.__key()
+
+
+class _CycleIterationResult:
+
+    def __init__(self,
+                 cycle_iteration: _CycleIteration,
+                 divs_profit: float,
+                 total_gold_cost: float):
+        self.cycle_iteration = cycle_iteration
+        self.divs_profit = divs_profit
+        self.total_gold_cost = total_gold_cost
+
+    def __key(self):
+        return self.cycle_iteration.cycle.currencies_order, self.total_gold_cost, self.divs_profit
+
+    def __eq__(self, other):
+        if not isinstance(other, _CycleIterationResult):
+            return NotImplemented
+
+        return self.__key() == other.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    @property
+    def gold_per_div_profit(self) -> float:
+        return self.total_gold_cost / self.divs_profit
 
 
 class _ArbitrageDataTracker:
@@ -225,14 +259,11 @@ class _ArbitrageDataTracker:
         self._steps_data['average_ratio'].append(avg_ratio_used)
 
     def add_profit(self,
-                   cycle_iteration: _CycleIteration,
-                   divs_profit: float,
-                   div_conversion_ratio_used: str,
-                   total_gold_cost: int):
-        self._profit_data['cycle_iteration_id'].append(cycle_iteration.id_)
-        self._profit_data['divs_profit'].append(divs_profit)
-        self._profit_data['total_gold_cost'].append(total_gold_cost)
-        self._profit_data['gold_per_div_profit'].append(total_gold_cost / divs_profit)
+                   cycle_iteration_result: _CycleIterationResult):
+        self._profit_data['cycle_iteration_id'].append(cycle_iteration_result.cycle_iteration.id_)
+        self._profit_data['divs_profit'].append(cycle_iteration_result.divs_profit)
+        self._profit_data['total_gold_cost'].append(cycle_iteration_result.total_gold_cost)
+        self._profit_data['gold_per_div_profit'].append(cycle_iteration_result.gold_per_div_profit)
         self._profit_data['end_currency_to_div_conversion_ratio'].append(div_conversion_ratio_used)
 
     def to_dataframe(self) -> pd.DataFrame:
@@ -250,7 +281,6 @@ class _ArbitrageDataTracker:
         return df
 
 
-# Not used for now
 class _CycleAnalyzer:
 
     def __init__(self,
@@ -372,8 +402,8 @@ class CurrencyArbitrager:
         self._verify_currency_pairs()
 
         G = self._create_graph()
-        cycle_objs = [_Cycle(simple_cycle, graph=G) for simple_cycle in nx.simple_cycles(G=G, length_bound=3)]
-        cycle_objs = [c for c in cycle_objs if c.start_currency in {Currency.CHAOS_ORB, Currency.DIVINE_ORB}]
+        cycle_objs = [_Cycle(simple_cycle, graph=G) for simple_cycle in nx.simple_cycles(G=G)]
+        # cycle_objs = [c for c in cycle_objs if c.endpoint_currency in {Currency.CHAOS_ORB, Currency.DIVINE_ORB}]
         for i, cycle in enumerate(cycle_objs):
             logger.info(f"Analyzing cycle {i} of {len(cycle_objs)} ({i / len(cycle_objs)})")
             self._cycle_analyzer.analyze_and_record_cycle_profit(cycle)

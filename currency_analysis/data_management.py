@@ -9,7 +9,18 @@ class MarketDataManager:
 
     def __init__(self,
                  currency_pairs: list[CurrencyPairMarketData] = None):
-        self._pair_objs = {(p.have_currency, p.want_currency): p for p in currency_pairs} if currency_pairs else dict()
+        self._pair_objs = self._create_pair_objects_dict(currency_pairs) if currency_pairs else dict()
+
+    def _create_pair_objects_dict(self, pair_objects: list[CurrencyPairMarketData]) -> dict:
+        d = dict()
+        for po in pair_objects:
+            k = po.have_currency, po.want_currency
+            if k in d:
+                raise ValueError(f"Duplicate entry for MarketDataManager CurrencyPairMarketData dictionary."
+                                 f"\n\tHave: {po.have_currency}"
+                                 f"\n\tWant: {po.want_currency}")
+            d[k] = po
+        return d
 
     @property
     def currency_pairs(self) -> list[CurrencyPair]:
