@@ -4,6 +4,7 @@ import uuid
 from abc import ABC
 from typing import Iterable
 
+from currency_analysis import utils
 from currency_analysis.data_objects import Currency
 
 logger = logging.getLogger(__name__)
@@ -96,7 +97,7 @@ class CaptureTableBounds:
         row_slices = [(row_boundaries[i], row_boundaries[i + 1])
                       for i in range(num_rows)]
 
-        col_slice = int((x_max - x_min) / 2)
+        col_slice = int((x_max + x_min) / 2)
         ratio_bounds = [
             CaptureBounds(x_min=x_min,
                           y_min=row_slice[0],
@@ -160,7 +161,8 @@ class _ScreenBoundsCapturer:
                 return bounds
 
             img_array = _ScreenShotCapturer.capture(bounds=bounds)
-            Cv2Visualizer.show(img_array=img_array)
+            Cv2Visualizer.show(img_array=img_array,
+                               continue_program=False)
 
 
 class _KeyPressCapturer:
@@ -371,7 +373,8 @@ class UiBoundsCreator:
                     color='blue',
                     inplace=True
                 )
-            Cv2Visualizer.show(img_array)
+            Cv2Visualizer.show(img_array,
+                               continue_program=True)
 
         return bounds_manager
 
@@ -457,10 +460,10 @@ class ScreenShotsCoordinator:
                                              have_currency=have_currency,
                                              date_taken=datetime.datetime.now())
 
-            print(f"Press a key:\n\t't': Capture screen shots\n\t1: Available trades do not exist"
-                  f"\n\t2: Competing trades do not exist\n\tBackspace: Quit capturing")
-            key = _KeyPressCapturer(acceptable_keys={'t', '1', '2', keyboard.Key.backspace}).capture()
-
+            key = utils.capture_user_input(
+                "Press a key:\n\t't': Capture screen shots\n\t1: Available trades do not exist"
+                "\n\t2: Competing trades do not exist\n\tBackspace: Quit capturing"
+            )
             match key:
                 case 't':
                     should_capture = True
@@ -508,6 +511,7 @@ class ScreenShotsCoordinator:
 
             if show:
                 for img in market_images.all_images:
-                    Cv2Visualizer.show(img_array=img.img_array)
+                    Cv2Visualizer.show(img_array=img.img_array,
+                                       continue_program=True)
 
             yield market_images

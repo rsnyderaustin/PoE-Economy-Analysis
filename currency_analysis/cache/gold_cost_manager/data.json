@@ -10,12 +10,13 @@
     "Orb of Alchemy": 15.0,
     "Orb of Alteration": 10.0,
     "Orb of Fusing": 15.0,
-    "Chromatic Orb": 0.08264462809917356,
+    "Chromatic Orb": 10.0,
     "Enkindling Orb": 35.0,
-    "Stacked Deck": 2.887500005053125e-07,
+    "Stacked Deck": 35.0,
     "Orb of Annulment": 250.0,
     "Orb of Chance": 10.0,
-    "Orb of Scouring": 15,
-    "Vaal Orb": 20
+    "Orb of Scouring": 15.0,
+    "Vaal Orb": 20.0,
+    "Vivid Crystallised Lifeforce": 0.125
   }
 }

@@ -147,7 +147,7 @@ class MarketSupplyTable:
         self.have_currency = have_currency
         self.want_currency = want_currency
 
-        self.supply_ratios = []
+        self.ratio_supplies: list[RatioSupply] = []
 
     def print(self):
         ratio_rows = {
@@ -155,7 +155,7 @@ class MarketSupplyTable:
             'want_per_have': [],
             'supply': []
         }
-        for ratio in self.supply_ratios:
+        for ratio in self.ratio_supplies:
             ratio_rows['ratio'].append(ratio.raw_ratio)
             ratio_rows['want_per_have'].append(ratio.want_per_have)
             ratio_rows['supply'].append(ratio.want_supply)
@@ -168,8 +168,8 @@ class MarketSupplyTable:
                          want_per_have: float,
                          want_supply: int,
                          check_for_ratio_imbalance: bool = True):
-        if self.supply_ratios and check_for_ratio_imbalance:
-            current_ratios = [r.want_per_have for r in self.supply_ratios]
+        if self.ratio_supplies and check_for_ratio_imbalance:
+            current_ratios = [r.want_per_have for r in self.ratio_supplies]
 
             distance_from_range = min(
                 want_per_have / max(current_ratios),
@@ -187,15 +187,15 @@ class MarketSupplyTable:
                 if i == 1:
                     want_per_have = float(input("Enter the new ratio here:"))
                 elif i == 2:
-                    for ratio_obj in self.supply_ratios:
+                    for ratio_obj in self.ratio_supplies:
                         new_ratio = input(f"Enter new ratio to replace {ratio_obj.want_per_have}:")
                         new_ratio = float(new_ratio)
                         ratio_obj.want_per_have = new_ratio
                 elif i != 3:
                     raise ValueError("Invalid option")
 
-        self.supply_ratios.append(RatioSupply(raw_ratio=raw_ratio,
-                                              have_currency=self.have_currency,
-                                              want_currency=self.want_currency,
-                                              want_per_have=want_per_have,
-                                              want_supply=want_supply))
+        self.ratio_supplies.append(RatioSupply(raw_ratio=raw_ratio,
+                                               have_currency=self.have_currency,
+                                               want_currency=self.want_currency,
+                                               want_per_have=want_per_have,
+                                               want_supply=want_supply))

@@ -165,8 +165,8 @@ def create_ui_bounds():
     creator.create_bounds(show=True)
 
 # test_fake_cycle()
-test_run()
-# test_arbitrage()
+# test_run()
+test_arbitrage()
 # test_build_supply_table()
 # create_ui_bounds()
 

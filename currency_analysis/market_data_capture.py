@@ -3,6 +3,7 @@ import logging
 from dataclasses import dataclass
 from typing import Iterable
 
+from currency_analysis import utils
 from currency_analysis.data_management import MarketDataManager, GoldCostManager, ImageCollectionsManager
 from currency_analysis.data_objects import RatioType, Currency
 
@@ -85,7 +86,8 @@ class MarketDataCaptureManager:
         return manager
 
     def _process_market_image_collections(self, market_image_collections: Iterable[MarketImageCollection]):
-        for collection in market_image_collections:
+        for i, collection in enumerate(market_image_collections):
+            logger.info(f"Processing MarketImageCollection {i} of {len(market_image_collections)}")
             available_table = ScreenShotAnalyzer.extract_supply_table(
                 ratio_img_arrays=[currency_ui_row.ratio_img.img_array
                                   for currency_ui_row in collection.available_currency_ui_rows],
@@ -125,13 +127,8 @@ class MarketDataCaptureManager:
             self._market_data_manager_cache.save(self.market_data_manager)
 
     def _capture_gold_cost(self, currency: Currency):
-        valid_gold_cost = False
-        while not valid_gold_cost:
-            try:
-                gold_cost = int(input(f"Enter gold cost per currency for {currency.value}: "))
-            except ValueError:
-                print("Please enter a valid gold cost value")
-
+        gold_cost = utils.capture_user_input(prompt=f"Enter gold cost per currency for {currency.value}: ",
+                                             convert_to=float)
         self.gold_cost_manager.add_gold_cost(currency=currency,
                                              gold_cost_per_currency=gold_cost)
 

@@ -38,7 +38,7 @@ class MarketDataManager:
         pair_obj = self._pair_objs[k]
 
         if available_trades_table:
-            pair_obj.add_ratios(available_trades_table.supply_ratios)
+            pair_obj.add_ratios(available_trades_table.ratio_supplies)
 
 
 class GoldCostManager:
@@ -57,7 +57,7 @@ class GoldCostManager:
 
     def add_gold_cost(self,
                       currency: Currency,
-                      gold_cost_per_currency: int):
+                      gold_cost_per_currency: float):
         if currency in self._gold_costs:
             logger.warning(f"{currency} already exists in self._gold_costs. Overwriting...")
 

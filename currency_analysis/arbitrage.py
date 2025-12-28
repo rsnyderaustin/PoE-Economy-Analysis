@@ -1,4 +1,7 @@
 import logging
+
+from sympy import cycle_length
+
 logger = logging.getLogger(__name__)
 
 import uuid
@@ -187,10 +190,10 @@ class _ArbitrageDataTracker:
             'cycle_iteration_id': [],
             'iteration_principal': [],
             'step_num': [],
-            'step_start_currency': [],
-            'step_end_currency': [],
-            'step_start_cost': [],
-            'step_end_supply': [],
+            'have': [],
+            'want': [],
+            'have_cost': [],
+            'want_supply': [],
             'average_ratio': []
         }
 
@@ -215,10 +218,10 @@ class _ArbitrageDataTracker:
         self._steps_data['iteration_principal'].append(iteration_starting_amount)
         self._steps_data['step_num'].append(step_num)
 
-        self._steps_data['step_start_currency'].append(starting_currency.value)
-        self._steps_data['step_end_currency'].append(ending_currency.value)
-        self._steps_data['step_start_cost'].append(starting_amount)
-        self._steps_data['step_end_supply'].append(ending_amount)
+        self._steps_data['have'].append(starting_currency.value)
+        self._steps_data['want'].append(ending_currency.value)
+        self._steps_data['have_cost'].append(starting_amount)
+        self._steps_data['want_supply'].append(ending_amount)
         self._steps_data['average_ratio'].append(avg_ratio_used)
 
     def add_profit(self,
@@ -354,6 +357,9 @@ class CurrencyArbitrager:
             if not pair_obj.sorted_ratios:
                 continue
 
+            if G.has_edge(pair_obj.have_currency, pair_obj.want_currency):
+                raise RuntimeError(f"Edge {pair_obj.have_currency} -> {pair_obj.want_currency} already exists")
+
             G.add_edge(
                 pair_obj.have_currency,
                 pair_obj.want_currency,
@@ -366,7 +372,8 @@ class CurrencyArbitrager:
         self._verify_currency_pairs()
 
         G = self._create_graph()
-        cycle_objs = [_Cycle(simple_cycle, graph=G) for simple_cycle in nx.simple_cycles(G=G, length_bound=5)]
+        cycle_objs = [_Cycle(simple_cycle, graph=G) for simple_cycle in nx.simple_cycles(G=G, length_bound=3)]
+        cycle_objs = [c for c in cycle_objs if c.start_currency in {Currency.CHAOS_ORB, Currency.DIVINE_ORB}]
         for i, cycle in enumerate(cycle_objs):
             logger.info(f"Analyzing cycle {i} of {len(cycle_objs)} ({i / len(cycle_objs)})")
             self._cycle_analyzer.analyze_and_record_cycle_profit(cycle)

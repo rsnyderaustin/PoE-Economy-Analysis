@@ -18,7 +18,7 @@ def capture_user_input(prompt: str,
     print("\n")
     done = False
     while not done:
-        i = input(prompt)
+        i = input(prompt).strip()
         if convert_to:
             try:
                 i = convert_to(i)
@@ -37,11 +37,11 @@ def capture_user_input(prompt: str,
                 print("Invalid input according to verification function")
                 continue
 
-        if valid_inputs:
-            if i in valid_inputs:
-                done = True
-            else:
-                print("Invalid input according to valid inputs")
+        if valid_inputs and i not in valid_inputs:
+            print("Invalid input according to valid inputs")
+            continue
+
+        done = True
 
     return i
 

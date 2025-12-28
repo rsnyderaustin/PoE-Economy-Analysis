@@ -15,6 +15,8 @@ class Cv2Visualizer:
              img_array: np.ndarray,
              continue_program: bool,
              name: str = "Image"):
+        cv2.namedWindow(name, cv2.WINDOW_NORMAL)
+        cv2.moveWindow(name, 100, 100)
         cv2.imshow(name, img_array)
 
         wait_key = 1 if continue_program else 0

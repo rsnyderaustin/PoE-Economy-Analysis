@@ -173,8 +173,8 @@ class ImageProcessor:
 
 
 class _MarketRow:
-    ratio: tuple[float, float] = None
-    supply: int = None
+    ratio: tuple[float, float] | None = None
+    supply: int | None = None
 
 class MarketRowProcessor:
 
@@ -182,7 +182,7 @@ class MarketRowProcessor:
     def _prompt_for_market_row(cls, row_strings: list[str]) -> _MarketRow:
         print(f"Could not determine ratio and stock given row: {row_strings}")
         ratio_str = utils.capture_user_input(prompt="Enter ratio: ",
-                                             verification_func=cls._is_valid_ratio)
+                                             verification_func=cls.is_valid_ratio)
         ratio = cls.parse_ratio(ratio_str)
         stock = utils.capture_user_input(prompt="Enter stock: ",
                                          convert_to=int)
@@ -192,71 +192,35 @@ class MarketRowProcessor:
         return market_row
 
     @classmethod
-    def _is_valid_ratio(cls, raw_ratio: str) -> bool:
+    def is_valid_ratio(cls, raw_ratio: str) -> bool:
         return ':' in raw_ratio and raw_ratio.count(":") == 1
 
     @classmethod
-    def parse_ratio(cls, raw_ratio: str) -> tuple[float, float]:
+    def parse_ratio(cls, raw_ratio: str) -> tuple[float, float] | None:
         raw_ratio = re.sub(r'[<>,]', '', raw_ratio)
         raw_ratio = re.sub(r':+', ':', raw_ratio)
 
         groups = re.findall(r"([^:]+)", raw_ratio)
-        return float(groups[0]), float(groups[1])
 
-    @classmethod
-    def create_market_row_from_row_strings(cls, row_strings: list[str]) -> _MarketRow | None:
-        if len(row_strings) == 0:
-            return _MarketRow()
+        if len(groups) != 2:
+            return None
 
-        if len(row_strings) >= 2 and ':' in row_strings[1]:
-            row_strings[0] = ''.join([row_strings[0], row_strings[1]])
-            row_strings.pop(1)
+        want, have = float(groups[0]), float(groups[1])
 
-        if len(row_strings) == 1:
-            first_s = row_strings[0]
+        if want != 1.0 and have != 1.0:
+            return None
 
-            utils.flush_stdin()
-            if ':' in first_s:
-                stock = utils.capture_user_input(prompt=f"Could not determine stock for ratio {first_s}. Enter here: ",
-                                                 convert_to=int)
-                row_strings.append(stock)
-            else:
-                market_row = cls._prompt_for_market_row(row_strings=row_strings)
-
-        try:
-            stock = int(row_strings[-1].replace(',', ''))
-        except ValueError:
-            ratio_str, stock_str = cls._prompt_for_market_row(row_strings=row_strings)
-            row_strings = [ratio_str, stock_str]
-
-        if len(row_strings) == 3:
-            raw_ratio = f"{row_strings[0]}:{row_strings[1]}"
-        else:
-            raw_ratio = "".join(row_strings[:-1])
-
-        if not bool(raw_ratio.strip()):
-            continue
-
-        is_valid_ratio = cls._is_valid_ratio(raw_ratio)
-        while not is_valid_ratio:
-            utils.flush_stdin()
-            raw_ratio = input(f"Cannot parse raw ratio {raw_ratio}. Type the correct version here:")
-
-            is_valid_ratio = cls._is_valid_ratio(raw_ratio)
-
-        print(f"Parsing raw ratio {raw_ratio}")
-        want, have = cls._attempt_to_parse_ratio(raw_ratio)
-        print(f"\tParsed into {want}:{have}")
+        return want, have
 
 
 class ScreenShotAnalyzer:
     _SUPPLY_LINE_PATTERN = re.compile(r'^\d+:\d+(?:\.\d+)? \d+$')
 
     @classmethod
-    def correct_table(cls, table: MarketSupplyTable):
-        table_rows = len(table.supply_ratios)
+    def prompt_to_correct_table(cls, table: MarketSupplyTable):
+        num_table_rows = len(table.ratio_supplies)
 
-        initial_i = utils.capture_user_input(prompt="Corrections?\n\t1: Yes\n\t2: No",
+        initial_i = utils.capture_user_input(prompt="Corrections?\n\t1: Yes\n\t2: No\n ",
                                              valid_inputs={1, 2},
                                              convert_to=int)
         if initial_i == 2:
@@ -271,21 +235,53 @@ class ScreenShotAnalyzer:
                 return
 
             row_i = utils.capture_user_input(prompt="Enter the index of the row you'd like to correct: ",
-                                             valid_inputs=set(range(table_rows)),
+                                             valid_inputs=set(range(num_table_rows)),
                                              convert_to=int)
-            row = table_rows[row_i]
+            row_ratio_supply = table.ratio_supplies[row_i]
 
             match correction_i:
                 case 1:
-                    corrected_ratio = utils.capture_user_input(prompt="Enter the corrected ratio: ")
+                    valid_ratio = False
+                    while not valid_ratio:
+                        corrected_ratio = utils.capture_user_input(prompt="Enter the corrected ratio: ",
+                                                                   verification_func=MarketRowProcessor.is_valid_ratio)
+                        parse_result = MarketRowProcessor.parse_ratio(corrected_ratio)
+
+                        if not parse_result:
+                            continue
+
+                        want, have = parse_result
+                        row_ratio_supply.want_per_have = want / have
+                        row_ratio_supply.raw_ratio = corrected_ratio
+                        valid_ratio = True
                 case 2:
                     corrected_stock = utils.capture_user_input(prompt="Enter the corrected stock: ",
                                                                convert_to=int)
+                    row_ratio_supply.want_supply = corrected_stock
+                    continue
 
     @classmethod
-    def _extract_ratio_from_image(cls, img_array: np.ndarray, show: bool) -> tuple[float, float]:
+    def _extract_ratio_from_image(cls, img_array: np.ndarray, show: bool) -> tuple[str, float, float] | None:
         row_strings = cls._extract_row_strings(img_array=img_array,
                                                show=show)
+
+        if not row_strings:
+            return None
+
+        collapsed = ''.join(row_strings)
+        parsed_ratio = MarketRowProcessor.parse_ratio(collapsed)
+
+        if parsed_ratio:
+            want, have = parsed_ratio
+        else:
+            print(f"Unable to parse ratio from {row_strings}. Displaying...")
+            Cv2Visualizer.show(img_array=img_array,
+                               continue_program=True)
+            raw_ratio = utils.capture_user_input("Enter ratio: ",
+                                                 verification_func=MarketRowProcessor.is_valid_ratio)
+            want, have = MarketRowProcessor.parse_ratio(raw_ratio)
+
+        return collapsed, want, have
 
     @classmethod
     def _extract_stock_from_image(cls, img_array: np.ndarray, show: bool) -> int:
@@ -332,22 +328,6 @@ class ScreenShotAnalyzer:
                              have_currency: Currency,
                              want_currency: Currency,
                              show_steps: bool = False) -> MarketSupplyTable | None:
-        """
-        draw_img_array = img_array.copy()
-
-        for row_start, row_end in row_slices:
-            _Cv2Visualizer.draw_rectangle(
-                img_array=draw_img_array,
-                x=10,
-                y=row_start,
-                w=img_array.shape[1] - 20,
-                h=row_end - row_start,
-                color='red',
-                inplace=True,
-                thickness=2
-            )
-        _Cv2Visualizer.show(img_array=draw_img_array)"""
-
         if ratio_type == RatioType.AVAILABLE:
             table = MarketSupplyTable(have_currency=have_currency,
                                       want_currency=want_currency)
@@ -357,38 +337,29 @@ class ScreenShotAnalyzer:
         else:
             raise NotImplementedError
 
-        for row_array in img_arrays:
-            """for thresh in range(80, 120):
-                s = (
-                    _ImageProcessor(row_array,
-                                    logger=logger)
-                    .grayscale()
-                    .show(skip=not show_steps)
-                    .isolate_outlines()
-                    .show(skip=not show_steps)
-                    .resize(new_size=600)
-                    .show(skip=not show_steps)
-                    .to_string(allowed_chars='0123456789:,.<>')
-                )"""
-            row_strings = (
-                ImageProcessor(row_array)
-                .grayscale()
-                .isolate_outlines(white_threshold=120)
-                .resize(new_size=600)
-                .show(skip=not show_steps)
-                .to_strings(allowed_chars='0123456789:,.<>')
-            )
+        for ratio_img_array, stock_img_array in zip(ratio_img_arrays, stock_img_arrays):
+            extracted_ratio = cls._extract_ratio_from_image(ratio_img_array,
+                                                            show=show_steps)
+            if not extracted_ratio:
+                continue
+
+            raw_ratio_str, want, have = extracted_ratio
+            stock = cls._extract_stock_from_image(stock_img_array, show=show_steps)
 
             if ratio_type == RatioType.COMPETING:
                 want, have = have, want
-                raw_ratio = f"{have}:{want}"
+                raw_ratio_str = f"{have}:{want}"
 
-            table.add_ratio_supply(raw_ratio=raw_ratio,
+            print(f"Parsed {raw_ratio_str} -> {want}:{have}\tStock: {stock}")
+            table.add_ratio_supply(raw_ratio=raw_ratio_str,
                                    want_per_have=want/have,
                                    want_supply=stock)
 
         print("Extracted supply table:")
         table.print()
+
+        cls.prompt_to_correct_table(table)
+
         return table
 
     @classmethod
