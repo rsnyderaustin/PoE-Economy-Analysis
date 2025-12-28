@@ -65,6 +65,14 @@ class CaptureBounds:
 class CaptureTableBounds:
 
     def __init__(self, x_min: int, y_min: int, x_max: int, y_max: int, num_rows: int = 6):
+        self.ratio_bounds, self.stock_bounds = self._split_into_row_bounds(
+            x_min=x_min,
+            y_min=y_min,
+            x_max=x_max,
+            y_max=y_max,
+            num_rows=num_rows
+        )
+
         self.x_min = x_min
         self.y_min = y_min
         self.x_max = x_max
@@ -72,26 +80,39 @@ class CaptureTableBounds:
 
         self.num_rows = num_rows
 
-    def split_into_row_bounds(self) -> list[CaptureBounds]:
+    def _split_into_row_bounds(self,
+                               x_min: int,
+                               y_min: int,
+                               x_max: int,
+                               y_max: int,
+                               num_rows: int) -> tuple[list[CaptureBounds], list[CaptureBounds]]:
         row_boundaries = list(np.linspace(
-            self.y_min,
-            self.y_max,
-            self.num_rows + 1,
+            y_min,
+            y_max,
+            num_rows + 1,
             dtype=int
         ))
 
         row_slices = [(row_boundaries[i], row_boundaries[i + 1])
-                      for i in range(self.num_rows)]
+                      for i in range(num_rows)]
 
-        return [
-            CaptureBounds(
-                x_min=self.x_min,
-                y_min=row_slice[0],
-                x_max=self.x_max,
-                y_max=row_slice[1]
-            )
+        col_slice = int((x_max - x_min) / 2)
+        ratio_bounds = [
+            CaptureBounds(x_min=x_min,
+                          y_min=row_slice[0],
+                          x_max=col_slice,
+                          y_max=row_slice[1])
             for row_slice in row_slices
         ]
+        stock_bounds = [
+            CaptureBounds(x_min=col_slice,
+                          y_min=row_slice[0],
+                          x_max=x_max,
+                          y_max=row_slice[1])
+            for row_slice in row_slices
+        ]
+
+        return ratio_bounds, stock_bounds
 
 
 class _ScreenBoundsCapturer:
@@ -187,20 +208,23 @@ class UiImage:
         self.id_ = id_ or uuid.uuid4().hex
 
 
-class RowUiImage(UiImage):
+class UiTableRow:
 
     def __init__(self,
                  ui_element: UiElement,
-                 img_array: np.ndarray,
+                 ratio_img: UiImage,
+                 stock_img: UiImage,
                  row_idx: int,
                  id_: uuid.UUID = None):
-        super().__init__(ui_element=ui_element,
-                         img_array=img_array,
-                         id_=id_)
+        self.ui_element = ui_element
+        self.ratio_img = ratio_img
+        self.stock_img = stock_img
         self.row_idx = row_idx
+        self.id_ = id_
 
-    def to_dict(self):
-        d = super().to_dict()
+    def to_dict(self) -> dict:
+        d = self.__dict__.copy()
+        return d
 
 
 class _ScreenShotCapturer:
@@ -222,7 +246,7 @@ class _ScreenShotCapturer:
 
 class ScreenBoundsManager:
 
-    def __init__(self, capture_bounds: dict[UiElement: CaptureBounds | CaptureTableBounds] = None):
+    def __init__(self, capture_bounds: dict[UiElement, CaptureBounds | CaptureTableBounds] = None):
         self._bounds = capture_bounds or dict()
 
     @property
@@ -232,7 +256,7 @@ class ScreenBoundsManager:
         return bool(all_ui_elements - self_ui_elements)
 
     def to_dict(self) -> dict:
-        d = {'_bounds': [v.to_dict() for k, v in self._bounds.items()]}
+        d = {'_bounds': {k: v.to_dict() for k, v in self._bounds.items()}}
         return d
 
     @classmethod
@@ -240,7 +264,7 @@ class ScreenBoundsManager:
         if not d:
             return ScreenBoundsManager()
 
-        capture_bounds = [CaptureBounds.from_dict(d) for d in d['_bounds']]
+        capture_bounds = {UiElement(ui_element): CaptureBounds.from_dict(d) for ui_element, d in d['_bounds'].items()}
         return ScreenBoundsManager(capture_bounds)
 
     @property
@@ -270,7 +294,7 @@ class UiBoundsCreator:
         y_max=1439
     )
 
-    _table_ui_elements = {UiElement.AVAILABLE_TRADES, UiElement.COMPETING_TRADES}
+    _table_ui_elements = {UiElement.AVAILABLE_TRADES, UiElement.COMPETING_TRADES, UiElement.TRADES_SOLO_TABLE}
 
     @classmethod
     def _create_relative_bounds(cls) -> dict[UiElement, RelativeBounds]:
@@ -351,26 +375,36 @@ class UiBoundsCreator:
 
         return bounds_manager
 
-class MarketDataImages:
+class MarketImageCollection:
 
     def __init__(self,
                  want_currency: Currency,
                  have_currency: Currency    ,
                  date_taken: datetime.datetime,
                  id_: str = None,
-                 available_currency_images: list[RowUiImage] = None,
-                 competing_currency_images: list[RowUiImage] = None):
+                 available_currency_ui_rows: list[UiTableRow] = None,
+                 competing_currency_ui_rows: list[UiTableRow] = None):
         self.want_currency = want_currency
         self.have_currency = have_currency
         self.date_taken = date_taken
 
         self.id_ = id_ or uuid.uuid4().hex
-        self.available_currency_images = available_currency_images
-        self.competing_currency_images = competing_currency_images
+        self.available_currency_ui_rows = available_currency_ui_rows
+        self.competing_currency_ui_rows = competing_currency_ui_rows
 
     @property
-    def all_images(self) -> list:
-        return (self.available_currency_images or []) + (self.competing_currency_images or [])
+    def all_images(self) -> list[UiImage]:
+        available_images = [
+            img
+            for row in self.available_currency_ui_rows
+            for img in [row.ratio_img, row.stock_img]
+        ]
+        competing_images = [
+            img
+            for row in self.competing_currency_ui_rows
+            for img in [row.ratio_img, row.stock_img]
+        ]
+        return available_images + competing_images
 
 
 class ScreenShotsCoordinator:
@@ -384,32 +418,44 @@ class ScreenShotsCoordinator:
                  screen_bounds_manager: ScreenBoundsManager):
         self.bounds_manager = screen_bounds_manager
 
-    def _create_table_row_images(self, solo_table: bool, available_or_competing: UiElement):
+    def _create_ui_table_rows(self, solo_table: bool, available_or_competing: UiElement) -> list[UiTableRow]:
         if solo_table:
             bounds = self.bounds_manager.fetch_bounds(UiElement.TRADES_SOLO_TABLE)
         else:
             bounds = self.bounds_manager.fetch_bounds(available_or_competing)
 
-        row_bounds = bounds.split_into_row_bounds()
-        img_arrays = [_ScreenShotCapturer.capture(row_bound) for row_bound in row_bounds]
-        row_imgs = [RowUiImage(ui_element=available_or_competing,
-                               img_array=img_array,
-                               row_idx=i) for i, img_array in enumerate(img_arrays)]
+        if not isinstance(bounds, CaptureTableBounds):
+            raise TypeError(f'Expected CaptureTableBounds but received {type(bounds)}')
 
-        return row_imgs
+        table_rows = []
+        for i, (ratio_bounds, stock_bounds) in enumerate(zip(bounds.ratio_bounds, bounds.stock_bounds)):
+            ratio_img_array = _ScreenShotCapturer.capture(ratio_bounds)
+            ratio_img = UiImage(ui_element=available_or_competing,
+                                img_array=ratio_img_array)
+            stock_img_array = _ScreenShotCapturer.capture(stock_bounds)
+            stock_img = UiImage(ui_element=available_or_competing,
+                                img_array=stock_img_array)
+            table_rows.append(UiTableRow(
+                ui_element=available_or_competing,
+                ratio_img=ratio_img,
+                stock_img=stock_img,
+                row_idx=i
+            ))
+
+        return table_rows
 
 
     def _capture_market_data_images(self,
                                     have_currency: Currency,
-                                    want_currency: Currency) -> MarketDataImages | None:
+                                    want_currency: Currency) -> MarketImageCollection | None:
         should_capture = False
         available_trades_exist = True
         competing_trades_exist = True
         while not should_capture:
             if not available_trades_exist and not competing_trades_exist:
-                return MarketDataImages(want_currency=want_currency,
-                                        have_currency=have_currency,
-                                        date_taken=datetime.datetime.now())
+                return MarketImageCollection(want_currency=want_currency,
+                                             have_currency=have_currency,
+                                             date_taken=datetime.datetime.now())
 
             print(f"Press a key:\n\t't': Capture screen shots\n\t1: Available trades do not exist"
                   f"\n\t2: Competing trades do not exist\n\tBackspace: Quit capturing")
@@ -428,26 +474,26 @@ class ScreenShotsCoordinator:
         available_imgs = None
         competing_imgs = None
         if available_trades_exist and not competing_trades_exist:
-            available_imgs = self._create_table_row_images(solo_table=True,
-                                                           available_or_competing=UiElement.AVAILABLE_TRADES)
+            available_imgs = self._create_ui_table_rows(solo_table=True,
+                                                        available_or_competing=UiElement.AVAILABLE_TRADES)
         elif not available_trades_exist and competing_trades_exist:
-            competing_imgs = self._create_table_row_images(solo_table=True,
-                                                           available_or_competing=UiElement.COMPETING_TRADES)
+            competing_imgs = self._create_ui_table_rows(solo_table=True,
+                                                        available_or_competing=UiElement.COMPETING_TRADES)
         elif available_trades_exist and competing_trades_exist:
-            available_imgs = self._create_table_row_images(solo_table=False,
-                                                           available_or_competing=UiElement.AVAILABLE_TRADES)
-            competing_imgs = self._create_table_row_images(solo_table=False,
-                                                           available_or_competing=UiElement.COMPETING_TRADES)
+            available_imgs = self._create_ui_table_rows(solo_table=False,
+                                                        available_or_competing=UiElement.AVAILABLE_TRADES)
+            competing_imgs = self._create_ui_table_rows(solo_table=False,
+                                                        available_or_competing=UiElement.COMPETING_TRADES)
 
-        return MarketDataImages(have_currency=have_currency,
-                                want_currency=want_currency,
-                                date_taken=datetime.datetime.now(),
-                                available_currency_images=available_imgs,
-                                competing_currency_images=competing_imgs)
+        return MarketImageCollection(have_currency=have_currency,
+                                     want_currency=want_currency,
+                                     date_taken=datetime.datetime.now(),
+                                     available_currency_ui_rows=available_imgs,
+                                     competing_currency_ui_rows=competing_imgs)
 
     def capture_screen_shots(self,
                              currency_pairs_to_capture: set[tuple[Currency, Currency]],
-                             show: bool = False) -> Iterable[MarketDataImages]:
+                             show: bool = False) -> Iterable[MarketImageCollection]:
         ordered_pairs = sorted(list(currency_pairs_to_capture), key=lambda p: (p[1].value, p[0].value))
         for currency_pair in ordered_pairs:
             have_currency = currency_pair[0]
@@ -456,12 +502,12 @@ class ScreenShotsCoordinator:
                   f"\nHave: {have_currency.value}\n---")
             market_images = self._capture_market_data_images(have_currency=have_currency,
                                                              want_currency=want_currency)
-            if show:
-                all_imgs = market_images.available_currency_images + market_images.competing_currency_images
-                for img in all_imgs:
-                    Cv2Visualizer.show(img_array=img.img_array)
 
             if not market_images:
                 return
+
+            if show:
+                for img in market_images.all_images:
+                    Cv2Visualizer.show(img_array=img.img_array)
 
             yield market_images

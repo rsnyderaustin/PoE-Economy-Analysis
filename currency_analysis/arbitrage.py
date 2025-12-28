@@ -5,6 +5,7 @@ import uuid
 
 import networkx as nx
 import pandas as pd
+from fractions import Fraction
 
 from currency_analysis.data_objects import CurrencyPairMarketData, Currency
 from currency_analysis.market_data_capture import MarketDataManager
@@ -68,19 +69,46 @@ class _CurrencyPairsDataManager:
         return self._indexed_dfs[k]
 
 
+class _ConversionResult:
+
+    def __init__(self,
+                 start_currency: Currency,
+                 end_currency: Currency,
+                 start_supply: float,
+                 end_supply: float,
+                 average_ratio_used: str):
+        self.start_currency = start_currency
+        self.end_currency = end_currency
+        self.start_supply = start_supply
+        self.end_supply = end_supply
+        self.average_ratio_used = average_ratio_used
+
 class _CurrencyConverter:
 
     def __init__(self, currency_pairs_data_manager: _CurrencyPairsDataManager):
         self._data_m = currency_pairs_data_manager
 
+    def _convert_want_per_have_to_str(self, want_per_have: float) -> str:
+        base = 1
+        if want_per_have == 1:
+            want_ratio = base
+            have_ratio = base
+        elif want_per_have > 1:
+            want_ratio = round(want_per_have / base, 2)
+            have_ratio = base
+        else:
+            want_ratio = base
+            have_ratio = round(base / want_per_have, 2)
+
+        return f"{want_ratio}:{have_ratio}"
+
+
     def convert(self,
                 have_currency: Currency,
                 want_currency: Currency,
-                have_amount: int) -> float:
-        neg = False
-        if have_amount < 0:
-            neg = True
-            have_amount = -have_amount
+                have_amount: int) -> _ConversionResult:
+        neg = have_amount < 0
+        have_amount = -have_amount if neg else have_amount
 
         c_df = self._data_m.fetch_dataframe(have_currency=have_currency,
                                             want_currency=want_currency)
@@ -93,11 +121,22 @@ class _CurrencyConverter:
             .clip(upper=c_df["max_have"])
         )
 
+        portions = used / used.sum()
+        avg_want_per_have = (c_df['want_per_have'] * portions).sum()
+        ratio_str = self._convert_want_per_have_to_str(avg_want_per_have)
+
         want = (used * c_df["want_per_have"]).sum()
 
-        if neg:
-            want = -want
-        return want
+        want = -want if neg else want
+
+        result = _ConversionResult(
+            start_currency=have_currency,
+            end_currency=want_currency,
+            start_supply=have_amount,
+            end_supply=want,
+            average_ratio_used=ratio_str
+        )
+        return result
 
 
 class _Cycle:
@@ -149,16 +188,18 @@ class _ArbitrageDataTracker:
             'iteration_principal': [],
             'step_num': [],
             'step_start_currency': [],
-            'step_start_cost': [],
             'step_end_currency': [],
-            'step_end_supply': []
+            'step_start_cost': [],
+            'step_end_supply': [],
+            'average_ratio': []
         }
 
         self._profit_data = {
             'cycle_iteration_id': [],
             'divs_profit': [],
             'total_gold_cost': [],
-            'divs_profit_per_gold_cost': []
+            'gold_per_div_profit': [],
+            'end_currency_to_div_conversion_ratio': []
         }
 
     def add_step(self,
@@ -166,27 +207,30 @@ class _ArbitrageDataTracker:
                  step_num: int,
                  iteration_starting_amount: float,
                  starting_currency: Currency,
-                 starting_amount: float,
                  ending_currency: Currency,
+                 starting_amount: float,
                  ending_amount: float,
-                 gold_cost: float):
+                 avg_ratio_used: str):
         self._steps_data['cycle_iteration_id'].append(cycle_iteration.id_)
         self._steps_data['iteration_principal'].append(iteration_starting_amount)
         self._steps_data['step_num'].append(step_num)
 
         self._steps_data['step_start_currency'].append(starting_currency.value)
-        self._steps_data['step_start_cost'].append(starting_amount)
         self._steps_data['step_end_currency'].append(ending_currency.value)
+        self._steps_data['step_start_cost'].append(starting_amount)
         self._steps_data['step_end_supply'].append(ending_amount)
+        self._steps_data['average_ratio'].append(avg_ratio_used)
 
     def add_profit(self,
                    cycle_iteration: _CycleIteration,
                    divs_profit: float,
+                   div_conversion_ratio_used: str,
                    total_gold_cost: int):
         self._profit_data['cycle_iteration_id'].append(cycle_iteration.id_)
         self._profit_data['divs_profit'].append(divs_profit)
         self._profit_data['total_gold_cost'].append(total_gold_cost)
-        self._profit_data['divs_profit_per_gold_cost'].append(divs_profit / total_gold_cost)
+        self._profit_data['gold_per_div_profit'].append(total_gold_cost / divs_profit)
+        self._profit_data['end_currency_to_div_conversion_ratio'].append(div_conversion_ratio_used)
 
     def to_dataframe(self) -> pd.DataFrame:
         steps_df = pd.DataFrame(self._steps_data)
@@ -197,8 +241,8 @@ class _ArbitrageDataTracker:
                             left_on=['cycle_iteration_id'],
                             right_on=['cycle_iteration_id']
                             )
-        df = df.sort_values(by=['divs_profit', 'cycle_iteration_id', 'step_num'],
-                            ascending=[False, True, True])
+        df = df.sort_values(by=['gold_per_div_profit', 'cycle_iteration_id', 'step_num'],
+                            ascending=[True, True, True])
 
         return df
 
@@ -222,37 +266,42 @@ class _CycleAnalyzer:
         prev_supply = principal
         prev_currency = pair_objs[0].have_currency
         for i, pair_obj in enumerate(pair_objs):
-            conversion_amount = self._converter.convert(
+            conversion_result = self._converter.convert(
                 have_currency=pair_obj.have_currency,
                 want_currency=pair_obj.want_currency,
                 have_amount=prev_supply
             )
-            gold_cost = self._gold_cost_manager.fetch_gold_cost(pair_obj.want_currency) * conversion_amount
+            currency_gold_cost = self._gold_cost_manager.fetch_gold_cost(pair_obj.want_currency)
+            total_gold_cost = currency_gold_cost * conversion_result.end_supply
             self._data_tracker.add_step(
                 cycle_iteration=cycle_iteration,
                 step_num=i + 1,
                 iteration_starting_amount=principal,
                 starting_amount=prev_supply,
                 starting_currency=prev_currency,
-                ending_amount=conversion_amount,
+                ending_amount=conversion_result.end_supply,
                 ending_currency=pair_obj.want_currency,
-                gold_cost=gold_cost
+                avg_ratio_used=conversion_result.average_ratio_used
             )
-            cum_gold_cost += gold_cost
+            cum_gold_cost += total_gold_cost
             prev_currency = pair_obj.want_currency
-            prev_supply = conversion_amount
+            prev_supply = conversion_result.end_supply
 
         profit = prev_supply - principal
 
         end_currency = pair_objs[-1].want_currency
         if end_currency == Currency.DIVINE_ORB:
             divs_profit = profit
+            ratio_used = "1:1"
         else:
-            divs_profit = self._converter.convert(have_currency=end_currency,
-                                                  want_currency=Currency.DIVINE_ORB,
-                                                  have_amount=profit)
+            divs_profit_result = self._converter.convert(have_currency=end_currency,
+                                                         want_currency=Currency.DIVINE_ORB,
+                                                         have_amount=profit)
+            divs_profit = divs_profit_result.end_supply
+            ratio_used = divs_profit_result.average_ratio_used
         self._data_tracker.add_profit(cycle_iteration=cycle_iteration,
                                       divs_profit=divs_profit,
+                                      div_conversion_ratio_used=ratio_used,
                                       total_gold_cost=cum_gold_cost)
         return divs_profit
 

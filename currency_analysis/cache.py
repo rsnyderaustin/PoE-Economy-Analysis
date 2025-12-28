@@ -8,7 +8,7 @@ from PIL import Image
 
 from currency_analysis.data_management import MarketDataManager, GoldCostManager
 from currency_analysis.data_objects import Currency
-from currency_analysis.ui_capture import UiElement, ImageCollection, MarketDataImages, GoldCostImages
+from currency_analysis.ui_capture import UiElement, MarketImageCollection
 
 logger = logging.getLogger(__name__)
 from enum import Enum
@@ -66,18 +66,18 @@ class CacheManager:
             json.dump(data, f, indent=2)
 
 
-class ImageCollectionsManagerCache:
+class MarketDataImagesCache:
 
     def __init__(self):
         self._root = CacheManager.get_cache_dir(CacheObject.IMAGE_COLLECTIONS_MANAGER)
 
-    def save(self, image_collection: ImageCollection):
+    def save(self, image_collection: MarketImageCollection):
         raise NotImplementedError
         collection_dir = self._root / image_collection.id_
         collection_dir.mkdir(parents=True, exist_ok=True)
         
         c = image_collection
-        if isinstance(c, MarketDataImages):
+        if isinstance(c, MarketImageCollection):
             metadata = {
                 'type': 'market_data',
                 'have_currency': c.have_currency,
@@ -93,14 +93,6 @@ class ImageCollectionsManagerCache:
                     [i.to_dict() for i in c.competing_currency_images]
                     if c.competing_currency_images else []
                 )
-            }
-        elif isinstance(c, GoldCostImages):
-            metadata = {
-                'type': 'gold_costs',
-                'date_taken': c.date_taken.isoformat(),
-                'currency': c.currency.value,
-                'id_': c.id_,
-                'currency_amount_image': c.currency_amount_image
             }
         else:
             raise NotImplementedError
@@ -125,7 +117,7 @@ class ImageCollectionsManagerCache:
         CacheManager.save_json(path=collection_dir / 'metadata.json',
                                data=metadata)
 
-    def load(self, missing_ok: bool) -> list[ImageCollection]:
+    def load(self, missing_ok: bool) -> list[MarketImageCollection]:
         collections = []
         for subdir in self._root.iterdir():
             if not subdir.is_dir():

@@ -29,20 +29,12 @@ def test_build_supply_table():
 
 def test_run():
 
-    currencies = {Currency.EXALTED_ORB,
-                  Currency.DIVINE_ORB,
+    currencies = {Currency.STACKED_DECK,
                   Currency.CHAOS_ORB,
-                  Currency.STACKED_DECK,
-                  Currency.ORB_OF_ALCHEMY,
-                  Currency.ORB_OF_FUSING,
-                  Currency.VAAL_ORB,
-                  Currency.ORB_OF_SCOURING,
-                  Currency.ORB_OF_CHANCE,
-                  Currency.ANCIENT_ORB,
-                  Currency.ORB_OF_ALTERATION,
-                  Currency.ENKINDLING_ORB,
+                  Currency.DIVINE_ORB,
                   Currency.CHROMATIC_ORB,
-                  Currency.ORB_OF_ANNULMENT}
+                  Currency.VIVID_CRYSTALLISED_LIFEFORCE,
+                  Currency.ORB_OF_SCOURING}
 
     cache_settings = CacheSettings()
     cache_settings.add_settings(cache_objects=[CacheObject.GOLD_COST_MANAGER],
@@ -50,7 +42,7 @@ def test_run():
                                 save_to_cache=True,
                                 missing_ok=False)
     cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER],
-                                load_from_cache=False,
+                                load_from_cache=True,
                                 save_to_cache=True,
                                 missing_ok=True)
     cache_settings.add_settings(cache_objects=[CacheObject.IMAGE_COLLECTIONS_MANAGER],
@@ -66,6 +58,31 @@ def test_run():
     )
     arbitrage_df = arbitrager.arbitrage()
     x = 0
+
+def test_arbitrage():
+    cache_settings = CacheSettings()
+    cache_settings.add_settings(cache_objects=[CacheObject.GOLD_COST_MANAGER],
+                                load_from_cache=True,
+                                save_to_cache=False,
+                                missing_ok=False)
+    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER],
+                                load_from_cache=True,
+                                save_to_cache=False,
+                                missing_ok=True)
+    cache_settings.add_settings(cache_objects=[CacheObject.IMAGE_COLLECTIONS_MANAGER],
+                                load_from_cache=False,
+                                save_to_cache=False,
+                                missing_ok=True)
+    manager = MarketDataCaptureManager(cache_settings=cache_settings)
+
+    arbitrager = CurrencyArbitrager(
+        market_data_manager=manager.market_data_manager,
+        gold_cost_manager=manager.gold_cost_manager
+    )
+    arbitrage_df = arbitrager.arbitrage()
+    arbitrage_profit_df = arbitrage_df[arbitrage_df['divs_profit'] > 0]
+    x=0
+
 
 def _create_randomized_tables(have_currency: Currency,
                               want_currency: Currency) -> tuple[MarketSupplyTable, MarketSupplyTable]:
@@ -149,6 +166,7 @@ def create_ui_bounds():
 
 # test_fake_cycle()
 test_run()
+# test_arbitrage()
 # test_build_supply_table()
 # create_ui_bounds()
 

@@ -13,9 +13,12 @@ class Cv2Visualizer:
     @classmethod
     def show(cls,
              img_array: np.ndarray,
+             continue_program: bool,
              name: str = "Image"):
         cv2.imshow(name, img_array)
-        cv2.waitKey(0)
+
+        wait_key = 1 if continue_program else 0
+        cv2.waitKey(wait_key)
 
     @classmethod
     def draw_rectangle(cls,

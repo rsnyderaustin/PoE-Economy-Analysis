@@ -171,11 +171,11 @@ class MarketSupplyTable:
         if self.supply_ratios and check_for_ratio_imbalance:
             current_ratios = [r.want_per_have for r in self.supply_ratios]
 
-            portion_from_range = min(
-                want_per_have / min(current_ratios),
-                want_per_have / max(current_ratios)
+            distance_from_range = min(
+                want_per_have / max(current_ratios),
+                min(current_ratios) / want_per_have
             )
-            if portion_from_range < 0.2 or portion_from_range > 5.0:
+            if distance_from_range > 5.0:
                 print(f"\n\nFound significant difference in ratios:"
                       f"\n\tPassed ratio {want_per_have}"
                       f"\n\tPrevious ratios: {current_ratios}")
@@ -191,9 +191,7 @@ class MarketSupplyTable:
                         new_ratio = input(f"Enter new ratio to replace {ratio_obj.want_per_have}:")
                         new_ratio = float(new_ratio)
                         ratio_obj.want_per_have = new_ratio
-                elif i == 3:
-                    pass
-                else:
+                elif i != 3:
                     raise ValueError("Invalid option")
 
         self.supply_ratios.append(RatioSupply(raw_ratio=raw_ratio,
