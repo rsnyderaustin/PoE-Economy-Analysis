@@ -163,30 +163,6 @@ def create_ui_bounds():
     creator = UiBoundsCreator()
     creator.create_bounds(show=True)
 
-def _same_graph(G1, G2):
-    if set(G1.nodes) != set(G2.nodes):
-        return False
-
-    if set(G1.edges) != set(G2.edges):
-        return False
-
-    for u, v in G1.edges:
-        if G1[u][v] != G2[u][v]:
-            return False
-
-    return True
-
-def _arbitrage_df_to_tuples(arbitrage_df):
-    rows = set(arbitrage_df[[
-        'iteration_principal',
-        'step_num',
-        'have',
-        'want',
-        'have_cost',
-        'want_supply'
-    ]].itertuples(index=False, name=None))
-    return rows
-
 def _determine_best_cycles(df, k: int):
     top_ids = (
         df['cycle_iteration_id']
@@ -198,65 +174,7 @@ def _determine_best_cycles(df, k: int):
 
     return top_cycles
 
-def _cache_tuples(tuples: set[tuple]):
-    with open('data.pkl', 'wb') as f:
-        pickle.dump(tuples, f)
 
-def _load_cached_tuples() -> set[tuple]:
-    with open('data.pkl', 'rb') as f:
-        loaded_list = pickle.load(f)
-        return loaded_list
-
-
-def test_graph_creation():
-    cache_settings = CacheSettings()
-    cache_settings.add_settings(cache_objects=[CacheObject.GOLD_COST_MANAGER],
-                                load_from_cache=True,
-                                save_to_cache=False,
-                                missing_ok=False)
-    cache_settings.add_settings(cache_objects=[CacheObject.MARKET_DATA_MANAGER],
-                                load_from_cache=True,
-                                save_to_cache=False,
-                                missing_ok=True)
-    cache_settings.add_settings(cache_objects=[CacheObject.IMAGE_COLLECTIONS_MANAGER],
-                                load_from_cache=False,
-                                save_to_cache=False,
-                                missing_ok=True)
-    manager = MarketDataCaptureManager(cache_settings=cache_settings)
-
-    arbitrager1 = CurrencyArbitrager(
-        market_data_manager=manager.market_data_manager,
-        gold_cost_manager=manager.gold_cost_manager
-    )
-    arbitrager2 = CurrencyArbitrager(
-        market_data_manager=manager.market_data_manager,
-        gold_cost_manager=manager.gold_cost_manager
-    )
-    g1 = arbitrager1._create_graph()
-    g2 = arbitrager2._create_graph()
-    same = _same_graph(g1, g2)
-
-    arbitrage_df1 = arbitrager1.arbitrage()
-    arbitrage_df2 = arbitrager2.arbitrage()
-
-    tuples1 = _arbitrage_df_to_tuples(arbitrage_df1)
-    _cache_tuples(tuples1)
-    tuples2 = _arbitrage_df_to_tuples(arbitrage_df2)
-    missing_tuples = tuples1 - tuples2
-
-    arbitrage_profit_df1 = arbitrage_df1[arbitrage_df1['divs_profit'] > 0]
-    arbitrage_profit_df2 = arbitrage_df2[arbitrage_df2['divs_profit'] > 0]
-
-    top_ids1 = (
-        arbitrage_profit_df1['cycle_iteration_id']
-        .drop_duplicates()
-        .head(3)
-    )
-
-    best_cycles1 = _determine_best_cycles(df=arbitrage_profit_df1, k=3)
-    best_cycles2 = _determine_best_cycles(df=arbitrage_profit_df2, k=3)
-
-    x=0
 
 # test_fake_cycle()
 # test_run()
