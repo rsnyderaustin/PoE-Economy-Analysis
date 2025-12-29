@@ -1,8 +1,10 @@
 
 import logging
-logger = logging.getLogger(__name__)
 
 from currency_analysis.data_objects import CurrencyPairMarketData, MarketSupplyTable, Currency, CurrencyPair
+
+
+logger = logging.getLogger(__name__)
 
 
 class MarketDataManager:

@@ -5,7 +5,7 @@ import pickle
 
 import cv2
 
-from currency_analysis.arbitrage import CurrencyArbitrager
+from currency_analysis.arbitrage import CurrencyArbitrager, _CycleIteration
 from currency_analysis.cache import CacheSettings, CacheObject
 from currency_analysis.data_management import GoldCostManager
 from currency_analysis.data_objects import RatioType, MarketSupplyTable, Currency
@@ -33,9 +33,7 @@ def test_run():
     currencies = {Currency.STACKED_DECK,
                   Currency.CHAOS_ORB,
                   Currency.DIVINE_ORB,
-                  Currency.CHROMATIC_ORB,
-                  Currency.VIVID_CRYSTALLISED_LIFEFORCE,
-                  Currency.ORB_OF_SCOURING}
+                  Currency.VIVID_CRYSTALLISED_LIFEFORCE}
 
     cache_settings = CacheSettings()
     cache_settings.add_settings(cache_objects=[CacheObject.GOLD_COST_MANAGER],
@@ -57,7 +55,6 @@ def test_run():
         market_data_manager=manager.market_data_manager,
         gold_cost_manager=manager.gold_cost_manager
     )
-    arbitrage_df = arbitrager.arbitrage()
     x = 0
 
 def test_arbitrage():
@@ -80,10 +77,11 @@ def test_arbitrage():
         market_data_manager=manager.market_data_manager,
         gold_cost_manager=manager.gold_cost_manager
     )
-    arbitrage_df = arbitrager.arbitrage()
-    arbitrage_profit_df = arbitrage_df[arbitrage_df['divs_profit'] > 0]
-    x=0
+    arbitrage_iterations = arbitrager.arbitrage(valid_cycle_start_currencies={Currency.CHAOS_ORB, Currency.DIVINE_ORB})
 
+    filtered_iterations = [i for i in arbitrage_iterations if i.result.divs_profit > 0]
+    sorted_iterations = sorted(filtered_iterations, key=lambda i: i.result.gold_per_div_profit)
+    x = 0
 
 def _create_randomized_tables(have_currency: Currency,
                               want_currency: Currency) -> tuple[MarketSupplyTable, MarketSupplyTable]:

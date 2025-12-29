@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Any
 
 
@@ -14,7 +15,7 @@ def flush_stdin():
 def capture_user_input(prompt: str,
                        valid_inputs: set[Any] = None,
                        convert_to: type = None,
-                       verification_func = None) -> Any:
+                       verification_func=None) -> Any:
     print("\n")
     done = False
     while not done:
@@ -45,3 +46,20 @@ def capture_user_input(prompt: str,
 
     return i
 
+
+def serialize(value):
+    if isinstance(value, Enum):
+        return value.value
+    elif hasattr(value, "to_dict") and callable(value.to_dict):
+        return value.to_dict()
+    elif isinstance(value, dict):
+        return {k: serialize(v) for k, v in value.items()}
+    elif isinstance(value, (list, tuple, set)):
+        return [serialize(v) for v in value]
+    else:
+        return value
+
+
+def standard_to_dict(thing):
+    d = thing.__dict__.copy()
+    return {k: serialize(v) for k, v in d.items()}

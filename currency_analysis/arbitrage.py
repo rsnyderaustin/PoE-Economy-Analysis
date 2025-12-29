@@ -1,6 +1,9 @@
 import logging
+from enum import Enum
 
 from sympy import cycle_length
+
+from currency_analysis import utils
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +32,7 @@ class _ConversionResult:
         self.end_supply = end_supply
         self.average_ratio_used = average_ratio_used
 
+
 class _CurrencyConverter:
 
     def __init__(self, currency_pair_objects: list[CurrencyPairMarketData]):
@@ -37,6 +41,9 @@ class _CurrencyConverter:
     def _build_indexed_dfs(self, currency_pairs: list[CurrencyPairMarketData]) -> dict:
         indexed_pair_dfs = dict()
         for currency_pair in currency_pairs:
+            if not currency_pair.sorted_ratios:
+                continue
+
             rows = {
                 'have_currency': [],
                 'want_currency': [],
@@ -47,28 +54,28 @@ class _CurrencyConverter:
                 'max_want': []
             }
 
-            tier = 0
             cum_have = 0
-            for i, ratio_obj in enumerate(currency_pair.sorted_ratios):
+            for tier, ratio_obj in enumerate(currency_pair.sorted_ratios):
                 rows['have_currency'].append(currency_pair.have_currency)
                 rows['want_currency'].append(currency_pair.want_currency)
                 rows['tier'].append(tier)
                 rows['want_per_have'].append(ratio_obj.want_per_have)
-
-                # For the worst posted ratio, we just assume an infinite supply
-                if i == len(currency_pair.sorted_ratios) - 1:
-                    max_have = 999e3
-                    max_want = 999e3
-                else:
-                    max_have = (1 / ratio_obj.want_per_have) * ratio_obj.want_supply
-                    max_want = ratio_obj.want_supply
-
+                max_have = (1 / ratio_obj.want_per_have) * ratio_obj.want_supply
                 rows['max_have'].append(max_have)
-                rows['max_want'].append(max_want)
+                rows['max_want'].append(ratio_obj.want_supply)
                 rows['prev_cum_have'].append(cum_have)
 
                 cum_have += max_have
-                tier += 1
+
+            # We add a final ratio that represents the non-analyzed ratios and supplies
+            rows['have_currency'].append(currency_pair.have_currency)
+            rows['want_currency'].append(currency_pair.want_currency)
+            rows['tier'].append(len(currency_pair.sorted_ratios))
+            want_per_have = currency_pair.sorted_ratios[-1].want_per_have * 0.99
+            rows['want_per_have'].append(want_per_have)
+            rows['max_have'].append(99e5)
+            rows['max_want'].append(99e5)
+            rows['prev_cum_have'].append(cum_have)
 
             k = currency_pair.have_currency, currency_pair.want_currency
             indexed_pair_dfs[k] = pd.DataFrame(rows)
@@ -147,6 +154,16 @@ class _CycleIterationStep:
         self.gold_cost = gold_cost
         self.average_ratio_used = average_ratio_used
 
+    def to_dict(self) -> dict:
+        return utils.standard_to_dict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "_CycleIterationStep":
+        d['have_currency'] = Currency(d['have_currency'])
+        d['want_currency'] = Currency(d['want_currency'])
+        d['average_ratio_used'] = ExchangeRatio.from_dict(d['average_ratio_used'])
+        return _CycleIterationStep(**d)
+
 
 class _CycleIterationResult:
 
@@ -158,6 +175,14 @@ class _CycleIterationResult:
         self.total_gold_cost = total_gold_cost
         self.to_div_ratio = to_div_ratio
 
+    def to_dict(self) -> dict:
+        return utils.standard_to_dict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "_CycleIterationResult":
+        d['to_div_ratio'] = ExchangeRatio.from_dict(d['to_div_ratio'])
+        return _CycleIterationResult(**d)
+
     @property
     def gold_per_div_profit(self) -> float:
         return self.total_gold_cost / self.divs_profit
@@ -167,17 +192,51 @@ class _CycleIteration:
 
     def __init__(self,
                  principal: int | float,
-                 currencies_order: list[Currency]):
+                 currencies_order: list[Currency],
+                 steps: list[_CycleIterationStep] | None = None,
+                 result: _ConversionResult | None = None):
         self.principal = principal
         self.currencies_order = currencies_order
 
-        self.steps: list[_CycleIterationStep] = []
+        self.steps: list[_CycleIterationStep] = steps or []
 
-        self.result: _CycleIterationResult | None = None
+        self.result: _CycleIterationResult | None = result or None
+
+    def __key(self):
+        return tuple(self.currencies_order), round(float(self.principal), 2)
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other):
+        if not isinstance(other, _CycleIteration):
+            return NotImplemented
+
+        return self.__key() == other.__key()
+
+    def to_dict(self) -> dict:
+        return utils.standard_to_dict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "_CycleIteration":
+        d['steps'] = [_CycleIterationStep.from_dict(step_d) for step_d in d['steps']]
+        d['result'] = _CycleIterationResult.from_dict(d['result']) if d['result'] else None
+
+        return _CycleIteration(**d)
 
     @property
     def total_gold_cost(self) -> float:
         return sum(step.gold_cost for step in self.steps)
+
+    def __str__(self) -> str:
+        strings = []
+        for i, step in enumerate(self.steps):
+            strings.append(f"\nStep {i}:"
+                           f"\n\tCurrencies: {round(step.have_cost, 2)} {step.have_currency.value} "
+                           f"-> {round(step.want_supply, 2)} {step.want_currency.value}"
+                           f"\n\tWant:Have ratio: {step.average_ratio_used.raw_ratio}")
+
+        return ''.join(strings)
 
 
 class _Cycle:
@@ -214,7 +273,7 @@ class _CyclesIterationsFactory:
     def create_cycle_iterations(cls, cycle: _Cycle) -> list[_CycleIteration]:
         first_currency_pair_obj = cycle.currency_pair_objects[0]
         buyout_cost = first_currency_pair_obj.determine_total_buyout_cost()
-        principals = [buyout_cost * portion for portion in [0.05, 0.1, 0.25, 0.5, 0.75, 1.25]]
+        principals = [int(buyout_cost * portion) for portion in [0.05, 0.1, 0.25, 0.5, 0.75, 1.25]]
         principals = [p for p in principals if p > 1]
         return [_CycleIteration(principal=principal,
                                 currencies_order=cycle.currencies_order) for principal in principals]
@@ -341,6 +400,10 @@ class _CycleIterationStepper:
         return divs_profit
 
 
+def _create_cycle_rotations(cycle: list) -> list:
+    return [cycle[i:] + cycle[:i] for i in range(len(cycle))]
+
+
 class CurrencyArbitrager:
 
     def __init__(self,
@@ -364,7 +427,6 @@ class CurrencyArbitrager:
         if missing_currencies:
             raise RuntimeError(f"Missing 'currency' -> 'divine orb' for: {missing_currencies}")
 
-
     def _create_graph(self) -> nx.DiGraph:
         G = nx.DiGraph()
 
@@ -383,16 +445,29 @@ class CurrencyArbitrager:
 
         return G
 
-    def arbitrage(self):
+    def _print_profitable_iterations(self, iterations: list[_CycleIteration]):
+        profitable_iterations = [i for i in iterations if i.result.divs_profit > 0]
+        sorted_iterations = sorted(profitable_iterations, key=lambda i: i.result.gold_per_div_profit)
+        for i in sorted_iterations:
+            print("\n\n")
+            print(f"Gold per divines profit: {i.result.gold_per_div_profit}")
+            print(f"{str(i)}")
+
+    def arbitrage(self, valid_cycle_start_currencies: set[Currency] = None):
         self._verify_currency_pairs()
 
         G = self._create_graph()
         raw_cycles = nx.simple_cycles(G)
+        all_raw_cycles = [rotated_cycle
+                          for raw_cycle in raw_cycles
+                          for rotated_cycle in _create_cycle_rotations(raw_cycle)]
 
         logger.info(f"\nStepping through arbitrage cycles...")
         processed_cycles = []
-        for nodes in raw_cycles:
+        for nodes in all_raw_cycles:
             cycle = _Cycle(nodes, graph=G)
+            if valid_cycle_start_currencies and cycle.currency_pair_objects[0].have_currency not in valid_cycle_start_currencies:
+                continue
 
             iterations = _CyclesIterationsFactory.create_cycle_iterations(cycle=cycle)
             cycle.iterations = iterations
@@ -405,6 +480,7 @@ class CurrencyArbitrager:
         logger.info("\tFinished stepping through arbitrage cycles")
 
         all_iterations = [iteration for c in processed_cycles for iteration in c.iterations]
-        filtered_iterations = [i for i in all_iterations if i.result.divs_profit > 0]
-        sorted_iterations = sorted(filtered_iterations, key=lambda i: i.result.gold_per_div_profit)
-        x=0
+
+        self._print_profitable_iterations(all_iterations)
+
+        return all_iterations

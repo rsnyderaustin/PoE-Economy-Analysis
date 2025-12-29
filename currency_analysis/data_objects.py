@@ -1,14 +1,16 @@
 
-
 import logging
 import math
 from decimal import Decimal, ROUND_DOWN
 
-logger = logging.getLogger(__name__)
+from currency_analysis import utils
 
 import pandas as pd
 from dataclasses import dataclass
 from enum import Enum
+
+
+logger = logging.getLogger(__name__)
 
 
 class Currency(Enum):
@@ -34,10 +36,10 @@ class Currency(Enum):
     ORB_OF_ANNULMENT = 'Orb of Annulment'
 
 
-
 class RatioType(Enum):
     AVAILABLE = 'available'
     COMPETING = 'competing'
+
 
 @dataclass
 class RatioSupply:
@@ -70,10 +72,12 @@ class RatioSupply:
     def buyout_cost(self) -> float:
         return (1 / self.want_per_have) * self.want_supply
 
+
 @dataclass(frozen=True)
 class CurrencyPair:
     have_currency: Currency
     want_currency: Currency
+
 
 class CurrencyPairMarketData:
     _max_rows = 6
@@ -136,6 +140,7 @@ class CurrencyPairMarketData:
 
             self._ratios.append(ratio_supply)
 
+
 class MarketSupplyTable:
 
     def __init__(self,
@@ -160,6 +165,29 @@ class MarketSupplyTable:
         print(f"Have: {self.have_currency}\tWant: {self.want_currency}")
         print(df)
 
+    def _prompt_for_new_ratios(self) -> float | None:
+        i = utils.capture_user_input(
+            prompt=(
+                "Select an option:"
+                "\n\t1: Change the passed ratio"
+                "\n\t2: Change the previous ratios"
+                "\n\t3: No changes"
+            ),
+            convert_to=int,
+            valid_inputs={1, 2, 3}
+        )
+        match i:
+            case 1:
+                return utils.capture_user_input(prompt="Enter the new ratio here: ",
+                                                convert_to=float)
+            case 2:
+                for ratio_obj in self.ratio_supplies:
+                    new_ratio = input(f"Enter new ratio to replace {ratio_obj.want_per_have}:")
+                    new_ratio = float(new_ratio)
+                    ratio_obj.want_per_have = new_ratio
+            case 3:
+                return
+
     def add_ratio_supply(self,
                          raw_ratio: str,
                          want_per_have: float,
@@ -167,6 +195,14 @@ class MarketSupplyTable:
                          check_for_ratio_imbalance: bool = True):
         if self.ratio_supplies and check_for_ratio_imbalance:
             current_ratios = [r.want_per_have for r in self.ratio_supplies]
+
+            while want_per_have > current_ratios[-1]:
+                print(f"\n\nPassed ratio is invalid because it is better than the previous ratios"
+                      f"\n\tPassed ratio: {want_per_have}"
+                      f"\n\tPrevious ratios: {current_ratios}")
+                new_ratio = self._prompt_for_new_ratios()
+                if new_ratio:
+                    want_per_have = new_ratio
 
             distance_from_range = min(
                 want_per_have / max(current_ratios),
@@ -176,26 +212,16 @@ class MarketSupplyTable:
                 print(f"\n\nFound significant difference in ratios:"
                       f"\n\tPassed ratio {want_per_have}"
                       f"\n\tPrevious ratios: {current_ratios}")
-                i = input("Select an option:"
-                      "\n\t1: Change the passed ratio"
-                      "\n\t2: Change the previous ratios"
-                      "\n\t3: No changes")
-                i = int(i.replace(' ', ''))
-                if i == 1:
-                    want_per_have = float(input("Enter the new ratio here:"))
-                elif i == 2:
-                    for ratio_obj in self.ratio_supplies:
-                        new_ratio = input(f"Enter new ratio to replace {ratio_obj.want_per_have}:")
-                        new_ratio = float(new_ratio)
-                        ratio_obj.want_per_have = new_ratio
-                elif i != 3:
-                    raise ValueError("Invalid option")
+                new_ratio = self._prompt_for_new_ratios()
+                if new_ratio:
+                    want_per_have = new_ratio
 
         self.ratio_supplies.append(RatioSupply(raw_ratio=raw_ratio,
                                                have_currency=self.have_currency,
                                                want_currency=self.want_currency,
                                                want_per_have=want_per_have,
                                                want_supply=want_supply))
+
 
 class ExchangeRatio:
 
@@ -208,3 +234,13 @@ class ExchangeRatio:
         self.have_currency = have_currency
         self.want_currency = want_currency
         self.want_per_have = want_per_have
+
+    def to_dict(self) -> dict:
+        return utils.standard_to_dict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "ExchangeRatio":
+        d['have_currency'] = Currency(d['have_currency'])
+        d['want_currency'] = Currency(d['want_currency'])
+        return ExchangeRatio(**d)
+

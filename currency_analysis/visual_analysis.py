@@ -327,6 +327,7 @@ class ScreenShotAnalyzer:
                              ratio_type: RatioType,
                              have_currency: Currency,
                              want_currency: Currency,
+                             rows_to_extract: int = 6,
                              show_steps: bool = False) -> MarketSupplyTable | None:
         if ratio_type == RatioType.AVAILABLE:
             table = MarketSupplyTable(have_currency=have_currency,
@@ -336,6 +337,10 @@ class ScreenShotAnalyzer:
                                       want_currency=have_currency)
         else:
             raise NotImplementedError
+
+        if rows_to_extract < 6:
+            ratio_img_arrays = ratio_img_arrays[:rows_to_extract]
+            stock_img_arrays = stock_img_arrays[:rows_to_extract]
 
         for ratio_img_array, stock_img_array in zip(ratio_img_arrays, stock_img_arrays):
             extracted_ratio = cls._extract_ratio_from_image(ratio_img_array,
