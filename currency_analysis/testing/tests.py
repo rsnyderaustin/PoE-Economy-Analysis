@@ -1,6 +1,7 @@
 import logging
 import random
 from pathlib import Path
+import pickle
 
 import cv2
 
@@ -199,6 +200,15 @@ def _determine_best_cycles(df, k: int):
 
     return top_cycles
 
+def _cache_tuples(tuples: set[tuple]):
+    with open('data.pkl', 'wb') as f:
+        pickle.dump(tuples, f)
+
+def _load_cached_tuples() -> set[tuple]:
+    with open('data.pkl', 'rb') as f:
+        loaded_list = pickle.load(f)
+        return loaded_list
+
 
 def test_graph_creation():
     cache_settings = CacheSettings()
@@ -232,6 +242,7 @@ def test_graph_creation():
     arbitrage_df2 = arbitrager2.arbitrage()
 
     tuples1 = _arbitrage_df_to_tuples(arbitrage_df1)
+    _cache_tuples(tuples1)
     tuples2 = _arbitrage_df_to_tuples(arbitrage_df2)
     missing_tuples = tuples1 - tuples2
 
@@ -251,8 +262,8 @@ def test_graph_creation():
 
 # test_fake_cycle()
 # test_run()
-# test_arbitrage()
+test_arbitrage()
 # test_build_supply_table()
 # create_ui_bounds()
-test_graph_creation()
+# test_graph_creation()
 

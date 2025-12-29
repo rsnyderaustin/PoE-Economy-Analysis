@@ -196,3 +196,15 @@ class MarketSupplyTable:
                                                want_currency=self.want_currency,
                                                want_per_have=want_per_have,
                                                want_supply=want_supply))
+
+class ExchangeRatio:
+
+    def __init__(self,
+                 raw_ratio: str,
+                 have_currency: Currency,
+                 want_currency: Currency,
+                 want_per_have: float):
+        self.raw_ratio = raw_ratio
+        self.have_currency = have_currency
+        self.want_currency = want_currency
+        self.want_per_have = want_per_have

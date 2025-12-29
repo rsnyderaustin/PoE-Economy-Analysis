@@ -10,7 +10,7 @@ import networkx as nx
 import pandas as pd
 from fractions import Fraction
 
-from currency_analysis.data_objects import CurrencyPairMarketData, Currency
+from currency_analysis.data_objects import CurrencyPairMarketData, Currency, ExchangeRatio
 from currency_analysis.market_data_capture import MarketDataManager
 from currency_analysis.data_management import GoldCostManager
 
@@ -22,7 +22,7 @@ class _ConversionResult:
                  end_currency: Currency,
                  start_supply: float,
                  end_supply: float,
-                 average_ratio_used: str):
+                 average_ratio_used: ExchangeRatio):
         self.start_currency = start_currency
         self.end_currency = end_currency
         self.start_supply = start_supply
@@ -93,7 +93,7 @@ class _CurrencyConverter:
     def convert(self,
                 have_currency: Currency,
                 want_currency: Currency,
-                have_amount: int) -> _ConversionResult:
+                have_amount: float) -> _ConversionResult:
         neg = have_amount < 0
         have_amount = -have_amount if neg else have_amount
 
@@ -109,10 +109,14 @@ class _CurrencyConverter:
 
         portions = used / used.sum()
         avg_want_per_have = (c_df['want_per_have'] * portions).sum()
-        ratio_str = self._convert_want_per_have_to_str(avg_want_per_have)
+        avg_ratio_used = ExchangeRatio(
+            raw_ratio=self._convert_want_per_have_to_str(avg_want_per_have),
+            have_currency=have_currency,
+            want_currency=want_currency,
+            want_per_have=avg_want_per_have
+        )
 
         want = (used * c_df["want_per_have"]).sum()
-
         want = -want if neg else want
 
         result = _ConversionResult(
@@ -120,9 +124,60 @@ class _CurrencyConverter:
             end_currency=want_currency,
             start_supply=have_amount,
             end_supply=want,
-            average_ratio_used=ratio_str
+            average_ratio_used=avg_ratio_used
         )
         return result
+
+
+class _CycleIterationStep:
+
+    def __init__(self,
+                 step_num: int,
+                 have_currency: Currency,
+                 want_currency: Currency,
+                 have_cost: float,
+                 want_supply: float,
+                 gold_cost: float,
+                 average_ratio_used: ExchangeRatio):
+        self.step_num = step_num
+        self.have_currency = have_currency
+        self.want_currency = want_currency
+        self.have_cost = have_cost
+        self.want_supply = want_supply
+        self.gold_cost = gold_cost
+        self.average_ratio_used = average_ratio_used
+
+
+class _CycleIterationResult:
+
+    def __init__(self,
+                 divs_profit: float,
+                 total_gold_cost: float,
+                 to_div_ratio: ExchangeRatio):
+        self.divs_profit = divs_profit
+        self.total_gold_cost = total_gold_cost
+        self.to_div_ratio = to_div_ratio
+
+    @property
+    def gold_per_div_profit(self) -> float:
+        return self.total_gold_cost / self.divs_profit
+
+
+class _CycleIteration:
+
+    def __init__(self,
+                 principal: int | float,
+                 currencies_order: list[Currency]):
+        self.principal = principal
+        self.currencies_order = currencies_order
+
+        self.steps: list[_CycleIterationStep] = []
+
+        self.result: _CycleIterationResult | None = None
+
+    @property
+    def total_gold_cost(self) -> float:
+        return sum(step.gold_cost for step in self.steps)
 
 
 class _Cycle:
@@ -136,88 +191,35 @@ class _Cycle:
 
         self.endpoint_currency = self.currency_pair_objects[0].have_currency
 
+        self.iterations: list[_CycleIteration] = []
+
     @property
-    def currencies_order(self) -> list[str]:
-        cycle_currencies_order = [
-            currency
-            for pair_obj in self.cycle.currency_pair_objects
-            for currency in [pair_obj.have_currency, pair_obj.want_currency]
-        ]
-        return cycle_currencies_order
+    def currencies_order(self) -> list[Currency]:
+        currencies = [self.endpoint_currency]
+        currencies.extend(
+            [pair_obj.want_currency for pair_obj in self.currency_pair_objects]
+        )
+        return currencies
 
     def __key(self):
-        return set(self.currencies_order)
+        return tuple(self.currencies_order)
 
     def __hash__(self):
         return hash(self.__key())
 
-    @property
-    def test_principals(self) -> list:
-        first_step_buyout = self.currency_pair_objects[0].determine_total_buyout_cost()
-        return [
-            first_step_buyout * 0.05,
-            first_step_buyout * 0.1,
-            first_step_buyout * 0.25,
-            first_step_buyout * 0.5,
-            first_step_buyout * 0.75,
-            first_step_buyout,
-            first_step_buyout * 1.25
-        ]
 
-    @property
-    def feasibility_principal(self) -> float:
-        return max(1, self.currency_pair_objects[0].determine_total_buyout_cost() * 0.05)
+class _CyclesIterationsFactory:
 
+    @classmethod
+    def create_cycle_iterations(cls, cycle: _Cycle) -> list[_CycleIteration]:
+        first_currency_pair_obj = cycle.currency_pair_objects[0]
+        buyout_cost = first_currency_pair_obj.determine_total_buyout_cost()
+        principals = [buyout_cost * portion for portion in [0.05, 0.1, 0.25, 0.5, 0.75, 1.25]]
+        principals = [p for p in principals if p > 1]
+        return [_CycleIteration(principal=principal,
+                                currencies_order=cycle.currencies_order) for principal in principals]
 
-class _CycleIteration:
-
-    def __init__(self, cycle: _Cycle, principal: int | float):
-        self.id_ = uuid.uuid4()
-
-        self.cycle = cycle
-        self.principal = principal
-
-    def __key(self):
-        return tuple(self.cycle.currencies_order), self.principal
-
-    def __hash__(self):
-        return hash(self.__key())
-
-    def __eq__(self, other):
-        if not isinstance(other, _CycleIteration):
-            return NotImplemented
-
-        return self.__key() == other.__key()
-
-
-class _CycleIterationResult:
-
-    def __init__(self,
-                 cycle_iteration: _CycleIteration,
-                 divs_profit: float,
-                 total_gold_cost: float):
-        self.cycle_iteration = cycle_iteration
-        self.divs_profit = divs_profit
-        self.total_gold_cost = total_gold_cost
-
-    def __key(self):
-        return self.cycle_iteration.cycle.currencies_order, self.total_gold_cost, self.divs_profit
-
-    def __eq__(self, other):
-        if not isinstance(other, _CycleIterationResult):
-            return NotImplemented
-
-        return self.__key() == other.__key()
-
-    def __hash__(self):
-        return hash(self.__key())
-
-    @property
-    def gold_per_div_profit(self) -> float:
-        return self.total_gold_cost / self.divs_profit
-
-
-class _ArbitrageDataTracker:
+"""class _ArbitrageDataTracker:
 
     def __init__(self):
         self._steps_data = {
@@ -278,27 +280,25 @@ class _ArbitrageDataTracker:
         df = df.sort_values(by=['gold_per_div_profit', 'cycle_iteration_id', 'step_num'],
                             ascending=[True, True, True])
 
-        return df
+        return df"""
 
 
-class _CycleAnalyzer:
+class _CycleIterationStepper:
 
     def __init__(self,
                  currency_converter: _CurrencyConverter,
-                 data_tracker: _ArbitrageDataTracker,
                  gold_cost_manager: GoldCostManager):
         self._converter = currency_converter
-        self._data_tracker = data_tracker
         self._gold_cost_manager = gold_cost_manager
 
-    def _determine_and_record_profit(self,
+    def step_through_cycle_iteration(self,
                                      cycle_iteration: _CycleIteration,
-                                     principal,
-                                     pair_objs: list[CurrencyPairMarketData]):
-        cum_gold_cost = 0
-        prev_supply = principal
-        prev_currency = pair_objs[0].have_currency
-        for i, pair_obj in enumerate(pair_objs):
+                                     currency_pair_objects: list[CurrencyPairMarketData]):
+        steps = cycle_iteration.steps
+        for i, pair_obj in enumerate(currency_pair_objects):
+            prev_supply = steps[-1].want_supply if steps else cycle_iteration.principal
+            prev_currency = steps[-1].want_currency if steps else cycle_iteration.currencies_order[0]
+
             conversion_result = self._converter.convert(
                 have_currency=pair_obj.have_currency,
                 want_currency=pair_obj.want_currency,
@@ -306,51 +306,39 @@ class _CycleAnalyzer:
             )
             currency_gold_cost = self._gold_cost_manager.fetch_gold_cost(pair_obj.want_currency)
             total_gold_cost = currency_gold_cost * conversion_result.end_supply
-            self._data_tracker.add_step(
-                cycle_iteration=cycle_iteration,
+
+            new_step = _CycleIterationStep(
                 step_num=i + 1,
-                iteration_starting_amount=principal,
-                starting_amount=prev_supply,
-                starting_currency=prev_currency,
-                ending_amount=conversion_result.end_supply,
-                ending_currency=pair_obj.want_currency,
-                avg_ratio_used=conversion_result.average_ratio_used
+                have_currency=prev_currency,
+                want_currency=pair_obj.want_currency,
+                have_cost=prev_supply,
+                want_supply=conversion_result.end_supply,
+                average_ratio_used=conversion_result.average_ratio_used,
+                gold_cost=total_gold_cost
             )
-            cum_gold_cost += total_gold_cost
-            prev_currency = pair_obj.want_currency
-            prev_supply = conversion_result.end_supply
+            steps.append(new_step)
 
-        profit = prev_supply - principal
+        profit = steps[-1].want_supply - cycle_iteration.principal
+        end_currency = steps[-1].want_currency
 
-        end_currency = pair_objs[-1].want_currency
         if end_currency == Currency.DIVINE_ORB:
             divs_profit = profit
-            ratio_used = "1:1"
+            to_div_conversion_ratio = ExchangeRatio(raw_ratio="1:1",
+                                                    have_currency=Currency.DIVINE_ORB,
+                                                    want_currency=Currency.DIVINE_ORB,
+                                                    want_per_have=1)
         else:
-            divs_profit_result = self._converter.convert(have_currency=end_currency,
-                                                         want_currency=Currency.DIVINE_ORB,
-                                                         have_amount=profit)
-            divs_profit = divs_profit_result.end_supply
-            ratio_used = divs_profit_result.average_ratio_used
-        self._data_tracker.add_profit(cycle_iteration=cycle_iteration,
-                                      divs_profit=divs_profit,
-                                      div_conversion_ratio_used=ratio_used,
-                                      total_gold_cost=cum_gold_cost)
+            divs_conversion_result = self._converter.convert(have_currency=end_currency,
+                                                             want_currency=Currency.DIVINE_ORB,
+                                                             have_amount=profit)
+            divs_profit = divs_conversion_result.end_supply
+            to_div_conversion_ratio = divs_conversion_result.average_ratio_used
+
+        iteration_result = _CycleIterationResult(divs_profit=divs_profit,
+                                                 total_gold_cost=cycle_iteration.total_gold_cost,
+                                                 to_div_ratio=to_div_conversion_ratio)
+        cycle_iteration.result = iteration_result
         return divs_profit
-
-    def analyze_and_record_cycle_profit(self, cycle: _Cycle):
-        feasibility_profit = self._determine_and_record_profit(cycle_iteration=_CycleIteration(cycle=cycle,
-                                                                                               principal=cycle.feasibility_principal),
-                                                               principal=cycle.feasibility_principal,
-                                                               pair_objs=cycle.currency_pair_objects)
-        if feasibility_profit < 0:
-            return self._data_tracker
-
-        for test_cost in cycle.test_principals:
-            self._determine_and_record_profit(cycle_iteration=_CycleIteration(cycle=cycle,
-                                                                              principal=test_cost),
-                                              principal=test_cost,
-                                              pair_objs=cycle.currency_pair_objects)
 
 
 class CurrencyArbitrager:
@@ -360,10 +348,8 @@ class CurrencyArbitrager:
                  gold_cost_manager: GoldCostManager):
         self._market_data_manager = market_data_manager
 
-        self._data_tracker = _ArbitrageDataTracker()
-        self._cycle_analyzer = _CycleAnalyzer(
+        self._cycle_stepper = _CycleIterationStepper(
             currency_converter=_CurrencyConverter(currency_pair_objects=self._market_data_manager.currency_pair_objs),
-            data_tracker=self._data_tracker,
             gold_cost_manager=gold_cost_manager
         )
 
@@ -397,16 +383,28 @@ class CurrencyArbitrager:
 
         return G
 
-    def arbitrage(self) -> pd.DataFrame:
+    def arbitrage(self):
         self._verify_currency_pairs()
 
         G = self._create_graph()
-        cycle_objs = [_Cycle(simple_cycle, graph=G) for simple_cycle in nx.simple_cycles(G=G)]
-        # cycle_objs = [c for c in cycle_objs if c.endpoint_currency in {Currency.CHAOS_ORB, Currency.DIVINE_ORB}]
-        for i, cycle in enumerate(cycle_objs):
-            logger.info(f"Analyzing cycle {i} of {len(cycle_objs)} ({i / len(cycle_objs)})")
-            self._cycle_analyzer.analyze_and_record_cycle_profit(cycle)
-            
-        df = self._data_tracker.to_dataframe()
+        raw_cycles = nx.simple_cycles(G)
 
-        return df
+        logger.info(f"\nStepping through arbitrage cycles...")
+        processed_cycles = []
+        for nodes in raw_cycles:
+            cycle = _Cycle(nodes, graph=G)
+
+            iterations = _CyclesIterationsFactory.create_cycle_iterations(cycle=cycle)
+            cycle.iterations = iterations
+
+            for iteration in iterations:
+                self._cycle_stepper.step_through_cycle_iteration(cycle_iteration=iteration,
+                                                                 currency_pair_objects=cycle.currency_pair_objects)
+
+            processed_cycles.append(cycle)
+        logger.info("\tFinished stepping through arbitrage cycles")
+
+        all_iterations = [iteration for c in processed_cycles for iteration in c.iterations]
+        filtered_iterations = [i for i in all_iterations if i.result.divs_profit > 0]
+        sorted_iterations = sorted(filtered_iterations, key=lambda i: i.result.gold_per_div_profit)
+        x=0
