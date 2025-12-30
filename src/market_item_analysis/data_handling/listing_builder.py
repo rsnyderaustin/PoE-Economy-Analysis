@@ -3,18 +3,60 @@ import pprint
 import re
 from dataclasses import dataclass
 import uuid
+from datetime import datetime
 
 from src.market_item_analysis.file_management.file_managers import ItemModsFile, Poe2DbModsManagerFile
-from src.market_item_analysis.instances_and_definitions import ItemMod, SubMod, ItemSkill, ModifiableListing, generate_mod_id
+from src.market_item_analysis.instances_and_definitions import ItemMod, SubMod, ItemSkill, EquipmentListing, generate_mod_id
 from src.market_item_analysis.program_logging import LogFile, LogsHandler, log_errors
 from src.market_item_analysis.shared import shared_utils
-from src.market_item_analysis.shared.enums.item_enums import ModAffixType, AType
-from src.market_item_analysis.shared.enums.trade_enums import ModClass
+from src.market_item_analysis.shared.enums.item_enums import ModAffixType, EquipmentCategory
+from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
 from . import utils
-from .api_response_parser import ApiResponseParser
+from src.market_item_analysis.official_poe_api.api_response_parser import ApiResponseParser
 from .mod_matching import ModMatcher
+from ..instances_and_definitions.item_instances import ItemRequirements, ItemTypes, ListingMetadata, ItemMods, Price, ItemProperties
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
+
+
+class _EquipmentCategorizer:
+    _wand_btype_map = {
+        'volatile_wand': 'fire_wand',
+        'withered_wand': 'chaos_wand',
+        'bone_wand': 'physical_wand',
+        'frigid_wand': 'cold_wand',
+        'galvanic_wand': 'lightning_wand',
+    }
+
+    @classmethod
+    def categorize(cls,
+                   base_category: str,
+                   base_name: str,
+                   strength_requirement: int,
+                   intelligence_requirement: int,
+                   dexterity_requirement: int):
+        if base_name in cls._wand_btype_map:
+            return cls._wand_btype_map[base_name]
+
+        _requirements_map = [
+            ((strength_requirement, dexterity_requirement, intelligence_requirement), "(str/dex/int)"),
+            ((strength_requirement, intelligence_requirement), "(str/int)"),
+            ((strength_requirement, dexterity_requirement), "(str/dex)"),
+            ((dexterity_requirement, intelligence_requirement), "(dex/int)"),
+            ((strength_requirement,), "str"),
+            ((dexterity_requirement,), "dex"),
+            ((intelligence_requirement,), "int"),
+        ]
+
+        possible_categories = [base_category]
+
+        possible_categories.extend([f"{base_category}_{suffix}" for reqs, suffix in _requirements_map if all(reqs)])
+
+        for category in possible_categories:
+            try:
+                return EquipmentCategory(category)
+            except ValueError:
+                pass
 
 
 class ListingBuilder:
@@ -35,10 +77,10 @@ class ListingBuilder:
 
     @staticmethod
     def _build_listing_string(rp: ApiResponseParser):
-        if rp.item_properties:
+        if rp._item_properties:
             properties_ = {
                 shared_utils.extract_from_brackets(p['name']): shared_utils.extract_values_from_text(p['values'][0][0])[0]
-                for p in rp.item_properties[1:]
+                for p in rp._item_properties[1:]
             }
         else:
             properties_ = {}
@@ -51,6 +93,10 @@ class ListingBuilder:
             }.items() if v
         }
 
+        item_requirements = ItemRequirements(
+            player_level=
+        )
+
         implicits = rp.fetch_tiered_mod_strings(mod_class=ModClass.IMPLICIT,
                                                 mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.IMPLICIT])
         enchants = rp.fetch_tiered_mod_strings(mod_class=ModClass.ENCHANT,
@@ -59,28 +105,6 @@ class ListingBuilder:
                                                  mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.FRACTURED])
         explicits = rp.fetch_tiered_mod_strings(mod_class=ModClass.EXPLICIT,
                                                 mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.EXPLICIT])
-
-        s = []
-
-        s.append(f"{rp.item_name} {rp.item_btype}\n"
-                 f"{rp.item_category}\n")
-
-        if properties_:
-            s.append('\n'.join(f"{k}: {v}" for k, v in properties_.items()))
-
-        s.append(f"\nItem Level: {rp.item_ilvl}")
-
-        if rp.level_requirement:
-            s.append(f"\nRequires Level: {rp.level_requirement} ")
-        if att_requirements:
-            s.append(', '.join(f"{k}: {v}" for k, v in att_requirements.items()))
-
-        skills = _SkillsFactory.create_skills(rp)
-        if skills:
-            s.append('\n' + '\n'.join([f"Grants Skill: Level {skill.level} {skill.name}" for skill in skills]))
-
-        s.append('\n\n' + '\n'.join(implicits + enchants + fractureds + explicits))
-        s.append(f"\n\n{rp.price.amount}x {rp.price.currency.value}  IGN: {rp.account_name}")
 
         return ''.join(s)
 
@@ -92,31 +116,63 @@ class ListingBuilder:
             relevant_date=utils.league_start_date,
             later_date=rp.date_fetched
         )
-        item_mods = self._mod_resolver.resolve_mods(rp)
 
-        listing = ModifiableListing(
-            my_id=f"LST_{uuid.uuid4().hex[:10].upper()}",
-            listing_str=self._build_listing_string(rp),
-            account_name=rp.account_name,
+        item_mods_list = self._mod_resolver.resolve_mods(rp)
+        item_mods = ItemMods(
+            implicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.IMPLICIT],
+            enchants=[mod for mod in item_mods_list if mod.mod_class == ModClass.ENCHANT],
+            fractures=[mod for mod in item_mods_list if mod.mod_class == ModClass.FRACTURED],
+            explicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.EXPLICIT],
+        )
+
+        item_price = Price(
+            currency=Currency(rp.price_currency),
+            amount=rp.price_amount
+        )
+
+        metadata = ListingMetadata(
+            poster_account_name=rp.account_name,
             listing_id=rp.listing_id,
-            date_fetched=rp.date_fetched,
-            minutes_since_listed=minutes_since_listed,
-            minutes_since_league_start=minutes_since_league_start,
-            currency=rp.price.currency,
-            currency_amount=rp.price.amount,
-            item_name=rp.item_name,
-            item_btype=rp.item_btype,
-            item_atype=rp.item_atype,
-            rarity=rp.item_rarity,
-            ilvl=rp.item_ilvl,
+            date_posted=rp.date_fetched,
+            date_fetched=datetime.now()
+        )
+
+        item_requirements = ItemRequirements(
+            player_level=rp.level_requirement,
+            strength=rp.strength_requirement,
+            intelligence=rp.intelligence_requirement,
+            dexterity=rp.dexterity_requirement
+        )
+
+        item_skills = _SkillsFactory.create_skills(rp)
+
+        item_category = _EquipmentCategorizer.categorize(base_category=rp.base_category,
+                                                         base_name=rp.base_name,
+                                                         strength_requirement=rp.strength_requirement,
+                                                         dexterity_requirement=rp.dexterity_requirement,
+                                                         intelligence_requirement=rp.intelligence_requirement)
+        item_types = ItemTypes(
+            base_name=rp.base_name,
+            item_category=item_category
+        )
+
+        item_properties = ItemProperties(
+            rarity=Rarity(rp.rarity),
+            ilvl=rp.ilvl,
             identified=rp.is_identified,
             corrupted=rp.is_corrupted,
-            implicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.IMPLICIT],
-            enchant_mods=[mod for mod in item_mods if mod.mod_class == ModClass.ENCHANT],
-            fractured_mods=[mod for mod in item_mods if mod.mod_class == ModClass.FRACTURED],
-            explicit_mods=[mod for mod in item_mods if mod.mod_class == ModClass.EXPLICIT],
-            item_skills=_SkillsFactory.create_skills(rp),
-            item_properties=rp.item_properties
+            quality=rp.quality
+        )
+
+        listing = EquipmentListing(
+            internal_id=f"LST_{uuid.uuid4().hex[:10].upper()}",
+            metadata=metadata,
+            item_name=rp.item_name,
+            types=item_types,
+            requirements=item_requirements,
+            mods=item_mods,
+            price=item_price,
+            skills=item_skills
         )
 
         return listing
@@ -130,10 +186,10 @@ class _ModValueRangesParser:
         {
             X: (10, 15),
             X: (20, 25)
-        }
-        ---->
+        } ---->
         {
             X: [(10, 15), (20, 25)]
+        }
         """
         mod_ids = {magnitude['hash'] for magnitude in mod_magnitudes}
 
@@ -190,7 +246,7 @@ class _PoE2DbInjector:
 
 @dataclass
 class _ModMeta:
-    mod_atype: AType
+    mod_atype: EquipmentCategory
     mod_class: ModClass
     sub_mod_hashes: set
     affix_type: ModAffixType | None
@@ -261,7 +317,7 @@ class _ModFactory:
     @classmethod
     def create_mod_meta(cls,
                         mod_class: ModClass,
-                        mod_atype: AType,
+                        mod_atype: EquipmentCategory,
                         mod_data: dict) -> _ModMeta:
         sub_mod_hashes = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
         affix_type = cls._determine_mod_affix_type(mod_data)
@@ -276,7 +332,7 @@ class _ModFactory:
         )
 
     @classmethod
-    def create_mod(cls, mod_atype: AType, mod_data: dict, mod_meta: _ModMeta, sub_mod_hash_to_text: dict):
+    def create_mod(cls, mod_atype: EquipmentCategory, mod_data: dict, mod_meta: _ModMeta, sub_mod_hash_to_text: dict):
         new_mod = ItemMod(
             atype=mod_atype,
             mod_class=mod_meta.mod_class,

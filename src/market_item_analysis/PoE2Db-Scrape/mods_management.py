@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from src.market_item_analysis.shared.enums.item_enums import ModAffixType, AType
+from src.market_item_analysis.shared.enums.item_enums import ModAffixType, EquipmentCategory
 
 
-def create_mod_id(atype: AType, mod_text: str, affix_type: ModAffixType):
+def create_mod_id(atype: EquipmentCategory, mod_text: str, affix_type: ModAffixType):
     return atype.value, mod_text, affix_type.value
 
 
@@ -18,7 +18,7 @@ class PoeDbModTier:
 class Poe2DbMod:
 
     def __init__(self,
-                 atype: AType,
+                 atype: EquipmentCategory,
                  affix_type: ModAffixType,
                  mod_text: str,
                  mod_types: list[str]):
@@ -113,7 +113,7 @@ class HybridModAnalyzer:
 class AtypeModsManager:
 
     def __init__(self,
-                 atype: AType):
+                 atype: EquipmentCategory):
         self.atype = atype
         self.mods = []
 
@@ -165,10 +165,10 @@ class Poe2DbModsManager:
     def __init__(self, atype_managers: list[AtypeModsManager]):
         self._atypes_managers = {am.atype: am for am in atype_managers}
 
-    def fetch_atype_manager(self, atype: AType = None):
+    def fetch_atype_manager(self, atype: EquipmentCategory = None):
         return self._atypes_managers[atype]
     
-    def fetch_mod(self, atype: AType, mod_id: int):
+    def fetch_mod(self, atype: EquipmentCategory, mod_id: int):
         atype_manager = self._atypes_managers[atype]
 
         return atype_manager.fetch_mod(mod_id)

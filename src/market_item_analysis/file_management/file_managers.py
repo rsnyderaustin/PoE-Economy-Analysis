@@ -6,7 +6,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Optional
 
-from src.market_item_analysis.shared.enums.item_enums import AType
+from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 from . import i_o_utils
 
 
@@ -142,7 +142,7 @@ class PricePredictModelFiles:
 
         self._models = dict()
 
-    def save_model(self, atype: AType, model: 'xgb.Booster'):
+    def save_model(self, atype: EquipmentCategory, model: 'xgb.Booster'):
         import xgboost as xgb
 
         if not isinstance(model, xgb.Booster):
@@ -153,7 +153,7 @@ class PricePredictModelFiles:
 
         model.save_model(str(file_path))
 
-    def load_model(self, atype: AType):
+    def load_model(self, atype: EquipmentCategory):
         import xgboost as xgb
 
         model = xgb.Booster()
@@ -173,7 +173,7 @@ class CraftingSimulatorFiles:
     def __init__(self, folder_path: str = None):
         self._folder_path = folder_path or Path.cwd() / 'file_management/crafting_models'
 
-    def save_model(self, atype: AType, model):
+    def save_model(self, atype: EquipmentCategory, model):
         from stable_baselines3 import PPO
 
         if not isinstance(model, PPO):
@@ -183,7 +183,7 @@ class CraftingSimulatorFiles:
         file_path = self._folder_path / f"{atype}"
         model.save(file_path)
 
-    def load_model(self, atype: AType) -> Optional['PPO']:
+    def load_model(self, atype: EquipmentCategory) -> Optional['PPO']:
         from stable_baselines3 import PPO
 
         file_path = self._folder_path / f"{atype}.zip"

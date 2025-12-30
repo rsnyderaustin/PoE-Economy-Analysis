@@ -39,7 +39,7 @@ class LocalMod(Enum):
     CRIT_CHANCE = 'critical_hit_chance'
 
 
-class AType(Enum):
+class EquipmentCategory(Enum):
     ONE_HANDED_MACE = 'one_hand_mace'
     SPEAR = 'spear'
     TWO_HANDED_MACE = 'two_hand_mace'

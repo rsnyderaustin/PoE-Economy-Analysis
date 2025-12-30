@@ -1,2 +1,2 @@
 
-from .item_instances import SubMod, ItemMod, ItemSkill, ModifiableListing, generate_mod_id
+from .item_instances import SubMod, ItemMod, ItemSkill, EquipmentListing, generate_mod_id

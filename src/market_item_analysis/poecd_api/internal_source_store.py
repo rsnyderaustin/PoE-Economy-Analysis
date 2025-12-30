@@ -1,6 +1,6 @@
 
 from src.market_item_analysis.shared import shared_utils
-from src.market_item_analysis.shared.enums.item_enums import AType
+from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 
 
 def _convert_str_to_int(s):
@@ -72,9 +72,9 @@ class PoecdSourceStore:
     def fetch_affix_type(self, mod_id) -> str | None:
         return self._mod_id_to_affix_type.get(mod_id, None)
 
-    def fetch_atype(self, atype_id) -> AType | None:
+    def fetch_atype(self, atype_id) -> EquipmentCategory | None:
         atype_name = self._atype_id_to_atype_name[atype_id]
-        return AType(atype_name)
+        return EquipmentCategory(atype_name)
 
     def fetch_mod_types(self, mod_id) -> list[str] | None:
         return self._mod_id_to_mod_types.get(mod_id, None)

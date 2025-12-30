@@ -4,11 +4,11 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 
 from src.market_item_analysis.core import CurrencyConverter
-from src.market_item_analysis.instances_and_definitions import ModifiableListing
+from src.market_item_analysis.instances_and_definitions import EquipmentListing
 from src.market_item_analysis.program_logging import LogsHandler, LogFile, log_errors
 from src.market_item_analysis.shared import shared_utils
 from src.market_item_analysis.shared.enums import ItemEnumGroups, WhichCategoryType
-from src.market_item_analysis.shared.enums.item_enums import AType, LocalMod, CalculatedMod
+from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory, LocalMod, CalculatedMod
 from src.market_item_analysis.shared.enums.trade_enums import Currency
 
 lh = LogsHandler()
@@ -24,7 +24,7 @@ class ListingFeatureCalculator(ABC):
 
     @classmethod
     @abstractmethod
-    def calculate(cls, listing: ModifiableListing) -> dict:
+    def calculate(cls, listing: EquipmentListing) -> dict:
         pass
 
     @log_errors(logging.getLogger())
@@ -55,7 +55,7 @@ class CalculatorRegistry:
         return calculator
 
     @classmethod
-    def fetch_calculators(cls, item_atype: AType) -> list[ListingFeatureCalculator]:
+    def fetch_calculators(cls, item_atype: EquipmentCategory) -> list[ListingFeatureCalculator]:
         return cls._item_atype_to_calculators[item_atype] if item_atype in cls._item_atype_to_calculators else []
 
     @classmethod
@@ -76,7 +76,7 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
     calculated_columns = {CalculatedMod.MAX_QUALITY_PDPS.value}
 
     @classmethod
-    def calculate(cls, listing: ModifiableListing):
+    def calculate(cls, listing: EquipmentListing):
         if listing.item_atype not in cls.applicable_atypes:
             msg = f"Listing with item category {listing.item_atype} called {cls.__name__}"
             logging.error(msg)
@@ -115,7 +115,7 @@ class NonPhysicalDpsCalculator(ListingFeatureCalculator):
 
     @classmethod
     @log_errors(parse_log)
-    def calculate(cls, listing: ModifiableListing):
+    def calculate(cls, listing: EquipmentListing):
         if listing.item_atype not in cls.applicable_atypes:
             raise TypeError(f"Listing with item category {listing.item_atype} called {cls.__name__}")
 
@@ -167,7 +167,7 @@ class ListingsTransforming:
     }
 
     @staticmethod
-    def to_flat_rows(listings: list[ModifiableListing]) -> dict:
+    def to_flat_rows(listings: list[EquipmentListing]) -> dict:
         """
 
         :param listings:
@@ -241,7 +241,7 @@ class ListingsTransforming:
 
     @classmethod
     def to_price_predict_df(cls,
-                            listings: list[ModifiableListing] = None,
+                            listings: list[EquipmentListing] = None,
                             rows: dict[str: list] = None,
                             existing_model=None) -> 'pd.DataFrame':
         """
@@ -288,7 +288,7 @@ class ListingsTransforming:
 class _PricePredictTransformer:
     _non_mod_cols = {'minutes_since_league_start', 'atype'}
 
-    def __init__(self, listing: ModifiableListing):
+    def __init__(self, listing: EquipmentListing):
         self.listing = listing
         parse_log.info(f"NEW LISTING DATA\n{pprint.pformat(listing)}")
 

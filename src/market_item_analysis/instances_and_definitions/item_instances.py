@@ -1,8 +1,10 @@
 import datetime
 import re
+import uuid
+from dataclasses import dataclass
 from typing import Iterable
 
-from src.market_item_analysis.shared.enums.item_enums import ModAffixType, AType
+from src.market_item_analysis.shared.enums.item_enums import ModAffixType, EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, Currency
 
 
@@ -21,7 +23,7 @@ class SubMod:
 
 
 def generate_mod_id(mod_class: ModClass,
-                    atype: AType,
+                    atype: EquipmentCategory,
                     sub_mod_hashes: Iterable,
                     mod_tier: int = None,
                     affix_type: ModAffixType = None):
@@ -34,7 +36,7 @@ def generate_mod_id(mod_class: ModClass,
 class ItemMod:
 
     def __init__(self,
-                 atype: AType,
+                 atype: EquipmentCategory,
                  mod_class: ModClass,
                  mod_name: str,
                  affix_type: ModAffixType,
@@ -104,78 +106,123 @@ class ItemSocketer:
         self.actual_values = actual_values
 
 
-class ModifiableListing:
+class ListingMetadata:
 
     def __init__(self,
-                 my_id: int,
-                 listing_str: str,
-                 account_name: str,
+                 poster_account_name: str,
                  listing_id: str,
-                 date_fetched: datetime,
-                 minutes_since_listed: float,
-                 minutes_since_league_start: float,
+                 date_posted: datetime,
+                 date_fetched: datetime):
+        self.poster_account_name = poster_account_name
+        self.listing_id = listing_id
+        self.date_posted = date_posted
+        self.date_fetched = date_fetched
+
+class ItemRequirements:
+
+    def __init__(self,
+                 player_level: int,
+                 strength: int,
+                 intelligence: int,
+                 dexterity: int):
+        self.player_level = player_level
+        self.strength = strength
+        self.intelligence = intelligence
+        self.dexterity = dexterity
+
+
+class ItemMods:
+
+    def __init__(self,
+                 implicits: list[ItemMod] | None = None,
+                 enchants: list[ItemMod] | None = None,
+                 fractures: list[ItemMod] | None = None,
+                 explicits: list[ItemMod] | None = None):
+        self.implicits = implicits or []
+        self.enchants = enchants or []
+        self.fractures = fractures or []
+        self.explicits = explicits or []
+
+        self._mod_class_d = {
+            ModClass.IMPLICIT: self.implicits,
+            ModClass.ENCHANT: self.enchants,
+            ModClass.FRACTURED: self.fractures,
+            ModClass.EXPLICIT: self.explicits
+        }
+
+    @property
+    def all_mods(self) -> list[ItemMod]:
+        return [m
+                for mods_list in self._mod_class_d.values()
+                for m in mods_list]
+
+    def fetch_mods(self, mod_class: ModClass) -> list[ItemMod]:
+        return self._mod_class_d[mod_class]
+
+
+class ItemTypes:
+
+    def __init__(self,
+                 base_name: str,
+                 item_category: EquipmentCategory):
+        """
+
+        :param base_name: Ex: Hunting Shoes, Lunar Amulet, etc
+        :param item_category: Ex: DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
+        """
+        self.base_name = base_name
+        self.item_category = item_category
+
+
+class Price:
+
+    def __init__(self,
                  currency: Currency,
-                 currency_amount: int,
-                 item_name: str,
-                 item_btype: str,  # Hunting Shoes, Lunar Amulet, etc
-                 item_atype: AType,  # DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
+                 amount: int):
+        self.currency = currency
+        self.amount = amount
+
+
+class ItemProperties:
+
+    def __init__(self,
                  rarity: Rarity,
                  ilvl: int,
-                 level_requirement: int,
-                 str_requirement: int,
-                 int_requirement: int,
-                 dex_requirement: int,
                  identified: bool,
                  corrupted: bool,
-                 implicit_mods: list[ItemMod],
-                 enchant_mods: list[ItemMod],
-                 fractured_mods: list[ItemMod],
-                 explicit_mods: list[ItemMod],
-                 item_skills: list[ItemSkill],
-                 item_properties: dict
-                 ):
-        self.my_id = my_id
-        self.listing_string = listing_str
-
-        self.account_name = account_name
-        self.listing_id = listing_id
-
-        self.date_fetched = date_fetched
-        self.minutes_since_listed = minutes_since_listed
-        self.minutes_since_league_start = minutes_since_league_start
-
-        self.currency = currency
-        self.currency_amount = currency_amount
-
-        self.item_name = item_name
-        self.item_btype = item_btype
-        self.item_atype = item_atype
+                 quality: int,
+                 **additional_properties):
         self.rarity = rarity
         self.ilvl = ilvl
-        self.level_requirement = level_requirement
-
-        self.str_requirement = str_requirement
-        self.int_requirement = int_requirement
-        self.dex_requirement = dex_requirement
-
         self.identified = identified
         self.corrupted = corrupted
+        self.quality = quality
 
-        self.item_skills = item_skills
+        self.additional_properties = additional_properties
 
-        self.implicit_mods = implicit_mods
-        self.enchant_mods = enchant_mods
-        self.fractured_mods = fractured_mods
-        self.explicit_mods = explicit_mods
+class EquipmentListing:
 
-        self.item_properties = item_properties
+    def __init__(self,
+                 metadata: ListingMetadata,
+                 price: Price,
+                 item_name: str,
+                 types: ItemTypes,
+                 requirements: ItemRequirements,
+                 mods: ItemMods,
+                 skills: list[ItemSkill],
+                 properties: ItemProperties,
+                 internal_id: int = None
+                 ):
+        self.metadata = metadata
+        self.price = price
+        self.item_name = item_name
+        self.types = types
+        self.requirements = requirements
+        self.mods_ = mods
+        self.skills = skills
+        self.properties = properties
 
-        self._mod_class_to_attribute = {
-            ModClass.IMPLICIT: self.implicit_mods,
-            ModClass.ENCHANT: self.enchant_mods,
-            ModClass.FRACTURED: self.fractured_mods,
-            ModClass.EXPLICIT: self.explicit_mods
-        }
+        self.internal_id = internal_id or uuid.uuid4().hex
 
         # This is lazy loaded when loading into the PricePrediction model
         self.divs = None
@@ -184,16 +231,54 @@ class ModifiableListing:
         return hash((self.listing_id, self.minutes_since_listed))
 
     def __str__(self):
-        return self.listing_string
+        if rp._item_properties:
+            properties_ = {
+                shared_utils.extract_from_brackets(p['name']): shared_utils.extract_values_from_text(p['values'][0][0])[0]
+                for p in rp._item_properties[1:]
+            }
+        else:
+            properties_ = {}
 
-    def _determine_max_quality(self) -> int:
-        implicit_sub_mods = [sub_mod for mod in self.implicit_mods for sub_mod in mod.sub_mods]
-        max_quality = 20
-        for sub_mod in implicit_sub_mods:
-            if bool(re.fullmatch(r"maximum_quality_is", sub_mod.sanitized_text)):
-                max_quality = sub_mod.actual_values[0]
+        att_requirements = {
+            k: v for k, v in {
+                'Str': rp.str_requirement,
+                'Dex': rp.dex_requirement,
+                'Int': rp.int_requirement
+            }.items() if v
+        }
 
-        return max_quality
+        implicits = rp.fetch_tiered_mod_strings(mod_class=ModClass.IMPLICIT,
+                                                mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.IMPLICIT])
+        enchants = rp.fetch_tiered_mod_strings(mod_class=ModClass.ENCHANT,
+                                               mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.ENCHANT])
+        fractureds = rp.fetch_tiered_mod_strings(mod_class=ModClass.FRACTURED,
+                                                 mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.FRACTURED])
+        explicits = rp.fetch_tiered_mod_strings(mod_class=ModClass.EXPLICIT,
+                                                mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.EXPLICIT])
+
+        s = []
+
+        s.append(f"{rp.item_name} {rp.base_name}\n"
+                 f"{rp.base_category}\n")
+
+        if properties_:
+            s.append('\n'.join(f"{k}: {v}" for k, v in properties_.items()))
+
+        s.append(f"\nItem Level: {rp.ilvl}")
+
+        if rp.level_requirement:
+            s.append(f"\nRequires Level: {rp.level_requirement} ")
+        if att_requirements:
+            s.append(', '.join(f"{k}: {v}" for k, v in att_requirements.items()))
+
+        skills = _SkillsFactory.create_skills(rp)
+        if skills:
+            s.append('\n' + '\n'.join([f"Grants Skill: Level {skill.level} {skill.name}" for skill in skills]))
+
+        s.append('\n\n' + '\n'.join(implicits + enchants + fractureds + explicits))
+        s.append(f"\n\n{rp.price.amount}x {rp.price.currency.value}  IGN: {rp.account_name}")
+
+        return ''.join(s)
 
     @property
     def mods(self) -> list[ItemMod]:
@@ -217,10 +302,6 @@ class ModifiableListing:
     def quality(self):
         return getattr(self.item_properties, 'quality', 0)
 
-    @quality.setter
-    def quality(self, new_quality):
-        self.item_properties['quality'] = new_quality
-
     @property
     def max_quality(self):
         return self._determine_max_quality()
@@ -231,6 +312,14 @@ class ModifiableListing:
     @property
     def prefixes(self):
         return [mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX]
+
+    def determine_open_suffixes(self) -> int:
+        if self.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
+            return 0
+        elif self.rarity == Rarity.MAGIC:
+            return 2 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
+        else:
+            return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
 
     @property
     def open_prefixes(self) -> int:
@@ -247,9 +336,9 @@ class ModifiableListing:
 
     @property
     def open_suffixes(self) -> int:
-        if self.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
+        if self.metadata.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
             return 0
-        elif self.rarity == Rarity.MAGIC:
+        elif self.metadata.rarity == Rarity.MAGIC:
             return 2 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
         else:
             return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])

@@ -1,6 +1,6 @@
 from src.market_item_analysis.data_transforming import ListingsTransforming
 from src.market_item_analysis.file_management.file_managers import PricePredictModelFiles
-from src.market_item_analysis.instances_and_definitions import ModifiableListing
+from src.market_item_analysis.instances_and_definitions import EquipmentListing
 from src.market_item_analysis.program_logging import LogsHandler, LogFile, log_errors
 
 
@@ -14,7 +14,7 @@ class PricePredictor:
         self._loaded_models = {}
 
     @log_errors(price_predict_log)
-    def predict(self, listing: ModifiableListing) -> float:
+    def predict(self, listing: EquipmentListing) -> float:
         model = self._loaded_models[listing.item_atype]
         df = ListingsTransforming.to_price_predict_df(listings=[listing],
                                                       existing_model=model)
