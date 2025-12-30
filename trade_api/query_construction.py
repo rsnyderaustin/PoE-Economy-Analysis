@@ -1,4 +1,4 @@
-from shared.enums.trade_enums import (StatSearchType)
+from src.market_item_analysis.shared.enums.trade_enums import (StatSearchType)
 from .query import MetaFilter, StatsFiltersGroup, Query
 
 

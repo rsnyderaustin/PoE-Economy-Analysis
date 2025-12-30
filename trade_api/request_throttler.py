@@ -1,7 +1,7 @@
 import time
 from collections import deque
 
-from program_logging import LogFile, LogsHandler, log_errors
+from src.market_item_analysis.program_logging import LogFile, LogsHandler, log_errors
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 

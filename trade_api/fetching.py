@@ -3,8 +3,8 @@ from datetime import datetime
 
 import requests
 
-from core import env_loader
-from program_logging import LogsHandler, LogFile, log_errors
+from src.market_item_analysis.core import env_loader
+from src.market_item_analysis.program_logging import LogsHandler, LogFile, log_errors
 from trade_api.request_throttler import RequestThrottler
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)

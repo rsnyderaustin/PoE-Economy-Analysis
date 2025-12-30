@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from psql import PostgreSqlManager
-from shared import shared_utils
+from src.market_item_analysis.psql import PostgreSqlManager
+from src.market_item_analysis.shared import shared_utils
 
 
 class ListingImportGatekeeper:
