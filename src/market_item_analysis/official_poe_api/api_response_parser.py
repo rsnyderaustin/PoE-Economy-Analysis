@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from src.market_item_analysis.instances_and_definitions import ItemMod
+from src.market_item_analysis.instances_and_definitions.item_instances import ItemMods
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
 from src.market_item_analysis.shared import shared_utils
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
@@ -100,14 +101,25 @@ class _ModFactory:
     def __init__(self):
         self._item_data = None
 
-    def _determine_mod_id_order(self, mod_class: ModClass) -> list[str]:
-        mod_abbrev = self._mod_abbrev_d[mod_class]
-        if mod_abbrev not in self._item_data['extended']['hashes']:
-            return []
+    def create_mods(self, item_data: dict) -> ItemMods:
+        item_mods = ItemMods()
+
+        info_d = item_data['extended']['mods']
+        hashes_d = item_data['extended']['hahes']
+        for mod_class in ModClass:
+            mod_abbrev = self._mod_abbrev_d[mod_class]
+
+            if mod_abbrev not in hashes_d:
+                continue
+
+            class_info_d = info_d[mod_abbrev]
+            class_hashes = hashes_d[mod_abbrev]
+
+            for mod_list in class_hashes:
+                mod_id = mod_list[0]
+                info_indices = mod_list[1]
 
 
-
-    def create_mods(self, item_data: dict) -> list[ItemMod]:
         self._item_data = item_data
 
     def _map_mod_id_to_text(self, item_data: dict) -> dict:

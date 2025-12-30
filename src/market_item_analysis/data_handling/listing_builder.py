@@ -1,19 +1,13 @@
 import copy
-import pprint
-import re
-from dataclasses import dataclass
 import uuid
 from datetime import datetime
 
-from src.market_item_analysis.file_management.file_managers import ItemModsFile, Poe2DbModsManagerFile
-from src.market_item_analysis.instances_and_definitions import ItemMod, SubMod, ItemSkill, EquipmentListing, generate_mod_id
+from src.market_item_analysis.file_management.file_managers import ItemModsFile
+from src.market_item_analysis.instances_and_definitions import ItemMod,  ItemSkill, EquipmentListing
 from src.market_item_analysis.program_logging import LogFile, LogsHandler, log_errors
-from src.market_item_analysis.shared import shared_utils
-from src.market_item_analysis.shared.enums.item_enums import ModAffixType, EquipmentCategory
+from src.market_item_analysis.shared.enums.item_enums import AffixType, EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
-from . import utils
 from src.market_item_analysis.official_poe_api.api_response_parser import ApiResponseParser
-from .mod_matching import ModMatcher
 from ..instances_and_definitions.item_instances import ItemRequirements, ItemTypes, ListingMetadata, ItemMods, Price, ItemProperties
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
@@ -61,22 +55,8 @@ class _EquipmentCategorizer:
 
 class ListingBuilder:
 
-    def __init__(self):
-        self._mod_resolver = self._create_mod_resolver()
-
-    @staticmethod
-    def _create_mod_resolver() -> '_ModResolver':
-        item_mods_file = ItemModsFile()
-
-        poe2db_mods_manager = Poe2DbModsManagerFile().load(missing_ok=False)
-        mod_matcher = ModMatcher(poe2db_mods_manager)
-
-        poe2db_injector = _PoE2DbInjector(mod_matcher=mod_matcher)  # <-- Typo fix here
-        return _ModResolver(item_mods_file=item_mods_file,
-                            poe2db_injector=poe2db_injector)
-
     def build_listing(self, rp: ApiResponseParser):
-        item_mods_list = self._mod_resolver.resolve_mods(rp)
+
         item_mods = ItemMods(
             implicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.IMPLICIT],
             enchants=[mod for mod in item_mods_list if mod.mod_class == ModClass.ENCHANT],
@@ -138,137 +118,27 @@ class ListingBuilder:
 
         return listing
 
-
-class _ModValueRangesParser:
-
-    @staticmethod
-    def determine_sub_mod_value_ranges(mod_magnitudes: list) -> dict:
-        """
-        {
-            X: (10, 15),
-            X: (20, 25)
-        } ---->
-        {
-            X: [(10, 15), (20, 25)]
-        }
-        """
-        mod_ids = {magnitude['hash'] for magnitude in mod_magnitudes}
-
-        v_ranges = dict()
-        for mod_id in mod_ids:
-            magnitudes = [magnitude for magnitude in mod_magnitudes if magnitude['hash'] == mod_id]
-
-            value_ranges = [
-                (
-                    utils.convert_string_into_number(m['min']) if 'min' in m else None,
-                    utils.convert_string_into_number(m['max']) if 'max' in m else None
-                )
-                for m in magnitudes
-            ]
-
-            v_ranges[mod_id] = value_ranges
-
-        return v_ranges
-
-
-class _SubModValuesInjector:
-
-    @staticmethod
-    def inject_sub_mod_values(sub_mod_hash_to_text: dict, current_mod: ItemMod):
-        sub_mod_hash_to_sub_mod = {sub_mod.sub_mod_hash: sub_mod for sub_mod in current_mod.sub_mods}
-        for sub_mod_hash, sub_mod in sub_mod_hash_to_sub_mod.items():
-            sub_mod_text = sub_mod_hash_to_text[sub_mod_hash]
-            values = shared_utils.extract_values_from_text(sub_mod_text)
-            parse_log.info(f"Parsed sub-mod text '{sub_mod_text}' into values {values}")
-            sub_mod.actual_values = values
-
-
-@dataclass
-class _ModMeta:
-    mod_atype: EquipmentCategory
-    mod_class: ModClass
-    sub_mod_hashes: set
-    affix_type: ModAffixType | None
-    mod_tier: int | None
-
-    @property
-    def mod_id(self):
-        return generate_mod_id(mod_class=self.mod_class,
-                               atype=self.mod_atype,
-                               sub_mod_hashes=self.sub_mod_hashes,
-                               mod_tier=self.mod_tier,
-                               affix_type=self.affix_type)
-
-
 class _ModFactory:
 
     @staticmethod
-    def _determine_mod_affix_type(mod_data: dict) -> ModAffixType | None:
+    def _determine_mod_affix_type(mod_data: dict) -> AffixType | None:
         mod_affix = None
         if mod_data['tier']:
             first_letter = mod_data['tier'][0]
             if first_letter == 's':
-                mod_affix = ModAffixType.SUFFIX
+                mod_affix = AffixType.SUFFIX
             elif first_letter == 'p':
-                mod_affix = ModAffixType.PREFIX
+                mod_affix = AffixType.PREFIX
             else:
                 parse_log.error(f"Did not recognize first character as an affix type for mod tier {mod_data['tier']}.")
                 return None
 
         return mod_affix
 
-    @staticmethod
-    def _determine_mod_tier(mod_data: dict) -> int | None:
-        mod_tier = None
-        if mod_data['tier']:
-            mod_tier_match = re.search(r'\d+', mod_data['tier'])
-            if mod_tier_match:
-                mod_tier = mod_tier_match.group()
-            else:
-                parse_log.info(f"Did not find a tier number for mod tier {mod_data['tier']}")
-                return None
-
-        return int(mod_tier) if mod_tier else None
-
-    @staticmethod
-    def _create_sub_mods(sub_mod_hash_to_text: dict,
-                         mod_magnitudes: list) -> list[SubMod]:
-        sub_mod_hashes = set(magnitude['hash'] for magnitude in mod_magnitudes)
-
-        mod_id_to_values_ranges = _ModValueRangesParser.determine_sub_mod_value_ranges(mod_magnitudes=mod_magnitudes)
-
-        sub_mods = []
-        for sub_mod_hash in sub_mod_hashes:
-            sanitized_text = shared_utils.sanitize_mod_text(sub_mod_hash_to_text[sub_mod_hash])
-
-            value_ranges = mod_id_to_values_ranges[sub_mod_hash]
-
-            new_sub_mod = SubMod(
-                sub_mod_hash=sub_mod_hash,
-                sanitized_text=sanitized_text,
-                actual_values=None,
-                values_ranges=value_ranges
-            )
-            sub_mods.append(new_sub_mod)
-
-        return sub_mods
-
     @classmethod
-    def create_mod_meta(cls,
-                        mod_class: ModClass,
-                        mod_atype: EquipmentCategory,
-                        mod_data: dict) -> _ModMeta:
-        sub_mod_hashes = set(magnitude['hash'] for magnitude in mod_data['magnitudes'])
-        affix_type = cls._determine_mod_affix_type(mod_data)
-        mod_tier = cls._determine_mod_tier(mod_data)
-
-        return _ModMeta(
-            mod_atype=mod_atype,
-            mod_class=mod_class,
-            sub_mod_hashes=sub_mod_hashes,
-            affix_type=affix_type,
-            mod_tier=mod_tier
-        )
+    def create_mods(cls, item_data: dict) -> ItemMods:
+        for mod_class in ModClass:
+            mod_abbrev = cls._
 
     @classmethod
     def create_mod(cls, mod_atype: EquipmentCategory, mod_data: dict, mod_meta: _ModMeta, sub_mod_hash_to_text: dict):

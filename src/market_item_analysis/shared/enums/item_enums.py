@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ModAffixType(Enum):
+class AffixType(Enum):
     PREFIX = 'prefix'
     SUFFIX = 'suffix'
 

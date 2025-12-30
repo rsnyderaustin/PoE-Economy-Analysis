@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from src.market_item_analysis.shared.enums.item_enums import ModAffixType, EquipmentCategory
+from src.market_item_analysis.shared.enums.item_enums import AffixType, EquipmentCategory
 
 
-def create_mod_id(atype: EquipmentCategory, mod_text: str, affix_type: ModAffixType):
+def create_mod_id(atype: EquipmentCategory, mod_text: str, affix_type: AffixType):
     return atype.value, mod_text, affix_type.value
 
 
@@ -19,7 +19,7 @@ class Poe2DbMod:
 
     def __init__(self,
                  atype: EquipmentCategory,
-                 affix_type: ModAffixType,
+                 affix_type: AffixType,
                  mod_text: str,
                  mod_types: list[str]):
         self.atype = atype
@@ -56,8 +56,8 @@ class HybridModAnalyzer:
         # This is useful for when we are matching mods to the Trade API data
         self._hybrid_parts_to_parents = dict()
         self._hybrid_parts_to_parents_affixed = {
-            ModAffixType.PREFIX: dict(),
-            ModAffixType.SUFFIX: dict()
+            AffixType.PREFIX: dict(),
+            AffixType.SUFFIX: dict()
         }
         self._mod_hybrid_parts = dict()
 
@@ -84,7 +84,7 @@ class HybridModAnalyzer:
 
             hybrid_affix_dict[part].add(mod)
 
-    def fetch_hybrid_part_to_parents(self, affix_type: ModAffixType = None):
+    def fetch_hybrid_part_to_parents(self, affix_type: AffixType = None):
         if affix_type:
             return self._hybrid_parts_to_parents_affixed[affix_type]
         else:
@@ -93,7 +93,7 @@ class HybridModAnalyzer:
     def determine_number_of_hybrid_parts(self, mod: Poe2DbMod):
         return self._mod_hybrid_parts[mod]
 
-    def _create_hybrid_to_parent_dict(self, affix_type: ModAffixType = None) -> dict:
+    def _create_hybrid_to_parent_dict(self, affix_type: AffixType = None) -> dict:
         hybrid_part_to_parent_id = dict()
         for mod in self._mods:
             if affix_type and mod.affix_type != affix_type:
@@ -121,8 +121,8 @@ class AtypeModsManager:
         self._mod_text_to_mod = dict()
 
         self._mods_affixed_dict = {
-            ModAffixType.PREFIX: dict(),
-            ModAffixType.SUFFIX: dict()
+            AffixType.PREFIX: dict(),
+            AffixType.SUFFIX: dict()
         }
 
         self._hybrid_mod_analyzer = HybridModAnalyzer()
@@ -147,13 +147,13 @@ class AtypeModsManager:
     def fetch_mod(self, mod_id):
         return self._mod_id_to_mod[mod_id]
 
-    def fetch_mod_texts(self, affix_type: ModAffixType = None):
+    def fetch_mod_texts(self, affix_type: AffixType = None):
         if affix_type:
             return list(self._mods_affixed_dict[affix_type].keys())
 
         return list(self._mod_text_to_mod.keys())
 
-    def fetch_hybrid_part_to_parents(self, affix_type: ModAffixType = None) -> dict[str: set[Poe2DbMod]]:
+    def fetch_hybrid_part_to_parents(self, affix_type: AffixType = None) -> dict[str: set[Poe2DbMod]]:
         return self._hybrid_mod_analyzer.fetch_hybrid_part_to_parents(affix_type)
 
     def determine_number_of_hybrid_parts(self, mod_id: Poe2DbMod):

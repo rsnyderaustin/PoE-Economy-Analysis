@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from poe2db_scrape.mods_management import Poe2DbMod
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
 from src.market_item_analysis.shared import shared_utils
-from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory, ModAffixType
+from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory, AffixType
 from . import mods_management
 from .mods_management import AtypeModsManager, Poe2DbModsManager
 
@@ -94,7 +94,7 @@ class _Poe2DbHtmlParser:
         html = self.driver.page_source
         self.soup = BeautifulSoup(html, 'html.parser')
 
-    def fetch_affix_mods(self, affix_type: ModAffixType):
+    def fetch_affix_mods(self, affix_type: AffixType):
         divs = self.soup.find_all('div', class_='col-lg-6')
         for div in divs:
             # The h5 element's text tells us what the table title is
@@ -187,7 +187,7 @@ class Poe2DbScraper:
             for atype in _atype_paths.keys()
         }
 
-    def _scrape_mods(self, atype: EquipmentCategory, affix_type: ModAffixType):
+    def _scrape_mods(self, atype: EquipmentCategory, affix_type: AffixType):
         parser = _Poe2DbHtmlParser(url=_atype_paths[atype])
         mods_manager = self._atypes_managers[atype]
 
@@ -228,8 +228,8 @@ class Poe2DbScraper:
 
     def scrape(self) -> Poe2DbModsManager:
         for atype, url in _atype_paths.items():
-            self._scrape_mods(atype=atype, affix_type=ModAffixType.PREFIX)
-            self._scrape_mods(atype=atype, affix_type=ModAffixType.SUFFIX)
+            self._scrape_mods(atype=atype, affix_type=AffixType.PREFIX)
+            self._scrape_mods(atype=atype, affix_type=AffixType.SUFFIX)
 
         poe2db_mods_manager = Poe2DbModsManager(atype_managers=list(self._atypes_managers.values()))
         return poe2db_mods_manager

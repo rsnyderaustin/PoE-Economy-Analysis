@@ -1,46 +1,26 @@
 import datetime
-import re
 import uuid
-from dataclasses import dataclass
-from typing import Iterable
 
 from src.market_item_analysis.data_handling import utils
-from src.market_item_analysis.shared.enums.item_enums import ModAffixType, EquipmentCategory
+from src.market_item_analysis.shared.enums.item_enums import AffixType, EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, Currency
-
-
-class SubMod:
-    def __init__(self,
-                 sub_mod_hash: str,
-                 sanitized_text: str,
-                 actual_values: list = None,
-                 values_ranges: list[tuple[float, float]] | list[tuple[int, int]] = None):
-        self.sub_mod_hash = sub_mod_hash
-        self.sanitized_text = sanitized_text
-
-        # When the ItemMod is stored as a template, its sub-mod values are empty
-        self.actual_values = actual_values
-        self.values_ranges = values_ranges
-
-
-def generate_mod_id(mod_class: ModClass,
-                    atype: EquipmentCategory,
-                    sub_mod_hashes: Iterable,
-                    mod_tier: int = None,
-                    affix_type: ModAffixType = None):
-    atype = atype.value.lower().replace(' ', '_')
-    sub_mod_hashes = sorted(list(sub_mod_hashes))
-
-    return mod_class, atype, *sub_mod_hashes, mod_tier, affix_type
 
 
 class ItemMod:
 
     def __init__(self,
                  mod_ids: list[str],
-                 mod_text: str):
+                 mod_text: str,
+                 mod_class: ModClass,
+                 affix_type: AffixType):
         self.mod_ids = mod_ids
         self.mod_text = mod_text
+        self.mod_class = mod_class
+        self.affix_type = affix_type
+
+    @property
+    def is_hybrid(self):
+        return len(self.mod_ids) >= 2
 
 
 class ItemSkill:
@@ -50,16 +30,6 @@ class ItemSkill:
                  level: int = None):
         self.name = name
         self.level = level or 1
-
-
-class ItemSocketer:
-
-    def __init__(self, sanitized_socketer_text: str, actual_values: tuple | None):
-        """
-        Socketers have no rolls and thus do not differ from item to item. Their text is static.
-        """
-        self.sanitized_socketer_text = sanitized_socketer_text
-        self.actual_values = actual_values
 
 
 class ListingMetadata:
@@ -111,6 +81,10 @@ class ItemMods:
         return [m
                 for mods_list in self._mod_class_d.values()
                 for m in mods_list]
+
+    def add_mod(self, mod: ItemMod):
+        mods = self._mod_class_d[mod.mod_class]
+        mods.append(mod)
 
     def fetch_mods(self, mod_class: ModClass) -> list[ItemMod]:
         return self._mod_class_d[mod_class]
@@ -184,9 +158,6 @@ class EquipmentListing:
 
         # This is lazy loaded when loading into the PricePrediction model
         self.divs = None
-
-    def __hash__(self):
-        return hash((self.listing_id, self.minutes_since_listed))
 
     def __str__(self):
         if rp._item_properties:
@@ -272,37 +243,38 @@ class EquipmentListing:
 
     @property
     def prefixes(self):
-        return [mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX]
+        return [mod for mod in self.mods if mod.affix_type == AffixType.PREFIX]
 
     def determine_open_suffixes(self) -> int:
-        if self.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
+        item_mods = self.mods_.all_mods
+        if self.properties.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
             return 0
-        elif self.rarity == Rarity.MAGIC:
-            return 2 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
+        elif self.properties.rarity == Rarity.MAGIC:
+            return 2 - len([mod for mod in item_mods if mod.affix_type == AffixType.SUFFIX])
         else:
-            return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
+            return 3 - len([mod for mod in self.mods if mod.affix_type == AffixType.SUFFIX])
 
     @property
     def open_prefixes(self) -> int:
         if self.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
             return 0
         elif self.rarity == Rarity.MAGIC:
-            return 2 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX])
+            return 2 - len([mod for mod in self.mods if mod.affix_type == AffixType.PREFIX])
         else:
-            return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.PREFIX])
+            return 3 - len([mod for mod in self.mods if mod.affix_type == AffixType.PREFIX])
 
     @property
     def suffixes(self):
-        return [mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX]
+        return [mod for mod in self.mods if mod.affix_type == AffixType.SUFFIX]
 
     @property
     def open_suffixes(self) -> int:
         if self.metadata.rarity in [Rarity.NORMAL, Rarity.UNIQUE]:
             return 0
         elif self.metadata.rarity == Rarity.MAGIC:
-            return 2 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
+            return 2 - len([mod for mod in self.mods if mod.affix_type == AffixType.SUFFIX])
         else:
-            return 3 - len([mod for mod in self.mods if mod.affix_type == ModAffixType.SUFFIX])
+            return 3 - len([mod for mod in self.mods if mod.affix_type == AffixType.SUFFIX])
 
     def fetch_mods(self, mod_class: ModClass):
         return self._mod_class_to_attribute[mod_class]
