@@ -4,6 +4,7 @@ import uuid
 from dataclasses import dataclass
 from typing import Iterable
 
+from src.market_item_analysis.data_handling import utils
 from src.market_item_analysis.shared.enums.item_enums import ModAffixType, EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, Currency
 
@@ -36,55 +37,10 @@ def generate_mod_id(mod_class: ModClass,
 class ItemMod:
 
     def __init__(self,
-                 atype: EquipmentCategory,
-                 mod_class: ModClass,
-                 mod_name: str,
-                 affix_type: ModAffixType,
-                 mod_tier: int,
-                 mod_ilvl: int,
-                 sub_mods: list[SubMod] = None):
-        self.atype = atype
-        self.mod_class = mod_class
-        self.mod_name = mod_name
-        self.affix_type = affix_type
-        self.mod_tier = mod_tier
-        self.mod_ilvl = mod_ilvl
-        self.sub_mods = sorted(sub_mods, key=lambda sm: sm.sub_mod_hash) if sub_mods else []
-
-        # These variables should be very quickly filled in after creation if applicable
-        self.mod_types = None
-        self.weighting = None
-
-    def __eq__(self, other):
-        if not isinstance(other, ItemMod):
-            return False
-
-        return self.mod_id == other.mod_id
-
-    @property
-    def is_hybrid(self):
-        return len(self.sub_mods) >= 2
-
-    @property
-    def mod_id(self):
-        return generate_mod_id(atype=self.atype,
-                               sub_mod_hashes=[sub_mod.sub_mod_hash for sub_mod in self.sub_mods],
-                               affix_type=self.affix_type,
-                               mod_class=self.mod_class)
-
-    @property
-    def mod_values(self):
-        return [sub_mod.actual_values for sub_mod in self.sub_mods]
-
-    @property
-    def sub_mod_ids(self):
-        return [sub_mod.sub_mod_hash for sub_mod in self.sub_mods]
-
-    def insert_sub_mods(self, sub_mods: list[SubMod]):
-        self.sub_mods = sorted(sub_mods, key=lambda sm: sm.sub_mod_hash)
-
-    def get_sub_mods(self):
-        return self.sub_mods
+                 mod_ids: list[str],
+                 mod_text: str):
+        self.mod_ids = mod_ids
+        self.mod_text = mod_text
 
 
 class ItemSkill:
@@ -178,9 +134,11 @@ class Price:
 
     def __init__(self,
                  currency: Currency,
-                 amount: int):
+                 currency_amount: int,
+                 gold_cost: int):
         self.currency = currency
-        self.amount = amount
+        self.currency_amount = currency_amount
+        self.gold_cost = gold_cost
 
 
 class ItemProperties:
@@ -211,7 +169,7 @@ class EquipmentListing:
                  mods: ItemMods,
                  skills: list[ItemSkill],
                  properties: ItemProperties,
-                 internal_id: int = None
+                 internal_id: str = None
                  ):
         self.metadata = metadata
         self.price = price
@@ -276,19 +234,22 @@ class EquipmentListing:
             s.append('\n' + '\n'.join([f"Grants Skill: Level {skill.level} {skill.name}" for skill in skills]))
 
         s.append('\n\n' + '\n'.join(implicits + enchants + fractureds + explicits))
-        s.append(f"\n\n{rp.price.amount}x {rp.price.currency.value}  IGN: {rp.account_name}")
+        s.append(f"\n\n{rp.price.currency_amount}x {rp.price.currency.value}  IGN: {rp.account_name}")
 
         return ''.join(s)
 
     @property
-    def mods(self) -> list[ItemMod]:
-        all_mods = (
-                self.implicit_mods +
-                self.enchant_mods +
-                self.fractured_mods +
-                self.explicit_mods
+    def minutes_since_listed(self):
+        return utils.determine_minutes_since(
+            relevant_date=self.metadata.date_fetched
         )
-        return all_mods
+
+    @property
+    def minutes_since_league_start(self):
+        return utils.determine_minutes_since(
+            relevant_date=utils.league_start_date,
+            later_date=self.metadata.date_fetched
+        )
 
     @property
     def affixed_mods(self) -> list[ItemMod]:

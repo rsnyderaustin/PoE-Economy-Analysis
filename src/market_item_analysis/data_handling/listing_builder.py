@@ -75,48 +75,7 @@ class ListingBuilder:
         return _ModResolver(item_mods_file=item_mods_file,
                             poe2db_injector=poe2db_injector)
 
-    @staticmethod
-    def _build_listing_string(rp: ApiResponseParser):
-        if rp._item_properties:
-            properties_ = {
-                shared_utils.extract_from_brackets(p['name']): shared_utils.extract_values_from_text(p['values'][0][0])[0]
-                for p in rp._item_properties[1:]
-            }
-        else:
-            properties_ = {}
-
-        att_requirements = {
-            k: v for k, v in {
-                'Str': rp.str_requirement,
-                'Dex': rp.dex_requirement,
-                'Int': rp.int_requirement
-            }.items() if v
-        }
-
-        item_requirements = ItemRequirements(
-            player_level=
-        )
-
-        implicits = rp.fetch_tiered_mod_strings(mod_class=ModClass.IMPLICIT,
-                                                mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.IMPLICIT])
-        enchants = rp.fetch_tiered_mod_strings(mod_class=ModClass.ENCHANT,
-                                               mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.ENCHANT])
-        fractureds = rp.fetch_tiered_mod_strings(mod_class=ModClass.FRACTURED,
-                                                 mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.FRACTURED])
-        explicits = rp.fetch_tiered_mod_strings(mod_class=ModClass.EXPLICIT,
-                                                mod_abbrev=ApiResponseParser.mod_class_to_abbrev[ModClass.EXPLICIT])
-
-        return ''.join(s)
-
     def build_listing(self, rp: ApiResponseParser):
-        minutes_since_listed = utils.determine_minutes_since(
-            relevant_date=rp.date_fetched
-        )
-        minutes_since_league_start = utils.determine_minutes_since(
-            relevant_date=utils.league_start_date,
-            later_date=rp.date_fetched
-        )
-
         item_mods_list = self._mod_resolver.resolve_mods(rp)
         item_mods = ItemMods(
             implicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.IMPLICIT],
@@ -127,7 +86,8 @@ class ListingBuilder:
 
         item_price = Price(
             currency=Currency(rp.price_currency),
-            amount=rp.price_amount
+            currency_amount=rp.price_amount,
+            gold_cost=rp.gold_cost
         )
 
         metadata = ListingMetadata(
@@ -172,7 +132,8 @@ class ListingBuilder:
             requirements=item_requirements,
             mods=item_mods,
             price=item_price,
-            skills=item_skills
+            skills=item_skills,
+            properties=item_properties
         )
 
         return listing
@@ -220,28 +181,6 @@ class _SubModValuesInjector:
             values = shared_utils.extract_values_from_text(sub_mod_text)
             parse_log.info(f"Parsed sub-mod text '{sub_mod_text}' into values {values}")
             sub_mod.actual_values = values
-
-
-class _PoE2DbInjector:
-
-    def __init__(self, mod_matcher: ModMatcher):
-        self.mod_matcher = mod_matcher
-
-    def inject_poe2db_into_mod(self, mod: ItemMod) -> ItemMod:
-        # Only explicit mods and fractured mods require weighting and mod types
-        if mod.mod_class not in (ModClass.EXPLICIT, ModClass.FRACTURED):
-            return mod
-
-        poe2db_mod = self.mod_matcher.match_mod(mod)
-
-        if not poe2db_mod:
-            parse_log.error(f"Was not able to match item mod:\n{pprint.pformat(mod)}")
-            return mod
-
-        mod.weighting = poe2db_mod.fetch_weighting(ilvl=mod.mod_ilvl)
-        mod.mod_types = poe2db_mod.mod_types
-
-        return mod
 
 
 @dataclass
@@ -334,7 +273,7 @@ class _ModFactory:
     @classmethod
     def create_mod(cls, mod_atype: EquipmentCategory, mod_data: dict, mod_meta: _ModMeta, sub_mod_hash_to_text: dict):
         new_mod = ItemMod(
-            atype=mod_atype,
+            equipment_category=mod_atype,
             mod_class=mod_meta.mod_class,
             mod_name=mod_data['name'],
             affix_type=mod_meta.affix_type,

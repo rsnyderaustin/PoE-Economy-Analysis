@@ -97,7 +97,7 @@ class ModMatcher:
         return text
 
     def _attempt_hybrid_match(self, item_mod: ItemMod, min_score: float) -> Poe2DbMod | None:
-        atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
+        atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.equipment_category)
         hybrid_scores_tracker = _MatchScoreTracker()
 
         number_of_parts = len(item_mod.sub_mods)
@@ -136,7 +136,7 @@ class ModMatcher:
         return poe2db_mod_match
 
     def _attempt_singleton_match(self, item_mod: ItemMod, min_score: float) -> Poe2DbMod | None:
-        atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.atype)
+        atype_manager = self._poe2db_mods_manager.fetch_atype_manager(atype=item_mod.equipment_category)
 
         poe2db_mod_texts = atype_manager.fetch_mod_texts(item_mod.affix_type)
 
@@ -150,7 +150,7 @@ class ModMatcher:
 
         match, score, idx = result
 
-        mod_id = create_mod_id(atype=atype_manager.atype,
+        mod_id = create_mod_id(atype=atype_manager.equipment_category,
                                mod_text=match,
                                affix_type=item_mod.affix_type)
         mod = atype_manager.fetch_mod(mod_id)

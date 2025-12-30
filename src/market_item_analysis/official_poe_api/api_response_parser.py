@@ -2,19 +2,13 @@ import pprint
 from dataclasses import dataclass
 from datetime import datetime
 
+from src.market_item_analysis.instances_and_definitions import ItemMod
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
 from src.market_item_analysis.shared import shared_utils
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
-
-
-@dataclass
-class ModTextTiers:
-    mod_class: ModClass
-    mod_text: str
-    tiers: list[str]
 
 
 class ElementalDamageValues:
@@ -93,7 +87,7 @@ class _ApiResponsePreprocessor:
         return d
 
 
-class _ModTextHandler:
+class _ModFactory:
 
     _mod_abbrev_d = {
         ModClass.IMPLICIT: 'implicit',
@@ -103,11 +97,21 @@ class _ModTextHandler:
         ModClass.RUNE: 'rune'
     }
 
-    def __init__(self, item_data: dict):
-        self._mod_id_d = self.__class__._map_mod_id_to_text(item_data)
+    def __init__(self):
+        self._item_data = None
 
-    @classmethod
-    def _map_mod_id_to_text(cls, item_data: dict) -> dict:
+    def _determine_mod_id_order(self, mod_class: ModClass) -> list[str]:
+        mod_abbrev = self._mod_abbrev_d[mod_class]
+        if mod_abbrev not in self._item_data['extended']['hashes']:
+            return []
+
+
+
+    def create_mods(self, item_data: dict) -> list[ItemMod]:
+        self._item_data = item_data
+
+    def _map_mod_id_to_text(self, item_data: dict) -> dict:
+        self._item_data = item_data
         mod_classes = [e for e in ModClass if e != ModClass.RUNE]
 
         mod_id_to_text = dict()
@@ -153,8 +157,6 @@ class ApiResponseParser:
     def __init__(self, api_response_data: dict):
         self.raw_response_data = _ApiResponsePreprocessor.preprocess(api_response_data)
 
-        self.sub_mod_hash_to_text = self._determine_sub_mod_hash_to_text()
-
         self._item_data = self.raw_response_data['item']
         self._item_properties = self._item_data['properties']
         self._listing_data = self.raw_response_data['listing']
@@ -178,6 +180,10 @@ class ApiResponseParser:
         return self.raw_response_data['id']
 
     @property
+    def quality(self) -> int:
+        return int(self._item_properties['quality'])
+
+    @property
     def mod_classes(self) -> list[ModClass]:
         # We aren't messing with runes right now
         return [mod_class for mod_class in ModClass
@@ -191,6 +197,10 @@ class ApiResponseParser:
     @property
     def account_name(self) -> str:
         return self._listing_data['account']['name']
+
+    @property
+    def gold_cost(self) -> int:
+        return int(self._listing_data['fee'])
 
     @property
     def price_currency(self) -> str:
