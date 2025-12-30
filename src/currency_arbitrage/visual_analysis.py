@@ -327,7 +327,7 @@ class ScreenShotAnalyzer:
                              ratio_type: RatioType,
                              have_currency: Currency,
                              want_currency: Currency,
-                             rows_to_extract: int = 6,
+                             rows_to_extract: int,
                              show_steps: bool = False) -> MarketSupplyTable | None:
         if ratio_type == RatioType.AVAILABLE:
             table = MarketSupplyTable(have_currency=have_currency,

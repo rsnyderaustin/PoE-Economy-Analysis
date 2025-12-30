@@ -24,7 +24,8 @@ def test_build_supply_table():
         img_arrays=[img_array],
         have_currency='Divination Scarab of Pilfering',
         want_currency='Chaos Orb',
-        ratio_type=RatioType.AVAILABLE
+        ratio_type=RatioType.AVAILABLE,
+        rows_to_extract=3
     )
 
 def test_run():
