@@ -95,7 +95,8 @@ class MarketDataCaptureManager:
                                   for currency_ui_row in collection.available_currency_ui_rows],
                 ratio_type=RatioType.AVAILABLE,
                 have_currency=collection.have_currency,
-                want_currency=collection.want_currency
+                want_currency=collection.want_currency,
+                rows_to_extract=3
             ) if collection.available_currency_ui_rows else None
             self.market_data_manager.record_market_data(
                 want_currency=collection.want_currency,
@@ -115,7 +116,8 @@ class MarketDataCaptureManager:
                                   for currency_ui_row in collection.competing_currency_ui_rows],
                 ratio_type=RatioType.COMPETING,
                 have_currency=collection.have_currency,
-                want_currency=collection.want_currency
+                want_currency=collection.want_currency,
+                rows_to_extract=3
             ) if collection.competing_currency_ui_rows else None
             self.market_data_manager.record_market_data(
                 want_currency=collection.have_currency,

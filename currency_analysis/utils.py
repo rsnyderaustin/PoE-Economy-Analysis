@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Any
 
+from pynput import mouse
+
 
 def flush_stdin():
     try:
@@ -11,6 +13,14 @@ def flush_stdin():
         import sys, termios  # for linux/unix
         termios.tcflush(sys.stdin, termios.TCIOFLUSH)
 
+
+def wait_for_right_click():
+    def on_click(x, y, button, pressed):
+        if pressed and button == mouse.Button.right:
+            return False
+
+    with mouse.Listener(on_click=on_click) as listener:
+        listener.join()
 
 def capture_user_input(prompt: str,
                        valid_inputs: set[Any] = None,

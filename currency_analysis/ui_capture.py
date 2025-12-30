@@ -451,28 +451,33 @@ class ScreenShotsCoordinator:
     def _capture_market_data_images(self,
                                     have_currency: Currency,
                                     want_currency: Currency) -> MarketImageCollection | None:
-        should_capture = False
+        ready_to_capture = False
         available_trades_exist = True
         competing_trades_exist = True
-        while not should_capture:
+        while not ready_to_capture:
             if not available_trades_exist and not competing_trades_exist:
                 return MarketImageCollection(want_currency=want_currency,
                                              have_currency=have_currency,
                                              date_taken=datetime.datetime.now())
 
             key = utils.capture_user_input(
-                "Press a key:\n\t't': Capture screen shots\n\t1: Available trades do not exist"
-                "\n\t2: Competing trades do not exist\n\tBackspace: Quit capturing"
+                prompt="Press a key:\n\t1: Ready to capture screen shots\n\t2: Available trades do not exist"
+                "\n\t3: Competing trades do not exist\n\t4: Quit capturing",
+                valid_inputs={1, 2, 3, 4},
+                convert_to=int
             )
             match key:
-                case 't':
-                    should_capture = True
-                case '1':
+                case 1:
+                    ready_to_capture = True
+                case 2:
                     available_trades_exist = False
-                case '2':
+                case 3:
                     competing_trades_exist = False
-                case keyboard.Key.backspace:
+                case 4:
                     return None
+
+        print("Press right-click when you want to capture screen shots")
+        utils.wait_for_right_click()
 
         available_imgs = None
         competing_imgs = None

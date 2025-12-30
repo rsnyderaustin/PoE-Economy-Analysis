@@ -445,9 +445,8 @@ class CurrencyArbitrager:
 
         return G
 
-    def _print_profitable_iterations(self, iterations: list[_CycleIteration]):
-        profitable_iterations = [i for i in iterations if i.result.divs_profit > 0]
-        sorted_iterations = sorted(profitable_iterations, key=lambda i: i.result.gold_per_div_profit)
+    def _print_iterations(self, iterations: list[_CycleIteration]):
+        sorted_iterations = sorted(iterations, key=lambda i: i.result.gold_per_div_profit)
         for i in sorted_iterations:
             print("\n\n")
             print(f"Gold per divines profit: {i.result.gold_per_div_profit}")
@@ -481,6 +480,6 @@ class CurrencyArbitrager:
 
         all_iterations = [iteration for c in processed_cycles for iteration in c.iterations]
 
-        self._print_profitable_iterations(all_iterations)
+        self._print_iterations(all_iterations)
 
         return all_iterations
