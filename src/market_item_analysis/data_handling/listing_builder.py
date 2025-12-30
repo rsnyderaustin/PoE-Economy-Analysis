@@ -118,56 +118,10 @@ class ListingBuilder:
 
         return listing
 
-class _ModFactory:
-
-    @staticmethod
-    def _determine_mod_affix_type(mod_data: dict) -> AffixType | None:
-        mod_affix = None
-        if mod_data['tier']:
-            first_letter = mod_data['tier'][0]
-            if first_letter == 's':
-                mod_affix = AffixType.SUFFIX
-            elif first_letter == 'p':
-                mod_affix = AffixType.PREFIX
-            else:
-                parse_log.error(f"Did not recognize first character as an affix type for mod tier {mod_data['tier']}.")
-                return None
-
-        return mod_affix
-
-    @classmethod
-    def create_mods(cls, item_data: dict) -> ItemMods:
-        for mod_class in ModClass:
-            mod_abbrev = cls._
-
-    @classmethod
-    def create_mod(cls, mod_atype: EquipmentCategory, mod_data: dict, mod_meta: _ModMeta, sub_mod_hash_to_text: dict):
-        new_mod = ItemMod(
-            equipment_category=mod_atype,
-            mod_class=mod_meta.mod_class,
-            mod_name=mod_data['name'],
-            affix_type=mod_meta.affix_type,
-            mod_tier=mod_meta.mod_tier,
-            mod_ilvl=int(mod_data['level'])
-        )
-
-        sub_mods = cls._create_sub_mods(
-            sub_mod_hash_to_text=sub_mod_hash_to_text,
-            mod_magnitudes=mod_data['magnitudes']
-        )
-
-        new_mod.insert_sub_mods(sub_mods)
-
-        return new_mod
-
 
 class _ModResolver:
 
-    def __init__(self,
-                 item_mods_file: ItemModsFile,
-                 poe2db_injector: _PoE2DbInjector):
-        self._poe2db_injector = poe2db_injector
-
+    def __init__(self, item_mods_file: ItemModsFile):
         self._item_mods_file = item_mods_file
         self._mods = item_mods_file.load(default=dict())
 
