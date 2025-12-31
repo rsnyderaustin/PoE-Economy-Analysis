@@ -1,6 +1,9 @@
+import os
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Iterable
+
+import psutil
 
 
 def generic_to_dict(val, _depth: int = 0) -> dict:
@@ -64,4 +67,11 @@ def format_date_into_utc(listing_date):
         dt = dt.astimezone(timezone.utc)
 
     return dt
+
+
+def log_memory_usage(stage=""):
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info().rss / (1024 ** 2)  # in MB
+    print(f"[Memory] {stage}: {mem:.2f} MB")
+
 

@@ -23,15 +23,15 @@ def _load_jsonl(path: Path) -> 'Generator[dict[str, Any], None, None]':
 class PoE2EconomyAnalysisIOManager:
 
     def __init__(self):
-        self.raw_listings_path = Path.cwd() / 'file_management/dynamic_files/raw_listings.jsonl'
+        self.raw_responses_path = Path.cwd() / 'file_management/dynamic_files/raw_listings.jsonl'
         self.constructed_listings_path = Path.cwd() / 'file_management/dynamic_files/constructed_listings.jsonl'
 
-    def save_raw_listings(self, raw_listings: list[dict]):
-        _write_jsonl(path=self.raw_listings_path,
-                     records=raw_listings)
+    def save_raw_responses(self, raw_responses: list[dict]):
+        _write_jsonl(path=self.raw_responses_path,
+                     records=raw_responses)
 
     def load_raw_listings(self):
-        return _load_jsonl(path=self.raw_listings_path)
+        return _load_jsonl(path=self.raw_responses_path)
 
     def save_constructed_listings(self, constructed_listings: list[dict]):
         _write_jsonl(path=self.constructed_listings_path,

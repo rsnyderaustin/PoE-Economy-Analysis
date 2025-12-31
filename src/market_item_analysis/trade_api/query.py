@@ -54,19 +54,10 @@ class Query:
         self.stats_filters_groups = stats_filters_groups or []
 
 
-class QueriesBundle:
-
-    def __init__(self, queries: list[Query]):
-        self.queries = queries
-
-    def shuffle(self):
-        random.shuffle(self.queries)
-
-
 class QueryPresets:
 
     @classmethod
-    def create_training_data_queries(cls) -> QueriesBundle:
+    def create_training_data_queries(cls) -> list[Query]:
         item_categories = EquipmentCategoryGroups.fetch_martial_weapon_categories(which=WhichCategoryType.TRADE)
         currencies = [trade_enums.Currency.DIVINE_ORB]
 
@@ -79,28 +70,28 @@ class QueryPresets:
         queries = []
         for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
             ilvl_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TypeFilters.ITEM_LEVEL,
+                filter_type_enum=trade_enums.TypeFilter.ITEM_LEVEL,
                 filter_value=(71, 100)
             )
 
             category_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TypeFilters.ITEM_CATEGORY,
+                filter_type_enum=trade_enums.TypeFilter.ITEM_CATEGORY,
                 filter_value=item_category
             )
 
             days_since_listed_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TradeFilters.LISTED,
+                filter_type_enum=trade_enums.TradeFilter.LISTED,
                 filter_value=trade_enums.ListedSince.UP_TO_1_HOUR
             )
 
             price_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TradeFilters.PRICE,
+                filter_type_enum=trade_enums.TradeFilter.PRICE,
                 filter_value=currency,
                 currency_amount=currency_amount
             )
 
             rarity_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TypeFilters.ITEM_RARITY,
+                filter_type_enum=trade_enums.TypeFilter.ITEM_RARITY,
                 filter_value=trade_enums.Rarity.RARE
             )
 
@@ -108,4 +99,4 @@ class QueryPresets:
             query = trade_api.Query(meta_filters=meta_mod_filters)
             queries.append(query)
 
-        return QueriesBundle(queries)
+        return queries

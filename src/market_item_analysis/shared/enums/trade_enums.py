@@ -18,11 +18,12 @@ class MetaSearchType(Enum):
     TRADE = 'trade_filters'
 
 
-class TypeFilters(Enum):
+class TypeFilter(Enum):
     ITEM_CATEGORY = 'category'
     ITEM_RARITY = 'rarity'
     ITEM_LEVEL = 'ilvl'
     ITEM_QUALITY = 'quality'
+    BUYOUT_TYPE = 'buyout_type'
 
 
 class EquipmentAttribute(Enum):
@@ -46,20 +47,20 @@ class ArmourAttribute(Enum):
     BLOCK = 'block'
 
 
-class RequirementFilters(Enum):
+class RequirementFilter(Enum):
     LEVEL = 'lvl'
     STRENGTH = 'str'
     DEXTERITY = 'dex'
     INTELLIGENCE = 'int'
 
 
-class MiscFilters(Enum):
+class PropertyFilter(Enum):
     IDENTIFIED = 'identified'
     CORRUPTED = 'corrupted'
     MIRRORED = 'mirrored'
 
 
-class TradeFilters(Enum):
+class TradeFilter(Enum):
     LISTED = 'indexed'
     PRICE = 'price'
 
@@ -67,7 +68,7 @@ class TradeFilters(Enum):
 filter_enum_to_meta_search_type = {
     **{
         e: 'type_filters'
-        for e in TypeFilters
+        for e in TypeFilter
     },
     **{
         e: 'equipment_filters'
@@ -75,15 +76,15 @@ filter_enum_to_meta_search_type = {
     },
     **{
         e: 'req_filters'
-        for e in RequirementFilters
+        for e in RequirementFilter
     },
     **{
         e: 'misc_filters'
-        for e in MiscFilters
+        for e in PropertyFilter
     },
     **{
         e: 'trade_filters'
-        for e in TradeFilters
+        for e in TradeFilter
     }
 }
 
