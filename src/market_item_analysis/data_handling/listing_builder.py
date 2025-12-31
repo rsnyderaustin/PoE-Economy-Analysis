@@ -119,92 +119,18 @@ class ListingBuilder:
         return listing
 
 
-class _ModResolver:
+class _ModFactory:
 
-    def __init__(self, item_mods_file: ItemModsFile):
-        self._item_mods_file = item_mods_file
-        self._mods = item_mods_file.load(default=dict())
+    _mod_abbrev_d = {
+        ModClass.IMPLICIT: 'implicit',
+        ModClass.ENCHANT: 'enchant',
+        ModClass.EXPLICIT: 'explicit',
+        ModClass.FRACTURED: 'fractured',
+        ModClass.RUNE: 'rune'
+    }
 
     @staticmethod
-    def _balance_same_hash_sub_mods(mods):
-        sub_mods = [sub_mod for mod in mods for sub_mod in mod.sub_mods]
-
-        sub_mod_hash_to_sub_mods = dict()
-        for sub_mod in sub_mods:
-            if sub_mod.sub_mod_hash not in sub_mod_hash_to_sub_mods:
-                sub_mod_hash_to_sub_mods[sub_mod.sub_mod_hash] = []
-
-            sub_mod_hash_to_sub_mods[sub_mod.sub_mod_hash].append(sub_mod)
-
-        sub_mod_hash_to_sub_mods = {
-            sub_mod_hash: sub_mods
-            for sub_mod_hash, sub_mods in sub_mod_hash_to_sub_mods.items()
-            if len(sub_mods) >= 2
-        }
-        for sub_mod_hash, sub_mods in sub_mod_hash_to_sub_mods.items():
-            range_sums = []
-            for sub_mod in sub_mods:
-                range_sum = sum([sum(value_range) for value_range in sub_mod.values_ranges])
-                range_sums.append(range_sum)
-
-            ranges_total = sum(range_sums)
-            range_portions = [range_sum/ranges_total for range_sum in range_sums]
-
-            for i, sub_mod in enumerate(sub_mods):
-                sub_mod.actual_values = [round(val * range_portions[i], 2) for val in sub_mod.actual_values]
-
-    @log_errors(parse_log)
-    def resolve_mods(self, rp: ApiResponseParser) -> list[ItemMod]:
-        """
-        Attempts to pull each mod in the item's data from file. Otherwise, it manages the mod's creation and caching
-        :return: All mods from the item data
-        """
-
-        mods = []
-        for mod_class in rp.mod_classes:
-            mods_data = rp.fetch_mods_data(mod_class)
-            for mod_data in mods_data:
-                mod_meta = _ModFactory.create_mod_meta(
-                    mod_class=mod_class,
-                    mod_atype=rp.item_atype,
-                    mod_data=mod_data
-                )
-                mod_id = mod_meta.mod_id
-                sub_mod_hash_to_text = rp.fetch_sub_mod_hash_to_text(mod_class=mod_meta.mod_class)
-
-                if mod_id in self._mods:
-                    new_mod = copy.deepcopy(self._mods[mod_id])
-                else:
-                    parse_log.info(f"Could not find mod with ID {mod_id}. Creating and caching.")
-                    new_mod = _ModFactory.create_mod(
-                        mod_atype=mod_meta.mod_atype,
-                        mod_data=mod_data,
-                        mod_meta=mod_meta,
-                        sub_mod_hash_to_text=sub_mod_hash_to_text
-                    )
-                    self._poe2db_injector.inject_poe2db_into_mod(mod=new_mod)
-
-                    template_mod = copy.deepcopy(new_mod)
-                    self._mods[mod_id] = template_mod
-
-                # Mods are created as templates - which essentially just means that they have everything filled except
-                # for actual values in their sub-mods
-                _SubModValuesInjector.inject_sub_mod_values(
-                    sub_mod_hash_to_text=sub_mod_hash_to_text,
-                    current_mod=new_mod
-                )
-                mods.append(new_mod)
-
-        """
-         Individual mod texts on an item can be comprised of multiple different mods. The way mod creation
-         works currently, those individual mods will all contain the TOTAL mod value as their mod value.
-         We have to find those and balance them appropriately.
-        """
-        self._balance_same_hash_sub_mods(mods=mods)
-
-        self._item_mods_file.save(data=self._mods)
-
-        return mods
+    def create_mods(rp: ApiResponseParser) -> list[ItemMod]:
 
 
 class _SkillsFactory:

@@ -1,4 +1,4 @@
-
+import enum
 from enum import Enum
 
 
@@ -89,11 +89,11 @@ filter_enum_to_meta_search_type = {
 
 
 class ModClass(Enum):
-    IMPLICIT = 'implicitMods'
-    EXPLICIT = 'explicitMods'
-    ENCHANT = 'enchantMods'
-    RUNE = 'runeMods'
-    FRACTURED = 'fracturedMods'
+    IMPLICIT = enum.auto()
+    EXPLICIT = enum.auto()
+    ENCHANT = enum.auto()
+    RUNE = enum.auto()
+    FRACTURED = enum.auto()
 
 
 class Rarity(Enum):

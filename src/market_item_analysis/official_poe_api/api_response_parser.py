@@ -88,82 +88,6 @@ class _ApiResponsePreprocessor:
         return d
 
 
-class _ModFactory:
-
-    _mod_abbrev_d = {
-        ModClass.IMPLICIT: 'implicit',
-        ModClass.ENCHANT: 'enchant',
-        ModClass.EXPLICIT: 'explicit',
-        ModClass.FRACTURED: 'fractured',
-        ModClass.RUNE: 'rune'
-    }
-
-    def __init__(self):
-        self._item_data = None
-
-    def create_mods(self, item_data: dict) -> ItemMods:
-        item_mods = ItemMods()
-
-        info_d = item_data['extended']['mods']
-        hashes_d = item_data['extended']['hahes']
-        for mod_class in ModClass:
-            mod_abbrev = self._mod_abbrev_d[mod_class]
-
-            if mod_abbrev not in hashes_d:
-                continue
-
-            class_info_d = info_d[mod_abbrev]
-            class_hashes = hashes_d[mod_abbrev]
-
-            for mod_list in class_hashes:
-                mod_id = mod_list[0]
-                info_indices = mod_list[1]
-
-
-        self._item_data = item_data
-
-    def _map_mod_id_to_text(self, item_data: dict) -> dict:
-        self._item_data = item_data
-        mod_classes = [e for e in ModClass if e != ModClass.RUNE]
-
-        mod_id_to_text = dict()
-        for mod_class in mod_classes:
-            mod_abbrev = cls._mod_abbrev_d[mod_class]
-
-            if mod_abbrev not in item_data['extended']['hashes']:
-                continue
-
-            mod_ids_list = item_data['extended']['hashes'][mod_abbrev]
-
-            mod_id_display_order = [mod_id_item[0] for mod_id_item in mod_ids_list]
-            mod_text_display_order = item_data[mod_class.value]
-
-            mod_id_to_text = {
-                mod_id: mod_text
-                for mod_id, mod_text in zip(mod_id_display_order, mod_text_display_order)
-            }
-            mod_id_to_text[mod_class] = mod_id_to_text
-
-        return mod_id_to_text
-
-    def fetch_tiered_mod_strings(self, mod_class: ModClass, mod_abbrev: str) -> list[str]:
-        hash_to_text = {k: f"({mod_class.value}) {v}   " for k, v in self.sub_mod_hash_to_text[mod_class].items()}
-        for mod in self._item_data['extended']['mods'][mod_abbrev]:
-            hashes = [magnitude['hash'] for magnitude in mod['magnitudes']]
-            is_hybrid = len(hashes) >= 2
-
-            mod_tier = f"Hybrid {mod['tier']}" if is_hybrid else mod['tier']
-
-            # Implicit mods and enchant mods do not have a mod tier
-            if not mod_tier:
-                continue
-
-            for hash_ in hashes:
-                hash_to_text[hash_] = f"{hash_to_text[hash_]} {mod_tier}"
-
-        return list(hash_to_text.values())
-
-
 class ApiResponseParser:
 
     def __init__(self, api_response_data: dict):
@@ -194,17 +118,6 @@ class ApiResponseParser:
     @property
     def quality(self) -> int:
         return int(self._item_properties['quality'])
-
-    @property
-    def mod_classes(self) -> list[ModClass]:
-        # We aren't messing with runes right now
-        return [mod_class for mod_class in ModClass
-                if mod_class.value in self._item_data and mod_class != ModClass.RUNE]
-
-    def fetch_mods_data(self, mod_class: ModClass) -> dict:
-        abbrev_class = self.__class__.mod_class_to_abbrev[mod_class]
-        mods_data = self._item_data['extended']['mods']
-        return mods_data[abbrev_class] if abbrev_class in mods_data else dict()
 
     @property
     def account_name(self) -> str:

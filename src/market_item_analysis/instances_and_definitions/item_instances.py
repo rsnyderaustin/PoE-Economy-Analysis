@@ -9,14 +9,10 @@ from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, 
 class ItemMod:
 
     def __init__(self,
-                 mod_ids: list[str],
                  mod_text: str,
-                 mod_class: ModClass,
-                 affix_type: AffixType):
-        self.mod_ids = mod_ids
+                 mod_class: ModClass):
         self.mod_text = mod_text
         self.mod_class = mod_class
-        self.affix_type = affix_type
 
     @property
     def is_hybrid(self):

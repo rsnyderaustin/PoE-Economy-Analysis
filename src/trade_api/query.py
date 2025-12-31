@@ -2,7 +2,7 @@ import itertools
 from dataclasses import dataclass
 from enum import Enum
 
-import trade_api
+from src import trade_api
 from src.market_item_analysis.shared.enums import ItemEnumGroups, WhichCategoryType
 from src.market_item_analysis.shared.enums import trade_enums
 

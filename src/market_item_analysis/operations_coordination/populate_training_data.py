@@ -5,14 +5,14 @@ import random
 import psutil
 
 from src.market_item_analysis import psql
-import trade_api
+from src import trade_api
 from src.market_item_analysis.core import env_loading
 from src.market_item_analysis.data_handling import ListingBuilder, ApiResponseParser
 from src.market_item_analysis.data_transforming import ListingsTransforming
 from src.market_item_analysis.file_management.file_managers import RawListingsFile
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
-from trade_api.listing_gatekeeper import ListingImportGatekeeper
-from trade_api.query import QueryPresets
+from src.trade_api import ListingImportGatekeeper
+from src.trade_api.query import QueryPresets
 
 overview_log = LogsHandler().fetch_log(LogFile.PROGRAM_OVERVIEW)
 
