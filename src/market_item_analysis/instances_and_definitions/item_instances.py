@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime
 import uuid
 
@@ -61,7 +62,8 @@ class ListingMetadata:
         d['date_fetched'] = datetime.fromisoformat(d['date_fetched'])
         return cls(**d)
 
-class ItemRequirements:
+
+class EquipmentRequirements:
 
     def __init__(self,
                  player_level: int,
@@ -77,7 +79,7 @@ class ItemRequirements:
         return shared_utils.generic_to_dict(self)
 
     @classmethod
-    def from_dict(cls, d: dict) -> "ItemRequirements":
+    def from_dict(cls, d: dict) -> "EquipmentRequirements":
         return cls(**d)
 
 
@@ -173,7 +175,32 @@ class Price:
         )
 
 
-class ItemProperties:
+class EquipmentStats:
+
+    def __init__(self,
+                 armour: int = None,
+                 energy_shield: int = None,
+                 evasion: int = None,
+                 attacks_per_second: float = None,
+                 physical_damage: float = None,
+                 critical_hit_chance: float = None,
+                 cold_damage: float = None,
+                 fire_damage: float = None,
+                 lightning_damage: float = None,
+                 chaos_damage: float = None):
+        self.armour = armour
+        self.energy_shield = energy_shield
+        self.evasion = evasion
+        self.attacks_per_second = attacks_per_second
+        self.physical_damage = physical_damage
+        self.critical_hit_chance = critical_hit_chance
+        self.cold_damage = cold_damage
+        self.fire_damage = fire_damage
+        self.lightning_damage = lightning_damage
+        self.chaos_damage = chaos_damage
+
+
+class EquipmentProperties:
 
     def __init__(self,
                  rarity: Rarity,
@@ -198,7 +225,7 @@ class ItemProperties:
         return shared_utils.generic_to_dict(self)
 
     @classmethod
-    def from_dict(cls, d: dict) -> "ItemProperties":
+    def from_dict(cls, d: dict) -> "EquipmentProperties":
         d['rarity'] = Rarity(d['rarity'])
         d['identified'] = bool(d['identified'])
         d['corrupted'] = bool(d['corrupted'])
@@ -210,6 +237,7 @@ class ItemProperties:
 
         return cls(**d)
 
+
 class EquipmentListing:
 
     def __init__(self,
@@ -217,10 +245,11 @@ class EquipmentListing:
                  price: Price,
                  item_name: str,
                  types: ItemTypes,
-                 requirements: ItemRequirements,
+                 requirements: EquipmentRequirements,
+                 stats: EquipmentStats,
                  mods: ItemMods,
                  skills: list[ItemSkill],
-                 properties: ItemProperties,
+                 properties: EquipmentProperties,
                  internal_id: str = None
                  ):
         self.metadata = metadata
@@ -228,6 +257,7 @@ class EquipmentListing:
         self.item_name = item_name
         self.types = types
         self.requirements = requirements
+        self.stats = stats
         self.mods_ = mods
         self.skills = skills
         self.properties = properties
@@ -242,10 +272,10 @@ class EquipmentListing:
         d['metadata'] = ListingMetadata.from_dict(d['metadata'])
         d['price'] = Price.from_dict(d['price'])
         d['types'] = ItemTypes.from_dict(d['types'])
-        d['requirements'] = ItemRequirements.from_dict(d['requirements'])
+        d['requirements'] = EquipmentRequirements.from_dict(d['requirements'])
         d['mods'] = ItemMods.from_dict(d['mods'])
         d['skills'] = [ItemSkill.from_dict(s) for s in d['skills']]
-        d['properties'] = ItemProperties.from_dict(d['properties'])
+        d['properties'] = EquipmentProperties.from_dict(d['properties'])
         return cls(**d)
 
     @property

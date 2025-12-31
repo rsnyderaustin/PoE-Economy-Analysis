@@ -101,7 +101,7 @@ class ApiResponse:
         self._item_properties = self.item_data['properties']
         self._listing_data = self.raw_response_data['listing']
 
-    def elemental_damage_values(self) -> ElementalDamageValues:
+    def determine_elemental_damage_values(self) -> ElementalDamageValues:
         return _ElementalDamageParser.determine_elemental_damage(raw_item_data=self.item_data)
 
     def fetch_sub_mod_hash_to_text(self, mod_class: ModClass) -> dict:

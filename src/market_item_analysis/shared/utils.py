@@ -50,14 +50,6 @@ def generic_to_dict(val, _depth: int = 0) -> dict:
     # Fallback: return as-is (or raise an error if you prefer)
     return val
 
-def extract_average_from_text(text) -> float:
-    values = extract_values_from_text(text)
-
-    values = [sum(value) / len(value) if isinstance(value, Iterable) else value for value in values]
-    avg_value = sum(values) / len(values)
-
-    return avg_value
-
 
 def sanitize_dict_texts(d: dict):
     if isinstance(d, dict):
@@ -89,4 +81,20 @@ def format_date_into_utc(listing_date):
         dt = dt.astimezone(timezone.utc)
 
     return dt
+
+
+def _singular_number_convert(s: str):
+    return float(s) if '.' in s else int(s)
+
+
+def convert_string_to_numbers(s: str) -> list[float] | list[int]:
+    if '-' not in s:
+        return [_singular_number_convert(s)]
+
+    split_vals = s.split('-')
+    if len(split_vals) == 2:
+        return [_singular_number_convert(split_vals[0]),
+                _singular_number_convert(split_vals[1])]
+    else:
+        raise ValueError(f"Could not convert {s} to numbers")
 

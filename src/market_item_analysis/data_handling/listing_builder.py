@@ -8,7 +8,7 @@ from src.market_item_analysis.program_logging import LogFile, LogsHandler, log_e
 from src.market_item_analysis.shared.enums.item_enums import AffixType, EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
 from src.market_item_analysis.official_poe_api.api_response_parser import ApiResponse
-from ..instances_and_definitions.item_instances import ItemRequirements, ItemTypes, ListingMetadata, ItemMods, Price, ItemProperties
+from ..instances_and_definitions.item_instances import EquipmentRequirements, ItemTypes, ListingMetadata, ItemMods, Price, EquipmentProperties, EquipmentStats
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
@@ -78,6 +78,36 @@ class _ModFactory:
 
         return all_mods
 
+
+class _StatsDiscoverer:
+
+    @classmethod
+    def _pull_value(cls, stat: str, r: ApiResponse) -> float | int | None:
+        properties_list = r.item_data['properties']
+        stat_dicts = [d for d in properties_list if d['name'] == stat]
+        if not stat_dicts:
+            return None
+
+        if len(stat_dicts) >= 2:
+            raise ValueError(f"Found 2 stats dicts for {stat}.\nSource data: {properties_list}")
+
+        val_str = stat_dicts[0]['values'][0]
+
+        if '-' in val_str:
+            split_vals = val_str.split('-')
+            if len(split_vals) == 2:
+
+
+        return float(val_str) if '.' in val_str else int(val_str)
+
+    @classmethod
+    def determine_stats(cls, r: ApiResponse) -> EquipmentStats:
+        elemental_damage = r.determine_elemental_damage_values()
+
+        phys_damage = cls._pull_value(stat='[Physical] Damage', r=r)
+        crit_chance =
+
+
 class _SkillsFactory:
 
     @staticmethod
@@ -140,7 +170,7 @@ class ListingBuilder:
             date_fetched=datetime.now()
         )
 
-        item_requirements = ItemRequirements(
+        item_requirements = EquipmentRequirements(
             player_level=r.level_requirement,
             strength=r.strength_requirement,
             intelligence=r.intelligence_requirement,
@@ -166,7 +196,7 @@ class ListingBuilder:
         ]
         suffixes = [m for m in mod_informations if m['tier'].startswith('S')]
         prefixes = [m for m in mod_informations if m['tier'].startswith('P')]
-        item_properties = ItemProperties(
+        item_properties = EquipmentProperties(
             rarity=Rarity(r.rarity),
             ilvl=r.ilvl,
             identified=r.is_identified,
