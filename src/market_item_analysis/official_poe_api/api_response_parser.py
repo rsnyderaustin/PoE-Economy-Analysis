@@ -2,12 +2,16 @@ import pprint
 from dataclasses import dataclass
 from datetime import datetime
 
+import numpy as np
+
 from src.market_item_analysis.instances_and_definitions import ItemMod
 from src.market_item_analysis.instances_and_definitions.item_instances import ItemMods
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
-from src.market_item_analysis.shared import shared_utils
+from src.market_item_analysis.shared import utils
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
+from src.market_item_analysis.text_analysis.analyzers import ModTextAnalyzer
+from src.market_item_analysis.shared import utils as shared_utils
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
@@ -55,9 +59,9 @@ class _ElementalDamageParser:
         values = ElementalDamageValues()
         for ele_property in properties_list:
             elemental_type = cls._determine_elemental_type(ele_property[1])
-            value = shared_utils.extract_average_from_text(ele_property[0])
+            values = ModTextAnalyzer.extract_values(ele_property[0])
             values.add_damage_value(elemental_type=elemental_type,
-                                    value=value)
+                                    value=np.average(values))
 
         return values
 
@@ -88,24 +92,24 @@ class _ApiResponsePreprocessor:
         return d
 
 
-class ApiResponseParser:
+class ApiResponse:
 
     def __init__(self, api_response_data: dict):
         self.raw_response_data = _ApiResponsePreprocessor.preprocess(api_response_data)
 
-        self._item_data = self.raw_response_data['item']
-        self._item_properties = self._item_data['properties']
+        self.item_data = self.raw_response_data['item']
+        self._item_properties = self.item_data['properties']
         self._listing_data = self.raw_response_data['listing']
 
     def elemental_damage_values(self) -> ElementalDamageValues:
-        return _ElementalDamageParser.determine_elemental_damage(raw_item_data=self._item_data)
+        return _ElementalDamageParser.determine_elemental_damage(raw_item_data=self.item_data)
 
     def fetch_sub_mod_hash_to_text(self, mod_class: ModClass) -> dict:
         return self.sub_mod_hash_to_text[mod_class] if mod_class in self.sub_mod_hash_to_text else dict()
 
     @property
     def skills_data(self) -> dict:
-        return self._item_data['grantedSkills'] if 'grantedSkills' in self._item_data else dict()
+        return self.item_data['grantedSkills'] if 'grantedSkills' in self.item_data else dict()
 
     @property
     def date_fetched(self) -> datetime:
@@ -137,40 +141,40 @@ class ApiResponseParser:
 
     @property
     def item_name(self) -> str:
-        return self._item_data['name']
+        return self.item_data['name']
 
     @property
     def base_name(self) -> str:
-        return self._item_data['baseType']
+        return self.item_data['baseType']
 
     @property
     def rarity(self) -> Rarity:
-        rarity_str = self._item_data['rarity'].lower()
+        rarity_str = self.item_data['rarity'].lower()
         return Rarity(rarity_str)
 
     @property
     def ilvl(self) -> int:
-        return int(self._item_data['ilvl'])
+        return int(self.item_data['ilvl'])
 
     @property
     def level_requirement(self) -> int:
-        reqs = self._item_data['requirements']
+        reqs = self.item_data['requirements']
         return int(reqs[0]['values'][0][0]) if reqs and reqs[0]['name'] == 'Level' else 0
 
     @property
     def is_identified(self) -> bool:
-        return 'identified' in self._item_data and self._item_data['identified'] is True
+        return 'identified' in self.item_data and self.item_data['identified'] is True
 
     @property
     def is_corrupted(self) -> bool:
-        return 'corrupted' in self._item_data and self._item_data['corrupted'] is True
+        return 'corrupted' in self.item_data and self.item_data['corrupted'] is True
 
     @property
     def base_category(self) -> str:
-        return shared_utils.extract_from_brackets(self._item_properties[0]['name'])
+        return shared_utils._extract_from_brackets(self._item_properties[0]['name'])
 
     def _extract_attribute_requirement(self, attribute_name: str):
-        requirements = self._item_data['requirements']
+        requirements = self.item_data['requirements']
         req = [req for req in requirements if req['name'] == attribute_name]
         return int(req[0]['values'][0][0]) if req else 0
 

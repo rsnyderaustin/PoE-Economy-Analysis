@@ -7,7 +7,7 @@ from src.market_item_analysis.instances_and_definitions import ItemMod,  ItemSki
 from src.market_item_analysis.program_logging import LogFile, LogsHandler, log_errors
 from src.market_item_analysis.shared.enums.item_enums import AffixType, EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
-from src.market_item_analysis.official_poe_api.api_response_parser import ApiResponseParser
+from src.market_item_analysis.official_poe_api.api_response_parser import ApiResponse
 from ..instances_and_definitions.item_instances import ItemRequirements, ItemTypes, ListingMetadata, ItemMods, Price, ItemProperties
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
@@ -53,72 +53,6 @@ class _EquipmentCategorizer:
                 pass
 
 
-class ListingBuilder:
-
-    def build_listing(self, rp: ApiResponseParser):
-
-        item_mods = ItemMods(
-            implicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.IMPLICIT],
-            enchants=[mod for mod in item_mods_list if mod.mod_class == ModClass.ENCHANT],
-            fractures=[mod for mod in item_mods_list if mod.mod_class == ModClass.FRACTURED],
-            explicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.EXPLICIT],
-        )
-
-        item_price = Price(
-            currency=Currency(rp.price_currency),
-            currency_amount=rp.price_amount,
-            gold_cost=rp.gold_cost
-        )
-
-        metadata = ListingMetadata(
-            poster_account_name=rp.account_name,
-            listing_id=rp.listing_id,
-            date_posted=rp.date_fetched,
-            date_fetched=datetime.now()
-        )
-
-        item_requirements = ItemRequirements(
-            player_level=rp.level_requirement,
-            strength=rp.strength_requirement,
-            intelligence=rp.intelligence_requirement,
-            dexterity=rp.dexterity_requirement
-        )
-
-        item_skills = _SkillsFactory.create_skills(rp)
-
-        item_category = _EquipmentCategorizer.categorize(base_category=rp.base_category,
-                                                         base_name=rp.base_name,
-                                                         strength_requirement=rp.strength_requirement,
-                                                         dexterity_requirement=rp.dexterity_requirement,
-                                                         intelligence_requirement=rp.intelligence_requirement)
-        item_types = ItemTypes(
-            base_name=rp.base_name,
-            item_category=item_category
-        )
-
-        item_properties = ItemProperties(
-            rarity=Rarity(rp.rarity),
-            ilvl=rp.ilvl,
-            identified=rp.is_identified,
-            corrupted=rp.is_corrupted,
-            quality=rp.quality
-        )
-
-        listing = EquipmentListing(
-            internal_id=f"LST_{uuid.uuid4().hex[:10].upper()}",
-            metadata=metadata,
-            item_name=rp.item_name,
-            types=item_types,
-            requirements=item_requirements,
-            mods=item_mods,
-            price=item_price,
-            skills=item_skills,
-            properties=item_properties
-        )
-
-        return listing
-
-
 class _ModFactory:
 
     _mod_abbrev_d = {
@@ -129,19 +63,30 @@ class _ModFactory:
         ModClass.RUNE: 'rune'
     }
 
-    @staticmethod
-    def create_mods(rp: ApiResponseParser) -> list[ItemMod]:
+    @classmethod
+    def create_mods(cls, r: ApiResponse) -> list[ItemMod]:
+        all_mods = []
+        for mod_class, mod_abbrev in cls._mod_abbrev_d.items():
+            d_key = f"{mod_abbrev}Mods"
+            if d_key not in r.item_data:
+                continue
 
+            mod_texts = r.item_data[d_key]
+            new_mods = [ItemMod(mod_text=mod_text,
+                                mod_class=mod_class) for mod_text in mod_texts]
+            all_mods.extend(new_mods)
+
+        return all_mods
 
 class _SkillsFactory:
 
     @staticmethod
-    def create_skills(rp: ApiResponseParser) -> list[ItemSkill]:
-        if not rp.skills_data:
+    def create_skills(r: ApiResponse) -> list[ItemSkill]:
+        if not r.skills_data:
             return []
 
         skills = []
-        for skill_data in rp.skills_data:
+        for skill_data in r.skills_data:
             raw_skill = skill_data['values'][0]
 
             # Spear Throw is the only skill that is granted by an item without a level. May have to update in the future
@@ -168,3 +113,79 @@ class _SkillsFactory:
             skills.append(new_skill)
 
         return skills
+
+
+class ListingBuilder:
+
+    @classmethod
+    def build_listing(cls, r: ApiResponse):
+        item_mods_list = _ModFactory.create_mods(r)
+        item_mods = ItemMods(
+            implicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.IMPLICIT],
+            enchants=[mod for mod in item_mods_list if mod.mod_class == ModClass.ENCHANT],
+            fractures=[mod for mod in item_mods_list if mod.mod_class == ModClass.FRACTURED],
+            explicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.EXPLICIT],
+        )
+
+        item_price = Price(
+            currency=Currency(r.price_currency),
+            currency_amount=r.price_amount,
+            gold_cost=r.gold_cost
+        )
+
+        metadata = ListingMetadata(
+            poster_account_name=r.account_name,
+            listing_id=r.listing_id,
+            date_posted=r.date_fetched,
+            date_fetched=datetime.now()
+        )
+
+        item_requirements = ItemRequirements(
+            player_level=r.level_requirement,
+            strength=r.strength_requirement,
+            intelligence=r.intelligence_requirement,
+            dexterity=r.dexterity_requirement
+        )
+
+        item_skills = _SkillsFactory.create_skills(r)
+
+        item_category = _EquipmentCategorizer.categorize(base_category=r.base_category,
+                                                         base_name=r.base_name,
+                                                         strength_requirement=r.strength_requirement,
+                                                         dexterity_requirement=r.dexterity_requirement,
+                                                         intelligence_requirement=r.intelligence_requirement)
+        item_types = ItemTypes(
+            base_name=r.base_name,
+            item_category=item_category
+        )
+
+        mod_informations = [
+            m
+            for mod_abbrev, mod_list in r.item_data['extended']['mods'].items()
+            for m in mod_list
+        ]
+        suffixes = [m for m in mod_informations if m['tier'].startswith('S')]
+        prefixes = [m for m in mod_informations if m['tier'].startswith('P')]
+        item_properties = ItemProperties(
+            rarity=Rarity(r.rarity),
+            ilvl=r.ilvl,
+            identified=r.is_identified,
+            corrupted=r.is_corrupted,
+            quality=r.quality,
+            open_suffixes=max(len(suffixes) - 3, 0),
+            open_prefixes=max(len(prefixes) - 3, 0),
+        )
+
+        listing = EquipmentListing(
+            internal_id=f"LST_{uuid.uuid4().hex[:10].upper()}",
+            metadata=metadata,
+            item_name=r.item_name,
+            types=item_types,
+            requirements=item_requirements,
+            mods=item_mods,
+            price=item_price,
+            skills=item_skills,
+            properties=item_properties
+        )
+
+        return listing

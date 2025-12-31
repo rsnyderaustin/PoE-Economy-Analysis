@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from src.market_item_analysis.core import CurrencyConverter
 from src.market_item_analysis.instances_and_definitions import EquipmentListing
 from src.market_item_analysis.program_logging import LogsHandler, LogFile, log_errors
-from src.market_item_analysis.shared import shared_utils
+from src.market_item_analysis.shared import utils
 from src.market_item_analysis.shared.enums import ItemEnumGroups, WhichCategoryType
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory, LocalMod, CalculatedMod
 from src.market_item_analysis.shared.enums.trade_enums import Currency
@@ -82,8 +82,10 @@ class MaxQualityPdpsCalculator(ListingFeatureCalculator):
             logging.error(msg)
             raise TypeError(msg)
 
-        current_multiplier = 1 + (listing.quality / 100)
-        max_multiplier = 1 + (listing.max_quality / 100)
+        current_multiplier = 1 + (listing.properties.quality / 100)
+
+        max_quality = 20
+        max_multiplier = 1 + (max_quality / 100)
 
         # Calculate the base damage and then the 20% quality damage
         phys_damage = listing.item_properties.get(LocalMod.PHYSICAL_DAMAGE.value, 0)

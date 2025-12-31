@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.options import Options
 
 from poe2db_scrape.mods_management import Poe2DbMod
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
-from src.market_item_analysis.shared import shared_utils
+from src.market_item_analysis.shared import utils
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory, AffixType
 from . import mods_management
 from .mods_management import AtypeModsManager, Poe2DbModsManager

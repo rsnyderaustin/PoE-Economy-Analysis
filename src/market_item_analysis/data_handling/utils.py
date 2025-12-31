@@ -23,15 +23,3 @@ def determine_minutes_since(relevant_date: str | datetime, later_date: str | dat
 
     minutes_diff = (later_date - relevant_date).total_seconds() / 60
     return round(minutes_diff, 2)
-
-@log_errors(logging.getLogger())
-def convert_string_into_number(s):
-    try:
-        int_val = int(s)
-        return int_val
-    except ValueError:
-        try:
-            float_val = float(s)
-            return float_val
-        except ValueError:
-            raise TypeError(f"String value {s} expected to represent a number, but did not.")

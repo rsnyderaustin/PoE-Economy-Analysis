@@ -1,5 +1,5 @@
 
-from src.market_item_analysis.shared import shared_utils
+from src.market_item_analysis.shared import utils
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 
 

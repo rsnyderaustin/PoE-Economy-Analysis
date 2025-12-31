@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import requests
 
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
-from src.market_item_analysis.shared import shared_utils
+from src.market_item_analysis.shared import utils
 
 api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
 

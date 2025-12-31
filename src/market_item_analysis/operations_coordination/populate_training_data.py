@@ -10,6 +10,7 @@ from src.market_item_analysis.core import env_loading
 from src.market_item_analysis.data_handling import ListingBuilder, ApiResponseParser
 from src.market_item_analysis.data_transforming import ListingsTransforming
 from src.market_item_analysis.file_management.file_managers import RawListingsFile
+from src.market_item_analysis.official_poe_api.api_response_parser import ApiResponse
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
 from src.trade_api import ListingImportGatekeeper
 from src.trade_api.query import QueryPresets
@@ -38,8 +39,8 @@ class TrainingDataPopulator:
 
         self.env_loader = env_loading.EnvLoader()
 
-    def _process_and_insert(self, response_parsers: list[ApiResponseParser]):
-        listings = [self.listing_builder.build_listing(api_r) for api_r in response_parsers]
+    def _process_and_insert(self, api_responses: list[ApiResponse]):
+        listings = [self.listing_builder.build_listing(api_r) for api_r in api_responses]
 
         for listing in listings:
             self.psql_manager.insert_listing_string(table_name='listing_strings',
