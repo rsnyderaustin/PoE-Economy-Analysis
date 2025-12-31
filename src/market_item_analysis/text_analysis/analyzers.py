@@ -13,7 +13,7 @@ class TextAnalyzer:
 
     @staticmethod
     def _preprocess(s):
-        return re.sub(r'[–—−-]', '-', match).strip()
+        return re.sub(r'[–—−-]', '-', s).strip()
 
     def sanitize(self):
         brackets_pattern = r'\[(.*?)\]'
