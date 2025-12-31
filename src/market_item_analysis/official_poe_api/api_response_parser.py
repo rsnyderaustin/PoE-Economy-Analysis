@@ -1,16 +1,11 @@
 import pprint
-from dataclasses import dataclass
 from datetime import datetime
 
 import numpy as np
 
-from src.market_item_analysis.instances_and_definitions import ItemMod
-from src.market_item_analysis.instances_and_definitions.item_instances import ItemMods
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
-from src.market_item_analysis.shared import utils
-from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
-from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
-from src.market_item_analysis.text_analysis.analyzers import ModTextAnalyzer
+from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity
+from src.market_item_analysis.shared.text_analysis import ModTextAnalyzer, convert_string_to_numbers
 from src.market_item_analysis.shared import utils as shared_utils
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
@@ -37,9 +32,9 @@ class ElementalDamageValues:
 
 class _ElementalDamageParser:
     _elemental_id_map = {
-        4: 'fire_damage',
-        5: 'cold_damage',
-        6: 'lightning_damage'
+        4: 'Fire Damage',
+        5: 'Cold Damage',
+        6: 'Lightning Damage'
     }
 
     @classmethod
@@ -48,22 +43,30 @@ class _ElementalDamageParser:
 
     @classmethod
     def determine_elemental_damage(cls, raw_item_data: dict) -> ElementalDamageValues:
-        raw_properties = raw_item_data['properties'][1:]
+        raw_properties = raw_item_data['properties']
+        damage_values = ElementalDamageValues()
 
-        elemental_properties = [p for p in raw_properties if p['name'] == 'elemental_damage']
-        if len(elemental_properties) >= 2:
-            raise ValueError(f"Unexpectedly got {len(elemental_properties)} elemental properties keys. Expected 0 or 1."
+        singular_elemental_damage = [d for d in raw_properties
+                                     if d['name'] in {'Fire Damage', 'Cold Damage', 'Lightning Damage'}]
+        for elemental_damage_d in singular_elemental_damage:
+            name = elemental_damage_d['name']
+            val = np.mean(convert_string_to_numbers(elemental_damage_d['values'][0]))
+            damage_values.add_damage_value(elemental_type=name,
+                                           value=val)
+
+        generic_elemental_properties = [p for p in raw_properties if p['name'] == 'elemental_damage']
+        if len(generic_elemental_properties) >= 2:
+            raise ValueError(f"Unexpectedly got {len(generic_elemental_properties)} elemental properties keys. Expected 0 or 1."
                              f"\n\n--- Raw item data: {pprint.pformat(raw_item_data)} ---")
 
-        properties_list = elemental_properties[0]['value']
-        values = ElementalDamageValues()
+        properties_list = generic_elemental_properties[0]['value']
         for ele_property in properties_list:
             elemental_type = cls._determine_elemental_type(ele_property[1])
-            values = ModTextAnalyzer.extract_values(ele_property[0])
-            values.add_damage_value(elemental_type=elemental_type,
-                                    value=np.average(values))
+            damage_values = ModTextAnalyzer.extract_values(ele_property[0])
+            damage_values.add_damage_value(elemental_type=elemental_type,
+                                    value=np.average(damage_values))
 
-        return values
+        return damage_values
 
 
 class _ApiResponsePreprocessor:
@@ -95,11 +98,19 @@ class _ApiResponsePreprocessor:
 class ApiResponse:
 
     def __init__(self, api_response_data: dict):
+        self.unprocessed_response_data = api_response_data.copy()
         self.raw_response_data = _ApiResponsePreprocessor.preprocess(api_response_data)
 
         self.item_data = self.raw_response_data['item']
         self._item_properties = self.item_data['properties']
         self._listing_data = self.raw_response_data['listing']
+
+    def to_dict(self) -> dict:
+        return self.unprocessed_response_data
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "ApiResponse":
+        return cls(api_response_data=d)
 
     def determine_elemental_damage_values(self) -> ElementalDamageValues:
         return _ElementalDamageParser.determine_elemental_damage(raw_item_data=self.item_data)

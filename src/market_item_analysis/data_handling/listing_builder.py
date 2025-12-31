@@ -1,13 +1,14 @@
-import copy
+import uuid
+from datetime import datetime
 import uuid
 from datetime import datetime
 
-from src.market_item_analysis.file_management.file_managers import ItemModsFile
-from src.market_item_analysis.instances_and_definitions import ItemMod,  ItemSkill, EquipmentListing
-from src.market_item_analysis.program_logging import LogFile, LogsHandler, log_errors
-from src.market_item_analysis.shared.enums.item_enums import AffixType, EquipmentCategory
-from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
+import numpy as np
+
+from src.market_item_analysis.instances_and_definitions import ItemMod, ItemSkill, EquipmentListing
 from src.market_item_analysis.official_poe_api.api_response_parser import ApiResponse
+from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
+from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
 from ..instances_and_definitions.item_instances import EquipmentRequirements, ItemTypes, ListingMetadata, ItemMods, Price, EquipmentProperties, EquipmentStats
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
@@ -92,20 +93,32 @@ class _StatsDiscoverer:
             raise ValueError(f"Found 2 stats dicts for {stat}.\nSource data: {properties_list}")
 
         val_str = stat_dicts[0]['values'][0]
-
-        if '-' in val_str:
-            split_vals = val_str.split('-')
-            if len(split_vals) == 2:
-
-
-        return float(val_str) if '.' in val_str else int(val_str)
+        vals = convert_string_to_numbers(val_str)
+        return np.mean(vals)
 
     @classmethod
     def determine_stats(cls, r: ApiResponse) -> EquipmentStats:
+        armour = cls._pull_value(stat='[Armour]', r=r)
+        evasion = cls._pull_value(stat='[Evasion|Evasion Rating]', r=r)
+        energy_shield = cls._pull_value(stat='[Energy Shield|Energy Shield]', r=r)
+
         elemental_damage = r.determine_elemental_damage_values()
 
         phys_damage = cls._pull_value(stat='[Physical] Damage', r=r)
-        crit_chance =
+        crit_chance = cls._pull_value(stat='[Critical|Critical Hit] Chance', r=r)
+        attacks_per_second = cls._pull_value(stat='Attacks per Second', r=r)
+
+        return EquipmentStats(
+            armour=armour,
+            evasion=evasion,
+            energy_shield=energy_shield,
+            fire_damage=elemental_damage.fire,
+            cold_damage=elemental_damage.cold,
+            lightning_damage=elemental_damage.lightning,
+            physical_damage=phys_damage,
+            critical_hit_chance=crit_chance,
+            attacks_per_second=attacks_per_second
+        )
 
 
 class _SkillsFactory:
@@ -184,6 +197,9 @@ class ListingBuilder:
                                                          strength_requirement=r.strength_requirement,
                                                          dexterity_requirement=r.dexterity_requirement,
                                                          intelligence_requirement=r.intelligence_requirement)
+
+        item_stats = _StatsDiscoverer.determine_stats(r)
+
         item_types = ItemTypes(
             base_name=r.base_name,
             item_category=item_category
@@ -215,7 +231,8 @@ class ListingBuilder:
             mods=item_mods,
             price=item_price,
             skills=item_skills,
-            properties=item_properties
+            properties=item_properties,
+            stats=item_stats
         )
 
         return listing

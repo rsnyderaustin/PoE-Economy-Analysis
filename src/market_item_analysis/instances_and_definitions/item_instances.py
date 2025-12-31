@@ -188,16 +188,23 @@ class EquipmentStats:
                  fire_damage: float = None,
                  lightning_damage: float = None,
                  chaos_damage: float = None):
-        self.armour = armour
-        self.energy_shield = energy_shield
-        self.evasion = evasion
-        self.attacks_per_second = attacks_per_second
-        self.physical_damage = physical_damage
-        self.critical_hit_chance = critical_hit_chance
-        self.cold_damage = cold_damage
-        self.fire_damage = fire_damage
-        self.lightning_damage = lightning_damage
-        self.chaos_damage = chaos_damage
+        self.armour = armour or 0
+        self.energy_shield = energy_shield or 0
+        self.evasion = evasion or 0
+        self.attacks_per_second = attacks_per_second or 0
+        self.physical_damage = physical_damage or 0
+        self.critical_hit_chance = critical_hit_chance or 0
+        self.cold_damage = cold_damage or 0
+        self.fire_damage = fire_damage or 0
+        self.lightning_damage = lightning_damage or 0
+        self.chaos_damage = chaos_damage or 0
+
+    def to_dict(self) -> dict:
+        return self.__dict__.copy()
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "EquipmentStats":
+        return cls(**d)
 
 
 class EquipmentProperties:
@@ -247,7 +254,7 @@ class EquipmentListing:
                  types: ItemTypes,
                  requirements: EquipmentRequirements,
                  stats: EquipmentStats,
-                 mods: ItemMods,
+                 mods_: ItemMods,
                  skills: list[ItemSkill],
                  properties: EquipmentProperties,
                  internal_id: str = None
@@ -258,11 +265,35 @@ class EquipmentListing:
         self.types = types
         self.requirements = requirements
         self.stats = stats
-        self.mods_ = mods
+        self.mods_ = mods_
         self.skills = skills
         self.properties = properties
 
         self.internal_id = internal_id or uuid.uuid4().hex
+
+    def __key(self):
+        return self.metadata.listing_id
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __gt__(self, other):
+        if not isinstance(other, EquipmentListing):
+            return NotImplemented
+
+        return self.metadata.date_fetched > other.metadata.date_fetched
+
+    def __lt__(self, other):
+        if not isinstance(other, EquipmentListing):
+            return NotImplemented
+
+        return self.metadata.date_fetched < other.metadata.date_fetched
+
+    def __eq__(self, other):
+        if not isinstance(other, EquipmentListing):
+            return NotImplemented
+
+        return self.__key() == other.__key()
 
     def to_dict(self) -> dict:
         return shared_utils.generic_to_dict(self)
@@ -290,4 +321,5 @@ class EquipmentListing:
             relevant_date=utils.league_start_date,
             later_date=self.metadata.date_fetched
         )
+
 

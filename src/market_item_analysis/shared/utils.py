@@ -51,20 +51,6 @@ def generic_to_dict(val, _depth: int = 0) -> dict:
     return val
 
 
-def sanitize_dict_texts(d: dict):
-    if isinstance(d, dict):
-        return {k: sanitize_dict_texts(v) for k, v in d.items()}
-    elif isinstance(d, list):
-        return [sanitize_dict_texts(item) for item in d]
-    elif isinstance(d, str):
-        return sanitize_text(d)
-    else:
-        return d
-
-
-parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
-
-
 def format_date_into_utc(listing_date):
     if isinstance(listing_date, str):
         listing_date = listing_date.lower().replace("z", "+00:00")
@@ -81,20 +67,4 @@ def format_date_into_utc(listing_date):
         dt = dt.astimezone(timezone.utc)
 
     return dt
-
-
-def _singular_number_convert(s: str):
-    return float(s) if '.' in s else int(s)
-
-
-def convert_string_to_numbers(s: str) -> list[float] | list[int]:
-    if '-' not in s:
-        return [_singular_number_convert(s)]
-
-    split_vals = s.split('-')
-    if len(split_vals) == 2:
-        return [_singular_number_convert(split_vals[0]),
-                _singular_number_convert(split_vals[1])]
-    else:
-        raise ValueError(f"Could not convert {s} to numbers")
 

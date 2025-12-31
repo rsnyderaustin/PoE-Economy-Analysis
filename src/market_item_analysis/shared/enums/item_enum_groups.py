@@ -1,143 +1,143 @@
 from enum import Enum
 
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
-from src.market_item_analysis.shared.enums.trade_enums import TradeItemCategory
+from src.market_item_analysis.shared.enums.trade_enums import TradeCategory
 
 
 class WhichCategoryType(Enum):
-    ATYPE = 'atype'
+    Equipment = 'equipment'
     TRADE = 'trade'
 
 
-class ItemEnumGroups:
+class EquipmentCategoryGroups:
 
-    atype_to_trade_map = {
-        EquipmentCategory.ONE_HANDED_MACE: TradeItemCategory.ONE_HANDED_MACE,
-        EquipmentCategory.SPEAR: TradeItemCategory.SPEAR,
-        EquipmentCategory.TWO_HANDED_MACE: TradeItemCategory.TWO_HANDED_MACE,
-        EquipmentCategory.QUARTERSTAFF: TradeItemCategory.QUARTERSTAFF,
-        EquipmentCategory.BOW: TradeItemCategory.BOW,
-        EquipmentCategory.CROSSBOW: TradeItemCategory.CROSSBOW,
-        EquipmentCategory.WAND: TradeItemCategory.WAND,
-        EquipmentCategory.SCEPTRE: TradeItemCategory.SCEPTRE,
-        EquipmentCategory.STAFF: TradeItemCategory.STAFF,
-        EquipmentCategory.HELMET_STR: TradeItemCategory.HELMET,
-        EquipmentCategory.HELMET_DEX: TradeItemCategory.HELMET,
-        EquipmentCategory.HELMET_INT: TradeItemCategory.HELMET,
-        EquipmentCategory.HELMET_STR_DEX: TradeItemCategory.HELMET,
-        EquipmentCategory.HELMET_STR_INT: TradeItemCategory.HELMET,
-        EquipmentCategory.HELMET_DEX_INT: TradeItemCategory.HELMET,
-        EquipmentCategory.BODY_ARMOUR_STR: TradeItemCategory.BODY_ARMOUR,
-        EquipmentCategory.BODY_ARMOUR_DEX: TradeItemCategory.BODY_ARMOUR,
-        EquipmentCategory.BODY_ARMOUR_INT: TradeItemCategory.BODY_ARMOUR,
-        EquipmentCategory.BODY_ARMOUR_STR_DEX: TradeItemCategory.BODY_ARMOUR,
-        EquipmentCategory.BODY_ARMOUR_STR_INT: TradeItemCategory.BODY_ARMOUR,
-        EquipmentCategory.BODY_ARMOUR_DEX_INT: TradeItemCategory.BODY_ARMOUR,
-        EquipmentCategory.BODY_ARMOUR_STR_DEX_INT: TradeItemCategory.BODY_ARMOUR,
-        EquipmentCategory.GLOVE_STR: TradeItemCategory.GLOVES,
-        EquipmentCategory.GLOVE_DEX: TradeItemCategory.GLOVES,
-        EquipmentCategory.GLOVE_INT: TradeItemCategory.GLOVES,
-        EquipmentCategory.GLOVE_STR_DEX: TradeItemCategory.GLOVES,
-        EquipmentCategory.GLOVE_STR_INT: TradeItemCategory.GLOVES,
-        EquipmentCategory.GLOVE_DEX_INT: TradeItemCategory.GLOVES,
-        EquipmentCategory.BOOT_STR: TradeItemCategory.BOOTS,
-        EquipmentCategory.BOOT_DEX: TradeItemCategory.BOOTS,
-        EquipmentCategory.BOOT_INT: TradeItemCategory.BOOTS,
-        EquipmentCategory.BOOT_STR_DEX: TradeItemCategory.BOOTS,
-        EquipmentCategory.BOOT_STR_INT: TradeItemCategory.BOOTS,
-        EquipmentCategory.BOOT_DEX_INT: TradeItemCategory.BOOTS,
-        EquipmentCategory.SHIELD_STR: TradeItemCategory.SHIELD,
-        EquipmentCategory.BUCKLER: TradeItemCategory.SHIELD,
-        EquipmentCategory.SHIELD_STR_DEX: TradeItemCategory.SHIELD,
-        EquipmentCategory.SHIELD_STR_INT: TradeItemCategory.SHIELD,
-        EquipmentCategory.FOCUS: TradeItemCategory.FOCUS,
-        EquipmentCategory.QUIVER: TradeItemCategory.QUIVER,
-        EquipmentCategory.LIFE_FLASK: TradeItemCategory.LIFE_FLASK,
-        EquipmentCategory.MANA_FLASK: TradeItemCategory.MANA_FLASK,
+    category_to_trade_map = {
+        EquipmentCategory.ONE_HANDED_MACE: TradeCategory.ONE_HANDED_MACE,
+        EquipmentCategory.SPEAR: TradeCategory.SPEAR,
+        EquipmentCategory.TWO_HANDED_MACE: TradeCategory.TWO_HANDED_MACE,
+        EquipmentCategory.QUARTERSTAFF: TradeCategory.QUARTERSTAFF,
+        EquipmentCategory.BOW: TradeCategory.BOW,
+        EquipmentCategory.CROSSBOW: TradeCategory.CROSSBOW,
+        EquipmentCategory.WAND: TradeCategory.WAND,
+        EquipmentCategory.SCEPTRE: TradeCategory.SCEPTRE,
+        EquipmentCategory.STAFF: TradeCategory.STAFF,
+        EquipmentCategory.HELMET_STR: TradeCategory.HELMET,
+        EquipmentCategory.HELMET_DEX: TradeCategory.HELMET,
+        EquipmentCategory.HELMET_INT: TradeCategory.HELMET,
+        EquipmentCategory.HELMET_STR_DEX: TradeCategory.HELMET,
+        EquipmentCategory.HELMET_STR_INT: TradeCategory.HELMET,
+        EquipmentCategory.HELMET_DEX_INT: TradeCategory.HELMET,
+        EquipmentCategory.BODY_ARMOUR_STR: TradeCategory.BODY_ARMOUR,
+        EquipmentCategory.BODY_ARMOUR_DEX: TradeCategory.BODY_ARMOUR,
+        EquipmentCategory.BODY_ARMOUR_INT: TradeCategory.BODY_ARMOUR,
+        EquipmentCategory.BODY_ARMOUR_STR_DEX: TradeCategory.BODY_ARMOUR,
+        EquipmentCategory.BODY_ARMOUR_STR_INT: TradeCategory.BODY_ARMOUR,
+        EquipmentCategory.BODY_ARMOUR_DEX_INT: TradeCategory.BODY_ARMOUR,
+        EquipmentCategory.BODY_ARMOUR_STR_DEX_INT: TradeCategory.BODY_ARMOUR,
+        EquipmentCategory.GLOVE_STR: TradeCategory.GLOVES,
+        EquipmentCategory.GLOVE_DEX: TradeCategory.GLOVES,
+        EquipmentCategory.GLOVE_INT: TradeCategory.GLOVES,
+        EquipmentCategory.GLOVE_STR_DEX: TradeCategory.GLOVES,
+        EquipmentCategory.GLOVE_STR_INT: TradeCategory.GLOVES,
+        EquipmentCategory.GLOVE_DEX_INT: TradeCategory.GLOVES,
+        EquipmentCategory.BOOT_STR: TradeCategory.BOOTS,
+        EquipmentCategory.BOOT_DEX: TradeCategory.BOOTS,
+        EquipmentCategory.BOOT_INT: TradeCategory.BOOTS,
+        EquipmentCategory.BOOT_STR_DEX: TradeCategory.BOOTS,
+        EquipmentCategory.BOOT_STR_INT: TradeCategory.BOOTS,
+        EquipmentCategory.BOOT_DEX_INT: TradeCategory.BOOTS,
+        EquipmentCategory.SHIELD_STR: TradeCategory.SHIELD,
+        EquipmentCategory.BUCKLER: TradeCategory.SHIELD,
+        EquipmentCategory.SHIELD_STR_DEX: TradeCategory.SHIELD,
+        EquipmentCategory.SHIELD_STR_INT: TradeCategory.SHIELD,
+        EquipmentCategory.FOCUS: TradeCategory.FOCUS,
+        EquipmentCategory.QUIVER: TradeCategory.QUIVER,
+        EquipmentCategory.LIFE_FLASK: TradeCategory.LIFE_FLASK,
+        EquipmentCategory.MANA_FLASK: TradeCategory.MANA_FLASK,
     }
 
-    _trade_to_atype_map = dict()
-    for atype, trade_category in atype_to_trade_map.items():
-        if trade_category not in _trade_to_atype_map:
-            _trade_to_atype_map[trade_category] = []
+    _trade_to_category_map = dict()
+    for category, trade_category in category_to_trade_map.items():
+        if trade_category not in _trade_to_category_map:
+            _trade_to_category_map[trade_category] = []
 
-        _trade_to_atype_map[trade_category].append(atype)
+        _trade_to_category_map[trade_category].append(category)
 
     _socketable_trade_categories = [
-        TradeItemCategory.ONE_HANDED_MACE,
-        TradeItemCategory.SPEAR,
-        TradeItemCategory.TWO_HANDED_MACE,
-        TradeItemCategory.QUARTERSTAFF,
-        TradeItemCategory.BOW,
-        TradeItemCategory.CROSSBOW,
-        TradeItemCategory.WAND,
-        TradeItemCategory.SCEPTRE,
-        TradeItemCategory.STAFF,
-        TradeItemCategory.HELMET,
-        TradeItemCategory.BODY_ARMOUR,
-        TradeItemCategory.GLOVES,
-        TradeItemCategory.BOOTS,
-        TradeItemCategory.SHIELD,
-        TradeItemCategory.FOCUS,
+        TradeCategory.ONE_HANDED_MACE,
+        TradeCategory.SPEAR,
+        TradeCategory.TWO_HANDED_MACE,
+        TradeCategory.QUARTERSTAFF,
+        TradeCategory.BOW,
+        TradeCategory.CROSSBOW,
+        TradeCategory.WAND,
+        TradeCategory.SCEPTRE,
+        TradeCategory.STAFF,
+        TradeCategory.HELMET,
+        TradeCategory.BODY_ARMOUR,
+        TradeCategory.GLOVES,
+        TradeCategory.BOOTS,
+        TradeCategory.SHIELD,
+        TradeCategory.FOCUS,
     ]
 
     _martial_weapon_trade_categories = [
-        TradeItemCategory.ONE_HANDED_MACE,
-        TradeItemCategory.SPEAR,
-        TradeItemCategory.TWO_HANDED_MACE,
-        TradeItemCategory.QUARTERSTAFF,
-        TradeItemCategory.BOW,
-        TradeItemCategory.CROSSBOW,
+        TradeCategory.ONE_HANDED_MACE,
+        TradeCategory.SPEAR,
+        TradeCategory.TWO_HANDED_MACE,
+        TradeCategory.QUARTERSTAFF,
+        TradeCategory.BOW,
+        TradeCategory.CROSSBOW,
     ]
 
     _non_martial_weapon_trade_categories = [
-        TradeItemCategory.WAND,
-        TradeItemCategory.SCEPTRE,
-        TradeItemCategory.STAFF,
+        TradeCategory.WAND,
+        TradeCategory.SCEPTRE,
+        TradeCategory.STAFF,
     ]
 
     _armour_trade_categories = [
-        TradeItemCategory.HELMET,
-        TradeItemCategory.BODY_ARMOUR,
-        TradeItemCategory.GLOVES,
-        TradeItemCategory.BOOTS,
-        TradeItemCategory.QUIVER,
-        TradeItemCategory.SHIELD,
-        TradeItemCategory.FOCUS,
+        TradeCategory.HELMET,
+        TradeCategory.BODY_ARMOUR,
+        TradeCategory.GLOVES,
+        TradeCategory.BOOTS,
+        TradeCategory.QUIVER,
+        TradeCategory.SHIELD,
+        TradeCategory.FOCUS,
     ]
 
     _flask_trade_categories = [
-        TradeItemCategory.LIFE_FLASK,
-        TradeItemCategory.MANA_FLASK,
+        TradeCategory.LIFE_FLASK,
+        TradeCategory.MANA_FLASK,
     ]
 
     @classmethod
-    def _convert_to_atypes(cls, which: WhichCategoryType, trade_categories: list):
+    def _fetch_categories(cls, which: WhichCategoryType, trade_categories: list):
         if which == WhichCategoryType.TRADE:
             return trade_categories
 
         return [
-            atype
+            category
             for trade_category in trade_categories
-            for atype in cls._trade_to_atype_map[trade_category]
+            for category in cls._trade_to_category_map[trade_category]
         ]
 
     @classmethod
-    def fetch_socketables(cls, which: WhichCategoryType) -> list:
-        return cls._convert_to_atypes(which=which, trade_categories=cls._socketable_trade_categories)
+    def fetch_socketable_categories(cls, which: WhichCategoryType) -> list:
+        return cls._fetch_categories(which=which, trade_categories=cls._socketable_trade_categories)
 
     @classmethod
-    def fetch_martial_weapons(cls, which: WhichCategoryType):
-        return cls._convert_to_atypes(which=which, trade_categories=cls._martial_weapon_trade_categories)
+    def fetch_martial_weapon_categories(cls, which: WhichCategoryType):
+        return cls._fetch_categories(which=which, trade_categories=cls._martial_weapon_trade_categories)
 
     @classmethod
-    def fetch_non_martial_weapons(cls, which: WhichCategoryType):
-        return cls._convert_to_atypes(which=which, trade_categories=cls._non_martial_weapon_trade_categories)
+    def fetch_non_martial_weapon_categories(cls, which: WhichCategoryType):
+        return cls._fetch_categories(which=which, trade_categories=cls._non_martial_weapon_trade_categories)
 
     @classmethod
-    def fetch_armours(cls, which: WhichCategoryType):
-        return cls._convert_to_atypes(which=which, trade_categories=cls._armour_trade_categories)
+    def fetch_armour_categories(cls, which: WhichCategoryType):
+        return cls._fetch_categories(which=which, trade_categories=cls._armour_trade_categories)
 
     @classmethod
-    def fetch_flasks(cls, which: WhichCategoryType):
-        return cls._convert_to_atypes(which=which, trade_categories=cls._flask_trade_categories)
+    def fetch_flask_categories(cls, which: WhichCategoryType):
+        return cls._fetch_categories(which=which, trade_categories=cls._flask_trade_categories)

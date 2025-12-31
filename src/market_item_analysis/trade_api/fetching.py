@@ -1,14 +1,13 @@
 
 from datetime import datetime
+import logging
 
 import requests
 
 from src.market_item_analysis.core import env_loader
-from src.market_item_analysis.program_logging import LogsHandler, LogFile, log_errors
-from src.trade_api.request_throttler import RequestThrottler
+from src.market_item_analysis.trade_api.request_throttler import RequestThrottler
 
-api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
-
+logger = logging.getLogger(__name__)
 
 def chunk_list(items: list, chunk_size: int = 10):
     return [items[i:i + chunk_size] for i in range(0, len(items), chunk_size)]
@@ -42,7 +41,6 @@ class TradeItemsFetching:
     class_start = datetime.now()
 
     @classmethod
-    @log_errors(api_log)
     def _post_for_search_id(cls, query):
         response = cls.request_throttler.send_request(
             request_func=requests.post,
@@ -56,7 +54,6 @@ class TradeItemsFetching:
         return json_data
 
     @classmethod
-    @log_errors(api_log)
     def _get_with_item_ids(cls, post_response, item_ids) -> list:
         chunked_list = chunk_list(items=item_ids, chunk_size=10)
 

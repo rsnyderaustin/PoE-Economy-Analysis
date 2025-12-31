@@ -103,18 +103,6 @@ class PostgreSqlManager:
             conn.execute(insert_stmt, formatted_data)
         psql_log.info(f"{table_name} PSQL rows {rows_before} -> {self._count_table_rows(table_name)}")
 
-    def insert_listing_string(self,
-                              table_name: str,
-                              my_id: str,
-                              listing_str: str
-                              ):
-        with self.engine.begin() as conn:
-            conn.execute(
-                f"INSERT INTO {table_name} (my_id, listing_str) VALUES (%s, %s) "
-                "ON CONFLICT (my_id) DO UPDATE SET listing_str = EXCLUDED.listing_str",
-                (my_id, listing_str)  # just the string here, no json.dumps
-            )
-
     def fetch_table_data(self, table_name: str) -> dict:
         if self.skip_sql:
             return dict()

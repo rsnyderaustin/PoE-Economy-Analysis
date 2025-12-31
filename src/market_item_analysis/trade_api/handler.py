@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import Generator
 
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
-from src.market_item_analysis.shared import utils
 from . import query_construction
 from .query import Query, MetaFilter
 from .fetching import TradeItemsFetching

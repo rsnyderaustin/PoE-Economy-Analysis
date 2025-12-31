@@ -1,1 +1,1 @@
-from .item_enum_groups import ItemEnumGroups, WhichCategoryType
+from .item_enum_groups import EquipmentCategoryGroups, WhichCategoryType

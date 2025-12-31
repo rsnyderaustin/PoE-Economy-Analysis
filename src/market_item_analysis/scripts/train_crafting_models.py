@@ -2,7 +2,7 @@ from src.market_item_analysis import psql
 from src.market_item_analysis.crafting_ai_model import CraftingModelPipeline
 from src.market_item_analysis.data_handling import ListingBuilder
 from src.market_item_analysis.file_management.file_managers import Poe2DbModsManagerFile
-from src.trade_api import TradeApiHandler
+from src.market_item_analysis.trade_api import TradeApiHandler
 
 poe2db_mods_manager = Poe2DbModsManagerFile().load(missing_ok=False)
 

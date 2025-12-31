@@ -1,10 +1,7 @@
-import logging
 from datetime import datetime, timezone
 
 import pytz
 from dateutil.parser import isoparse
-
-from src.market_item_analysis.program_logging import log_errors
 
 _dt = datetime(2025, 4, 4, 12, 0, 0)
 _pacific = pytz.timezone('US/Pacific')

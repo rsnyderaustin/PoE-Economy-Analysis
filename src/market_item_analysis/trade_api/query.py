@@ -2,8 +2,8 @@ import itertools
 from dataclasses import dataclass
 from enum import Enum
 
-from src import trade_api
-from src.market_item_analysis.shared.enums import ItemEnumGroups, WhichCategoryType
+from src.market_item_analysis import trade_api
+from src.market_item_analysis.shared.enums import EquipmentCategoryGroups, WhichCategoryType
 from src.market_item_analysis.shared.enums import trade_enums
 
 
@@ -58,12 +58,8 @@ class QueryPresets:
     @property
     def training_fills(self) -> list[Query]:
         # item_categories = [*trade_enums.socketable_items, *trade_enums.martial_weapons]
-        item_categories = ItemEnumGroups.fetch_martial_weapons(which=WhichCategoryType.TRADE)
-        currencies = [
-            trade_enums.Currency.EXALTED_ORB,
-            trade_enums.Currency.DIVINE_ORB,
-            trade_enums.Currency.CHAOS_ORB
-        ]
+        item_categories = EquipmentCategoryGroups.fetch_martial_weapon_categories(which=WhichCategoryType.TRADE)
+        currencies = [trade_enums.Currency.DIVINE_ORB]
 
         currency_amounts = [(1, 1)]
         for i in range(1, 8):
