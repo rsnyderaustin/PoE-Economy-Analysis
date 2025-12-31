@@ -1,4 +1,4 @@
 
 from .model import PricePredictor
-from .training_pipeline import PricePredictModelPipeline
 from .stats_prep import StatsPrep
+from .training_pipeline import PricePredictModelPipeline

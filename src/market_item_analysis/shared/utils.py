@@ -1,9 +1,6 @@
-import re
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Iterable
-
-from src.market_item_analysis.program_logging import LogsHandler, LogFile
 
 
 def generic_to_dict(val, _depth: int = 0) -> dict:

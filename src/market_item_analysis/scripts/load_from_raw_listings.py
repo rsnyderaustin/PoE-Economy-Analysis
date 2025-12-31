@@ -2,7 +2,7 @@
 print("Entered Python file for fill_training_data.py")
 
 from src.market_item_analysis import program_logging, psql
-from src.market_item_analysis.file_management.file_managers import RawListingsFile
+from src.market_item_analysis.file_management.io_manager import RawListingsFile
 from src.market_item_analysis.operations_coordination.populate_training_data import TrainingDataPopulator
 
 program_logging.basicConfig(level=program_logging.INFO)

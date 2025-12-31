@@ -1,5 +1,5 @@
 from poe2db_scrape.mods_management import Poe2DbMod, AtypeModsManager
-from src.market_item_analysis.shared import utils
+
 from src.market_item_analysis.shared.enums.item_enums import AffixType
 from .internal_source_store import PoecdSourceStore
 

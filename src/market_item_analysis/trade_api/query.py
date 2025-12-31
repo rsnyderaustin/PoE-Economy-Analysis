@@ -1,4 +1,5 @@
 import itertools
+import random
 from dataclasses import dataclass
 from enum import Enum
 
@@ -53,11 +54,19 @@ class Query:
         self.stats_filters_groups = stats_filters_groups or []
 
 
+class QueriesBundle:
+
+    def __init__(self, queries: list[Query]):
+        self.queries = queries
+
+    def shuffle(self):
+        random.shuffle(self.queries)
+
+
 class QueryPresets:
 
-    @property
-    def training_fills(self) -> list[Query]:
-        # item_categories = [*trade_enums.socketable_items, *trade_enums.martial_weapons]
+    @classmethod
+    def create_training_data_queries(cls) -> QueriesBundle:
         item_categories = EquipmentCategoryGroups.fetch_martial_weapon_categories(which=WhichCategoryType.TRADE)
         currencies = [trade_enums.Currency.DIVINE_ORB]
 
@@ -99,4 +108,4 @@ class QueryPresets:
             query = trade_api.Query(meta_filters=meta_mod_filters)
             queries.append(query)
 
-        return queries
+        return QueriesBundle(queries)

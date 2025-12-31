@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 
 def _write_jsonl(path: Path, records: list[dict]):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -18,22 +20,27 @@ def _load_jsonl(path: Path) -> 'Generator[dict[str, Any], None, None]':
             yield json.loads(line)
 
 
-class PoE2EconomyAnalysisDataManager:
+class PoE2EconomyAnalysisIOManager:
 
     def __init__(self):
         self.raw_listings_path = Path.cwd() / 'file_management/dynamic_files/raw_listings.jsonl'
         self.constructed_listings_path = Path.cwd() / 'file_management/dynamic_files/constructed_listings.jsonl'
 
-    def write_raw_listings(self, raw_listings: list[dict]):
+    def save_raw_listings(self, raw_listings: list[dict]):
         _write_jsonl(path=self.raw_listings_path,
                      records=raw_listings)
 
     def load_raw_listings(self):
         return _load_jsonl(path=self.raw_listings_path)
 
-    def write_constructed_listings(self, constructed_listings: list[dict]):
+    def save_constructed_listings(self, constructed_listings: list[dict]):
         _write_jsonl(path=self.constructed_listings_path,
                      records=constructed_listings)
 
     def load_constructed_listings(self):
         return _load_jsonl(path=self.constructed_listings_path)
+
+    def save_price_predictions_performance(self, df: pd.DataFrame):
+        return NotImplemented
+
+

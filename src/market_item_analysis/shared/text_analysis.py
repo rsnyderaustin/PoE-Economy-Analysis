@@ -1,11 +1,12 @@
 import re
+
 import numpy as np
 
 
 class TextAnalyzer:
 
     _neg_float_p = r'-?\d+(?:\.\d+)?'
-    _numbers_capture_pattern = rf'{_neg_float_p} to {_neg_float_p} | {_neg_float_p}'
+    _numbers_capture_pattern = rf'{_neg_float_p} to {_neg_float_p} | {_neg_float_p} | {_neg_float_p}-{_neg_float_p}'
 
     @classmethod
     def _singular_number_convert(cls, s: str):
@@ -15,6 +16,8 @@ class TextAnalyzer:
     def _replace_numbers(cls, match):
         if ' to ' in match.group():
             return '# to #'
+        elif '-' in match.group():
+            return '#-#'
         else:
             return '#'
 
@@ -26,7 +29,7 @@ class TextAnalyzer:
         """
         vals = []
         for match in re.finditer(cls._numbers_capture_pattern, s):
-            if ' to ' in match.group():
+            if ' to ' in match.group() or '-' in match.group():
                 val = np.mean([cls._singular_number_convert(g) for g in match.groups()])
             else:
                 val = cls._singular_number_convert(match.groups()[0])

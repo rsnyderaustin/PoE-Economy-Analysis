@@ -1,4 +1,4 @@
-from src.market_item_analysis.file_management.file_managers import PricePredictModelFiles, PricePredictPerformanceFile
+from src.market_item_analysis.file_management.io_manager import PricePredictModelFiles, PricePredictPerformanceFile
 from src.market_item_analysis.price_predict_ai_model import PricePredictModelPipeline
 from src.market_item_analysis.psql import PostgreSqlManager
 

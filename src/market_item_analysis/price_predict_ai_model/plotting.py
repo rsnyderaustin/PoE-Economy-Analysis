@@ -1,10 +1,8 @@
 import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
 import numpy as np
+import pandas as pd
+import seaborn as sns
 from sklearn.decomposition import PCA
-from sklearn.neighbors import NearestNeighbors
-
 
 
 def plot_pca(features_df: pd.DataFrame, price_column: pd.Series, title: str, should_plot=True):

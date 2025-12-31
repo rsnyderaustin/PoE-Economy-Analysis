@@ -1,17 +1,14 @@
 import uuid
 from datetime import datetime
-import uuid
-from datetime import datetime
 
 import numpy as np
 
 from src.market_item_analysis.instances_and_definitions import ItemMod, ItemSkill, EquipmentListing
-from src.market_item_analysis.official_poe_api.api_response_parser import ApiResponse
+from src.market_item_analysis.trade_api.api_response_obj import ApiResponse
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
 from ..instances_and_definitions.item_instances import EquipmentRequirements, ItemTypes, ListingMetadata, ItemMods, Price, EquipmentProperties, EquipmentStats
-
-parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
+from ..shared.text_analysis import TextAnalyzer
 
 
 class _EquipmentCategorizer:
@@ -93,7 +90,7 @@ class _StatsDiscoverer:
             raise ValueError(f"Found 2 stats dicts for {stat}.\nSource data: {properties_list}")
 
         val_str = stat_dicts[0]['values'][0]
-        vals = convert_string_to_numbers(val_str)
+        vals = TextAnalyzer.extract_numbers_from_string(val_str)
         return np.mean(vals)
 
     @classmethod

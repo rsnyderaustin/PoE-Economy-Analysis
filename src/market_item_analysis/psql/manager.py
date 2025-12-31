@@ -1,8 +1,8 @@
 import sqlalchemy
 from sqlalchemy import text, inspect
-
-from src.market_item_analysis.core.env_loading import EnvLoader
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
+
+from src.market_item_analysis.shared.env_loading import EnvLoader
 from . import utils
 
 psql_log = LogsHandler().fetch_log(LogFile.PSQL)

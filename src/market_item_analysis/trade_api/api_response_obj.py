@@ -2,11 +2,11 @@ import pprint
 from datetime import datetime
 
 import numpy as np
-
 from src.market_item_analysis.program_logging import LogsHandler, LogFile
+
+from src.market_item_analysis.shared import utils as shared_utils
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity
 from src.market_item_analysis.shared.text_analysis import ModTextAnalyzer, convert_string_to_numbers
-from src.market_item_analysis.shared import utils as shared_utils
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 

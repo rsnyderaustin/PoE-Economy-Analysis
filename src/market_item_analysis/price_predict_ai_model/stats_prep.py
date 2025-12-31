@@ -3,11 +3,11 @@ import copy
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
-
-from .utils import ModelLifeCycle
 from src.market_item_analysis.program_logging import LogFile, LogsHandler
+
 from src.market_item_analysis.price_predict_ai_model.dataframe_prep import DataFramePrep
 from src.market_item_analysis.price_predict_ai_model.neighborhood_class import Neighborhood
+from .utils import ModelLifeCycle
 
 stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
 

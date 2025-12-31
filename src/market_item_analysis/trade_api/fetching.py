@@ -1,6 +1,6 @@
 
-from datetime import datetime
 import logging
+from datetime import datetime
 
 import requests
 
@@ -89,9 +89,9 @@ class TradeItemsFetching:
     def fetch_items_response(cls, query) -> tuple[list, int]:
         post_response = cls._post_for_search_id(query=query)
 
-        total_responses = post_response['total']
+        total_possible_responses = post_response['total']
         item_ids = post_response['result']
 
         get_response = cls._get_with_item_ids(post_response=post_response,
                                               item_ids=item_ids)
-        return get_response, total_responses
+        return get_response, total_possible_responses

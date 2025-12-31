@@ -1,4 +1,4 @@
-from src.market_item_analysis.file_management.file_managers import OfficialStatsFile, OfficialStaticFile
+from src.market_item_analysis.file_management.io_manager import OfficialStatsFile, OfficialStaticFile
 from src.market_item_analysis.official_poe_api import OfficialApiPuller, OfficialEndpoint
 
 api_m = OfficialApiPuller()

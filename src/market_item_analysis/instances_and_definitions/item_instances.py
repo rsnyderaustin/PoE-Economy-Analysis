@@ -1,11 +1,13 @@
-from dataclasses import dataclass
 from datetime import datetime
 import uuid
 
+import uuid
+from datetime import datetime
+
 from src.market_item_analysis.data_handling import utils
-from src.market_item_analysis.shared.enums.item_enums import AffixType, EquipmentCategory
-from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, Currency
 from src.market_item_analysis.shared import utils as shared_utils
+from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
+from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, Currency
 
 
 class ItemMod:

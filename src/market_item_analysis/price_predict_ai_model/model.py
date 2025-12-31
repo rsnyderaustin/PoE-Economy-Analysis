@@ -1,8 +1,8 @@
 from src.market_item_analysis.data_transforming import ListingsTransforming
-from src.market_item_analysis.file_management.file_managers import PricePredictModelFiles
-from src.market_item_analysis.instances_and_definitions import EquipmentListing
 from src.market_item_analysis.program_logging import LogsHandler, LogFile, log_errors
 
+from src.market_item_analysis.file_management.io_manager import PricePredictModelFiles
+from src.market_item_analysis.instances_and_definitions import EquipmentListing
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
