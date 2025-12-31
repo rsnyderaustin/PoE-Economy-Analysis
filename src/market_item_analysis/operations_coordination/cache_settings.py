@@ -3,11 +3,11 @@
 class CacheSettings:
 
     def __init__(self,
-                 load_raw_api_responses: bool,
-                 load_listings: bool,
-                 save_raw_api_responses: bool,
-                 save_listings: bool):
-        self.load_raw_api_responses = load_raw_api_responses
-        self.load_listings = load_listings
-        self.save_raw_api_responses = save_raw_api_responses
-        self.save_listings = save_listings
+                 load_from_file: bool,
+                 pull_from_trade_api: bool,
+                 save_to_file: bool,
+                 save_every: int = 5):
+        self.load_from_file = load_from_file
+        self.pull_from_trade_api = pull_from_trade_api
+        self.save_to_file = save_to_file
+        self.save_every = save_every

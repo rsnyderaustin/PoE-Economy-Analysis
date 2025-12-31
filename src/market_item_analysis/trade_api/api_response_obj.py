@@ -6,7 +6,7 @@ from src.market_item_analysis.program_logging import LogsHandler, LogFile
 
 from src.market_item_analysis.shared import utils as shared_utils
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity
-from src.market_item_analysis.shared.text_analysis import ModTextAnalyzer, convert_string_to_numbers
+from src.market_item_analysis.shared.text_analysis import TextAnalyzer
 
 parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
@@ -50,7 +50,7 @@ class _ElementalDamageParser:
                                      if d['name'] in {'Fire Damage', 'Cold Damage', 'Lightning Damage'}]
         for elemental_damage_d in singular_elemental_damage:
             name = elemental_damage_d['name']
-            val = np.mean(convert_string_to_numbers(elemental_damage_d['values'][0]))
+            val = np.mean(TextAnalyzer.extract_numbers_from_string(elemental_damage_d['values'][0]))
             damage_values.add_damage_value(elemental_type=name,
                                            value=val)
 
@@ -62,9 +62,9 @@ class _ElementalDamageParser:
         properties_list = generic_elemental_properties[0]['value']
         for ele_property in properties_list:
             elemental_type = cls._determine_elemental_type(ele_property[1])
-            damage_values = ModTextAnalyzer.extract_values(ele_property[0])
+            val = np.mean(TextAnalyzer.extract_numbers_from_string(ele_property[0]))
             damage_values.add_damage_value(elemental_type=elemental_type,
-                                    value=np.average(damage_values))
+                                           value=val)
 
         return damage_values
 
