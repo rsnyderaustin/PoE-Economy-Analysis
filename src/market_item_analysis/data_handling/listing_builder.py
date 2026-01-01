@@ -3,11 +3,11 @@ from datetime import datetime
 
 import numpy as np
 
-from src.market_item_analysis.instances_and_definitions import ItemMod, ItemSkill, EquipmentListing
 from src.market_item_analysis.trade_api.api_response_obj import ApiResponse
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
-from ..instances_and_definitions.item_instances import EquipmentRequirements, ItemTypes, ListingMetadata, ItemMods, Price, EquipmentProperties, EquipmentStats
+from ..instances_and_definitions.item_instances import EquipmentRequirements, ItemTypes, ListingMetadata, ItemMods, \
+    Price, EquipmentProperties, EquipmentStats, ItemMod, ItemSkill, EquipmentListing
 from ..shared.text_analysis import TextAnalyzer
 
 
@@ -158,7 +158,7 @@ class _SkillsFactory:
 class ListingBuilder:
 
     @classmethod
-    def build_listing(cls, r: ApiResponse):
+    def build_listing(cls, r: ApiResponse) -> EquipmentListing:
         item_mods_list = _ModFactory.create_mods(r)
         item_mods = ItemMods(
             implicits=[mod for mod in item_mods_list if mod.mod_class == ModClass.IMPLICIT],

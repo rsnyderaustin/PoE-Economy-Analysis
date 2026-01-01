@@ -5,7 +5,9 @@ from .query import MetaFilter, StatsFiltersGroup, Query
 def create_trade_query(query: Query):
     query_dict = {
         'query': {
-            'status': {'option': 'securable'}
+            'status': {
+                'option': 'securable'
+            }
         }
     }
     if query.meta_filters:

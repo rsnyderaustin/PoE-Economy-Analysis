@@ -2,13 +2,10 @@ import pprint
 from datetime import datetime
 
 import numpy as np
-from src.market_item_analysis.program_logging import LogsHandler, LogFile
 
 from src.market_item_analysis.shared import utils as shared_utils
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity
 from src.market_item_analysis.shared.text_analysis import TextAnalyzer
-
-parse_log = LogsHandler().fetch_log(LogFile.API_PARSING)
 
 
 class ElementalDamageValues:
@@ -98,15 +95,15 @@ class _ApiResponsePreprocessor:
 class ApiResponse:
 
     def __init__(self, api_response_data: dict):
-        self.unprocessed_response_data = api_response_data.copy()
-        self.raw_response_data = _ApiResponsePreprocessor.preprocess(api_response_data)
+        self.raw_response_data = api_response_data.copy()
+        self.preprocessed_data = _ApiResponsePreprocessor.preprocess(api_response_data)
 
-        self.item_data = self.raw_response_data['item']
+        self.item_data = self.preprocessed_data['item']
         self._item_properties = self.item_data['properties']
-        self._listing_data = self.raw_response_data['listing']
+        self._listing_data = self.preprocessed_data['listing']
 
     def to_dict(self) -> dict:
-        return self.unprocessed_response_data
+        return self.preprocessed_data
 
     @classmethod
     def from_dict(cls, d: dict) -> "ApiResponse":
@@ -114,9 +111,6 @@ class ApiResponse:
 
     def determine_elemental_damage_values(self) -> ElementalDamageValues:
         return _ElementalDamageParser.determine_elemental_damage(raw_item_data=self.item_data)
-
-    def fetch_sub_mod_hash_to_text(self, mod_class: ModClass) -> dict:
-        return self.sub_mod_hash_to_text[mod_class] if mod_class in self.sub_mod_hash_to_text else dict()
 
     @property
     def skills_data(self) -> dict:
@@ -128,7 +122,7 @@ class ApiResponse:
 
     @property
     def listing_id(self) -> str:
-        return self.raw_response_data['id']
+        return self.preprocessed_data['id']
 
     @property
     def quality(self) -> int:
@@ -182,7 +176,7 @@ class ApiResponse:
 
     @property
     def base_category(self) -> str:
-        return shared_utils._extract_from_brackets(self._item_properties[0]['name'])
+        return self._item_properties[0]['name']
 
     def _extract_attribute_requirement(self, attribute_name: str):
         requirements = self.item_data['requirements']

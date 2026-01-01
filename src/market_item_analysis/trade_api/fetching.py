@@ -1,13 +1,16 @@
 
 import logging
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 
 import requests
 
-from src.market_item_analysis.core import env_loader
 from src.market_item_analysis.trade_api.request_throttler import RequestThrottler
 
 logger = logging.getLogger(__name__)
+
+load_dotenv()
 
 def chunk_list(items: list, chunk_size: int = 10):
     return [items[i:i + chunk_size] for i in range(0, len(items), chunk_size)]
@@ -15,7 +18,7 @@ def chunk_list(items: list, chunk_size: int = 10):
 
 class TradeItemsFetching:
 
-    post_url = "https://www.pathofexile.com/api/trade2/search/poe2/Dawn%20of%20the%20Hunt"
+    post_url = "https://www.pathofexile.com/api/trade2/search/poe2/Fate%20of%20the%20Vaal"
     get_url = "https://www.pathofexile.com/api/trade2/fetch/"
 
     post_endpoint = "fetch"
@@ -25,14 +28,14 @@ class TradeItemsFetching:
         'Content-Type': 'application/json',
         # Used to be '5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0',
-        'Cookie': f'POESESSID={env_loader.get_env("POSSESSID")}',
+        'Cookie': f'POESESSID={os.getenv("POSSESSID")}',
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br, zstd',
         'Accept-Language': 'en-US,en;q=0.5',
         'Connection': 'keep-alive',
         'Host': 'www.pathofexile.com',
         'Origin': 'https://www.pathofexile.com',
-        'Referer': 'https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt'
+        'Referer': 'https://www.pathofexile.com/trade2/search/poe2/Fate%20of%20the%20Vaal'
     }
 
     request_throttler = RequestThrottler()
@@ -69,7 +72,7 @@ class TradeItemsFetching:
             get_url = f'{cls.get_url}{chunked_ids}'
 
             cookies = {
-                'POSSESSID': env_loader.get_env("POSSESSID")
+                'POSSESSID': os.getenv("POSSESSID")
             }
             response = cls.request_throttler.send_request(
                 request_func=requests.get,

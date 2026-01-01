@@ -29,7 +29,7 @@ def generic_to_dict(val, _depth: int = 0) -> dict:
         return val.isoformat()
 
     # If object has a to_dict method, use it
-    if hasattr(val, 'to_dict') and callable(obj.to_dict):
+    if hasattr(val, 'to_dict') and callable(val.to_dict):
         return val.to_dict()
 
     # Handle dictionaries
@@ -39,9 +39,6 @@ def generic_to_dict(val, _depth: int = 0) -> dict:
     # Handle lists, tuples, sets
     if isinstance(val, (list, tuple, set)):
         return [generic_to_dict(item) for item in val]
-
-    if hasattr(val, 'to_dict') and callable(val.to_dict):
-        return val.to_dict()
 
     # Handle objects with __dict__ (custom classes)
     if hasattr(val, '__dict__'):

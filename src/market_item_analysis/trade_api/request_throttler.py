@@ -1,9 +1,8 @@
 import time
 from collections import deque
+import logging
 
-from src.market_item_analysis.program_logging import LogFile, LogsHandler, log_errors
-
-api_log = LogsHandler().fetch_log(LogFile.EXTERNAL_APIS)
+logger = logging.getLogger(__name__)
 
 
 def _parse_rate_string(rate_limit_str):
@@ -113,11 +112,11 @@ class RequestThrottler:
     def set_limits(self, func_name: str, response_headers: dict):
         account_limits, account_state, ip_limits, ip_state = self._fetch_limits_and_state(response_headers)
 
-        api_log.info(f"Setting new limits."
-                     f"\n\tAccount limits: {account_limits}"
-                     f"\n\tAccount state: {account_state}"
-                     f"\n\tIP limits: {ip_limits}"
-                     f"\n\tIP state: {ip_state}")
+        logger.info(f"Setting new limits."
+                    f"\n\tAccount limits: {account_limits}"
+                    f"\n\tAccount state: {account_state}"
+                    f"\n\tIP limits: {ip_limits}"
+                    f"\n\tIP state: {ip_state}")
 
         self.current_account_limits[func_name] = account_limits
         self.current_ip_limits[func_name] = ip_limits
@@ -141,13 +140,13 @@ class RequestThrottler:
 
         limits_changed = False
         if account_limits != self.current_account_limits[func_name]:
-            api_log.info(f"Previous account limit for {func_name}: {self.current_account_limits[func_name]}"
-                         f"\n\tNew account limit for {func_name}: {account_limits}")
+            logger.info(f"Previous account limit for {func_name}: {self.current_account_limits[func_name]}"
+                        f"\n\tNew account limit for {func_name}: {account_limits}")
             limits_changed = True
 
         if ip_limits != self.current_ip_limits[func_name]:
-            api_log.info(f"Previous IP limit for {func_name}: {self.current_ip_limits[func_name]}"
-                         f"\n\tNew IP limit for {func_name}: {ip_limits}")
+            logger.info(f"Previous IP limit for {func_name}: {self.current_ip_limits[func_name]}"
+                        f"\n\tNew IP limit for {func_name}: {ip_limits}")
             limits_changed = True
 
         return limits_changed
@@ -182,7 +181,6 @@ class RequestThrottler:
         for request_deque in self.request_deques[func_name]:
             request_deque.register_request(now=now)
 
-    @log_errors(api_log)
     def send_request(self, request_func, *args, **kwargs):
         func_name = request_func.__name__
         if func_name not in self.request_deques:
