@@ -7,10 +7,10 @@ from src.market_item_analysis.data_transforming import ListingsTransforming
 from src.market_item_analysis.program_logging import LogFile, LogsHandler
 
 from src.market_item_analysis.file_management.io_manager import PricePredictModelFiles, PricePredictCacheFile, PricePredictPerformanceFile
-from src.market_item_analysis.price_predict_ai_model.dataframe_prep import DataFramePrep
+from src.market_item_analysis.price_predict_ai_model.stats.data_prep import Prepper
 from src.market_item_analysis.psql import PostgreSqlManager
-from .stats_prep import StatsPrep
-from .utils import ModelLifeCycle
+from src.market_item_analysis.price_predict_ai_model.stats.stats_prep import StatsPrep
+from .listing_lifecycle import ListingLifecycle
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
@@ -28,31 +28,11 @@ class PricePredictModelPipeline:
 
         self._model_lifecycles = []
 
-    def _load_training_data(self, from_cache: bool) -> pd.DataFrame:
-        training_cache = PricePredictCacheFile()
-        model_df = None
-        if from_cache:
-            model_df = training_cache.load(default=None)
-
-            if model_df is None:
-                print("Raw training cache data is missing / empty.")
-
-        if model_df is None:
-            print("Fetching PSQL table data.")
-            raw_data = self._psql_manager.fetch_table_data(table_name='listings')
-
-            print("Converting PSQL table to PricePredict DataFrame.")
-            model_df = ListingsTransforming.to_price_predict_df(rows=raw_data)
-
-            training_cache.save(model_df)
-
-        return model_df
-
     def _stratify_dataframe(self, model_df: pd.DataFrame):
         stratified_dfs = {}
 
         for atype, atype_df in model_df.groupby('atype'):
-            prep = DataFramePrep(atype_df, price_col_name='divs')
+            prep = Prepper(atype_df, price_col_name='divs')
             stratified = prep.stratify_dataframe(
                 col_name='divs',
                 quantiles=[0.25, 0.5, 0.75, 0.9, 1.0]
@@ -86,12 +66,12 @@ class PricePredictModelPipeline:
         stratified_dfs = self._stratify_dataframe(model_df)
 
         for (atype, tier), df in stratified_dfs.items():
-            model_lifecycle = ModelLifeCycle(atype=str(atype),
-                                             tier=str(tier))
+            model_lifecycle = ListingLifecycle(category=str(atype),
+                                               tier=str(tier))
             self._model_lifecycles.append(model_lifecycle)
 
             print(f"Beginning stats preparation for Atype {atype}")
-            df_prep = StatsPrep.prep(model_lifecycle=model_lifecycle,
+            df_prep = StatsPrep.prep(lifecycle=model_lifecycle,
                                      df=df,
                                      price_column='divs')
 
@@ -104,8 +84,8 @@ class PricePredictModelPipeline:
         self._performance_file.save(perf_df)
 
     def _train_model(self,
-                     model_lifecycle: ModelLifeCycle,
-                     df_prep: DataFramePrep,
+                     model_lifecycle: ListingLifecycle,
+                     df_prep: Prepper,
                      training_depth: int = 12,
                      eta: float = 0.00075,
                      num_boost_rounds: int = 1250,

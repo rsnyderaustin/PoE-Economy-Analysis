@@ -3,13 +3,16 @@ import itertools
 import numpy as np
 import pandas as pd
 
+from src.market_item_analysis.instances_and_definitions.item_instances import EquipmentListing
+from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 
-class ModelLifeCycle:
+
+class ListingLifecycle:
 
     def __init__(self,
-                 atype: str,
+                 listing: EquipmentListing,
                  tier: str):
-        self.atype = atype
+        self.listing = listing
         self.tier = tier
 
         self.dropped_cols = []
@@ -29,7 +32,7 @@ class DataFramePrep:
 
     def __init__(self,
                  dataframe: pd.DataFrame,
-                 model_lifecycle: ModelLifeCycle,
+                 model_lifecycle: ListingLifecycle,
                  price_col_name: str = None,
                  log_col_name: str = None):
         self._df = dataframe
