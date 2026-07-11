@@ -4,7 +4,7 @@ import pytz
 from dateutil.parser import isoparse
 
 
-class TimeAnalysis:
+class TimeService:
 
     LEAGUE_START_DATE = pytz.timezone('US/Pacific').localize(datetime(2026, 5, 29, 12, 0, 0))
 

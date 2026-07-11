@@ -1,10 +1,10 @@
 import logging
 from enum import Enum
 
-from src.market_item_analysis.instances_and_definitions.item_instances import EquipmentListing
+from src.market_item_analysis.listing.objects import EquipmentListing
 from src.market_item_analysis.shared.enums import EquipmentCategoryGroups, WhichCategoryType
 from src.market_item_analysis.shared.enums.item_enums import CalculatedMod
-from src.market_item_analysis.shared.text_analysis import TextAnalyzer
+from src.market_item_analysis.core.string_service import TextAnalyzer
 
 logger = logging.getLogger(__name__)
 

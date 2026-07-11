@@ -6,7 +6,8 @@ import os
 
 import requests
 
-from src.market_item_analysis.trade_api.request_throttler import RequestThrottler
+from src.market_item_analysis.trade_api.requesting.request_throttler import RequestThrottler
+from src.market_item_analysis.trade_api.trade_result import TradeApiResult
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ class _TradeGetter:
             'realm': 'poe2'
         }
 
-        url = f'{cls._BASE_URL}{','.join(result_ids)}'
+        url = f"{cls._BASE_URL}{','.join(result_ids)}"
 
         response = cls._REQUEST_THROTTLER.send_request(
             request_func=requests.get,
@@ -91,7 +92,7 @@ class _TradePostResponse:
 
 @dataclass(frozen=True)
 class TradeApiResultsResponse:
-    results: list
+    results: list[TradeApiResult]
     total_results: int
 
     @property
@@ -101,7 +102,7 @@ class TradeApiResultsResponse:
 class TradeApiResultsFetcher:
 
     @classmethod
-    def fetch(cls, query) -> TradeApiResultsResponse:
+    def fetch(cls, query) -> tuple[list[dict], int]:
         post_response = _TradePoster.post(query=query)
 
         item_id_chunk_lists = chunk_list(result_ids=post_response.result_ids, chunk_size=10)
@@ -115,7 +116,4 @@ class TradeApiResultsFetcher:
             result = get_json['result']
             response_items.extend(result)
 
-        return TradeApiResultsResponse(
-            results=response_items,
-            total_results=post_response.total_possible_responses
-        )
+        return response_items, post_response.total_possible_responses

@@ -4,7 +4,7 @@ import pandas as pd
 
 from src.market_item_analysis.data_handling import ListingBuilder
 from src.market_item_analysis.listing.flattener import ListingFlattener
-from src.market_item_analysis.core.io_manager import IoManager
+from src.market_item_analysis.core.input_output import IoManager
 from src.market_item_analysis.trade_api.trade_result import ApiResponse
 
 logger = logging.getLogger(__name__)

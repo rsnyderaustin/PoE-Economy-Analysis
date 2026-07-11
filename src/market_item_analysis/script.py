@@ -1,6 +1,6 @@
 
-from src.market_item_analysis.program_processes.raw_listings_loader import RawListingLoader
-from src.market_item_analysis.core.io_manager import IoManager
+from src.market_item_analysis.workflows.trade_api_results_ingestion import RawListingLoader
+from src.market_item_analysis.core.input_output import IoManager
 from src.market_item_analysis.trade_api import TradeApiInterface
 
 io_manager = IoManager()

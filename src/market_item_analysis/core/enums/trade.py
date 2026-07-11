@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 from src.market_item_analysis.core.types import Range, ListIndex, DictKey
-from src.market_item_analysis.trade_api.query.construction import TradeApiQueryEntry
+from src.market_item_analysis.trade_api.query.builder import TradeApiQueryEntry
 
 
 class TradeSearchCategory(Enum):

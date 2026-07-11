@@ -5,9 +5,9 @@ import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
 import logging
 
-from src.market_item_analysis.price_predict_ai_model.stats.data_prep import Prepper
-from src.market_item_analysis.price_predict_ai_model.stats.neighborhood_class import Neighborhood
-from src.market_item_analysis.price_predict_ai_model.listing_lifecycle import ListingLifecycle
+from src.market_item_analysis.ai_model.stats.data_prep import Prepper
+from src.market_item_analysis.ai_model.stats.neighborhood_class import Neighborhood
+from src.market_item_analysis.ai_model.listing_lifecycle import ListingLifecycle
 
 logger = logging.getLogger(__name__)
 

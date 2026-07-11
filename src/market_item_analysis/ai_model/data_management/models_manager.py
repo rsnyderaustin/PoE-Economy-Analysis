@@ -1,7 +1,7 @@
 
 import logging
 
-from src.market_item_analysis.price_predict_ai_model import PricePredictor
+from src.market_item_analysis.ai_model import PricePredictor
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 
 

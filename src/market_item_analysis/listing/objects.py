@@ -1,16 +1,31 @@
+from abc import ABC, abstractmethod
+
 import numpy as np
 
 import uuid
 from datetime import datetime
 
-from src.market_item_analysis.shared import utils as shared_utils
+from src.market_item_analysis.core import utils as shared_utils
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory, AffixType
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, Currency
-from src.market_item_analysis.shared.text_analysis import TextAnalyzer
+
+from src.market_item_analysis.core.dictionary_service import DictionaryService
+from src.market_item_analysis.core.string_service import TextAnalyzer
 from src.market_item_analysis.trade_api.trade_result import ApiResponse
 
 
-class ItemMod:
+class TradeApiResponseObject(ABC):
+
+    def to_dict(self) -> dict:
+        return DictionaryService.convert_to_dict(self)
+
+    @classmethod
+    @abstractmethod
+    def from_dict(cls, d: dict):
+        pass
+
+
+class ItemMod(TradeApiResponseObject):
 
     def __init__(self,
                  mod_text: str,
@@ -21,9 +36,6 @@ class ItemMod:
 
         self.affix_type = affix_type
 
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
-
     @classmethod
     def from_dict(cls, d: dict) -> "ItemMod":
         d['mod_class'] = ModClass(d['mod_class'])
@@ -31,7 +43,7 @@ class ItemMod:
         return cls(**d)
 
 
-class ItemSkill:
+class EquipmentSkill(TradeApiResponseObject):
 
     def __init__(self,
                  name: str,
@@ -39,15 +51,12 @@ class ItemSkill:
         self.name = name
         self.level = level or 1
 
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
-
     @classmethod
-    def from_dict(cls, d: dict) -> "ItemSkill":
+    def from_dict(cls, d: dict) -> "EquipmentSkill":
         return cls(**d)
 
 
-class ListingMetadata:
+class ListingMetadata(TradeApiResponseObject):
 
     def __init__(self,
                  poster_account_name: str,
@@ -59,9 +68,6 @@ class ListingMetadata:
         self.date_posted = date_posted
         self.date_fetched = date_fetched
 
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
-
     @classmethod
     def from_dict(cls, d: dict) -> "ListingMetadata":
         d['date_posted'] = datetime.fromisoformat(d['date_posted'])
@@ -69,7 +75,7 @@ class ListingMetadata:
         return cls(**d)
 
     @classmethod
-    def from_api_response(cls, r: ApiResponse) -> "ListingMetadata":
+    def from_api_response(cls, r: TradeApiResponse) -> "ListingMetadata":
         return ListingMetadata(
             poster_account_name=r.account_name,
             listing_id=r.listing_id,
@@ -78,7 +84,7 @@ class ListingMetadata:
         )
 
 
-class EquipmentRequirements:
+class EquipmentRequirements(TradeApiResponseObject):
 
     def __init__(self,
                  player_level: int,
@@ -89,9 +95,6 @@ class EquipmentRequirements:
         self.strength = strength
         self.intelligence = intelligence
         self.dexterity = dexterity
-
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
 
     @classmethod
     def from_dict(cls, d: dict) -> "EquipmentRequirements":
@@ -107,23 +110,20 @@ class EquipmentRequirements:
         )
 
 
-class ItemSkills:
+class EquipmentSkills(TradeApiResponseObject):
 
     def __init__(self,
-                 skills: list[ItemSkill]):
+                 skills: list[EquipmentSkill]):
         self.skills = skills
 
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
+    @classmethod
+    def from_dict(cls, d: dict) -> "EquipmentSkills":
+        return cls([EquipmentSkill.from_dict(skill_d) for skill_d in d['skills']])
 
     @classmethod
-    def from_dict(cls, d: dict) -> "ItemSkills":
-        return cls([ItemSkill.from_dict(skill_d) for skill_d in d['skills']])
-
-    @classmethod
-    def from_api_response(cls, r: ApiResponse):
+    def from_api_response(cls, r: ApiResponse) -> "EquipmentSkills":
         if not r.skills_data:
-            return []
+            return EquipmentSkills(skills=[])
 
         skills = []
         for skill_data in r.skills_data:
@@ -131,7 +131,7 @@ class ItemSkills:
 
             # Spear Throw is the only skill that is granted by an item without a level. May have to update in the future
             if raw_skill[0] == 'Spear Throw':
-                new_skill = ItemSkill(
+                new_skill = EquipmentSkill(
                     name='Spear Throw'
                 )
                 skills.append(new_skill)
@@ -145,16 +145,16 @@ class ItemSkills:
                 skill_name = raw_skill[0][0]
                 level = raw_skill[0][1]
 
-            new_skill = ItemSkill(
+            new_skill = EquipmentSkill(
                 name=skill_name,
                 level=level
             )
 
             skills.append(new_skill)
 
-        return ItemSkills(skills=skills)
+        return EquipmentSkills(skills=skills)
 
-class ItemMods:
+class ItemMods(TradeApiResponseObject):
 
     def __init__(self,
                  mods_d: dict[ModClass, list[ItemMod]]):
@@ -179,9 +179,6 @@ class ItemMods:
     @property
     def runes(self):
         return self._mods_d.get(ModClass.RUNE, [])
-
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
 
     @classmethod
     def from_dict(cls, d: dict) -> "ItemMods":
@@ -230,7 +227,7 @@ class ItemMods:
         return self._mods_d[mod_class]
 
 
-class ItemTypes:
+class ItemTypes(TradeApiResponseObject):
 
     def __init__(self,
                  base_name: str,
@@ -243,9 +240,6 @@ class ItemTypes:
         self.base_name = base_name
         self.item_category = item_category
 
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
-
     @classmethod
     def from_dict(cls, d: dict) -> "ItemTypes":
         return ItemTypes(
@@ -254,7 +248,22 @@ class ItemTypes:
         )
 
 
-class Price:
+class EquipmentNamespace(TradeApiResponseObject):
+
+    def __init__(self,
+                 base_name: str):
+        self.base_name = base_name
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "EquipmentNamespace":
+        return EquipmentNamespace(base_name=d['base_name'])
+
+    @classmethod
+    def from_api_response(cls, r: TradeApiResponse) -> "EquipmentNamespace":
+        return EquipmentNamespace(base_name=r.base_name)
+
+
+class EquipmentPrice(TradeApiResponseObject):
 
     def __init__(self,
                  currency: Currency,
@@ -264,27 +273,24 @@ class Price:
         self.currency_amount = currency_amount
         self.gold_cost = gold_cost
 
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
-
     @classmethod
-    def from_dict(cls, d: dict) -> "Price":
-        return Price(
+    def from_dict(cls, d: dict) -> "EquipmentPrice":
+        return EquipmentPrice(
             currency=Currency(d['currency']),
             currency_amount=int(d['currency_amount']),
             gold_cost=int(d['gold_cost'])
         )
 
     @classmethod
-    def from_api_response(cls, r: ApiResponse) -> "Price":
-        return Price(
+    def from_api_response(cls, r: ApiResponse) -> "EquipmentPrice":
+        return EquipmentPrice(
             currency=Currency(r.price_currency),
             currency_amount=r.price_amount,
             gold_cost=r.gold_cost
         )
 
 
-class EquipmentStats:
+class EquipmentStats(TradeApiResponseObject):
 
     def __init__(self,
                  armour: int = None,
@@ -307,9 +313,6 @@ class EquipmentStats:
         self.fire_damage = fire_damage or 0
         self.lightning_damage = lightning_damage or 0
         self.chaos_damage = chaos_damage or 0
-
-    def to_dict(self) -> dict:
-        return self.__dict__.copy()
 
     @classmethod
     def from_dict(cls, d: dict) -> "EquipmentStats":
@@ -355,7 +358,7 @@ class EquipmentStats:
 
 
 
-class EquipmentProperties:
+class EquipmentProperties(TradeApiResponseObject):
 
     def __init__(self,
                  rarity: Rarity,
@@ -372,9 +375,6 @@ class EquipmentProperties:
 
         self.additional_properties = additional_properties
 
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
-
     @classmethod
     def from_dict(cls, d: dict) -> "EquipmentProperties":
         d['rarity'] = Rarity(d['rarity'])
@@ -389,23 +389,23 @@ class EquipmentProperties:
         return cls(**d)
 
 
-class EquipmentListing:
+class EquipmentListing(TradeApiResponseObject):
 
     def __init__(self,
                  metadata: ListingMetadata,
-                 price: Price,
-                 item_name: str,
+                 price: EquipmentPrice,
+                 namespace: EquipmentNamespace,
                  types: ItemTypes,
                  requirements: EquipmentRequirements,
                  stats: EquipmentStats,
                  mods_: ItemMods,
-                 skills: list[ItemSkill],
+                 skills: list[EquipmentSkill],
                  properties: EquipmentProperties,
                  internal_id: str = None
                  ):
         self.metadata = metadata
         self.price = price
-        self.item_name = item_name
+        self.namespace = namespace
         self.types = types
         self.requirements = requirements
         self.stats = stats
@@ -439,19 +439,31 @@ class EquipmentListing:
 
         return self.__key() == other.__key()
 
-    def to_dict(self) -> dict:
-        return shared_utils.generic_to_dict(self)
-
     @classmethod
     def from_dict(cls, d: dict) -> "EquipmentListing":
         d['metadata'] = ListingMetadata.from_dict(d['metadata'])
-        d['price'] = Price.from_dict(d['price'])
+        d['price'] = EquipmentPrice.from_dict(d['price'])
+        d['namespace'] = EquipmentNamespace.from_dict(d['namespace'])
         d['types'] = ItemTypes.from_dict(d['types'])
         d['requirements'] = EquipmentRequirements.from_dict(d['requirements'])
         d['mods'] = ItemMods.from_dict(d['mods'])
-        d['skills'] = [ItemSkill.from_dict(s) for s in d['skills']]
+        d['skills'] = [EquipmentSkill.from_dict(s) for s in d['skills']]
         d['properties'] = EquipmentProperties.from_dict(d['properties'])
         return cls(**d)
+
+    @classmethod
+    def from_api_response(cls, r: ApiResponse) -> "EquipmentListing":
+        return cls(
+            metadata=ListingMetadata.from_api_response(r),
+            price=EquipmentPrice.from_api_response(r),
+            namespace=EquipmentNamespace.from_api_response(r),
+            types=ItemTypes.from_api_response(r),
+            requirements=EquipmentRequirements.from_api_response(r),
+            stats=ItemStats.from_api_response(r),
+            mods_=ItemMods.from_api_response(r),
+            skills=EquipmentSkill.from_api_response(r),
+            properties=EquipmentProperties.from_api_response(r),
+        )
 
     @property
     def minutes_since_listed(self):

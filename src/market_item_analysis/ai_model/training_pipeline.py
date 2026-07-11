@@ -7,8 +7,8 @@ from src.market_item_analysis.data_transforming import ListingsTransforming
 from src.market_item_analysis.program_logging import LogFile, LogsHandler
 
 from src.market_item_analysis.file_management.io_manager import PricePredictModelFiles, PricePredictCacheFile, PricePredictPerformanceFile
-from src.market_item_analysis.price_predict_ai_model.dataframe_prep import DataFramePrep
-from src.market_item_analysis.data_storage.postgres import PostgresClient
+from src.market_item_analysis.ai_model.dataframe_prep import DataFramePrep
+from src.market_item_analysis.database.postgres import PostgresClient
 from .stats_prep import StatsPrep
 from .utils import ModelLifeCycle
 

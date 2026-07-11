@@ -3,7 +3,7 @@ import itertools
 import numpy as np
 import pandas as pd
 
-from src.market_item_analysis.price_predict_ai_model.stats.model_data_obj import ModelData
+from src.market_item_analysis.ai_model.stats.model_data_obj import ModelData
 
 
 class Prepper:

@@ -6,9 +6,8 @@ import numpy as np
 from src.market_item_analysis.trade_api.trade_result import ApiResponse
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Currency, Rarity
-from ..instances_and_definitions.item_instances import EquipmentRequirements, ItemTypes, ListingMetadata, ItemMods, \
-    Price, EquipmentProperties, EquipmentStats, ItemMod, ItemSkill, EquipmentListing, ItemSkills, EquipmentCategories
-from ..shared.text_analysis import TextAnalyzer
+from src.market_item_analysis.listing.objects import EquipmentRequirements, ItemTypes, ListingMetadata, ItemMods, \
+    EquipmentPrice, EquipmentProperties, EquipmentStats, ItemMod, EquipmentListing, EquipmentSkills, EquipmentCategories
 
 
 class _EquipmentCategorizer:
@@ -104,10 +103,10 @@ class ListingBuilder:
     @classmethod
     def from_api_response(cls, r: ApiResponse) -> EquipmentListing:
         item_mods = ItemMods.from_api_response(r)
-        price = Price.from_api_response(r)
+        price = EquipmentPrice.from_api_response(r)
         metadata = ListingMetadata.from_api_response(r)
         item_requirements = EquipmentRequirements.from_api_response(r)
-        item_skills = ItemSkills.from_api_response(r)
+        item_skills = EquipmentSkills.from_api_response(r)
         item_category = _EquipmentCategorizer.from_api_response(r)
         item_stats = EquipmentStats.from_api_response(r)
 

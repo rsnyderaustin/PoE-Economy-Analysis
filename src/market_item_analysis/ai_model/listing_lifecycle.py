@@ -3,7 +3,7 @@ import itertools
 import numpy as np
 import pandas as pd
 
-from src.market_item_analysis.instances_and_definitions.item_instances import EquipmentListing
+from src.market_item_analysis.listing.objects import EquipmentListing
 from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
 
 

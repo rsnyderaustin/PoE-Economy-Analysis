@@ -7,7 +7,7 @@ from src.market_item_analysis import trade_api
 from src.market_item_analysis.core.enums.trade import TradeQueryMetaFilterDefinition, \
     TradeQueryStatsFilterGroupDefinition, TradeSearchType
 from src.market_item_analysis.core.types import Range, ListIndex
-from src.market_item_analysis.trade_api.query.construction import TradeApiQueryEntry
+from src.market_item_analysis.trade_api.query.builder import TradeApiQueryEntry
 
 
 class TradeApiQueryFilter(ABC):
@@ -15,7 +15,7 @@ class TradeApiQueryFilter(ABC):
     def __init__(self):
         self.filter_id = uuid.uuid4()
 
-class MetaFilter(ABC, TradeApiQueryFilter):
+class TradeApiMetaFilter(ABC, TradeApiQueryFilter):
 
     def __init__(self,
                  filter_definition: TradeQueryMetaFilterDefinition):
@@ -40,7 +40,7 @@ class MetaFilter(ABC, TradeApiQueryFilter):
     def query_value(self):
         pass
 
-class EnumMetaFilter(MetaFilter):
+class TradeApiEnumMetaFilter(TradeApiMetaFilter):
 
     def __init__(self, filter_definition: TradeQueryMetaFilterDefinition, enum_value: Enum):
         super().__init__(filter_definition)
@@ -54,7 +54,7 @@ class EnumMetaFilter(MetaFilter):
     def query_value(self):
         return self.enum_value.value
 
-class RangeMetaFilter(MetaFilter):
+class TradeApiRangeMetaFilter(TradeApiMetaFilter):
 
     def __init__(self, filter_definition: TradeQueryMetaFilterDefinition, values_range: Range):
         super().__init__(filter_definition)
@@ -72,7 +72,7 @@ class RangeMetaFilter(MetaFilter):
     def query_value(self):
         return self.values_range.query_value
 
-class BoolMetaFilter(MetaFilter):
+class TradeApiBoolMetaFilter(TradeApiMetaFilter):
 
     def __init__(self, filter_definition: TradeQueryMetaFilterDefinition, bool_value: bool):
         super().__init__(filter_definition)
@@ -90,7 +90,7 @@ class BoolMetaFilter(MetaFilter):
         }
         return bool_d[self.bool_value]
 
-class StatFilter(TradeApiQueryFilter):
+class TradeApiStatFilter(TradeApiQueryFilter):
 
     def __init__(self,
                  mod_id: str,
@@ -122,11 +122,11 @@ class StatFilter(TradeApiQueryFilter):
         return base_d
 
 
-class StatFiltersGroup:
+class TradeApiStatFiltersGroup:
 
     def __init__(self,
                  filter_group_definition: TradeQueryStatsFilterGroupDefinition,
-                 stat_filters: list[StatFilter],
+                 stat_filters: list[TradeApiStatFilter],
                  value_range: Range | None = None):
         self.filter_group_definition = filter_group_definition
         self.value_range = value_range
@@ -148,72 +148,70 @@ class StatFiltersGroup:
             value=filter_group_value
         )
 
-class QueryPlan:
+class TradeApiQueryPlan:
 
     def __init__(self,
-                 meta_filters: list[MetaFilter],
-                 stat_filters_groups: list[StatFiltersGroup] | None = None):
+                 meta_filters: list[TradeApiMetaFilter],
+                 stat_filters_groups: list[TradeApiStatFiltersGroup] | None = None):
         self._meta_filters = {meta_filter.filter_id: meta_filter for meta_filter in meta_filters}
         self.stat_filters_groups = stat_filters_groups or []
 
     @property
-    def meta_filters(self) -> list[MetaFilter]:
+    def meta_filters(self) -> list[TradeApiMetaFilter]:
         return list(self._meta_filters.values())
 
-    def clone_with_new_filter(self, original_filter: TradeApiQueryFilter, new_filter: TradeApiQueryFilter) -> "QueryPlan":
+    def clone_with_new_filter(self, original_filter: TradeApiQueryFilter, new_filter: TradeApiQueryFilter) -> "TradeApiQueryPlan":
         if isinstance(original_filter, )
         new_filters = [
             new_filter if f is original_filter else f
             for f in self.meta_filters
         ]
-        return QueryPlan(meta_filters=new_filters,
-                         stat_filters_groups=self.stat_filters_groups)
+        return TradeApiQueryPlan(meta_filters=new_filters,
+                                 stat_filters_groups=self.stat_filters_groups)
 
         self._meta_filters[new_filter.filter_id] = new_filter
 
-class QueryPresets:
 
-    @classmethod
-    def training_data(cls) -> list[QueryPlan]:
-        item_categories = EquipmentCategoryGroups.fetch_martial_weapon_categories(which=WhichCategoryType.TRADE)
-        currencies = [trade_enums.Currency.DIVINE_ORB]
+@dataclass
+class TradeApiQueryEntry:
+    keys_path: list[DictKey | ListIndex]
+    value: dict | list
 
-        currency_amounts = [(1, 1)]
-        for i in range(1, 8):
-            first_num = currency_amounts[i - 1][1] + 1
-            second_num = first_num + i * 2
-            currency_amounts.append((first_num, second_num))
+class TradeApiQuery:
 
-        queries = []
-        for item_category, currency, currency_amount in itertools.product(item_categories, currencies, currency_amounts):
-            ilvl_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TypeFilter.ITEM_LEVEL,
-                filter_value=(71, 100)
-            )
+    def __init__(self):
+        self._d = {
+            'query': {
+                'status': {
+                    'option': 'securable'
+                }
+            }
+        }
 
-            category_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TypeFilter.ITEM_CATEGORY,
-                filter_value=item_category
-            )
+    def insert_value(self, entry: TradeApiQueryEntry):
+        current = self._d
 
-            days_since_listed_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TradeFilter.LISTED,
-                filter_value=trade_enums.ListedSince.UP_TO_1_HOUR
-            )
+        for i, key in enumerate(entry.keys_path):
+            is_last = (i == len(entry.keys_path) - 1)
 
-            price_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TradeFilter.PRICE,
-                filter_value=currency,
-                currency_amount=currency_amount
-            )
+            if isinstance(key, DictKey):
+                if is_last:
+                    current[key.key] = entry.value
+                else:
+                    # Initialize dict if missing
+                    if key.key not in current or not isinstance(current[key.key], dict):
+                        current[key.key] = {}
+                    current = current[key.key]
 
-            rarity_filter = trade_api.MetaFilter(
-                filter_type_enum=trade_enums.TypeFilter.ITEM_RARITY,
-                filter_value=trade_enums.Rarity.RARE
-            )
+            elif isinstance(key, ListIndex):
+                # Ensure the list is long enough
+                while len(current) <= key.index:
+                    current.append({})
 
-            meta_mod_filters = [ilvl_filter, category_filter, price_filter, rarity_filter, days_since_listed_filter]
-            query = trade_api.Query(meta_filters=meta_mod_filters)
-            queries.append(query)
+                if is_last:
+                    current[key.index] = entry.value
+                else:
+                    current = current[key.index]
+            else:
+                raise TypeError(f"Unsupported key type {type(key)}")
 
-        return queries

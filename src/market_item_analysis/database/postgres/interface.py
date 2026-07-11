@@ -2,8 +2,8 @@ from typing import Iterable
 
 from sqlalchemy import text
 
-from src.market_item_analysis.data_storage.postgres import PostgresClient
-from src.market_item_analysis.data_storage.postgres.python_to_postgres_dtype import PythonToPostgresDtype
+from src.market_item_analysis.database.postgres import PostgresClient
+from src.market_item_analysis.database.postgres.python_to_postgres_dtype import PythonToPostgresDtype
 
 psql_log = LogsHandler().fetch_log(log_e=LogFile.PSQL)
 

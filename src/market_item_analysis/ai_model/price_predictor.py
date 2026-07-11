@@ -3,8 +3,8 @@ import logging
 import pandas as pd
 
 from src.market_item_analysis.data_handling.listing_flattener import ListingFlattener
-from src.market_item_analysis.instances_and_definitions.item_instances import EquipmentListing
-from src.market_item_analysis.price_predict_ai_model.data_management.models_manager import PricePredictorsManager
+from src.market_item_analysis.listing.objects import EquipmentListing
+from src.market_item_analysis.ai_model.data_management.models_manager import PricePredictorsManager
 
 logger = logging.getLogger(__name__)
 

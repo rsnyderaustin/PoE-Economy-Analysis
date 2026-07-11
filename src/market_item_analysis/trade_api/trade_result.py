@@ -6,8 +6,9 @@ from enum import Enum
 
 import numpy as np
 
-from src.market_item_analysis.shared import utils as shared_utils
-from src.market_item_analysis.shared.text_analysis import TextAnalyzer
+from src.market_item_analysis.core import utils as shared_utils
+from src.market_item_analysis.core.dictionary_service import DictionaryService
+from src.market_item_analysis.core.string_service import TextAnalyzer
 
 
 class ElementalDamageValues:
@@ -82,7 +83,7 @@ class TradeResultSectionContext:
     key_path: list[str]
 
 
-class TradeResultSection(ABC):
+class TradeApiResultSection(ABC):
 
     def __init__(self,
                  data,
@@ -103,7 +104,7 @@ class TradeResultSection(ABC):
 
         return self.data[key]
 
-class TradeResultListingPriceSection(TradeResultSection):
+class TradeApiResultListingPriceSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -112,7 +113,7 @@ class TradeResultListingPriceSection(TradeResultSection):
         self.amount = self.require('amount')
         self.currency = self.require('currency')
 
-class TradeResultListingAccountSection(TradeResultSection):
+class TradeApiResultListingAccountSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -120,18 +121,18 @@ class TradeResultListingAccountSection(TradeResultSection):
         self.name = self.require('name')
         self.is_online = self.require('online')
 
-class TradeResultListingSection(TradeResultSection):
+class TradeApiResultListingSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
-        self.price_section = TradeResultListingPriceSection(data=self.require('price'),
-                                                            key_path=key_path + ['price'])
-        self.account_section = TradeResultListingAccountSection(data=self.require('account'),
-                                                                key_path=key_path + ['account'])
+        self.price = TradeApiResultListingPriceSection(data=self.require('price'),
+                                                       key_path=key_path + ['price'])
+        self.account = TradeApiResultListingAccountSection(data=self.require('account'),
+                                                           key_path=key_path + ['account'])
         self.gold_fee = self.require('fee')
         self.indexed_datetime = self.require(key='indexed')
 
-class TradeResultItemRequirementSection(TradeResultSection):
+class TradeApiResultItemRequirementSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -145,7 +146,7 @@ class TradeResultItemPropertyValue:
         self.values_str = data[0]
         self.value_type_id = data[1]
 
-class TradeResultItemPropertySection(TradeResultSection):
+class TradeApiResultItemPropertySection(TradeApiResultSection):
 
     def __init__(self, data: list, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -154,7 +155,7 @@ class TradeResultItemPropertySection(TradeResultSection):
         self.values = [TradeResultItemPropertyValue(data=value_list)
                        for value_index, value_list in enumerate(self.require('values'))]
 
-class TradeResultItemModStatMagnitudesSection(TradeResultSection):
+class TradeApiResultItemModStatMagnitudesSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -162,7 +163,7 @@ class TradeResultItemModStatMagnitudesSection(TradeResultSection):
         self.min = self.require('min')
         self.max = self.require('max')
 
-class TradeResultItemModStatSection(TradeResultSection):
+class TradeApiResultItemModStatSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -171,11 +172,11 @@ class TradeResultItemModStatSection(TradeResultSection):
         self.tier = self.require('tier')
         self.level = self.require('level')
         self.magnitudes = [
-            TradeResultItemModStatMagnitudesSection(data=magnitudes_d, key_path=key_path + [magnitudes_index])
+            TradeApiResultItemModStatMagnitudesSection(data=magnitudes_d, key_path=key_path + [magnitudes_index])
             for magnitudes_index, magnitudes_d in enumerate(self.require('magnitudes'))
         ]
 
-class TradeResultItemModSection(TradeResultSection):
+class TradeApiResultItemModSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -183,11 +184,11 @@ class TradeResultItemModSection(TradeResultSection):
         self.description = self.require('description')
         self.hash = self.require('hash')
         self.mod_stats = [
-            TradeResultItemModStatSection(data=stats_d, key_path=key_path + [])
+            TradeApiResultItemModStatSection(data=stats_d, key_path=key_path + [])
             for stats_d in self.require('mods')
         ]
 
-class TradeResultItemSection(TradeResultSection):
+class TradeApiResultItemSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -203,29 +204,29 @@ class TradeResultItemSection(TradeResultSection):
         self.is_corrupted = self.optional('corrupted')
 
         self.properties = [
-            TradeResultItemPropertySection(data=property_d, key_path=key_path + [property_index])
+            TradeApiResultItemPropertySection(data=property_d, key_path=key_path + [property_index])
             for property_index, property_d in enumerate(self.require('properties'))
         ]
 
         self.requirements = [
-            TradeResultItemRequirementSection(data=requirement_d, key_path=key_path + [requirement_index])
+            TradeApiResultItemRequirementSection(data=requirement_d, key_path=key_path + [requirement_index])
             for requirement_index, requirement_d in enumerate(self.require('requirements'))
         ]
 
-        self.implicit_mods = self._parse_mods('implicitMods')
+        self.implicit_mods = [mod_description for mod_description in data.get('implicitMods', [])]
         self.explicit_mods = self._parse_mods('explicitMods')
         self.enchant_mods = self._parse_mods('enchantMods')
         self.fractured_mods = self._parse_mods('fracturedMods')
         self.rune_mods = self._parse_mods('runeMods')
 
-    def _parse_mods(self, key: str) -> list[TradeResultItemModSection] | None:
+    def _parse_mods(self, key: str) -> list[TradeApiResultItemModSection] | None:
         """Helper that returns type-hinted list or None."""
         raw_mods = self.optional(key)
         if not raw_mods:
             return None
 
         return [
-            TradeResultItemModSection(
+            TradeApiResultItemModSection(
                 data=mod_d,
                 key_path=self.key_path + [(key, str(i))]
             )
@@ -233,150 +234,31 @@ class TradeResultItemSection(TradeResultSection):
         ]
 
 
-class TradeResult(TradeResultSection):
+class TradeApiResult(TradeApiResultSection):
 
     def __init__(self, api_response_data: dict):
         super().__init__(data=api_response_data,
                          key_path=[])
-        self.raw_response_data = api_response_data.copy()
-        self.data = self.preprocess(api_response_data)
+        self.data = api_response_data
 
         try:
-            self.listing = TradeResultListingSection(data=self.require('listing'),
-                                                     key_path=['listing'])
-            self.item = TradeResultItemSection(data=self.require('item'),
-                                               key_path=['item'])
+            self.listing = TradeApiResultListingSection(data=self.require('listing'),
+                                                        key_path=['listing'])
+            self.item = TradeApiResultItemSection(data=self.require('item'),
+                                                  key_path=['item'])
         except ConfigError as e:
             print(f"Error caught @ {e.key_path}: {e}\n\nTrade result data:\n\n{pprint.pformat(api_response_data)}")
 
+    @property
+    def _key(self):
+        return self.item.id, self.listing.indexed_datetime
+
+    def __hash__(self):
+        return hash(self._key)
 
     def to_dict(self) -> dict:
-        return self.raw_response_data
-
-    @staticmethod
-    def _clean_blank_spear_implicit(response_data: dict):
-        # This currently only applies to the blank implicit mod on spears
-        mods_data = response_data['item']['extended']['mods']
-        if 'implicit' not in mods_data:
-            return response_data
-
-        mods_data['implicit'] = [
-            mod for mod in mods_data['implicit']
-            if not (
-                    mod.get("name") == "" and
-                    mod.get("tier") == "" and
-                    mod.get("magnitudes") is None and
-                    mod.get("level") == 1
-            )
-        ]
-        return response_data
-
-    @classmethod
-    def preprocess(cls, item_data: dict) -> dict:
-        # This currently only applies to the blank implicit mod on spears
-        mods_data = item_data['item']['extended']['mods']
-        if 'implicit' not in mods_data:
-            return item_data
-
-        mods_data['implicit'] = [
-            mod for mod in mods_data['implicit']
-            if not (
-                    mod.get("name") == "" and
-                    mod.get("tier") == "" and
-                    mod.get("magnitudes") is None and
-                    mod.get("level") == 1
-            )
-        ]
-
-        d = cls._clean_blank_spear_implicit(raw_item_data)
-        return d
+        return self.data
 
     @classmethod
     def from_dict(cls, d: dict) -> "ApiResponse":
         return cls(api_response_data=d)
-
-    def determine_elemental_damage_values(self) -> ElementalDamageValues:
-        return _ElementalDamageParser.determine_elemental_damage(raw_item_data=self.item_data)
-
-    @property
-    def skills_data(self) -> dict:
-        return self.item_data['grantedSkills'] if 'grantedSkills' in self.item_data else dict()
-
-    @property
-    def date_fetched(self) -> datetime:
-        return shared_utils.format_date_into_utc(self._listing_data['indexed'])
-
-    @property
-    def listing_id(self) -> str:
-        return self.preprocessed_data['id']
-
-    @property
-    def quality(self) -> int:
-        return int(self._item_properties['quality'])
-
-    @property
-    def account_name(self) -> str:
-        return self._listing_data['account']['name']
-
-    @property
-    def gold_cost(self) -> int:
-        return int(self._listing_data['fee'])
-
-    @property
-    def price_currency(self) -> str:
-        return self._listing_data['price']['currency']
-
-    @property
-    def price_amount(self) -> int:
-        return int(self._listing_data['price']['amount'])
-
-    @property
-    def item_name(self) -> str:
-        return self.item_data['name']
-
-    @property
-    def base_name(self) -> str:
-        return self.item_data['baseType']
-
-    @property
-    def rarity(self) -> Rarity:
-        rarity_str = self.item_data['rarity'].lower()
-        return Rarity(rarity_str)
-
-    @property
-    def ilvl(self) -> int:
-        return int(self.item_data['ilvl'])
-
-    @property
-    def level_requirement(self) -> int:
-        reqs = self.item_data['requirements']
-        return int(reqs[0]['values'][0][0]) if reqs and reqs[0]['name'] == 'Level' else 0
-
-    @property
-    def is_identified(self) -> bool:
-        return 'identified' in self.item_data and self.item_data['identified'] is True
-
-    @property
-    def is_corrupted(self) -> bool:
-        return 'corrupted' in self.item_data and self.item_data['corrupted'] is True
-
-    @property
-    def base_category(self) -> str:
-        return self._item_properties[0]['name']
-
-    def _extract_attribute_requirement(self, attribute_name: str):
-        requirements = self.item_data['requirements']
-        req = [req for req in requirements if req['name'] == attribute_name]
-        return int(req[0]['values'][0][0]) if req else 0
-
-    @property
-    def strength_requirement(self) -> int:
-        return self._extract_attribute_requirement('str')
-
-    @property
-    def intelligence_requirement(self) -> int:
-        return self._extract_attribute_requirement('int')
-
-    @property
-    def dexterity_requirement(self) -> int:
-        return self._extract_attribute_requirement('dex')
