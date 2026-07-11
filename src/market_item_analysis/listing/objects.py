@@ -5,16 +5,12 @@ import numpy as np
 import uuid
 from datetime import datetime
 
-from src.market_item_analysis.core import utils as shared_utils
-from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory, AffixType
-from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, Currency
-
 from src.market_item_analysis.core.dictionary_service import DictionaryService
-from src.market_item_analysis.core.string_service import TextAnalyzer
-from src.market_item_analysis.trade_api.trade_result import ApiResponse
+from src.market_item_analysis.core.enums.equipment import EquipmentCategory, Rarity
+from src.market_item_analysis.trade_api.trade_result import TradeApiResult
 
 
-class TradeApiResponseObject(ABC):
+class TradeApiResultObject(ABC):
 
     def to_dict(self) -> dict:
         return DictionaryService.convert_to_dict(self)
@@ -25,7 +21,7 @@ class TradeApiResponseObject(ABC):
         pass
 
 
-class ItemMod(TradeApiResponseObject):
+class ItemMod(TradeApiResultObject):
 
     def __init__(self,
                  mod_text: str,
@@ -43,7 +39,7 @@ class ItemMod(TradeApiResponseObject):
         return cls(**d)
 
 
-class EquipmentSkill(TradeApiResponseObject):
+class EquipmentSkill(TradeApiResultObject):
 
     def __init__(self,
                  name: str,
@@ -56,7 +52,7 @@ class EquipmentSkill(TradeApiResponseObject):
         return cls(**d)
 
 
-class ListingMetadata(TradeApiResponseObject):
+class ListingMetadata(TradeApiResultObject):
 
     def __init__(self,
                  poster_account_name: str,
@@ -75,7 +71,7 @@ class ListingMetadata(TradeApiResponseObject):
         return cls(**d)
 
     @classmethod
-    def from_api_response(cls, r: TradeApiResponse) -> "ListingMetadata":
+    def from_api_response(cls, r: TradeApiResult) -> "ListingMetadata":
         return ListingMetadata(
             poster_account_name=r.account_name,
             listing_id=r.listing_id,
@@ -84,7 +80,7 @@ class ListingMetadata(TradeApiResponseObject):
         )
 
 
-class EquipmentRequirements(TradeApiResponseObject):
+class EquipmentRequirements(TradeApiResultObject):
 
     def __init__(self,
                  player_level: int,
@@ -101,16 +97,16 @@ class EquipmentRequirements(TradeApiResponseObject):
         return cls(**d)
 
     @classmethod
-    def from_api_response(cls, r: ApiResponse) -> "EquipmentRequirements":
+    def from_api_response(cls, r: TradeApiResult) -> "EquipmentRequirements":
         return EquipmentRequirements(
-            player_level=r.level_requirement,
-            strength=r.strength_requirement,
-            intelligence=r.intelligence_requirement,
-            dexterity=r.dexterity_requirement
+            player_level=r.item.requirements.level_requirement,
+            strength=r.item.requirements.strength_requirement,
+            intelligence=r.item.requirements.intelligence_requirement,
+            dexterity=r.item.requirements.dexterity_requirement
         )
 
 
-class EquipmentSkills(TradeApiResponseObject):
+class EquipmentSkills(TradeApiResultObject):
 
     def __init__(self,
                  skills: list[EquipmentSkill]):
@@ -121,7 +117,7 @@ class EquipmentSkills(TradeApiResponseObject):
         return cls([EquipmentSkill.from_dict(skill_d) for skill_d in d['skills']])
 
     @classmethod
-    def from_api_response(cls, r: ApiResponse) -> "EquipmentSkills":
+    def from_api_response(cls, r: TradeApiResult) -> "EquipmentSkills":
         if not r.skills_data:
             return EquipmentSkills(skills=[])
 
@@ -154,7 +150,7 @@ class EquipmentSkills(TradeApiResponseObject):
 
         return EquipmentSkills(skills=skills)
 
-class ItemMods(TradeApiResponseObject):
+class ItemMods(TradeApiResultObject):
 
     def __init__(self,
                  mods_d: dict[ModClass, list[ItemMod]]):
@@ -192,7 +188,7 @@ class ItemMods(TradeApiResponseObject):
         return ItemMods(mods_d=mods_d)
 
     @classmethod
-    def from_api_response(cls, r: ApiResponse) -> "ItemMods":
+    def from_api_response(cls, r: TradeApiResult) -> "ItemMods":
 
         mods_d = {
             ModClass.IMPLICIT: [],
@@ -227,28 +223,7 @@ class ItemMods(TradeApiResponseObject):
         return self._mods_d[mod_class]
 
 
-class ItemTypes(TradeApiResponseObject):
-
-    def __init__(self,
-                 base_name: str,
-                 item_category: EquipmentCategory):
-        """
-
-        :param base_name: Ex: Hunting Shoes, Lunar Amulet, etc
-        :param item_category: Ex: DEX Body Armour, INT/DEX Gloves, One Handed Mace, etc
-        """
-        self.base_name = base_name
-        self.item_category = item_category
-
-    @classmethod
-    def from_dict(cls, d: dict) -> "ItemTypes":
-        return ItemTypes(
-            base_name=d['base_name'],
-            item_category=EquipmentCategory(d['item_category'])
-        )
-
-
-class EquipmentNamespace(TradeApiResponseObject):
+class EquipmentNamespace(TradeApiResultObject):
 
     def __init__(self,
                  base_name: str):
@@ -259,11 +234,11 @@ class EquipmentNamespace(TradeApiResponseObject):
         return EquipmentNamespace(base_name=d['base_name'])
 
     @classmethod
-    def from_api_response(cls, r: TradeApiResponse) -> "EquipmentNamespace":
-        return EquipmentNamespace(base_name=r.base_name)
+    def from_api_response(cls, r: TradeApiResult) -> "EquipmentNamespace":
+        return EquipmentNamespace(base_name=r.item.properties.base_name)
 
 
-class EquipmentPrice(TradeApiResponseObject):
+class EquipmentPrice(TradeApiResultObject):
 
     def __init__(self,
                  currency: Currency,
@@ -282,7 +257,7 @@ class EquipmentPrice(TradeApiResponseObject):
         )
 
     @classmethod
-    def from_api_response(cls, r: ApiResponse) -> "EquipmentPrice":
+    def from_api_response(cls, r: TradeApiResult) -> "EquipmentPrice":
         return EquipmentPrice(
             currency=Currency(r.price_currency),
             currency_amount=r.price_amount,
@@ -290,7 +265,7 @@ class EquipmentPrice(TradeApiResponseObject):
         )
 
 
-class EquipmentStats(TradeApiResponseObject):
+class EquipmentStats(TradeApiResultObject):
 
     def __init__(self,
                  armour: int = None,
@@ -319,7 +294,7 @@ class EquipmentStats(TradeApiResponseObject):
         return cls(**d)
 
     @classmethod
-    def _pull_value(cls, stat: str, r: ApiResponse) -> float | int | None:
+    def _pull_value(cls, stat: str, r: TradeApiResult) -> float | int | None:
         properties_list = r.item_data['properties']
         stat_dicts = [d for d in properties_list if d['name'] == stat]
         if not stat_dicts:
@@ -333,7 +308,7 @@ class EquipmentStats(TradeApiResponseObject):
         return np.mean(vals)
 
     @classmethod
-    def from_api_response(cls, r: ApiResponse) -> "EquipmentStats":
+    def from_api_response(cls, r: TradeApiResult) -> "EquipmentStats":
         armour = cls._pull_value(stat='[Armour]', r=r)
         evasion = cls._pull_value(stat='[Evasion|Evasion Rating]', r=r)
         energy_shield = cls._pull_value(stat='[Energy Shield|Energy Shield]', r=r)
@@ -358,7 +333,7 @@ class EquipmentStats(TradeApiResponseObject):
 
 
 
-class EquipmentProperties(TradeApiResponseObject):
+class EquipmentProperties(TradeApiResultObject):
 
     def __init__(self,
                  rarity: Rarity,
@@ -389,13 +364,13 @@ class EquipmentProperties(TradeApiResponseObject):
         return cls(**d)
 
 
-class EquipmentListing(TradeApiResponseObject):
+class EquipmentListing(TradeApiResultObject):
 
     def __init__(self,
                  metadata: ListingMetadata,
                  price: EquipmentPrice,
                  namespace: EquipmentNamespace,
-                 types: ItemTypes,
+                 category: EquipmentCategory,
                  requirements: EquipmentRequirements,
                  stats: EquipmentStats,
                  mods_: ItemMods,
@@ -406,7 +381,7 @@ class EquipmentListing(TradeApiResponseObject):
         self.metadata = metadata
         self.price = price
         self.namespace = namespace
-        self.types = types
+        self.category = category
         self.requirements = requirements
         self.stats = stats
         self.mods_ = mods_
@@ -452,7 +427,7 @@ class EquipmentListing(TradeApiResponseObject):
         return cls(**d)
 
     @classmethod
-    def from_api_response(cls, r: ApiResponse) -> "EquipmentListing":
+    def from_api_response(cls, r: TradeApiResult) -> "EquipmentListing":
         return cls(
             metadata=ListingMetadata.from_api_response(r),
             price=EquipmentPrice.from_api_response(r),

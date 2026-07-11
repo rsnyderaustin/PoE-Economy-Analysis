@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Generator
 
 
 class InputOutputService:

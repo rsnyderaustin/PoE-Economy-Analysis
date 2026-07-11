@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
 import sqlalchemy
 from sqlalchemy import text, inspect
@@ -7,6 +9,33 @@ from src.market_item_analysis.program_logging import LogsHandler, LogFile
 from src.market_item_analysis.core.env_loader import EnvLoader
 
 psql_log = LogsHandler().fetch_log(LogFile.PSQL)
+
+
+class ValueCondition(Enum):
+    GREATER_THAN = '>'
+    LESS_THAN = '<'
+    EQUAL_TO = '='
+    NOT_EQUAL_TO = '!='
+
+@dataclass
+class QueryFilter:
+    left_value: Any
+    right_value: Any
+    value_condition: ValueCondition
+
+    @property
+    def sql(self) -> str:
+        return f"{self.left_value} {self.value_condition} {self.right_value}"
+
+
+class PostgresQuery:
+
+    def __init__(self):
+        self.conditions = []
+        self.params = []
+
+    def filter_by_age(self):
+
 
 class PostgresDatabaseUrl:
 
@@ -96,7 +125,10 @@ class PostgresClient:
         with self.engine.begin() as conn:
             conn.execute(insert_stmt, data)
 
-    def table_data(self, table_name: str, column_names: list[str] | None = None) -> dict:
+    def table_data(self,
+                   table_name: str,
+                   column_names: list[str] | None = None,
+                   where: list[str] | None = None) -> dict:
         columns = [col.upper() for col in column_names]
 
         if self.skip_sql:
@@ -117,6 +149,10 @@ class PostgresClient:
             query = text(f'SELECT {quoted_columns} FROM {quoted_table}')
         else:
             query = text(f'SELECT * FROM {quoted_table}')
+
+        if where:
+            where_sql = 'AND '.join([w for w in where])
+            query += f" {where_sql}"
 
         with self.engine.connect() as conn:
             result = list(conn.execute(query).mappings())

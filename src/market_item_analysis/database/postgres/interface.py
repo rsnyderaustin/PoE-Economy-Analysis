@@ -1,9 +1,13 @@
+from datetime import datetime, timedelta
+from enum import Enum
 from typing import Iterable
 
 from sqlalchemy import text
 
 from src.market_item_analysis.database.postgres import PostgresClient
+from src.market_item_analysis.database.postgres.client import QueryFilter
 from src.market_item_analysis.database.postgres.python_to_postgres_dtype import PythonToPostgresDtype
+from src.market_item_analysis.listing.objects import EquipmentListing
 
 psql_log = LogsHandler().fetch_log(log_e=LogFile.PSQL)
 
@@ -66,6 +70,37 @@ class PostgresInsertableData:
     def fetch_column(self, column: str):
         return self.columns[column.lower()]
 
+
+class TrainingDataColumn(Enum):
+    POSTER_ACCOUNT_NAME = 'account_name'
+    LISTING_ID = 'listing_id'
+    LISTING_INDEXED = 'indexed_datetime'
+    RECORD_CREATED = 'record_created'
+    PRICE_CURRENCY = 'price_currency'
+    PRICE_AMOUNT = 'price_amount'
+    GOLD_COST = 'gold_cost'
+    STATS_OBJECT = 'stats_object'
+
+
+class TrainingDataRepository:
+
+    def fetch_data(self,
+                   postgres_client: PostgresClient,
+                   listing_age_minutes: int | None = None) -> list[EquipmentListing]:
+        sql_params = []
+
+        sql_where = []
+        if listing_age_minutes:
+            cutoff = datetime.now() - timedelta(minutes=listing_age_minutes)
+
+            sql_where.append(f"{TrainingDataColumn.LISTING_INDEXED} >= ?")
+
+            sql_params.append(cutoff)
+
+        listings_data = postgres_client.
+
+    def insert_data(self, data: list[EquipmentListing]):
+
 class PostgresInterface:
 
     def __init__(self,
@@ -95,6 +130,10 @@ class PostgresInterface:
         self.client.insert_data(table_name=table_name,
                                 data=insertable_data.data)
 
-    def fetch_data(self, table_name: str, column_names: list[str] | None = None):
+    def fetch_data(self,
+                   table_name: str,
+                   column_names: list[str] | None = None,
+                   where_filters: list[QueryFilter] | None = None):
         return self.client.table_data(table_name=table_name,
-                                      column_names=column_names)
+                                      column_names=column_names,
+                                      where_filters=where_filters)
