@@ -1,10 +1,9 @@
-import pprint
 from datetime import datetime
 import random
 
-from src.market_item_analysis.shared.io_manager import IoManager
-from src.market_item_analysis.trade_api import TradeApiHandler
-from src.market_item_analysis.trade_api.api_response_obj import ApiResponse
+from src.market_item_analysis.core.io_manager import IoManager
+from src.market_item_analysis.trade_api import TradeApiInterface
+from src.market_item_analysis.trade_api.trade_result import ApiResponse
 from src.market_item_analysis.trade_api.query import QueryPresets
 
 
@@ -31,7 +30,7 @@ class _IntakeGatekepeer:
 class RawListingLoader:
 
     def __init__(self,
-                 trade_api_handler: TradeApiHandler,
+                 trade_api_handler: TradeApiInterface,
                  io_manager: IoManager):
         self.trade_api_handler = trade_api_handler
         self._io_manager = io_manager
@@ -86,4 +85,5 @@ class RawListingLoader:
             runtime_minutes = (current_time - pull_start_time).total_seconds() / 60.0
 
             if runtime_minutes >= pull_minutes_limit:
+                print("Reached pull time limit. Returning...")
                 return

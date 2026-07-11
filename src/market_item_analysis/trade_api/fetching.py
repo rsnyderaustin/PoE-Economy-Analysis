@@ -1,7 +1,7 @@
 
 import logging
+from dataclasses import dataclass
 from datetime import datetime
-from dotenv import load_dotenv
 import os
 
 import requests
@@ -10,21 +10,11 @@ from src.market_item_analysis.trade_api.request_throttler import RequestThrottle
 
 logger = logging.getLogger(__name__)
 
-load_dotenv()
+def chunk_list(result_ids: list, chunk_size: int = 10):
+    return [result_ids[i:i + chunk_size] for i in range(0, len(result_ids), chunk_size)]
 
-def chunk_list(items: list, chunk_size: int = 10):
-    return [items[i:i + chunk_size] for i in range(0, len(items), chunk_size)]
-
-
-class TradeItemsFetching:
-
-    post_url = "https://www.pathofexile.com/api/trade2/search/poe2/Fate%20of%20the%20Vaal"
-    get_url = "https://www.pathofexile.com/api/trade2/fetch/"
-
-    post_endpoint = "fetch"
-    post_filename_starter = '/official_api/trade2/fetch/'
-
-    headers = {
+def get_trade_headers() -> dict:
+    return {
         'Content-Type': 'application/json',
         # Used to be '5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0',
@@ -38,63 +28,94 @@ class TradeItemsFetching:
         'Referer': 'https://www.pathofexile.com/trade2/search/poe2/Fate%20of%20the%20Vaal'
     }
 
-    request_throttler = RequestThrottler()
 
-    items_fetched = 0
-    class_start = datetime.now()
+class _TradePoster:
+
+    _BASE_URL = "https://www.pathofexile.com/api/trade2/search/poe2/Fate%20of%20the%20Vaal"
+    _ENDPOINT = "fetch"
+    _FILENAME_STARTER = '/official_api/trade2/fetch/'
+
+    _REQUEST_THROTTLER = RequestThrottler()
 
     @classmethod
-    def _post_for_search_id(cls, query):
-        response = cls.request_throttler.send_request(
+    def post(cls, query):
+        response = cls._REQUEST_THROTTLER.send_request(
             request_func=requests.post,
-            url=cls.post_url,
-            headers=cls.headers,
+            url=cls._BASE_URL,
+            headers=get_trade_headers(),
             json=query
+        )
+        response.raise_for_status()
+        json_data = response.json()
+
+        return _TradePostResponse(json_data)
+
+class _TradeGetter:
+
+    _BASE_URL = "https://www.pathofexile.com/api/trade2/fetch/"
+
+    _COOKIES = {
+        'POSSESSID': os.getenv("POSSESSID")
+    }
+
+    _REQUEST_THROTTLER = RequestThrottler()
+
+    @classmethod
+    def get(cls, search_id: str, result_ids: list[str]) -> dict:
+        params = {
+            'query': search_id,
+            'realm': 'poe2'
+        }
+
+        url = f'{cls._BASE_URL}{','.join(result_ids)}'
+
+        response = cls._REQUEST_THROTTLER.send_request(
+            request_func=requests.get,
+            url=url,
+            headers=get_trade_headers(),
+            params=params,
+            cookies=cls._COOKIES
         )
         response.raise_for_status()
         json_data = response.json()
 
         return json_data
 
-    @classmethod
-    def _get_with_item_ids(cls, post_response, item_ids) -> list:
-        chunked_list = chunk_list(items=item_ids, chunk_size=10)
+class _TradePostResponse:
 
-        params = {
-            'query': post_response['id'],
-            'realm': 'poe2'
-        }
+    def __init__(self, response_json: dict):
+        self.search_id = response_json['id']
+        self.result_ids = response_json['result']
+        self.total_possible_responses = response_json['total']
+
+
+@dataclass(frozen=True)
+class TradeApiResultsResponse:
+    results: list
+    total_results: int
+
+    @property
+    def results_count(self):
+        return len(self.results)
+
+class TradeApiResultsFetcher:
+
+    @classmethod
+    def fetch(cls, query) -> TradeApiResultsResponse:
+        post_response = _TradePoster.post(query=query)
+
+        item_id_chunk_lists = chunk_list(result_ids=post_response.result_ids, chunk_size=10)
 
         response_items = []
-        for chunked_ids in chunked_list:
-            chunked_ids = ",".join(chunked_ids)
-
-            get_url = f'{cls.get_url}{chunked_ids}'
-
-            cookies = {
-                'POSSESSID': os.getenv("POSSESSID")
-            }
-            response = cls.request_throttler.send_request(
-                request_func=requests.get,
-                url=get_url,
-                headers=cls.headers,
-                params=params,
-                cookies=cookies
+        for result_ids_list in item_id_chunk_lists:
+            get_json = _TradeGetter.get(
+                search_id=post_response.search_id,
+                result_ids=result_ids_list
             )
-            response.raise_for_status()
-            json_data = response.json()
-            result = json_data['result']
+            result = get_json['result']
             response_items.extend(result)
 
-        return response_items
-
-    @classmethod
-    def fetch_items_response(cls, query) -> tuple[list, int]:
-        post_response = cls._post_for_search_id(query=query)
-
-        total_possible_responses = post_response['total']
-        item_ids = post_response['result']
-
-        get_response = cls._get_with_item_ids(post_response=post_response,
-                                              item_ids=item_ids)
-        return get_response, total_possible_responses
+        return TradeApiResultsResponse(
+            results=response_items,
+            total_results=post_response.total_possible_responses
+        )

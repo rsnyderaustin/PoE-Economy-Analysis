@@ -1,22 +1,25 @@
-from datetime import datetime
-import uuid
+import numpy as np
 
 import uuid
 from datetime import datetime
 
-from src.market_item_analysis.data_handling import utils
 from src.market_item_analysis.shared import utils as shared_utils
-from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory
+from src.market_item_analysis.shared.enums.item_enums import EquipmentCategory, AffixType
 from src.market_item_analysis.shared.enums.trade_enums import ModClass, Rarity, Currency
+from src.market_item_analysis.shared.text_analysis import TextAnalyzer
+from src.market_item_analysis.trade_api.trade_result import ApiResponse
 
 
 class ItemMod:
 
     def __init__(self,
                  mod_text: str,
-                 mod_class: ModClass):
+                 mod_class: ModClass,
+                 affix_type: AffixType | None = None):
         self.mod_text = mod_text
         self.mod_class = mod_class
+
+        self.affix_type = affix_type
 
     def to_dict(self) -> dict:
         return shared_utils.generic_to_dict(self)
@@ -24,6 +27,7 @@ class ItemMod:
     @classmethod
     def from_dict(cls, d: dict) -> "ItemMod":
         d['mod_class'] = ModClass(d['mod_class'])
+        d['affix_type'] = AffixType(d['affix_type']) if 'affix_type' in d else None
         return cls(**d)
 
 
@@ -64,6 +68,15 @@ class ListingMetadata:
         d['date_fetched'] = datetime.fromisoformat(d['date_fetched'])
         return cls(**d)
 
+    @classmethod
+    def from_api_response(cls, r: ApiResponse) -> "ListingMetadata":
+        return ListingMetadata(
+            poster_account_name=r.account_name,
+            listing_id=r.listing_id,
+            date_posted=r.date_fetched,
+            date_fetched=datetime.now()
+        )
+
 
 class EquipmentRequirements:
 
@@ -84,51 +97,137 @@ class EquipmentRequirements:
     def from_dict(cls, d: dict) -> "EquipmentRequirements":
         return cls(**d)
 
+    @classmethod
+    def from_api_response(cls, r: ApiResponse) -> "EquipmentRequirements":
+        return EquipmentRequirements(
+            player_level=r.level_requirement,
+            strength=r.strength_requirement,
+            intelligence=r.intelligence_requirement,
+            dexterity=r.dexterity_requirement
+        )
+
+
+class ItemSkills:
+
+    def __init__(self,
+                 skills: list[ItemSkill]):
+        self.skills = skills
+
+    def to_dict(self) -> dict:
+        return shared_utils.generic_to_dict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "ItemSkills":
+        return cls([ItemSkill.from_dict(skill_d) for skill_d in d['skills']])
+
+    @classmethod
+    def from_api_response(cls, r: ApiResponse):
+        if not r.skills_data:
+            return []
+
+        skills = []
+        for skill_data in r.skills_data:
+            raw_skill = skill_data['values'][0]
+
+            # Spear Throw is the only skill that is granted by an item without a level. May have to update in the future
+            if raw_skill[0] == 'Spear Throw':
+                new_skill = ItemSkill(
+                    name='Spear Throw'
+                )
+                skills.append(new_skill)
+                continue
+
+            if isinstance(raw_skill, str):
+                _, level_str, *skill_parts = raw_skill.split()
+                level = int(level_str)
+                skill_name = ' '.join(skill_parts)
+            else:
+                skill_name = raw_skill[0][0]
+                level = raw_skill[0][1]
+
+            new_skill = ItemSkill(
+                name=skill_name,
+                level=level
+            )
+
+            skills.append(new_skill)
+
+        return ItemSkills(skills=skills)
 
 class ItemMods:
 
     def __init__(self,
-                 implicits: list[ItemMod] | None = None,
-                 enchants: list[ItemMod] | None = None,
-                 fractures: list[ItemMod] | None = None,
-                 explicits: list[ItemMod] | None = None):
-        self.implicits = implicits or []
-        self.enchants = enchants or []
-        self.fractures = fractures or []
-        self.explicits = explicits or []
+                 mods_d: dict[ModClass, list[ItemMod]]):
+        self._mods_d = mods_d
 
-        self._mod_class_d = {
-            ModClass.IMPLICIT: self.implicits,
-            ModClass.ENCHANT: self.enchants,
-            ModClass.FRACTURED: self.fractures,
-            ModClass.EXPLICIT: self.explicits
-        }
+    @property
+    def implicits(self):
+        return self._mods_d.get(ModClass.IMPLICIT, [])
+
+    @property
+    def explicits(self):
+        return self._mods_d.get(ModClass.EXPLICIT, [])
+
+    @property
+    def enchants(self):
+        return self._mods_d.get(ModClass.ENCHANT, [])
+
+    @property
+    def fractures(self):
+        return self._mods_d.get(ModClass.FRACTURED, [])
+
+    @property
+    def runes(self):
+        return self._mods_d.get(ModClass.RUNE, [])
 
     def to_dict(self) -> dict:
         return shared_utils.generic_to_dict(self)
 
     @classmethod
     def from_dict(cls, d: dict) -> "ItemMods":
-        return ItemMods(
-            implicits=[ItemMod.from_dict(v) for v in d['implicits']] if 'implicits' in d else None,
-            enchants=[ItemMod.from_dict(v) for v in d['enchants']] if 'enchants' in d else None,
-            fractures=[ItemMod.from_dict(v) for v in d['fractures']] if 'fractures' in d else None,
-            explicits=[ItemMod.from_dict(v) for v in d['explicits']] if 'explicits' in d else None
-        )
+        mods_d = {}
+        for mod_class_str, mod_dicts in d.items():
+            mod_class = ModClass(mod_class_str)
+            mods = [ItemMod.from_dict(d) for d in mod_dicts]
 
+            mods_d[mod_class] = mods
+
+        return ItemMods(mods_d=mods_d)
+
+    @classmethod
+    def from_api_response(cls, r: ApiResponse) -> "ItemMods":
+
+        mods_d = {
+            ModClass.IMPLICIT: [],
+            ModClass.ENCHANT: [],
+            ModClass.FRACTURED: [],
+            ModClass.EXPLICIT: [],
+            ModClass.RUNE: []
+        }
+        for mod_class in ModClass:
+            if mod_class.api_key not in r.item_data:
+                continue
+
+            mod_dicts = r.item_data[mod_class.api_key]
+            new_mods = [ItemMod(mod_text=mod_text,
+                                mod_class=mod_class) for mod_text in mod_dicts]
+
+            mods_d[mod_class].extend(new_mods)
+
+        item_mods = ItemMods(mods_d=mods_d)
+        return item_mods
 
     @property
     def all_mods(self) -> list[ItemMod]:
         return [m
-                for mods_list in self._mod_class_d.values()
+                for mods_list in self._mods_d.values()
                 for m in mods_list]
 
     def add_mod(self, mod: ItemMod):
-        mods = self._mod_class_d[mod.mod_class]
-        mods.append(mod)
+        self._mods_d[mod.mod_class].append(mod)
 
-    def fetch_mods(self, mod_class: ModClass) -> list[ItemMod]:
-        return self._mod_class_d[mod_class]
+    def fetch_mods_by_class(self, mod_class: ModClass) -> list[ItemMod]:
+        return self._mods_d[mod_class]
 
 
 class ItemTypes:
@@ -176,6 +275,14 @@ class Price:
             gold_cost=int(d['gold_cost'])
         )
 
+    @classmethod
+    def from_api_response(cls, r: ApiResponse) -> "Price":
+        return Price(
+            currency=Currency(r.price_currency),
+            currency_amount=r.price_amount,
+            gold_cost=r.gold_cost
+        )
+
 
 class EquipmentStats:
 
@@ -208,6 +315,45 @@ class EquipmentStats:
     def from_dict(cls, d: dict) -> "EquipmentStats":
         return cls(**d)
 
+    @classmethod
+    def _pull_value(cls, stat: str, r: ApiResponse) -> float | int | None:
+        properties_list = r.item_data['properties']
+        stat_dicts = [d for d in properties_list if d['name'] == stat]
+        if not stat_dicts:
+            return None
+
+        if len(stat_dicts) >= 2:
+            raise ValueError(f"Found 2 stats dicts for {stat}.\nSource data: {properties_list}")
+
+        val_str = stat_dicts[0]['values'][0]
+        vals = TextAnalyzer.extract_numbers_from_string(val_str)
+        return np.mean(vals)
+
+    @classmethod
+    def from_api_response(cls, r: ApiResponse) -> "EquipmentStats":
+        armour = cls._pull_value(stat='[Armour]', r=r)
+        evasion = cls._pull_value(stat='[Evasion|Evasion Rating]', r=r)
+        energy_shield = cls._pull_value(stat='[Energy Shield|Energy Shield]', r=r)
+
+        elemental_damage = r.determine_elemental_damage_values()
+
+        phys_damage = cls._pull_value(stat='[Physical] Damage', r=r)
+        crit_chance = cls._pull_value(stat='[Critical|Critical Hit] Chance', r=r)
+        attacks_per_second = cls._pull_value(stat='Attacks per Second', r=r)
+
+        return EquipmentStats(
+            armour=armour,
+            evasion=evasion,
+            energy_shield=energy_shield,
+            fire_damage=elemental_damage.fire,
+            cold_damage=elemental_damage.cold,
+            lightning_damage=elemental_damage.lightning,
+            physical_damage=phys_damage,
+            critical_hit_chance=crit_chance,
+            attacks_per_second=attacks_per_second
+        )
+
+
 
 class EquipmentProperties:
 
@@ -217,16 +363,12 @@ class EquipmentProperties:
                  identified: bool,
                  corrupted: bool,
                  quality: int,
-                 open_prefixes: int,
-                 open_suffixes: int,
                  **additional_properties):
         self.rarity = rarity
         self.ilvl = ilvl
         self.identified = identified
         self.corrupted = corrupted
         self.quality = quality
-        self.open_suffixes = open_suffixes
-        self.open_prefixes = open_prefixes
 
         self.additional_properties = additional_properties
 

@@ -8,7 +8,7 @@ from src.market_item_analysis.program_logging import LogFile, LogsHandler
 
 from src.market_item_analysis.file_management.io_manager import PricePredictModelFiles, PricePredictCacheFile, PricePredictPerformanceFile
 from src.market_item_analysis.price_predict_ai_model.dataframe_prep import DataFramePrep
-from src.market_item_analysis.psql import PostgreSqlManager
+from src.market_item_analysis.data_storage.postgres import PostgresClient
 from .stats_prep import StatsPrep
 from .utils import ModelLifeCycle
 
@@ -19,7 +19,7 @@ class PricePredictModelPipeline:
     def __init__(self,
                  price_predict_files: PricePredictModelFiles,
                  performance_file: PricePredictPerformanceFile,
-                 psql_manager: PostgreSqlManager):
+                 psql_manager: PostgresClient):
         self._files_manager = price_predict_files
         self._performance_file = performance_file
         self._psql_manager = psql_manager

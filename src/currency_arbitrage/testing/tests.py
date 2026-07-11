@@ -51,12 +51,6 @@ def test_run():
     manager = MarketDataCaptureManager(cache_settings=cache_settings)
     manager.capture(currencies)
 
-    arbitrager = CurrencyArbitrager(
-        market_data_manager=manager.market_data_manager,
-        gold_cost_manager=manager.gold_cost_manager
-    )
-    x = 0
-
 def test_arbitrage():
     cache_settings = CacheSettings()
     cache_settings.add_settings(cache_objects=[CacheObject.GOLD_COST_MANAGER],

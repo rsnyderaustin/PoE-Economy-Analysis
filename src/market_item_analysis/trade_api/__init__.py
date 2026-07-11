@@ -1,2 +1,2 @@
-from .handler import TradeApiHandler
-from .query import Query, StatsFiltersGroup, StatFilter, MetaFilter
+from .interface import TradeApiInterface
+from .query import Query, StatFiltersGroup, StatFilter, MetaFilter

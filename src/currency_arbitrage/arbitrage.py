@@ -473,7 +473,7 @@ class CurrencyArbitrager:
         logger.info("\tFinished stepping through arbitrage cycles")
 
         all_iterations = [iteration for c in processed_cycles for iteration in c.iterations]
-
-        self._print_iterations(all_iterations)
+        profitable_iterations = [i for i in all_iterations if i.result.divs_profit > 0]
+        self._print_iterations(profitable_iterations)
 
         return all_iterations

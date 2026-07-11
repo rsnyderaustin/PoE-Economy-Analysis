@@ -5,25 +5,25 @@
       "want_currency": "Chaos Orb",
       "_ratios": [
         {
-          "raw_ratio": "155:1",
+          "raw_ratio": "157:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
-          "want_per_have": 155.0,
-          "want_supply": 10385
+          "want_per_have": 157.0,
+          "want_supply": 1727
+        },
+        {
+          "raw_ratio": "156:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 156.0,
+          "want_supply": 936
         },
         {
           "raw_ratio": "154:1",
           "have_currency": "Divine Orb",
           "want_currency": "Chaos Orb",
           "want_per_have": 154.0,
-          "want_supply": 9086
-        },
-        {
-          "raw_ratio": "153:1",
-          "have_currency": "Divine Orb",
-          "want_currency": "Chaos Orb",
-          "want_per_have": 153.0,
-          "want_supply": 5202
+          "want_supply": 616
         }
       ],
       "_sorted_ratios": null,
@@ -33,26 +33,113 @@
       "have_currency": "Chaos Orb",
       "want_currency": "Divine Orb",
       "_ratios": [
+        {
+          "raw_ratio": "158.0:1.0",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.006329113924050633,
+          "want_supply": 67
+        },
+        {
+          "raw_ratio": "159.0:1.0",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.006289308176100629,
+          "want_supply": 2
+        },
         {
           "raw_ratio": "160.0:1.0",
           "have_currency": "Chaos Orb",
           "want_currency": "Divine Orb",
           "want_per_have": 0.00625,
-          "want_supply": 134
+          "want_supply": 30
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Chaos Orb",
+      "want_currency": "Stacked Deck",
+      "_ratios": [
+        {
+          "raw_ratio": "1:1.67",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Stacked Deck",
+          "want_per_have": 0.5988023952095809,
+          "want_supply": 417
         },
         {
-          "raw_ratio": "160.5:1.0",
+          "raw_ratio": "1:1.67",
           "have_currency": "Chaos Orb",
-          "want_currency": "Divine Orb",
-          "want_per_have": 0.006230529595015576,
+          "want_currency": "Stacked Deck",
+          "want_per_have": 0.5988023952095809,
+          "want_supply": 215
+        },
+        {
+          "raw_ratio": "1:1.75",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Stacked Deck",
+          "want_per_have": 0.5714285714285714,
+          "want_supply": 32
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Stacked Deck",
+      "want_currency": "Chaos Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "1.0:1.52",
+          "have_currency": "Stacked Deck",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 1.52,
           "want_supply": 190
         },
         {
-          "raw_ratio": "161.0:1.0",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Divine Orb",
-          "want_per_have": 0.006211180124223602,
-          "want_supply": 500
+          "raw_ratio": "1.0:1.51",
+          "have_currency": "Stacked Deck",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 1.51,
+          "want_supply": 13815
+        },
+        {
+          "raw_ratio": "1.0:1.5",
+          "have_currency": "Stacked Deck",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 1.5,
+          "want_supply": 15591
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Divine Orb",
+      "want_currency": "Stacked Deck",
+      "_ratios": [
+        {
+          "raw_ratio": "86:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Stacked Deck",
+          "want_per_have": 86.0,
+          "want_supply": 4816
+        },
+        {
+          "raw_ratio": "85.83:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Stacked Deck",
+          "want_per_have": 85.83,
+          "want_supply": 3949
+        },
+        {
+          "raw_ratio": "85:1",
+          "have_currency": "Divine Orb",
+          "want_currency": "Stacked Deck",
+          "want_per_have": 85.0,
+          "want_supply": 595
         }
       ],
       "_sorted_ratios": null,
@@ -60,202 +147,100 @@
     },
     {
       "have_currency": "Stacked Deck",
-      "want_currency": "Chaos Orb",
+      "want_currency": "Divine Orb",
       "_ratios": [
         {
-          "raw_ratio": "1.31:1",
+          "raw_ratio": "89.0:1.0",
           "have_currency": "Stacked Deck",
-          "want_currency": "Chaos Orb",
-          "want_per_have": 1.31,
-          "want_supply": 292
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.011235955056179775,
+          "want_supply": 36
         },
         {
-          "raw_ratio": "1.30:1",
+          "raw_ratio": "90.0:1.0",
           "have_currency": "Stacked Deck",
-          "want_currency": "Chaos Orb",
-          "want_per_have": 1.3,
-          "want_supply": 1000
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.011111111111111112,
+          "want_supply": 65
         },
         {
-          "raw_ratio": "1.30:1",
+          "raw_ratio": "93.0:1.0",
           "have_currency": "Stacked Deck",
-          "want_currency": "Chaos Orb",
-          "want_per_have": 1.3,
-          "want_supply": 19674
+          "want_currency": "Divine Orb",
+          "want_per_have": 0.010752688172043012,
+          "want_supply": 5
         }
       ],
       "_sorted_ratios": null,
       "atts": {}
     },
     {
-      "have_currency": "Chaos Orb",
+      "have_currency": "Vivid Crystallised Lifeforce",
       "want_currency": "Stacked Deck",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Stacked Deck",
+      "want_currency": "Vivid Crystallised Lifeforce",
+      "_ratios": [],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Chaos Orb",
+      "want_currency": "Vivid Crystallised Lifeforce",
       "_ratios": [
         {
-          "raw_ratio": "1.71:1.0",
+          "raw_ratio": "24.87:1",
           "have_currency": "Chaos Orb",
-          "want_currency": "Stacked Deck",
-          "want_per_have": 0.5847953216374269,
+          "want_currency": "Vivid Crystallised Lifeforce",
+          "want_per_have": 24.87,
+          "want_supply": 746
+        },
+        {
+          "raw_ratio": "24.59:1",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Vivid Crystallised Lifeforce",
+          "want_per_have": 24.59,
+          "want_supply": 2926
+        },
+        {
+          "raw_ratio": "24.44:1",
+          "have_currency": "Chaos Orb",
+          "want_currency": "Vivid Crystallised Lifeforce",
+          "want_per_have": 24.44,
+          "want_supply": 22000
+        }
+      ],
+      "_sorted_ratios": null,
+      "atts": {}
+    },
+    {
+      "have_currency": "Vivid Crystallised Lifeforce",
+      "want_currency": "Chaos Orb",
+      "_ratios": [
+        {
+          "raw_ratio": "27.83:1.0",
+          "have_currency": "Vivid Crystallised Lifeforce",
+          "want_currency": "Chaos Orb",
+          "want_per_have": 0.035932446999640676,
           "want_supply": 100
         },
         {
-          "raw_ratio": "1.72:1.0",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Stacked Deck",
-          "want_per_have": 0.5813953488372093,
-          "want_supply": 171
-        },
-        {
-          "raw_ratio": "1.72:1.0",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Stacked Deck",
-          "want_per_have": 0.5813953488372093,
-          "want_supply": 1090
-        }
-      ],
-      "_sorted_ratios": null,
-      "atts": {}
-    },
-    {
-      "have_currency": "Vivid Crystallised Lifeforce",
-      "want_currency": "Chaos Orb",
-      "_ratios": [
-        {
-          "raw_ratio": "1:32",
+          "raw_ratio": "27.84:1.0",
           "have_currency": "Vivid Crystallised Lifeforce",
           "want_currency": "Chaos Orb",
-          "want_per_have": 0.03125,
-          "want_supply": 25145
+          "want_per_have": 0.035919540229885055,
+          "want_supply": 130
         },
         {
-          "raw_ratio": "1:50",
+          "raw_ratio": "27.86:1.0",
           "have_currency": "Vivid Crystallised Lifeforce",
           "want_currency": "Chaos Orb",
-          "want_per_have": 0.02,
-          "want_supply": 1500
-        },
-        {
-          "raw_ratio": "1:59",
-          "have_currency": "Vivid Crystallised Lifeforce",
-          "want_currency": "Chaos Orb",
-          "want_per_have": 0.01694915254237288,
-          "want_supply": 226
-        }
-      ],
-      "_sorted_ratios": null,
-      "atts": {}
-    },
-    {
-      "have_currency": "Chaos Orb",
-      "want_currency": "Vivid Crystallised Lifeforce",
-      "_ratios": [
-        {
-          "raw_ratio": "1.0:29.02",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Vivid Crystallised Lifeforce",
-          "want_per_have": 29.02,
-          "want_supply": 12390
-        },
-        {
-          "raw_ratio": "1.0:29.0",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Vivid Crystallised Lifeforce",
-          "want_per_have": 29.0,
-          "want_supply": 247747
-        },
-        {
-          "raw_ratio": "1.0:28.96",
-          "have_currency": "Chaos Orb",
-          "want_currency": "Vivid Crystallised Lifeforce",
-          "want_per_have": 28.96,
-          "want_supply": 8978
-        }
-      ],
-      "_sorted_ratios": null,
-      "atts": {}
-    },
-    {
-      "have_currency": "Stacked Deck",
-      "want_currency": "Divine Orb",
-      "_ratios": [
-        {
-          "raw_ratio": "1:98",
-          "have_currency": "Stacked Deck",
-          "want_currency": "Divine Orb",
-          "want_per_have": 0.01020408163265306,
-          "want_supply": 8
-        },
-        {
-          "raw_ratio": "1:100",
-          "have_currency": "Stacked Deck",
-          "want_currency": "Divine Orb",
-          "want_per_have": 0.01,
-          "want_supply": 21
-        },
-        {
-          "raw_ratio": "1:105",
-          "have_currency": "Stacked Deck",
-          "want_currency": "Divine Orb",
-          "want_per_have": 0.009523809523809525,
-          "want_supply": 10
-        }
-      ],
-      "_sorted_ratios": null,
-      "atts": {}
-    },
-    {
-      "have_currency": "Divine Orb",
-      "want_currency": "Stacked Deck",
-      "_ratios": [
-        {
-          "raw_ratio": "1.0:95.0",
-          "have_currency": "Divine Orb",
-          "want_currency": "Stacked Deck",
-          "want_per_have": 95.0,
-          "want_supply": 9595
-        },
-        {
-          "raw_ratio": "1.0:94.0",
-          "have_currency": "Divine Orb",
-          "want_currency": "Stacked Deck",
-          "want_per_have": 94.0,
-          "want_supply": 1034
-        },
-        {
-          "raw_ratio": "1.0:93.33",
-          "have_currency": "Divine Orb",
-          "want_currency": "Stacked Deck",
-          "want_per_have": 93.33,
-          "want_supply": 840
-        }
-      ],
-      "_sorted_ratios": null,
-      "atts": {}
-    },
-    {
-      "have_currency": "Divine Orb",
-      "want_currency": "Vivid Crystallised Lifeforce",
-      "_ratios": [
-        {
-          "raw_ratio": "4350:1",
-          "have_currency": "Divine Orb",
-          "want_currency": "Vivid Crystallised Lifeforce",
-          "want_per_have": 4350.0,
-          "want_supply": 1822650
-        },
-        {
-          "raw_ratio": "4347.22:1",
-          "have_currency": "Divine Orb",
-          "want_currency": "Vivid Crystallised Lifeforce",
-          "want_per_have": 4347.22,
-          "want_supply": 221709
-        },
-        {
-          "raw_ratio": "4347:1",
-          "have_currency": "Divine Orb",
-          "want_currency": "Vivid Crystallised Lifeforce",
-          "want_per_have": 4347.0,
-          "want_supply": 17388
+          "want_per_have": 0.03589375448671931,
+          "want_supply": 9980
         }
       ],
       "_sorted_ratios": null,
@@ -266,41 +251,56 @@
       "want_currency": "Divine Orb",
       "_ratios": [
         {
-          "raw_ratio": "4750.0:1.0",
+          "raw_ratio": "1:3968",
           "have_currency": "Vivid Crystallised Lifeforce",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.0002105263157894737,
-          "want_supply": 2
+          "want_per_have": 0.00025201612903225806,
+          "want_supply": 145
         },
         {
-          "raw_ratio": "4859.0:1.0",
+          "raw_ratio": "1:3970",
           "have_currency": "Vivid Crystallised Lifeforce",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.00020580366330520683,
-          "want_supply": 16
+          "want_per_have": 0.00025188916876574307,
+          "want_supply": 39
         },
         {
-          "raw_ratio": "4860.0:1.0",
+          "raw_ratio": "1:3988",
           "have_currency": "Vivid Crystallised Lifeforce",
           "want_currency": "Divine Orb",
-          "want_per_have": 0.00020576131687242798,
-          "want_supply": 200
+          "want_per_have": 0.00025075225677031093,
+          "want_supply": 71
         }
       ],
       "_sorted_ratios": null,
       "atts": {}
     },
     {
-      "have_currency": "Stacked Deck",
+      "have_currency": "Divine Orb",
       "want_currency": "Vivid Crystallised Lifeforce",
-      "_ratios": [],
-      "_sorted_ratios": null,
-      "atts": {}
-    },
-    {
-      "have_currency": "Vivid Crystallised Lifeforce",
-      "want_currency": "Stacked Deck",
-      "_ratios": [],
+      "_ratios": [
+        {
+          "raw_ratio": "1.0:3800.0",
+          "have_currency": "Divine Orb",
+          "want_currency": "Vivid Crystallised Lifeforce",
+          "want_per_have": 3800.0,
+          "want_supply": 159600
+        },
+        {
+          "raw_ratio": "1.0:3710.0",
+          "have_currency": "Divine Orb",
+          "want_currency": "Vivid Crystallised Lifeforce",
+          "want_per_have": 3710.0,
+          "want_supply": 37100
+        },
+        {
+          "raw_ratio": "1.0:3701.0",
+          "have_currency": "Divine Orb",
+          "want_currency": "Vivid Crystallised Lifeforce",
+          "want_per_have": 3701.0,
+          "want_supply": 7402
+        }
+      ],
       "_sorted_ratios": null,
       "atts": {}
     }
