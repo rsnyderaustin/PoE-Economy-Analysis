@@ -3,13 +3,13 @@ import copy
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
-from src.market_item_analysis.program_logging import LogFile, LogsHandler
+import logging
 
-from src.market_item_analysis.price_predict_ai_model.dataframe_prep import DataFramePrep
-from src.market_item_analysis.price_predict_ai_model.neighborhood_class import Neighborhood
-from .utils import ModelLifeCycle
+from src.market_item_analysis.price_predict_ai_model.stats.data_prep import Prepper
+from src.market_item_analysis.price_predict_ai_model.stats.neighborhood_class import Neighborhood
+from src.market_item_analysis.price_predict_ai_model.listing_lifecycle import ListingLifecycle
 
-stats_log = LogsHandler().fetch_log(LogFile.STATS_PREP)
+logger = logging.getLogger(__name__)
 
 
 class _NeighborhoodFactory:
@@ -80,11 +80,11 @@ class _NeighborhoodFactory:
 class StatsPrep:
 
     @staticmethod
-    def _normalize_data(df_prep: DataFramePrep) -> DataFramePrep:
+    def _normalize_data(df_prep: Prepper) -> Prepper:
         norm_df_prep = (
-            DataFramePrep(df_prep.df,
-                          price_col_name=df_prep.price_col_name,
-                          log_col_name=df_prep.log_col_name)
+            Prepper(df_prep.df,
+                    price_col_name=df_prep.price_col_name,
+                    log_col_name=df_prep.log_col_name)
             .normalize_features()
             .weight_columns(df_prep.mutual_info_series)
         )
@@ -95,12 +95,12 @@ class StatsPrep:
     def _initial_data_prep(df: pd.DataFrame,
                            price_column: str):
         df_prep = (
-            DataFramePrep(df,
-                          price_col_name=price_column)
+            Prepper(df,
+                    price_col_name=price_column)
             .drop_duplicates()
             .drop(columns=['atype', 'minutes_since_league_start'])
             .fillna(0)
-            .log_price(log_col_name='log_divs')
+            .create_log_price_column(log_col_name='log_divs')
             .drop_nan_rows()
             .reset_index(drop=True)
             .drop_overly_null_columns(max_percent_nulls=0.98)
@@ -119,21 +119,21 @@ class StatsPrep:
 
     @classmethod
     def prep(cls,
-             model_lifecycle: ModelLifeCycle,
+             lifecycle: ListingLifecycle,
              df: pd.DataFrame,
              price_column: str,
-             neighbor_distance_threshold: float = 0.1) -> DataFramePrep:
+             neighbor_distance_threshold: float = 0.1) -> Prepper:
 
-        atype = model_lifecycle.atype
-        tier = model_lifecycle.tier
+        atype = lifecycle.atype
+        tier = lifecycle.tier
 
         print(f"------------ {tier} -----------\n")
         print("Pre-prepping DataFrame.")
         df_prep = cls._initial_data_prep(df=df,
                                          price_column=price_column)
 
-        model_lifecycle.dropped_columns = df_prep.dropped_columns
-        model_lifecycle.mi_series = df_prep.mutual_info_series
+        lifecycle.dropped_columns = df_prep.dropped_columns
+        lifecycle.mi_series = df_prep.mutual_info_series
 
         print("Normalizing and weighting features.")
         norm_df_prep = cls._normalize_data(copy.deepcopy(df_prep))
