@@ -80,12 +80,12 @@ class ConfigError(Exception):
 
 
 @dataclass(frozen=True)
-class TradeResultSectionContext:
+class SectionContext:
     listing_data: dict
     key_path: list[str]
 
 
-class TradeApiResultSection(ABC):
+class Section(ABC):
 
     def __init__(self,
                  data,
@@ -106,7 +106,7 @@ class TradeApiResultSection(ABC):
 
         return self._data[key]
 
-class TradeApiResultListingPriceSection(TradeApiResultSection):
+class ListingPrice(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -115,7 +115,7 @@ class TradeApiResultListingPriceSection(TradeApiResultSection):
         self.amount = self.require('amount')
         self.currency = self.require('currency')
 
-class TradeApiResultListingAccountSection(TradeApiResultSection):
+class ListingAccount(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -123,18 +123,18 @@ class TradeApiResultListingAccountSection(TradeApiResultSection):
         self.name = self.require('name')
         self.is_online = self.require('online')
 
-class TradeApiResultListingSection(TradeApiResultSection):
+class Listing(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
-        self.price = TradeApiResultListingPriceSection(data=self.require('price'),
+        self.price = ListingPriceSection(data=self.require('price'),
                                                        key_path=key_path + ['price'])
-        self.account = TradeApiResultListingAccountSection(data=self.require('account'),
+        self.account = ListingAccountSection(data=self.require('account'),
                                                            key_path=key_path + ['account'])
         self.gold_fee = self.require('fee')
         self.indexed_datetime = self.require(key='indexed')
 
-class TradeApiResultItemRequirementSection(TradeApiResultSection):
+class ItemRequirement(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -142,22 +142,30 @@ class TradeApiResultItemRequirementSection(TradeApiResultSection):
         self.name = self.require('name')
         self.values = self.require('values')
 
-class TradeResultItemPropertyValue:
+class ItemPropertyValue:
 
     def __init__(self, data: list):
         self.values_str = data[0]
         self.value_type_id = data[1]
 
-class TradeApiResultItemPropertySection(TradeApiResultSection):
+
+class ItemSkill(Section):
+
+    def __init__(self, data: dict, key_path: list[str]):
+        super().__init__(data=data, key_path=key_path)
+
+        
+
+class ItemProperty(Section):
 
     def __init__(self, data: list, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
 
         self.name = self.require('name')
-        self.values = [TradeResultItemPropertyValue(data=value_list)
+        self.values = [ItemPropertyValue(data=value_list)
                        for value_index, value_list in enumerate(self.require('values'))]
 
-class TradeApiResultItemModStatMagnitudesSection(TradeApiResultSection):
+class ModMagnitude(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -165,7 +173,7 @@ class TradeApiResultItemModStatMagnitudesSection(TradeApiResultSection):
         self.min = self.require('min')
         self.max = self.require('max')
 
-class TradeApiResultItemModStatSection(TradeApiResultSection):
+class ItemSubMod(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -174,12 +182,12 @@ class TradeApiResultItemModStatSection(TradeApiResultSection):
         self.tier = self.require('tier')
         self.level = self.require('level')
         self.magnitudes = [
-            TradeApiResultItemModStatMagnitudesSection(data=magnitudes_d, key_path=key_path + [magnitudes_index])
+            ModMagnitude(data=magnitudes_d, key_path=key_path + [magnitudes_index])
             for magnitudes_index, magnitudes_d in enumerate(self.require('magnitudes'))
         ]
 
 
-class TradeApiResultItemModSection(TradeApiResultSection):
+class ItemMod(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -189,13 +197,13 @@ class TradeApiResultItemModSection(TradeApiResultSection):
         self.flags = self.optional('flags')
         self.hash = self.optional('hash')
         if mods_data := self.optional('mods'):
-            self.sub_mods = [TradeApiResultItemModStatSection(data=mod_d,
-                                                              key_path=key_path + ['mods', mod_index])
+            self.sub_mods = [ItemSubMod(data=mod_d,
+                                        key_path=key_path + ['mods', mod_index])
                              for mod_index, mod_d in enumerate(mods_data)]
         else:
             self.sub_mods = []
 
-class TradeApiResultItemSection(TradeApiResultSection):
+class Item(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -211,19 +219,23 @@ class TradeApiResultItemSection(TradeApiResultSection):
         self.is_identified = self.require('identified')
         self.is_corrupted = self.optional('corrupted')
 
+        self.skills = [
+            Skills()
+        ]
+
         self.properties = [
-            TradeApiResultItemPropertySection(data=property_d, key_path=key_path + [property_index])
+            ItemPropertySection(data=property_d, key_path=key_path + [property_index])
             for property_index, property_d in enumerate(self.require('properties'))
         ]
 
         self.requirements = [
-            TradeApiResultItemRequirementSection(data=requirement_d, key_path=key_path + [requirement_index])
+            ItemRequirementSection(data=requirement_d, key_path=key_path + [requirement_index])
             for requirement_index, requirement_d in enumerate(self.require('requirements'))
         ]
 
         if explicit_mods := self.optional(ModType.EXPLICIT.trade_result_key) is not None:
             self.explicit_mods = [
-                TradeApiResultItemModSection(
+                ItemModSection(
                     data=mod_d,
                     key_path=self.key_path + [(ModType.EXPLICIT.trade_result_key, str(i))]
                 )
@@ -244,7 +256,7 @@ class TradeApiResultItemSection(TradeApiResultSection):
         return self.properties[0].name
 
 
-class TradeApiResult(TradeApiResultSection):
+class (Section):
 
     def __init__(self, api_response_data: dict):
         super().__init__(data=api_response_data,
@@ -252,9 +264,9 @@ class TradeApiResult(TradeApiResultSection):
         self._data = api_response_data
 
         try:
-            self.listing = TradeApiResultListingSection(data=self.require('listing'),
+            self.listing = ListingSection(data=self.require('listing'),
                                                         key_path=['listing'])
-            self.item = TradeApiResultItemSection(data=self.require('item'),
+            self.item = ItemSection(data=self.require('item'),
                                                   key_path=['item'])
         except ConfigError as e:
             print(f"Error caught @ {e.key_path}: {e}\n\nTrade result data:\n\n{pprint.pformat(api_response_data)}")

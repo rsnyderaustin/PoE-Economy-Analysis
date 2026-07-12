@@ -7,7 +7,7 @@ import os
 import requests
 
 from src.market_item_analysis.trade_api.requesting.request_throttler import RequestThrottler
-from src.market_item_analysis.trade_api.trade_result import TradeApiResult
+from src.market_item_analysis.trade_api.raw_result import TradeApiResult
 
 logger = logging.getLogger(__name__)
 

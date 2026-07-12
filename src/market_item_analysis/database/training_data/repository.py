@@ -4,7 +4,7 @@ from sqlalchemy import select, Select, insert
 
 from src.market_item_analysis.core.enums.trade import ListedSince
 from src.market_item_analysis.database.training_data.model import TrainingDataModel
-from src.market_item_analysis.trade_api.trade_result import TradeApiResult
+from src.market_item_analysis.trade_api.raw_result import TradeApiResult
 
 
 class TrainingDataRepository:

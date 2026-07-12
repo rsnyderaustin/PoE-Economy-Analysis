@@ -8,7 +8,7 @@ from src.market_item_analysis.trade_api.requesting.fetching import TradeApiResul
 from src.market_item_analysis.trade_api.query.builder import TradeApiQueryBuilder
 from src.market_item_analysis.trade_api.query.objects import TradeApiQueryPlan, TradeApiMetaFilter
 from src.market_item_analysis.core.types import RangeService
-from src.market_item_analysis.trade_api.trade_result import TradeApiResult
+from src.market_item_analysis.trade_api.raw_result import TradeApiResult
 
 logger = logging.getLogger(__name__)
 

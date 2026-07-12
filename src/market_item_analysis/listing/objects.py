@@ -11,7 +11,7 @@ from src.market_item_analysis.core.enums.equipment import EquipmentCategory, Rar
 from src.market_item_analysis.core.enums.trade import Currency
 from src.market_item_analysis.core.string_service import StringService
 from src.market_item_analysis.core.types import Range
-from src.market_item_analysis.trade_api.trade_result import TradeApiResult, TradeApiResultItemModSection, \
+from src.market_item_analysis.trade_api.raw_result import TradeApiResult, TradeApiResultItemModSection, \
     TradeApiResultItemModStatSection
 
 
@@ -55,7 +55,10 @@ class ItemSubMod:
         return ItemSubMod(
             name=trade_api_sub_mod_section.name,
             affix_type=AffixType.from_trade_result_id(trade_result_id=trade_api_sub_mod_section.tier[0]),
-            tier=int(trade_api_sub_mod_section.tier[]),
+            tier=int(trade_api_sub_mod_section.tier[1:]),
+            level=int(trade_api_sub_mod_section.level),
+            magnitudes=[Range(min=mag_section.min, max=mag_section.max)
+                        for mag_section in trade_api_sub_mod_section.magnitudes]
         )
 
 class ItemMod:
@@ -74,14 +77,11 @@ class ItemMod:
 
     @classmethod
     def from_dict(cls, d: dict) -> "ItemMod":
-        mod_types = [mod_type_section]
-        if d.get('flags', {}).get(ModFlag.FRACTURED.trade_result_key) is True:
-            mod_types.append(ModType.FRACTURED)
 
         return ItemMod(
             description=d['description'],
-            mod_types=mod_types,
-            hash_id=d['hash_id'],
+            mod_types=[ModType(mod_type_str) for mod_type_str in d['mod_types']],
+            hash_id=d.get('hash_id'),
             sub_mods=[ItemSubMod.from_dict(sub_mod_d) for sub_mod_d in d['sub_mods']] if 'sub_mods' in d else None,
             affix_type=AffixType(d['affix_type']) if 'affix_type' in d else None
         )
@@ -98,7 +98,7 @@ class ItemMod:
             description=trade_api_mod_section.description,
             mod_types=mod_types,
             hash_id=trade_api_mod_section.hash,
-            sub_mods=
+            sub_mods=[ItemSubMod.from_trade_api_result(sub_mod_section) for sub_mod_section in trade_api_mod_section.sub_mods]
         )
 
 
@@ -176,7 +176,7 @@ class EquipmentSkills(TradeApiResultObject):
 
     @classmethod
     def from_trade_api_result(cls, r: TradeApiResult) -> "EquipmentSkills":
-        if not r.skills_data:
+        if not r.item.skills:
             return EquipmentSkills(skills=[])
 
         skills = []
