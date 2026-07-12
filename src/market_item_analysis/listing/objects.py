@@ -25,7 +25,7 @@ class TradeApiResultObject(ABC):
         pass
 
 
-class ItemSubMod(TradeApiResultObject):
+class ItemSubMod:
 
     def __init__(self,
                  name: str,
@@ -49,28 +49,28 @@ class ItemSubMod(TradeApiResultObject):
             magnitudes=[Range.from_dict(magnitude_d) for magnitude_d in d['magnitudes']]
         )
 
-class ItemMod(TradeApiResultObject):
+class ItemMod:
 
     def __init__(self,
                  description: str,
-                 hash_id: str,
                  mod_type: ModType,
-                 sub_mods: list[ItemSubMod],
-                 affix_type: AffixType | None = None):
+                 hash_id: str | None,
+                 sub_mods: list[ItemSubMod] | None,
+                 affix_type: AffixType | None):
         self.description = description
-        self.hash_id = hash_id
         self.mod_type = mod_type
-        self.sub_mods = sub_mods
 
+        self.hash_id = hash_id
+        self.sub_mods = sub_mods
         self.affix_type = affix_type
 
     @classmethod
-    def from_dict(cls, d: dict) -> "ItemMod":
+    def from_dict(cls, d: dict, mod_type: ModType) -> "ItemMod":
         return ItemMod(
             description=d['description'],
+            mod_type=mod_type,
             hash_id=d['hash_id'],
-            mod_type=ModType(d['mod_type']),
-            sub_mods=[ItemSubMod.from_dict(sub_mod_d) for sub_mod_d in d['sub_mods']],
+            sub_mods=[ItemSubMod.from_dict(sub_mod_d) for sub_mod_d in d['sub_mods']] if 'sub_mods' in d else None,
             affix_type=AffixType(d['affix_type']) if 'affix_type' in d else None
         )
 
@@ -226,7 +226,7 @@ class ItemMods(TradeApiResultObject):
         mods_d = {}
         for mod_class_str, mod_dicts in d.items():
             mod_type = ModType[mod_class_str]
-            mods = [ItemMod.from_dict(d) for d in mod_dicts]
+            mods = [ItemMod.from_dict(d, mod_type=mod_type) for d in mod_dicts]
 
             mods_d[mod_type] = mods
 
@@ -242,7 +242,8 @@ class ItemMods(TradeApiResultObject):
             ModType.EXPLICIT: [],
             ModType.RUNE: []
         }
-        for mod_class in ModType:
+        for mod_type_member in ModType.__members__.values():
+
             if mod_class.trade_result_key not in r.item.:
                 continue
 

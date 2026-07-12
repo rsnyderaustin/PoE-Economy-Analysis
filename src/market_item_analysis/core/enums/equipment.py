@@ -12,7 +12,7 @@ class ModType(Enum):
     IMPLICIT = 'implicitMods'
     EXPLICIT = 'explicitMods'
     ENCHANT = 'enchantMods'
-    FRACTURED = 'fracturedMods'
+    FRACTURED = None
     RUNE = 'runeMods'
 
     def __init__(self, trade_result_key: str):

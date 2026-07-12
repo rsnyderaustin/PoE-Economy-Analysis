@@ -224,7 +224,6 @@ class TradeApiResultItemSection(TradeApiResultSection):
         self.implicit_mods = [mod_description for mod_description in data.get('implicitMods', [])]
         self.explicit_mods = self._parse_mods('explicitMods')
         self.enchant_mods = self._parse_mods('enchantMods')
-        self.fractured_mods = self._parse_mods('fracturedMods')
         self.rune_mods = self._parse_mods('runeMods')
 
     @property
