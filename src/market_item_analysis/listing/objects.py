@@ -7,11 +7,12 @@ from datetime import datetime
 
 from src.market_item_analysis.core.dictionary_service import DictionaryService
 from src.market_item_analysis.core.enums.equipment import EquipmentCategory, Rarity, AttributeType, AffixType, ModType, \
-    EquipmentStat
+    EquipmentStat, ModFlag
 from src.market_item_analysis.core.enums.trade import Currency
 from src.market_item_analysis.core.string_service import StringService
 from src.market_item_analysis.core.types import Range
-from src.market_item_analysis.trade_api.trade_result import TradeApiResult
+from src.market_item_analysis.trade_api.trade_result import TradeApiResult, TradeApiResultItemModSection, \
+    TradeApiResultItemModStatSection
 
 
 class TradeApiResultObject(ABC):
@@ -49,29 +50,55 @@ class ItemSubMod:
             magnitudes=[Range.from_dict(magnitude_d) for magnitude_d in d['magnitudes']]
         )
 
+    @classmethod
+    def from_trade_api_result(cls, trade_api_sub_mod_section: TradeApiResultItemModStatSection) -> "ItemSubMod":
+        return ItemSubMod(
+            name=trade_api_sub_mod_section.name,
+            affix_type=AffixType.from_trade_result_id(trade_result_id=trade_api_sub_mod_section.tier[0]),
+            tier=int(trade_api_sub_mod_section.tier[]),
+        )
+
 class ItemMod:
 
     def __init__(self,
                  description: str,
-                 mod_type: ModType,
-                 hash_id: str | None,
-                 sub_mods: list[ItemSubMod] | None,
-                 affix_type: AffixType | None):
+                 mod_types: list[ModType],
+                 hash_id: str | None = None,
+                 sub_mods: list[ItemSubMod] | None = None,
+                 affix_type: AffixType | None = None):
         self.description = description
-        self.mod_type = mod_type
-
+        self.mod_types = mod_types
         self.hash_id = hash_id
         self.sub_mods = sub_mods
         self.affix_type = affix_type
 
     @classmethod
-    def from_dict(cls, d: dict, mod_type: ModType) -> "ItemMod":
+    def from_dict(cls, d: dict) -> "ItemMod":
+        mod_types = [mod_type_section]
+        if d.get('flags', {}).get(ModFlag.FRACTURED.trade_result_key) is True:
+            mod_types.append(ModType.FRACTURED)
+
         return ItemMod(
             description=d['description'],
-            mod_type=mod_type,
+            mod_types=mod_types,
             hash_id=d['hash_id'],
             sub_mods=[ItemSubMod.from_dict(sub_mod_d) for sub_mod_d in d['sub_mods']] if 'sub_mods' in d else None,
             affix_type=AffixType(d['affix_type']) if 'affix_type' in d else None
+        )
+
+    @classmethod
+    def from_trade_api_result(cls,
+                              trade_api_mod_section: TradeApiResultItemModSection,
+                              mod_type_section: ModType) -> "ItemMod":
+        mod_types = [mod_type_section]
+        if trade_api_mod_section.flags.get(ModFlag.FRACTURED.trade_result_key) is True:
+            mod_types.append(ModType.FRACTURED)
+
+        return ItemMod(
+            description=trade_api_mod_section.description,
+            mod_types=mod_types,
+            hash_id=trade_api_mod_section.hash,
+            sub_mods=
         )
 
 
@@ -218,22 +245,33 @@ class EquipmentType(TradeApiResultObject):
 class ItemMods(TradeApiResultObject):
 
     def __init__(self,
-                 mods_d: dict[ModType, list[ItemMod]]):
-        self._mods_d = mods_d
+                 mods: list[ItemMod]):
+        self.mods = mods
 
     @classmethod
     def from_dict(cls, d: dict) -> "ItemMods":
-        mods_d = {}
-        for mod_class_str, mod_dicts in d.items():
-            mod_type = ModType[mod_class_str]
-            mods = [ItemMod.from_dict(d, mod_type=mod_type) for d in mod_dicts]
+        mods = []
+        for mod_type_str, mod_dicts in d.items():
+            mod_type = ModType[mod_type_str]
+            for mod_dict in mod_dicts:
+                new_mod = ItemMod.from_dict(d=mod_dict, mod_type_section=mod_type)
+                mods.append(new_mod)
 
-            mods_d[mod_type] = mods
-
-        return ItemMods(mods_d=mods_d)
+        return ItemMods(mods=mods)
 
     @classmethod
     def from_trade_api_result(cls, r: TradeApiResult) -> "ItemMods":
+        mods = []
+        for explicit_mod_section in r.item.explicit_mods:
+            new_mod = ItemMod(
+
+            )
+
+        implicit_mods = [ItemMod(description=mod_desc, mod_types=[ModType.IMPLICIT]) for mod_desc in r.item.implicit_mod_descriptions]
+        enchant_mods = [ItemMod(description=mod_desc, mod_types=[ModType.ENCHANT]) for mod_desc in r.item.enchant_mod_descriptions]
+        rune_mods = [ItemMod(description=mod_desc, mod_types=[ModType.RUNE]) for mod_desc in r.item.rune_mod_descriptions]
+
+        explicit_mods = [ItemMod.from_dict() for explicit_mod_d in r.item.explicit_mods]
 
         mods_d = {
             ModType.IMPLICIT: [],
@@ -242,6 +280,7 @@ class ItemMods(TradeApiResultObject):
             ModType.EXPLICIT: [],
             ModType.RUNE: []
         }
+        explicit_mods =
         for mod_type_member in ModType.__members__.values():
 
             if mod_class.trade_result_key not in r.item.:

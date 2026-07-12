@@ -8,7 +8,7 @@ import numpy as np
 
 from src.market_item_analysis.core import utils as shared_utils
 from src.market_item_analysis.core.dictionary_service import DictionaryService
-from src.market_item_analysis.core.enums.equipment import EquipmentCategory
+from src.market_item_analysis.core.enums.equipment import EquipmentCategory, ModType
 from src.market_item_analysis.core.string_service import TextAnalyzer, StringService
 from src.market_item_analysis.core.types import Range
 
@@ -221,10 +221,20 @@ class TradeApiResultItemSection(TradeApiResultSection):
             for requirement_index, requirement_d in enumerate(self.require('requirements'))
         ]
 
-        self.implicit_mods = [mod_description for mod_description in data.get('implicitMods', [])]
-        self.explicit_mods = self._parse_mods('explicitMods')
-        self.enchant_mods = self._parse_mods('enchantMods')
-        self.rune_mods = self._parse_mods('runeMods')
+        if explicit_mods := self.optional(ModType.EXPLICIT.trade_result_key) is not None:
+            self.explicit_mods = [
+                TradeApiResultItemModSection(
+                    data=mod_d,
+                    key_path=self.key_path + [(ModType.EXPLICIT.trade_result_key, str(i))]
+                )
+                for i, mod_d in enumerate(explicit_mods)
+            ]
+        else:
+            self.explicit_mods = []
+
+        self.implicit_mod_descriptions = [mod_description for mod_description in data.get(ModType.IMPLICIT.trade_result_key, [])]
+        self.enchant_mod_descriptions = [mod_description for mod_description in data.get(ModType.ENCHANT.trade_result_key, [])]
+        self.rune_mod_descriptions = [mod_description for mod_description in data.get(ModType.RUNE.trade_result_key, [])]
 
     @property
     def equipment_category_id(self) -> str | None:
@@ -232,20 +242,6 @@ class TradeApiResultItemSection(TradeApiResultSection):
             return None
 
         return self.properties[0].name
-
-    def _parse_mods(self, key: str) -> list[TradeApiResultItemModSection] | None:
-        """Helper that returns type-hinted list or None."""
-        raw_mods = self.optional(key)
-        if not raw_mods:
-            return None
-
-        return [
-            TradeApiResultItemModSection(
-                data=mod_d,
-                key_path=self.key_path + [(key, str(i))]
-            )
-            for i, mod_d in enumerate(raw_mods)
-        ]
 
 
 class TradeApiResult(TradeApiResultSection):

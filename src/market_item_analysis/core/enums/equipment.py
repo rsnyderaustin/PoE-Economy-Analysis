@@ -4,20 +4,44 @@ from src.market_item_analysis.core.types import Range
 
 
 class AffixType(Enum):
-    PREFIX = 'prefix'
-    SUFFIX = 'suffix'
+    PREFIX = ('prefix', 'P')
+    SUFFIX = ('suffix', 'S')
 
+    def __init__(self, internal_id: str, trade_result_id: str):
+        self.internal_id = internal_id
+        self.trade_result_id = trade_result_id
+
+    @classmethod
+    def from_trade_result_id(cls, trade_result_id: str):
+        if not hasattr(cls, '_trade_result_id_map'):
+            cls._trade_result_id_map = {member.trade_result_id: member for member in cls}
+
+        return cls._trade_result_id_map[trade_result_id]
 
 class ModType(Enum):
-    IMPLICIT = 'implicitMods'
-    EXPLICIT = 'explicitMods'
-    ENCHANT = 'enchantMods'
-    FRACTURED = None
-    RUNE = 'runeMods'
+    IMPLICIT = ('implicit', 'implicitMods')
+    EXPLICIT = ('explicit', 'explicitMods')
+    ENCHANT = ('enchant', 'enchantMods')
+    FRACTURED = ('fractured', None)
+    RUNE = ('rune', 'runeMods')
+
+    def __init__(self, internal_id: str, trade_result_key: str):
+        self.internal_id = internal_id
+        self.trade_result_key = trade_result_key
+
+
+class ModFlag(Enum):
+    FRACTURED = 'fractured'
 
     def __init__(self, trade_result_key: str):
         self.trade_result_key = trade_result_key
 
+    @classmethod
+    def from_trade_result_key(cls, trade_result_key: str):
+        if not hasattr(cls, '_trade_result_key_map'):
+            cls._trade_result_key_map = {member.trade_result_key: member for member in cls}
+
+        return cls._trade_result_key_map[trade_result_key]
 
 class EquipmentCategory(Enum):
     ONE_HANDED_MACE = ('Mace|One Hand Mace', 'weapon.onemace', True, True)
