@@ -1,6 +1,6 @@
 from datetime import datetime, timezone, timedelta
 
-from sqlalchemy import select, Select
+from sqlalchemy import select, Select, insert
 
 from src.market_item_analysis.core.enums.trade import ListedSince
 from src.market_item_analysis.database.training_data.model import TrainingDataModel
@@ -12,6 +12,23 @@ class TrainingDataRepository:
     def __init__(self, session):
         self.session = session
 
+    def insert_results(self, results: list[TradeApiResult]):
+        """
+        Performs a bulk insert of TradeApiResult objects into the database.
+        """
+        if not results:
+            return
+
+        # Prepare the list of dictionaries for bulk insert
+        # We assume TradeApiResult has an as_dict() method or accessible attributes
+        data_to_insert = [result.to_training_results_model() for result in results]
+
+        # Execute the bulk insert
+        self.session.execute(
+            insert(TrainingDataModel),
+            data_to_insert
+        )
+
     def _stmt_to_results(self, stmt: Select) -> list[TradeApiResult]:
         models = self.session.execute(stmt).scalars().all()
 
@@ -19,10 +36,10 @@ class TrainingDataRepository:
 
         return results
 
-    def fetch_all_results(self):
+    def fetch_all_results(self) -> list[TradeApiResult]:
         stmt = select(TrainingDataModel.result_object)
 
-        return self._stmt_to_results(stmt)
+        return self._stmt_to_results(stmt=stmt)
 
     def fetch_recent_results(self, listed_since: ListedSince) -> list[TradeApiResult]:
         cutoff = datetime.now(timezone.utc) - timedelta(minutes=listed_since.minutes_equivalent)
@@ -30,4 +47,4 @@ class TrainingDataRepository:
             TrainingDataModel.indexed_datetime_utc >= cutoff
         )
 
-        return self._stmt_to_results(stmt)
+        return self._stmt_to_results(stmt=stmt)

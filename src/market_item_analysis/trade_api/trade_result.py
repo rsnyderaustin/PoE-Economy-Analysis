@@ -277,3 +277,15 @@ class TradeApiResult(TradeApiResultSection):
     @classmethod
     def from_dict(cls, d: dict) -> "ApiResponse":
         return cls(api_response_data=d)
+
+    def to_training_results_model(self) -> dict:
+        return {
+            "account_name": self.listing.account,
+            "indexed_datetime_utc": self.listing.indexed_datetime,
+            "price_currency": self.listing.price.currency,
+            "price_amount": self.listing.price.amount,
+            "gold_cost": self.listing.gold_fee,
+            "ilvl": self.item.ilvl,
+            "rarity": self.item.rarity,
+            "result_object": self._data
+        }

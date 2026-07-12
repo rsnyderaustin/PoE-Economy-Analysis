@@ -1,19 +1,35 @@
 from src.market_item_analysis.core.enums.trade import ListedSince
 from src.market_item_analysis.core.input_output_service import InputOutputService
+from src.market_item_analysis.database.postgres_manager import PostgresManager, PostgresDatabaseUrl
 from src.market_item_analysis.database.training_data.repository import TrainingDataRepository
 from src.market_item_analysis.listing.objects import EquipmentListing
 from src.market_item_analysis.workflows.query_plan_presets import QueryPlanPresets
-from src.market_item_analysis.workflows.trade_api_results_ingestor import TradeApiResultsIngestor
+from src.market_item_analysis.workflows.trade_api_results_ingestor import TradeApiResultsIngestor, \
+    TradeApiResultValidator
 
 
-def populate_training_data():
-    existing_listings = TrainingDataRepository.fetch_recent_results(minutes_old=)
-    ingestor = TradeApiResultsIngestor()
+def fetch_training_results_to_db():
+    postgres_manager = PostgresManager(db_url=PostgresDatabaseUrl())
 
-    training_query_plans = QueryPlanPresets.standard_training(listed_since=ListedSince.UP_TO_1_HOUR)
+    with postgres_manager.get_session() as session:
 
-    for trade_api_results in ingestor.ingest(query_plans=training_query_plans,
-                                             pull_minutes_limit=5):
-        listings = [EquipmentListing.from_trade_api_result(r=r) for r in trade_api_results]
-        listing_dicts = [listing.to_dict() for listing in listings]
-        InputOutputService.to_jsonl(records=listing_dicts, path=)
+        training_data_repo = TrainingDataRepository(session=session)
+
+        recent_results = training_data_repo.fetch_recent_results(
+            listed_since=ListedSince.UP_TO_1_HOUR
+        )
+
+        listings_validator = TradeApiResultValidator(existing_results=recent_results)
+        ingestor = TradeApiResultsIngestor(validator=listings_validator)
+        training_query_plans = QueryPlanPresets.standard_training(listed_since=ListedSince.UP_TO_1_HOUR)
+
+        results_cache = []
+        for trade_api_results in ingestor.ingest(query_plans=training_query_plans, pull_minutes_limit=5):
+            results_cache.extend(trade_api_results)
+
+            if len(results_cache) > 100:
+                training_data_repo.insert_results(results=results_cache)
+                results_cache = []
+
+        if results_cache:
+            training_data_repo.insert_results(results=results_cache)
