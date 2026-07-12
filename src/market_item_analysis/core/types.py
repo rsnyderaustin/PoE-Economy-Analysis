@@ -9,6 +9,16 @@ class Range(NamedTuple):
     def __str__(self):
         return f"{self.min}..{self.max}"
 
+    def to_dict(self):
+        return {
+            'min': self.min,
+            'max': self.max
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Range":
+        return Range(min=d['min'], max=d['max'])
+
     @property
     def values_count(self) -> int:
         return self.max + 1 - self.min

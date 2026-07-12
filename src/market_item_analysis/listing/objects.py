@@ -6,7 +6,11 @@ import uuid
 from datetime import datetime
 
 from src.market_item_analysis.core.dictionary_service import DictionaryService
-from src.market_item_analysis.core.enums.equipment import EquipmentCategory, Rarity
+from src.market_item_analysis.core.enums.equipment import EquipmentCategory, Rarity, AttributeType, AffixType, ModType, \
+    EquipmentStat
+from src.market_item_analysis.core.enums.trade import Currency
+from src.market_item_analysis.core.string_service import StringService
+from src.market_item_analysis.core.types import Range
 from src.market_item_analysis.trade_api.trade_result import TradeApiResult
 
 
@@ -21,22 +25,54 @@ class TradeApiResultObject(ABC):
         pass
 
 
+class ItemSubMod(TradeApiResultObject):
+
+    def __init__(self,
+                 name: str,
+                 affix_type: AffixType,
+                 tier: int,
+                 level: int,
+                 magnitudes: list[Range]):
+        self.name = name
+        self.affix_type = affix_type
+        self.tier = tier
+        self.level = level
+        self.magnitudes = magnitudes
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "ItemSubMod":
+        return ItemSubMod(
+            name=d['name'],
+            affix_type=AffixType(d['affix_type']),
+            tier=d['tier'],
+            level=d['level'],
+            magnitudes=[Range.from_dict(magnitude_d) for magnitude_d in d['magnitudes']]
+        )
+
 class ItemMod(TradeApiResultObject):
 
     def __init__(self,
-                 mod_text: str,
-                 mod_class: ModClass,
+                 description: str,
+                 hash_id: str,
+                 mod_type: ModType,
+                 sub_mods: list[ItemSubMod],
                  affix_type: AffixType | None = None):
-        self.mod_text = mod_text
-        self.mod_class = mod_class
+        self.description = description
+        self.hash_id = hash_id
+        self.mod_type = mod_type
+        self.sub_mods = sub_mods
 
         self.affix_type = affix_type
 
     @classmethod
     def from_dict(cls, d: dict) -> "ItemMod":
-        d['mod_class'] = ModClass(d['mod_class'])
-        d['affix_type'] = AffixType(d['affix_type']) if 'affix_type' in d else None
-        return cls(**d)
+        return ItemMod(
+            description=d['description'],
+            hash_id=d['hash_id'],
+            mod_type=ModType(d['mod_type']),
+            sub_mods=[ItemSubMod.from_dict(sub_mod_d) for sub_mod_d in d['sub_mods']],
+            affix_type=AffixType(d['affix_type']) if 'affix_type' in d else None
+        )
 
 
 class EquipmentSkill(TradeApiResultObject):
@@ -56,27 +92,22 @@ class ListingMetadata(TradeApiResultObject):
 
     def __init__(self,
                  poster_account_name: str,
-                 listing_id: str,
-                 date_posted: datetime,
-                 date_fetched: datetime):
+                 date_posted: datetime):
         self.poster_account_name = poster_account_name
-        self.listing_id = listing_id
         self.date_posted = date_posted
-        self.date_fetched = date_fetched
 
     @classmethod
     def from_dict(cls, d: dict) -> "ListingMetadata":
-        d['date_posted'] = datetime.fromisoformat(d['date_posted'])
-        d['date_fetched'] = datetime.fromisoformat(d['date_fetched'])
-        return cls(**d)
+        return ListingMetadata(
+            poster_account_name=d['poster_account_name'],
+            date_posted=d['date_posted']
+        )
 
     @classmethod
-    def from_api_response(cls, r: TradeApiResult) -> "ListingMetadata":
+    def from_trade_api_result(cls, r: TradeApiResult) -> "ListingMetadata":
         return ListingMetadata(
-            poster_account_name=r.account_name,
-            listing_id=r.listing_id,
-            date_posted=r.date_fetched,
-            date_fetched=datetime.now()
+            poster_account_name=r.listing.account.name,
+            date_posted=r.listing.indexed_datetime
         )
 
 
@@ -97,7 +128,7 @@ class EquipmentRequirements(TradeApiResultObject):
         return cls(**d)
 
     @classmethod
-    def from_api_response(cls, r: TradeApiResult) -> "EquipmentRequirements":
+    def from_trade_api_result(cls, r: TradeApiResult) -> "EquipmentRequirements":
         return EquipmentRequirements(
             player_level=r.item.requirements.level_requirement,
             strength=r.item.requirements.strength_requirement,
@@ -117,7 +148,7 @@ class EquipmentSkills(TradeApiResultObject):
         return cls([EquipmentSkill.from_dict(skill_d) for skill_d in d['skills']])
 
     @classmethod
-    def from_api_response(cls, r: TradeApiResult) -> "EquipmentSkills":
+    def from_trade_api_result(cls, r: TradeApiResult) -> "EquipmentSkills":
         if not r.skills_data:
             return EquipmentSkills(skills=[])
 
@@ -150,59 +181,73 @@ class EquipmentSkills(TradeApiResultObject):
 
         return EquipmentSkills(skills=skills)
 
+
+class EquipmentType(TradeApiResultObject):
+
+    _wand_btype_map = {
+        'volatile_wand': 'fire_wand',
+        'withered_wand': 'chaos_wand',
+        'bone_wand': 'physical_wand',
+        'frigid_wand': 'cold_wand',
+        'galvanic_wand': 'lightning_wand',
+    }
+
+    def __init__(self,
+                 attribute_types: list[AttributeType],
+                 category: EquipmentCategory):
+        self.attribute_types = attribute_types
+        self.category = category
+
+    @classmethod
+    def from_dict(cls, d: dict):
+        attribute_types = [AttributeType.from_dict(type_d) for type_d in d['attribute_types']]
+        category = EquipmentCategory.from_dict(d['category'])
+
+        return EquipmentType(
+            attribute_types=attribute_types,
+            category=category
+        )
+
+    @classmethod
+    def from_trade_api_result(cls, r: TradeApiResult) -> "EquipmentType":
+        category = EquipmentCategory.from_trade_result_id(r.item.equipment_category_id)
+        attribute_types = [AttributeType.from_trade_result_id(requirement.name) for requirement in r.item.equipment_requirements]
+
+        return EquipmentType(attribute_types=attribute_types, category=category)
+
 class ItemMods(TradeApiResultObject):
 
     def __init__(self,
-                 mods_d: dict[ModClass, list[ItemMod]]):
+                 mods_d: dict[ModType, list[ItemMod]]):
         self._mods_d = mods_d
-
-    @property
-    def implicits(self):
-        return self._mods_d.get(ModClass.IMPLICIT, [])
-
-    @property
-    def explicits(self):
-        return self._mods_d.get(ModClass.EXPLICIT, [])
-
-    @property
-    def enchants(self):
-        return self._mods_d.get(ModClass.ENCHANT, [])
-
-    @property
-    def fractures(self):
-        return self._mods_d.get(ModClass.FRACTURED, [])
-
-    @property
-    def runes(self):
-        return self._mods_d.get(ModClass.RUNE, [])
 
     @classmethod
     def from_dict(cls, d: dict) -> "ItemMods":
         mods_d = {}
         for mod_class_str, mod_dicts in d.items():
-            mod_class = ModClass(mod_class_str)
+            mod_type = ModType[mod_class_str]
             mods = [ItemMod.from_dict(d) for d in mod_dicts]
 
-            mods_d[mod_class] = mods
+            mods_d[mod_type] = mods
 
         return ItemMods(mods_d=mods_d)
 
     @classmethod
-    def from_api_response(cls, r: TradeApiResult) -> "ItemMods":
+    def from_trade_api_result(cls, r: TradeApiResult) -> "ItemMods":
 
         mods_d = {
-            ModClass.IMPLICIT: [],
-            ModClass.ENCHANT: [],
-            ModClass.FRACTURED: [],
-            ModClass.EXPLICIT: [],
-            ModClass.RUNE: []
+            ModType.IMPLICIT: [],
+            ModType.ENCHANT: [],
+            ModType.FRACTURED: [],
+            ModType.EXPLICIT: [],
+            ModType.RUNE: []
         }
-        for mod_class in ModClass:
-            if mod_class.api_key not in r.item_data:
+        for mod_class in ModType:
+            if mod_class.trade_result_key not in r.item.:
                 continue
 
             mod_dicts = r.item_data[mod_class.api_key]
-            new_mods = [ItemMod(mod_text=mod_text,
+            new_mods = [ItemMod(description=mod_text,
                                 mod_class=mod_class) for mod_text in mod_dicts]
 
             mods_d[mod_class].extend(new_mods)
@@ -221,21 +266,6 @@ class ItemMods(TradeApiResultObject):
 
     def fetch_mods_by_class(self, mod_class: ModClass) -> list[ItemMod]:
         return self._mods_d[mod_class]
-
-
-class EquipmentNamespace(TradeApiResultObject):
-
-    def __init__(self,
-                 base_name: str):
-        self.base_name = base_name
-
-    @classmethod
-    def from_dict(cls, d: dict) -> "EquipmentNamespace":
-        return EquipmentNamespace(base_name=d['base_name'])
-
-    @classmethod
-    def from_api_response(cls, r: TradeApiResult) -> "EquipmentNamespace":
-        return EquipmentNamespace(base_name=r.item.properties.base_name)
 
 
 class EquipmentPrice(TradeApiResultObject):
@@ -257,79 +287,63 @@ class EquipmentPrice(TradeApiResultObject):
         )
 
     @classmethod
-    def from_api_response(cls, r: TradeApiResult) -> "EquipmentPrice":
+    def from_trade_api_result(cls, r: TradeApiResult) -> "EquipmentPrice":
         return EquipmentPrice(
-            currency=Currency(r.price_currency),
-            currency_amount=r.price_amount,
-            gold_cost=r.gold_cost
+            currency=Currency(r.listing.price.currency),
+            currency_amount=r.listing.price.amount,
+            gold_cost=r.listing.price.gold_cost
         )
 
 
 class EquipmentStats(TradeApiResultObject):
 
-    def __init__(self,
-                 armour: int = None,
-                 energy_shield: int = None,
-                 evasion: int = None,
-                 attacks_per_second: float = None,
-                 physical_damage: float = None,
-                 critical_hit_chance: float = None,
-                 cold_damage: float = None,
-                 fire_damage: float = None,
-                 lightning_damage: float = None,
-                 chaos_damage: float = None):
-        self.armour = armour or 0
-        self.energy_shield = energy_shield or 0
-        self.evasion = evasion or 0
-        self.attacks_per_second = attacks_per_second or 0
-        self.physical_damage = physical_damage or 0
-        self.critical_hit_chance = critical_hit_chance or 0
-        self.cold_damage = cold_damage or 0
-        self.fire_damage = fire_damage or 0
-        self.lightning_damage = lightning_damage or 0
-        self.chaos_damage = chaos_damage or 0
+    def __init__(self, stats_d: dict[EquipmentStat, [int | float | Range]]):
+        self._stats_d = stats_d
 
     @classmethod
     def from_dict(cls, d: dict) -> "EquipmentStats":
-        return cls(**d)
+        stats_d = dict()
+
+        for enum_name, raw_value in d.items():
+            enum_key = EquipmentStat[enum_name]
+            val = Range(raw_value[0], raw_value[1]) if isinstance(raw_value, list) else raw_value
+
+            stats_d[enum_key] = val
+
+        return cls(stats_d)
 
     @classmethod
-    def _pull_value(cls, stat: str, r: TradeApiResult) -> float | int | None:
-        properties_list = r.item_data['properties']
-        stat_dicts = [d for d in properties_list if d['name'] == stat]
-        if not stat_dicts:
-            return None
+    def _resolve_value(cls, value_str: str) -> int | float | Range:
+        extracted_obj = StringService.extract_numbers(value_str)
 
-        if len(stat_dicts) >= 2:
-            raise ValueError(f"Found 2 stats dicts for {stat}.\nSource data: {properties_list}")
+        numbers = extracted_obj.numbers
+        if len(numbers) == 1:
+            return numbers[0]
+        elif len(numbers) == 2:
+            return Range(min=numbers[0], max=numbers[1])
+        else:
+            raise ValueError(f"Unable to resolve item property string value: {value_str}")
 
-        val_str = stat_dicts[0]['values'][0]
-        vals = TextAnalyzer.extract_numbers_from_string(val_str)
-        return np.mean(vals)
-
+    _ELEMENTAL_DAMAGE_VALUE_ID_MAP = {
+        4: EquipmentStat.FIRE_DAMAGE,
+        5: EquipmentStat.COLD_DAMAGE,
+        6: EquipmentStat.LIGHTNING_DAMAGE
+    }
     @classmethod
-    def from_api_response(cls, r: TradeApiResult) -> "EquipmentStats":
-        armour = cls._pull_value(stat='[Armour]', r=r)
-        evasion = cls._pull_value(stat='[Evasion|Evasion Rating]', r=r)
-        energy_shield = cls._pull_value(stat='[Energy Shield|Energy Shield]', r=r)
+    def from_trade_api_result(cls, r: TradeApiResult) -> "EquipmentStats":
+        stats_d = dict()
+        for p in r.item.properties:
+            stat_enum = EquipmentStat.from_trade_result_id(trade_result_id=p.name)
 
-        elemental_damage = r.determine_elemental_damage_values()
+            if stat_enum == EquipmentStat.ELEMENTAL_DAMAGE:
+                for property_value in p.values:
+                    value_stat_enum = cls._ELEMENTAL_DAMAGE_VALUE_ID_MAP[property_value.value_type_id]
+                    value = cls._resolve_value(value_str=property_value.values_str)
+                    stats_d[value_stat_enum] = value
+            else:
+                stats_d[stat_enum] = cls._resolve_value(p.values[0].values_str)
 
-        phys_damage = cls._pull_value(stat='[Physical] Damage', r=r)
-        crit_chance = cls._pull_value(stat='[Critical|Critical Hit] Chance', r=r)
-        attacks_per_second = cls._pull_value(stat='Attacks per Second', r=r)
-
-        return EquipmentStats(
-            armour=armour,
-            evasion=evasion,
-            energy_shield=energy_shield,
-            fire_damage=elemental_damage.fire,
-            cold_damage=elemental_damage.cold,
-            lightning_damage=elemental_damage.lightning,
-            physical_damage=phys_damage,
-            critical_hit_chance=crit_chance,
-            attacks_per_second=attacks_per_second
-        )
+        return EquipmentStats(stats_d=stats_d)
 
 
 
@@ -367,9 +381,9 @@ class EquipmentProperties(TradeApiResultObject):
 class EquipmentListing(TradeApiResultObject):
 
     def __init__(self,
+                 flavor_name: str,
                  metadata: ListingMetadata,
                  price: EquipmentPrice,
-                 namespace: EquipmentNamespace,
                  category: EquipmentCategory,
                  requirements: EquipmentRequirements,
                  stats: EquipmentStats,
@@ -378,9 +392,9 @@ class EquipmentListing(TradeApiResultObject):
                  properties: EquipmentProperties,
                  internal_id: str = None
                  ):
+        self.flavor_name = flavor_name
         self.metadata = metadata
         self.price = price
-        self.namespace = namespace
         self.category = category
         self.requirements = requirements
         self.stats = stats
@@ -396,24 +410,6 @@ class EquipmentListing(TradeApiResultObject):
     def __hash__(self):
         return hash(self.__key())
 
-    def __gt__(self, other):
-        if not isinstance(other, EquipmentListing):
-            return NotImplemented
-
-        return self.metadata.date_fetched > other.metadata.date_fetched
-
-    def __lt__(self, other):
-        if not isinstance(other, EquipmentListing):
-            return NotImplemented
-
-        return self.metadata.date_fetched < other.metadata.date_fetched
-
-    def __eq__(self, other):
-        if not isinstance(other, EquipmentListing):
-            return NotImplemented
-
-        return self.__key() == other.__key()
-
     @classmethod
     def from_dict(cls, d: dict) -> "EquipmentListing":
         d['metadata'] = ListingMetadata.from_dict(d['metadata'])
@@ -427,17 +423,17 @@ class EquipmentListing(TradeApiResultObject):
         return cls(**d)
 
     @classmethod
-    def from_api_response(cls, r: TradeApiResult) -> "EquipmentListing":
+    def from_trade_api_result(cls, r: TradeApiResult) -> "EquipmentListing":
         return cls(
-            metadata=ListingMetadata.from_api_response(r),
-            price=EquipmentPrice.from_api_response(r),
-            namespace=EquipmentNamespace.from_api_response(r),
-            types=ItemTypes.from_api_response(r),
-            requirements=EquipmentRequirements.from_api_response(r),
-            stats=ItemStats.from_api_response(r),
-            mods_=ItemMods.from_api_response(r),
-            skills=EquipmentSkill.from_api_response(r),
-            properties=EquipmentProperties.from_api_response(r),
+            flavor_name=r.item.flavor_name,
+            metadata=ListingMetadata.from_trade_api_result(r),
+            price=EquipmentPrice.from_trade_api_result(r),
+            category=EquipmentCategory.from_trade_result_id(trade_result_id=r.item.equipment_category_id) if r.item.equipment_category_id else None,
+            requirements=EquipmentRequirements.from_trade_api_result(r),
+            stats=ItemStats.from_trade_api_result(r),
+            mods_=ItemMods.from_trade_api_result(r),
+            skills=EquipmentSkill.from_trade_api_result(r),
+            properties=EquipmentProperties.from_trade_api_result(r),
         )
 
     @property

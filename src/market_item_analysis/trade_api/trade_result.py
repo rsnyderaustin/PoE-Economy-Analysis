@@ -8,7 +8,9 @@ import numpy as np
 
 from src.market_item_analysis.core import utils as shared_utils
 from src.market_item_analysis.core.dictionary_service import DictionaryService
-from src.market_item_analysis.core.string_service import TextAnalyzer
+from src.market_item_analysis.core.enums.equipment import EquipmentCategory
+from src.market_item_analysis.core.string_service import TextAnalyzer, StringService
+from src.market_item_analysis.core.types import Range
 
 
 class ElementalDamageValues:
@@ -88,21 +90,21 @@ class TradeApiResultSection(ABC):
     def __init__(self,
                  data,
                  key_path: list[str]):
-        self.data = data
+        self._data = data
         self.key_path = key_path
 
     def require(self, key):
-        if key not in self.data:
+        if key not in self._data:
             raise ConfigError(message=f"Could not find required key '{key}'.",
                               key_path=self.key_path + key)
 
-        return self.data[key]
+        return self._data[key]
 
     def optional(self, key):
-        if key not in self.data:
+        if key not in self._data:
             return None
 
-        return self.data[key]
+        return self._data[key]
 
 class TradeApiResultListingPriceSection(TradeApiResultSection):
 
@@ -176,17 +178,22 @@ class TradeApiResultItemModStatSection(TradeApiResultSection):
             for magnitudes_index, magnitudes_d in enumerate(self.require('magnitudes'))
         ]
 
+
 class TradeApiResultItemModSection(TradeApiResultSection):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
 
         self.description = self.require('description')
-        self.hash = self.require('hash')
-        self.mod_stats = [
-            TradeApiResultItemModStatSection(data=stats_d, key_path=key_path + [])
-            for stats_d in self.require('mods')
-        ]
+
+        self.flags = self.optional('flags')
+        self.hash = self.optional('hash')
+        if mods_data := self.optional('mods'):
+            self.sub_mods = [TradeApiResultItemModStatSection(data=mod_d,
+                                                              key_path=key_path + ['mods', mod_index])
+                             for mod_index, mod_d in enumerate(mods_data)]
+        else:
+            self.sub_mods = []
 
 class TradeApiResultItemSection(TradeApiResultSection):
 
@@ -196,7 +203,8 @@ class TradeApiResultItemSection(TradeApiResultSection):
         self.verified = self.require('verified')
         self.icon_url = self.require('icon')
         self.id = self.require('id')
-        self.base_type = self.require('baseType')
+        self.flavor_name = self.require('name')
+        self.type_line = self.require('typeLine')
         self.rarity = self.require('rarity')
         self.ilvl = self.require('ilvl')
 
@@ -219,6 +227,13 @@ class TradeApiResultItemSection(TradeApiResultSection):
         self.fractured_mods = self._parse_mods('fracturedMods')
         self.rune_mods = self._parse_mods('runeMods')
 
+    @property
+    def equipment_category_id(self) -> str | None:
+        if not self.properties:
+            return None
+
+        return self.properties[0].name
+
     def _parse_mods(self, key: str) -> list[TradeApiResultItemModSection] | None:
         """Helper that returns type-hinted list or None."""
         raw_mods = self.optional(key)
@@ -239,7 +254,7 @@ class TradeApiResult(TradeApiResultSection):
     def __init__(self, api_response_data: dict):
         super().__init__(data=api_response_data,
                          key_path=[])
-        self.data = api_response_data
+        self._data = api_response_data
 
         try:
             self.listing = TradeApiResultListingSection(data=self.require('listing'),
@@ -257,7 +272,7 @@ class TradeApiResult(TradeApiResultSection):
         return hash(self._key)
 
     def to_dict(self) -> dict:
-        return self.data
+        return self._data
 
     @classmethod
     def from_dict(cls, d: dict) -> "ApiResponse":

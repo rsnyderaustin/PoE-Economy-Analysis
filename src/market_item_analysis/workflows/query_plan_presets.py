@@ -11,7 +11,7 @@ from src.market_item_analysis.trade_api.query.objects import TradeApiQueryPlan, 
 class QueryPlanPresets:
 
     @classmethod
-    def standard_training(cls) -> list[TradeApiQueryPlan]:
+    def standard_training(cls, listed_since: ListedSince) -> list[TradeApiQueryPlan]:
         martial_weapon_categories = [cat for cat in EquipmentCategory if cat.is_martial]
         currencies = [Currency.EXALTED_ORB]
 

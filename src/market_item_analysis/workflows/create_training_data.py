@@ -18,7 +18,7 @@ class TrainingDataCreator:
     def create(self) -> pd.DataFrame:
         raw_listings_data = self._io_manager.load_raw_responses()
         responses = [ApiResponse(r) for r in raw_listings_data]
-        listings = [ListingBuilder.from_api_response(r) for r in responses]
+        listings = [ListingBuilder.from_trade_api_result(r) for r in responses]
         flattened_listing_dicts = [ListingFlattener.flatten_listing(l) for l in listings]
 
         aggregate_d = dict()

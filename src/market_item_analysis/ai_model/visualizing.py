@@ -61,7 +61,7 @@ def _bar_plot_feature_diff(neighborhood, neighbor, should_plot=True):
         return
     feature_names = neighborhood.feature_names
     main_point = pd.Series(neighborhood.list_data, index=feature_names)
-    neighbor_point = pd.Series(neighbor.data, index=feature_names)
+    neighbor_point = pd.Series(neighbor._data, index=feature_names)
     main_norm = pd.Series(neighborhood.normalized_list_data, index=feature_names)
     neighbor_norm = pd.Series(neighbor.normalized_data, index=feature_names)
     filtered_cols = [col for col in feature_names if (main_point[col] != 0) or (neighbor_point[col] != 0)]

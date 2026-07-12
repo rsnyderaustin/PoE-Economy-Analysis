@@ -1,9 +1,22 @@
 from enum import Enum
 
+from src.market_item_analysis.core.types import Range
+
 
 class AffixType(Enum):
     PREFIX = 'prefix'
     SUFFIX = 'suffix'
+
+
+class ModType(Enum):
+    IMPLICIT = 'implicitMods'
+    EXPLICIT = 'explicitMods'
+    ENCHANT = 'enchantMods'
+    FRACTURED = 'fracturedMods'
+    RUNE = 'runeMods'
+
+    def __init__(self, trade_result_key: str):
+        self.trade_result_key = trade_result_key
 
 
 class EquipmentCategory(Enum):
@@ -12,7 +25,7 @@ class EquipmentCategory(Enum):
     TWO_HANDED_MACE = ('two_hand_mace', 'weapon.twomace', True, True)
     QUARTERSTAFF = ('quarterstaff', 'weapon.warstaff', True, True)
     BOW = ('bow', 'weapon.bow', True, True)
-    CROSSBOW = ('crossbow', 'weapon.crossbow', True, True)
+    CROSSBOW = ('Crossbow', 'weapon.crossbow', True, True)
     WAND = ('wand', 'weapon.wand', False, True)
     SCEPTRE = ('sceptre', 'weapon.sceptre', False, True)
     STAFF = ('staff', 'weapon.staff', False, True)
@@ -40,25 +53,25 @@ class EquipmentCategory(Enum):
     BELT = ('belt', 'accessory.belt', False, False)
 
     def __init__(self, trade_result_id: str, trade_query_id: str, is_martial: bool, is_socketable: bool):
-        self.internal_id = trade_result_id
-        self.trade_id = trade_query_id
+        self.trade_result_id = trade_result_id
+        self.trade_query_id = trade_query_id
 
         self.is_martial = is_martial
         self.is_socketable = is_socketable
 
     @classmethod
-    def from_trade_result_id(cls, internal_id: str):
+    def from_trade_result_id(cls, trade_result_id: str):
         if not hasattr(cls, '_trade_result_id_map'):
-            cls._trade_result_id_map = {member.internal_id: member for member in cls}
+            cls._trade_result_id_map = {member.trade_result_id: member for member in cls}
 
-        return cls._trade_result_id_map.get(internal_id)
+        return cls._trade_result_id_map.get(trade_result_id)
 
     @classmethod
-    def from_trade_query_id(cls, trade_id: str):
+    def from_trade_query_id(cls, trade_query_id: str):
         if not hasattr(cls, '_trade_query_id_map'):
-            cls._trade_query_id_map = {member.internal_id: member for member in cls}
+            cls._trade_query_id_map = {member.trade_query_id: member for member in cls}
 
-        return cls._trade_query_id_map.get(trade_id)
+        return cls._trade_query_id_map.get(trade_query_id)
 
     @classmethod
     def get_martial_weapons(cls, as_trade_strings: bool = False):
@@ -72,11 +85,68 @@ class EquipmentCategory(Enum):
         return items
 
 
+class EquipmentStat(Enum):
+
+    ARMOUR = (int, '[Armour]', 'ar')
+    EVASION = (int, '[Evasion|Evasion Rating]', 'ev')
+    ENERGY_SHIELD = (int, '[Energy Shield|Energy Shield]', 'es')
+    SPIRIT = (int, '[Spirit]', 'spirit')
+    WARD = (int, '[Ward|Runic Ward]', 'ward')
+
+    ATTACKS_PER_SECOND = (float, 'Attacks per Second', 'aps')
+    CRITICAL_CHANCE = (float, '[Critical|Critical Hit] Chance', 'crit')
+    PHYSICAL_DAMAGE = (Range, '[Physical] Damage', 'damage')
+
+    ELEMENTAL_DAMAGE = (Range, '[ElementalDamage|Elemental] Damage', None)
+    LIGHTNING_DAMAGE = (Range, 'Lightning Damage', None)
+    FIRE_DAMAGE = (Range, 'Fire Damage', None)
+    COLD_DAMAGE = (Range, 'Cold Damage', None)
+
+    ELEMENTAL_DAMAGE_PER_SECOND = (float, None, 'edps')
+    PHYSICAL_DAMAGE_PER_SECOND = (float, None, 'pdps')
+    RELOAD_TIME = (float, 'Reload Time', 'reload_time')
+
+    def __init__(self,
+                 data_type: int | float | Range,
+                 trade_result_id: str | None,
+                 trade_query_id: str | None):
+        self.data_type = data_type
+        self.trade_result_id = trade_result_id
+        self.trade_query_id = trade_query_id
+
+    @classmethod
+    def from_trade_result_id(cls, trade_result_id: str):
+        if not hasattr(cls, '_trade_result_id_map'):
+            cls._trade_result_id_map = {member.trade_result_id: member for member in cls}
+
+        return cls._trade_result_id_map[trade_result_id]
+
+    @property
+    def queryable(self):
+        return self.trade_query_id is not None
+
 class Rarity(Enum):
     NORMAL = 'normal'
     MAGIC = 'magic'
     RARE = 'rare'
     UNIQUE = 'unique'
+
+
+class AttributeType(Enum):
+
+    DEX = ('Dexterity|Dex')
+    STR = ('Strength|Str')
+    INT = ('Intelligence|Int')
+
+    def __init__(self, trade_result_id: str):
+        self.trade_result_id = trade_result_id
+
+    @classmethod
+    def from_trade_result_id(cls, trade_result_id: str):
+        if not hasattr(cls, '_trade_result_id_map'):
+            cls._trade_result_id_map = {member.trade_result_id: member for member in cls}
+
+        return cls._trade_result_id_map.get(trade_result_id)
 
 
 class JewelRadius(Enum):

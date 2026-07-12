@@ -16,8 +16,8 @@ class TradeApiResponseMetrics:
 
 class TradeApiResultValidator:
 
-    def __init__(self):
-        self._result_ids = set()
+    def __init__(self, existing_results: list[TradeApiResult]):
+        self._result_ids = {r.__hash__() for r in existing_results}
 
     def add_listings(self, results: list[TradeApiResult]):
         self._result_ids.update({result.__hash__() for result in results})
