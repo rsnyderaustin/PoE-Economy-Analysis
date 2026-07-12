@@ -1,74 +1,7 @@
 import pprint
 from abc import ABC
-from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
 
-import numpy as np
-
-from src.market_item_analysis.core import utils as shared_utils
-from src.market_item_analysis.core.dictionary_service import DictionaryService
-from src.market_item_analysis.core.enums.equipment import EquipmentCategory, ModType
-from src.market_item_analysis.core.string_service import TextAnalyzer, StringService
-from src.market_item_analysis.core.types import Range
-
-
-class ElementalDamageValues:
-
-    def __init__(self,
-                 fire: float | None = None,
-                 cold: float | None = None,
-                 lightning: float | None = None):
-        self.fire = fire
-        self.cold = cold
-        self.lightning = lightning
-
-    def add_damage_value(self, elemental_type: str, value: float):
-        match elemental_type:
-            case 'fire_damage':
-                self.fire = value
-            case 'cold_damage':
-                self.cold = value
-            case 'lightning_damage':
-                self.lightning = value
-
-class _ElementalDamageParser:
-    _elemental_id_map = {
-        4: 'Fire Damage',
-        5: 'Cold Damage',
-        6: 'Lightning Damage'
-    }
-
-    @classmethod
-    def _determine_elemental_type(cls, raw_id: int) -> str:
-        return cls._elemental_id_map[raw_id]
-
-    @classmethod
-    def determine_elemental_damage(cls, raw_item_data: dict) -> ElementalDamageValues:
-        raw_properties = raw_item_data['properties']
-        damage_values = ElementalDamageValues()
-
-        singular_elemental_damage = [d for d in raw_properties
-                                     if d['name'] in {'Fire Damage', 'Cold Damage', 'Lightning Damage'}]
-        for elemental_damage_d in singular_elemental_damage:
-            name = elemental_damage_d['name']
-            val = np.mean(TextAnalyzer.extract_numbers_from_string(elemental_damage_d['values'][0]))
-            damage_values.add_damage_value(elemental_type=name,
-                                           value=val)
-
-        generic_elemental_properties = [p for p in raw_properties if p['name'] == 'elemental_damage']
-        if len(generic_elemental_properties) >= 2:
-            raise ValueError(f"Unexpectedly got {len(generic_elemental_properties)} elemental properties keys. Expected 0 or 1."
-                             f"\n\n--- Raw item data: {pprint.pformat(raw_item_data)} ---")
-
-        properties_list = generic_elemental_properties[0]['value']
-        for ele_property in properties_list:
-            elemental_type = cls._determine_elemental_type(ele_property[1])
-            val = np.mean(TextAnalyzer.extract_numbers_from_string(ele_property[0]))
-            damage_values.add_damage_value(elemental_type=elemental_type,
-                                           value=val)
-
-        return damage_values
+from src.market_item_analysis.core.enums.equipment import ModType
 
 
 class ConfigError(Exception):
@@ -77,12 +10,6 @@ class ConfigError(Exception):
         super().__init__(message)
 
         self.key_path = key_path
-
-
-@dataclass(frozen=True)
-class SectionContext:
-    listing_data: dict
-    key_path: list[str]
 
 
 class Section(ABC):
@@ -106,7 +33,7 @@ class Section(ABC):
 
         return self._data[key]
 
-class ListingPrice(Section):
+class Price(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -115,7 +42,7 @@ class ListingPrice(Section):
         self.amount = self.require('amount')
         self.currency = self.require('currency')
 
-class ListingAccount(Section):
+class Account(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -127,14 +54,14 @@ class Listing(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
-        self.price = ListingPriceSection(data=self.require('price'),
-                                                       key_path=key_path + ['price'])
-        self.account = ListingAccountSection(data=self.require('account'),
-                                                           key_path=key_path + ['account'])
+        self.price = Price(data=self.require('price'),
+                           key_path=key_path + ['price'])
+        self.account = Account(data=self.require('account'),
+                               key_path=key_path + ['account'])
         self.gold_fee = self.require('fee')
         self.indexed_datetime = self.require(key='indexed')
 
-class ItemRequirement(Section):
+class Requirement(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -142,28 +69,21 @@ class ItemRequirement(Section):
         self.name = self.require('name')
         self.values = self.require('values')
 
-class ItemPropertyValue:
-
-    def __init__(self, data: list):
-        self.values_str = data[0]
-        self.value_type_id = data[1]
-
-
-class ItemSkill(Section):
+class Skill(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
 
-        
+        self.name = self.require('name')
+        self.values = self.require('values')
 
-class ItemProperty(Section):
+class Property(Section):
 
     def __init__(self, data: list, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
 
         self.name = self.require('name')
-        self.values = [ItemPropertyValue(data=value_list)
-                       for value_index, value_list in enumerate(self.require('values'))]
+        self.values = self.require('values')
 
 class ModMagnitude(Section):
 
@@ -173,7 +93,7 @@ class ModMagnitude(Section):
         self.min = self.require('min')
         self.max = self.require('max')
 
-class ItemSubMod(Section):
+class SubMod(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -187,7 +107,7 @@ class ItemSubMod(Section):
         ]
 
 
-class ItemMod(Section):
+class Mod(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
         super().__init__(data=data, key_path=key_path)
@@ -196,12 +116,12 @@ class ItemMod(Section):
 
         self.flags = self.optional('flags')
         self.hash = self.optional('hash')
-        if mods_data := self.optional('mods'):
-            self.sub_mods = [ItemSubMod(data=mod_d,
-                                        key_path=key_path + ['mods', mod_index])
+        if (mods_data := self.optional('mods')) is not None:
+            self.sub_mods = [SubMod(data=mod_d,
+                                    key_path=key_path + ['mods', mod_index])
                              for mod_index, mod_d in enumerate(mods_data)]
         else:
-            self.sub_mods = []
+            self.sub_mods = None
 
 class Item(Section):
 
@@ -216,26 +136,31 @@ class Item(Section):
         self.rarity = self.require('rarity')
         self.ilvl = self.require('ilvl')
 
-        self.is_identified = self.require('identified')
+        self.is_identified = self.optional('identified')
         self.is_corrupted = self.optional('corrupted')
 
-        self.skills = [
-            Skills()
-        ]
+        if (skills_list := self.optional('grantedSkills')) is not None:
+            self.skills = [
+                Skill(data=skill_data,
+                      key_path=['grantedSkills', f'index_{skill_index}'])
+                for skill_index, skill_data in enumerate(skills_list)
+            ]
+        else:
+            self.skills = None
 
         self.properties = [
-            ItemPropertySection(data=property_d, key_path=key_path + [property_index])
+            Property(data=property_d, key_path=key_path + [property_index])
             for property_index, property_d in enumerate(self.require('properties'))
         ]
 
         self.requirements = [
-            ItemRequirementSection(data=requirement_d, key_path=key_path + [requirement_index])
+            Requirement(data=requirement_d, key_path=key_path + [requirement_index])
             for requirement_index, requirement_d in enumerate(self.require('requirements'))
         ]
 
         if explicit_mods := self.optional(ModType.EXPLICIT.trade_result_key) is not None:
             self.explicit_mods = [
-                ItemModSection(
+                Mod(
                     data=mod_d,
                     key_path=self.key_path + [(ModType.EXPLICIT.trade_result_key, str(i))]
                 )
@@ -243,7 +168,6 @@ class Item(Section):
             ]
         else:
             self.explicit_mods = []
-
         self.implicit_mod_descriptions = [mod_description for mod_description in data.get(ModType.IMPLICIT.trade_result_key, [])]
         self.enchant_mod_descriptions = [mod_description for mod_description in data.get(ModType.ENCHANT.trade_result_key, [])]
         self.rune_mod_descriptions = [mod_description for mod_description in data.get(ModType.RUNE.trade_result_key, [])]
@@ -256,7 +180,7 @@ class Item(Section):
         return self.properties[0].name
 
 
-class (Section):
+class Result(Section):
 
     def __init__(self, api_response_data: dict):
         super().__init__(data=api_response_data,
@@ -264,10 +188,8 @@ class (Section):
         self._data = api_response_data
 
         try:
-            self.listing = ListingSection(data=self.require('listing'),
-                                                        key_path=['listing'])
-            self.item = ItemSection(data=self.require('item'),
-                                                  key_path=['item'])
+            self.listing = Listing(data=self.require('listing'), key_path=['listing'])
+            self.item = Item(data=self.require('item'), key_path=['item'])
         except ConfigError as e:
             print(f"Error caught @ {e.key_path}: {e}\n\nTrade result data:\n\n{pprint.pformat(api_response_data)}")
 
@@ -282,8 +204,8 @@ class (Section):
         return self._data
 
     @classmethod
-    def from_dict(cls, d: dict) -> "ApiResponse":
-        return cls(api_response_data=d)
+    def from_dict(cls, d: dict) -> "Result":
+        return Result(api_response_data=d)
 
     def to_training_results_model(self) -> dict:
         return {

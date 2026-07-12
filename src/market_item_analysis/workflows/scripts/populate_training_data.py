@@ -2,7 +2,7 @@ from src.market_item_analysis.core.enums.trade import ListedSince
 from src.market_item_analysis.core.input_output_service import InputOutputService
 from src.market_item_analysis.database.postgres_manager import PostgresManager, PostgresDatabaseUrl
 from src.market_item_analysis.database.training_data.repository import TrainingDataRepository
-from src.market_item_analysis.listing.objects import EquipmentListing
+from src.market_item_analysis.listing.objects import Listing
 from src.market_item_analysis.workflows.query_plan_presets import QueryPlanPresets
 from src.market_item_analysis.workflows.trade_api_results_ingestor import TradeApiResultsIngestor, \
     TradeApiResultValidator

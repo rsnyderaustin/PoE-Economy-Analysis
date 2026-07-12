@@ -1,7 +1,7 @@
 import logging
 from enum import Enum
 
-from src.market_item_analysis.listing.objects import EquipmentListing
+from src.market_item_analysis.listing.objects import Listing
 from src.market_item_analysis.shared.enums import EquipmentCategoryGroups, WhichCategoryType
 from src.market_item_analysis.shared.enums.item_enums import CalculatedMod
 from src.market_item_analysis.core.string_service import TextAnalyzer
@@ -25,7 +25,7 @@ class CalculatedMod(Enum):
 class ListingFlattener:
 
     @classmethod
-    def flatten_listing(cls, listing: EquipmentListing) -> dict:
+    def flatten_listing(cls, listing: Listing) -> dict:
         d = dict()
         is_martial_weapon = listing.types.item_category in EquipmentCategoryGroups.fetch_martial_weapon_categories(which=WhichCategoryType.Equipment)
         if is_martial_weapon:
@@ -43,7 +43,7 @@ class ListingFlattener:
         return d
 
     @classmethod
-    def _calculate_max_armour_stats(cls, listing: EquipmentListing) -> dict:
+    def _calculate_max_armour_stats(cls, listing: Listing) -> dict:
         current_multiplier = 1 + (listing.properties.quality / 100)
 
         max_quality = 20
@@ -66,7 +66,7 @@ class ListingFlattener:
         }
 
     @classmethod
-    def _calculate_non_physical_dps(cls, listing: EquipmentListing) -> dict:
+    def _calculate_non_physical_dps(cls, listing: Listing) -> dict:
         attacks_per_second = listing.stats.attacks_per_second or 0
         cold_dps = listing.stats.cold_damage * attacks_per_second
         fire_dps = listing.stats.fire_damage * attacks_per_second
@@ -85,7 +85,7 @@ class ListingFlattener:
         }
 
     @classmethod
-    def _calculate_max_physical_dps(cls, listing: EquipmentListing) -> dict:
+    def _calculate_max_physical_dps(cls, listing: Listing) -> dict:
         current_multiplier = 1 + (listing.properties.quality / 100)
 
         max_quality = 20
@@ -101,7 +101,7 @@ class ListingFlattener:
 
     @classmethod
     def _flatten_listing(cls,
-                         listing: EquipmentListing,
+                         listing: Listing,
                          include_stats: bool) -> dict:
         d = dict()
         d.update(listing.metadata.to_dict())

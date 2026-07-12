@@ -4,7 +4,7 @@ from typing import Generator
 
 from src.market_item_analysis.trade_api import TradeApiInterface
 from src.market_item_analysis.trade_api.query.objects import TradeApiQueryPlan
-from src.market_item_analysis.trade_api.raw_result import TradeApiResult
+from src.market_item_analysis.trade_api.api_result import TradeApiResult
 
 
 class TradeApiResponseMetrics:
