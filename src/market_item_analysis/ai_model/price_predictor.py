@@ -3,7 +3,6 @@ import logging
 import pandas as pd
 
 from src.market_item_analysis.data_handling.listing_flattener import ListingFlattener
-from src.market_item_analysis.listing.objects import Listing
 from src.market_item_analysis.ai_model.data_management.models_manager import PricePredictorsManager
 
 logger = logging.getLogger(__name__)
@@ -12,7 +11,7 @@ class PricePredictor:
     def __init__(self, models_manager: PricePredictorsManager):
         self._models_manager = models_manager
 
-    def predict(self, listing: Listing) -> float:
+    def predict(self, listing: EquipmentListing) -> float:
         model = self._models_manager.fetch_model(category=listing.types.item_category)
         flattened_d = ListingFlattener.flatten_listing(listing)
 

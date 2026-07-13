@@ -151,7 +151,7 @@ class Metadata(ListingSection):
         )
 
     @classmethod
-    def from_trade_api_result(cls, r: TradeApiResult) -> "Metadata":
+    def from_trade_api_result(cls, r: api_result.Result) -> "Metadata":
         return Metadata(
             poster_account_name=r.listing.account.name,
             date_posted=r.listing.indexed_datetime
@@ -172,10 +172,15 @@ class Requirements(ListingSection):
 
     @classmethod
     def from_dict(cls, d: dict) -> "Requirements":
-        return cls(**d)
+        return Requirements(
+            player_level=int(d['player_level']),
+            strength=int(d['strength']),
+            intelligence=int(d['intelligence']),
+            dexterity=int(d['dexterity'])
+        )
 
     @classmethod
-    def from_trade_api_result(cls, r: TradeApiResult) -> "Requirements":
+    def from_trade_api_result(cls, r: api_result.Result) -> "Requirements":
         return Requirements(
             player_level=r.item.requirements.level_requirement,
             strength=r.item.requirements.strength_requirement,
@@ -249,7 +254,7 @@ class EquipmentType(ListingSection):
     def from_dict(cls, d: dict):
         return EquipmentType(
             attribute_types=[AttributeType(s) for s in d['attribute_types']],
-            category=EquipmentCategory(d['category'])
+            category=EquipmentCategory[d['category']]
         )
 
     @classmethod
@@ -365,8 +370,7 @@ class ItemAttributes(ListingSection):
             ilvl=ilvl,
             identified=identified,
             corrupted=corrupted,
-            quality=quality,
-            additional_properties=d
+            quality=quality
         )
 
     @classmethod
@@ -417,17 +421,14 @@ class Listing(ListingSection):
             flavor_name=d['flavor_name'],
             metadata=Metadata.from_dict(d['metadata']),
             price=Price.from_dict(d['price']),
-
+            category=EquipmentCategory(d['category']),
+            requirements=Requirements.from_dict(d['requirements']),
+            stats=Stats.from_dict(d['stats']),
+            mods=Mods.from_dict(d['mods']),
+            skills=Skill.from_dict(d['skills']),
+            properties=Properties.from_dict(d['properties']),
+            internal_id=d['internal_id']
         )
-        metadata = Metadata.from_dict(d['metadata'])
-        price = Price.from_dict(d['price'])
-        namespace = EquipmentNamespace.from_dict(d['namespace'])
-        types = ItemTypes.from_dict(d['types)
-        requirements = Requirements.from_dict(requirements)
-        mods = Mods.from_dict(mods)
-        skills = [Skill.from_dict(s) for s in skills]
-        properties = Properties.from_dict(properties)
-        return cls(**d)
 
     @classmethod
     def from_trade_api_result(cls, r: TradeApiResult) -> "Listing":
@@ -438,22 +439,9 @@ class Listing(ListingSection):
             category=EquipmentCategory.from_trade_result_id(trade_result_id=r.item.equipment_category_id) if r.item.equipment_category_id else None,
             requirements=Requirements.from_trade_api_result(r),
             stats=ItemStats.from_trade_api_result(r),
-            mods_=Mods.from_trade_api_result(r),
+            mods=Mods.from_trade_api_result(r),
             skills=Skill.from_trade_api_result(r),
             properties=Properties.from_trade_api_result(r),
-        )
-
-    @property
-    def minutes_since_listed(self):
-        return utils.determine_minutes_since(
-            relevant_date=self.metadata.date_fetched
-        )
-
-    @property
-    def minutes_since_league_start(self):
-        return utils.determine_minutes_since(
-            relevant_date=utils.league_start_date,
-            later_date=self.metadata.date_fetched
         )
 
 
