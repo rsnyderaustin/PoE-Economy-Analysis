@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from collections import defaultdict
 
 
 class DictionaryService:
@@ -45,3 +46,21 @@ class DictionaryService:
 
         # Fallback: return as-is (or raise an error if you prefer)
         return val
+
+    @classmethod
+    def combine_dictionaries(cls, dicts: list[dict]) -> dict:
+        # Use a defaultdict to store lists of values for each key
+        combined = defaultdict(list)
+
+        # Track all unique keys found across all dictionaries
+        all_keys = set()
+        for d in dicts:
+            all_keys.update(d.keys())
+
+        # Build the lists, filling with None if a key is missing
+        for d in dicts:
+            for key in all_keys:
+                combined[key].append(d.get(key, None))
+
+        return dict(combined)
+

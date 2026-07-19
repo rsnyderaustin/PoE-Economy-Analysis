@@ -51,14 +51,14 @@ class SubMod(ListingSection):
         )
 
     @classmethod
-    def from_trade_api_result(cls, trade_api_sub_mod_section: TradeApiResultItemModStatSection) -> "SubMod":
+    def from_sub_mod_result(cls, sub_mod_result: api_result.SubMod) -> "SubMod":
         return SubMod(
-            name=trade_api_sub_mod_section.name,
-            affix_type=AffixType.from_trade_result_id(trade_result_id=trade_api_sub_mod_section.tier[0]),
-            tier=int(trade_api_sub_mod_section.tier[1:]),
-            level=int(trade_api_sub_mod_section.level),
+            name=sub_mod_result.name,
+            affix_type=AffixType.from_trade_result_id(trade_result_id=sub_mod_result.tier[0]),
+            tier=int(sub_mod_result.tier[1:]),
+            level=int(sub_mod_result.level),
             magnitudes=[Range(min=mag_section.min, max=mag_section.max)
-                        for mag_section in trade_api_sub_mod_section.magnitudes]
+                        for mag_section in sub_mod_result.magnitudes]
         )
 
 class Mod(ListingSection):
@@ -87,19 +87,44 @@ class Mod(ListingSection):
         )
 
     @classmethod
-    def from_trade_api_result(cls,
-                              trade_api_mod_section: TradeApiResultItemModSection,
-                              mod_type_section: ModType) -> "Mod":
+    def from_mod_result(cls,
+                        result_mod: api_result.Mod,
+                        mod_type_section: ModType) -> "Mod":
         mod_types = [mod_type_section]
-        if trade_api_mod_section.flags.get(ModFlag.FRACTURED.trade_result_key) is True:
+        if result_mod.flags.get(ModFlag.FRACTURED.trade_result_key) is True:
             mod_types.append(ModType.FRACTURED)
 
         return Mod(
-            description=trade_api_mod_section.description,
+            description=result_mod.description,
             mod_types=mod_types,
-            hash_id=trade_api_mod_section.hash,
-            sub_mods=[SubMod.from_trade_api_result(sub_mod_section) for sub_mod_section in trade_api_mod_section.sub_mods]
+            hash_id=result_mod.hash,
+            sub_mods=[SubMod.from_sub_mod_result(sub_mod_section) for sub_mod_section in result_mod.sub_mods]
         )
+
+
+class Mods(ListingSection):
+
+    def __init__(self, mods: list[Mod]):
+        self.mods = mods
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Mods":
+        return Mods(
+            mods=[Mod.from_dict(d=mod_dict) for mod_dict in d['mods']]
+        )
+
+    @classmethod
+    def from_trade_api_result(cls, r: api_result.Result) -> "Mods":
+        explicit_mods = [Mod.from_mod_result(result_mod=explicit_mod, mod_type_section=ModType.EXPLICIT)
+                         for explicit_mod in r.item.explicit_mods]
+        implicit_mods = [Mod.from_mod_result(result_mod=implicit_mod, mod_type_section=ModType.IMPLICIT)
+                         for implicit_mod in r.item.implicit_mods]
+        enchant_mods = [Mod.from_mod_result(result_mod=enchant_mod, mod_type_section=ModType.ENCHANT)
+                        for enchant_mod in r.item.enchant_mods]
+        rune_mods = [Mod.from_mod_result(result_mod=rune_mod, mod_type_section=ModType.RUNE)
+                     for rune_mod in r.item.rune_mods]
+
+        return Mods(mods=explicit_mods + implicit_mods + enchant_mods + rune_mods)
 
 
 class Skill(ListingSection):
@@ -200,38 +225,9 @@ class Skills(ListingSection):
         return cls([Skill.from_dict(skill_d) for skill_d in d['skills']])
 
     @classmethod
-    def from_trade_api_result(cls, r: TradeApiResult) -> "Skills":
-        if not r.item.skills:
-            return Skills(skills=[])
-
-        skills = []
-        for skill_data in r.skills_data:
-            raw_skill = skill_data['values'][0]
-
-            # Spear Throw is the only skill that is granted by an item without a level. May have to update in the future
-            if raw_skill[0] == 'Spear Throw':
-                new_skill = Skill(
-                    name='Spear Throw'
-                )
-                skills.append(new_skill)
-                continue
-
-            if isinstance(raw_skill, str):
-                _, level_str, *skill_parts = raw_skill.split()
-                level = int(level_str)
-                skill_name = ' '.join(skill_parts)
-            else:
-                skill_name = raw_skill[0][0]
-                level = raw_skill[0][1]
-
-            new_skill = Skill(
-                name=skill_name,
-                level=level
-            )
-
-            skills.append(new_skill)
-
-        return Skills(skills=skills)
+    def from_trade_api_result(cls, r: api_result.Result) -> "Skills":
+        skills = [Skill.from_skill_result(result_skill) for result_skill in r.item.skills]
+        return Skills(skills)
 
 
 class EquipmentType(ListingSection):
@@ -258,7 +254,7 @@ class EquipmentType(ListingSection):
         )
 
     @classmethod
-    def from_trade_api_result(cls, r: TradeApiResult) -> "EquipmentType":
+    def from_trade_api_result(cls, r: api_result.Result) -> "EquipmentType":
         category = EquipmentCategory.from_trade_result_id(r.item.equipment_category_id)
         attribute_types = [AttributeType.from_trade_result_id(requirement.name) for requirement in r.item.equipment_requirements]
 
@@ -283,7 +279,7 @@ class Price(ListingSection):
         )
 
     @classmethod
-    def from_trade_api_result(cls, r: TradeApiResult) -> "Price":
+    def from_trade_api_result(cls, r: api_result.Result) -> "Price":
         return Price(
             currency=Currency(r.listing.price.currency),
             currency_amount=int(r.listing.price.amount),
@@ -291,22 +287,40 @@ class Price(ListingSection):
         )
 
 
+class Stat(ListingSection):
+
+    def __init__(self, stat: EquipmentStat, value: int | float | Range):
+        self.stat = stat
+        self.value = value
+
+    _TYPE_REGISTRY = {
+        "Range": Range.from_dict,
+        "int": int,
+        "float": float,
+    }
+    
+    @classmethod
+    def from_dict(cls, d: dict) -> "Stat":
+        # 2. Look up the builder in the dictionary
+        builder = cls._TYPE_REGISTRY.get(d['_value_type'])
+
+        if not builder:
+            raise ValueError(f"Unknown value type: {d['_value_type']}")
+
+        return Stat(
+            stat=EquipmentStat[d['stat']],
+            value=builder(d['value'])  # Call the builder function
+        )
+
 class Stats(ListingSection):
 
-    def __init__(self, stats_d: dict[EquipmentStat, [int | float | Range]]):
-        self._stats_d = stats_d
+    def __init__(self, stats: list[Stat]):
+        self.stats = stats
 
     @classmethod
     def from_dict(cls, d: dict) -> "Stats":
-        stats_d = dict()
-
-        for enum_name, raw_value in d.items():
-            enum_key = EquipmentStat[enum_name]
-            val = Range(raw_value[0], raw_value[1]) if isinstance(raw_value, list) else raw_value
-
-            stats_d[enum_key] = val
-
-        return cls(stats_d)
+        stats = [Stat.from_dict(d=stat_d) for stat_d in d['stats']]
+        return Stats(stats=stats)
 
     @classmethod
     def _resolve_value(cls, value_str: str) -> int | float | Range:
@@ -326,8 +340,8 @@ class Stats(ListingSection):
         6: EquipmentStat.LIGHTNING_DAMAGE
     }
     @classmethod
-    def from_trade_api_result(cls, r: TradeApiResult) -> "Stats":
-        stats_d = dict()
+    def from_trade_api_result(cls, r: api_result.Result) -> "Stats":
+        stats = []
         for p in r.item.properties:
             stat_enum = EquipmentStat.from_trade_result_id(trade_result_id=p.name)
 
@@ -335,11 +349,13 @@ class Stats(ListingSection):
                 for property_value in p.values:
                     value_stat_enum = cls._ELEMENTAL_DAMAGE_VALUE_ID_MAP[property_value.value_type_id]
                     value = cls._resolve_value(value_str=property_value.values_str)
-                    stats_d[value_stat_enum] = value
+                    stats.append(Stat(stat=value_stat_enum, value=value))
             else:
-                stats_d[stat_enum] = cls._resolve_value(p.values[0].values_str)
+                stats.append(
+                    Stat(stat=stat_enum, value=cls._resolve_value(p.values[0].values_str))
+                )
 
-        return Stats(stats_d=stats_d)
+        return Stats(stats=stats)
 
 
 
@@ -358,7 +374,7 @@ class ItemAttributes(ListingSection):
         self.quality = quality
 
     @classmethod
-    def from_dict(cls, d: dict) -> "Properties":
+    def from_dict(cls, d: dict) -> "ItemAttributes":
         rarity = Rarity(d.pop('rarity'))
         ilvl = int(d.pop('ilvl'))
         identified = bool(d.pop('identified'))
@@ -384,64 +400,87 @@ class ItemAttributes(ListingSection):
         )
 
 
-class Listing(ListingSection):
+class Item(ListingSection):
 
     def __init__(self,
                  flavor_name: str,
-                 metadata: Metadata,
-                 price: Price,
                  category: EquipmentCategory,
                  requirements: Requirements,
                  stats: Stats,
-                 mods: list[Mod],
-                 skills: list[Skill],
-                 properties: Properties,
+                 mods: Mods,
+                 skills: Skills,
+                 item_attributes: ItemAttributes,
                  internal_id: str = None):
         self.flavor_name = flavor_name
-        self.metadata = metadata
-        self.price = price
         self.category = category
         self.requirements = requirements
         self.stats = stats
         self.mods = mods
         self.skills = skills
-        self.properties = properties
+        self.item_attributes = item_attributes
 
         self.internal_id = internal_id or uuid.uuid4().hex
 
     def __key(self):
-        return self.metadata.listing_id
+        return [
+            self.flavor_name,
+            self.stats.to_dict(),
+            self.mods.to_dict()
+        ]
 
     def __hash__(self):
         return hash(self.__key())
 
     @classmethod
-    def from_dict(cls, d: dict) -> "Listing":
-        return Listing(
+    def from_dict(cls, d: dict) -> "Item":
+        return Item(
             flavor_name=d['flavor_name'],
-            metadata=Metadata.from_dict(d['metadata']),
-            price=Price.from_dict(d['price']),
             category=EquipmentCategory(d['category']),
             requirements=Requirements.from_dict(d['requirements']),
             stats=Stats.from_dict(d['stats']),
             mods=Mods.from_dict(d['mods']),
-            skills=Skill.from_dict(d['skills']),
-            properties=Properties.from_dict(d['properties']),
+            skills=Skills.from_dict(d['skills']),
+            item_attributes=ItemAttributes.from_dict(d['item_attributes']),
             internal_id=d['internal_id']
         )
 
     @classmethod
-    def from_trade_api_result(cls, r: TradeApiResult) -> "Listing":
-        return cls(
+    def from_trade_api_result(cls, r: api_result.Result) -> "Item":
+        return Item(
             flavor_name=r.item.flavor_name,
-            metadata=Metadata.from_trade_api_result(r),
-            price=Price.from_trade_api_result(r),
             category=EquipmentCategory.from_trade_result_id(trade_result_id=r.item.equipment_category_id) if r.item.equipment_category_id else None,
             requirements=Requirements.from_trade_api_result(r),
-            stats=ItemStats.from_trade_api_result(r),
+            stats=Stats.from_trade_api_result(r),
             mods=Mods.from_trade_api_result(r),
-            skills=Skill.from_trade_api_result(r),
-            properties=Properties.from_trade_api_result(r),
+            skills=Skills.from_trade_api_result(r),
+            item_attributes=ItemAttributes.from_trade_api_result(r),
         )
 
+
+class Listing(ListingSection):
+
+    def __init__(self,
+                 metadata: Metadata,
+                 price: Price,
+                 item: Item):
+        self.metadata = metadata
+        self.price = price
+        self.item = item
+
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Listing":
+        return Listing(
+            metadata=Metadata.from_dict(d['metadata']),
+            price=Price.from_dict(d['price']),
+            item=Item.from_dict(d['item'])
+        )
+
+    @classmethod
+    def from_trade_api_result(cls, r: api_result.Result) -> "Listing":
+        return Listing(
+            metadata=Metadata.from_trade_api_result(r),
+            price=Price.from_trade_api_result(r),
+            item=Item.from_trade_api_result(r)
+        )
 

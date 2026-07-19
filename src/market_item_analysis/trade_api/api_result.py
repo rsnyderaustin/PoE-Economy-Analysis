@@ -1,5 +1,6 @@
 import pprint
 from abc import ABC
+from typing import Any
 
 from src.market_item_analysis.core.enums.equipment import ModType
 
@@ -27,9 +28,9 @@ class Section(ABC):
 
         return self._data[key]
 
-    def optional(self, key):
+    def optional(self, key, default: Any = None):
         if key not in self._data:
-            return None
+            return default
 
         return self._data[key]
 
@@ -106,7 +107,6 @@ class SubMod(Section):
             for magnitudes_index, magnitudes_d in enumerate(self.require('magnitudes'))
         ]
 
-
 class Mod(Section):
 
     def __init__(self, data: dict, key_path: list[str]):
@@ -146,7 +146,7 @@ class Item(Section):
                 for skill_index, skill_data in enumerate(skills_list)
             ]
         else:
-            self.skills = None
+            self.skills = []
 
         self.properties = [
             Property(data=property_d, key_path=key_path + [property_index])
@@ -168,6 +168,7 @@ class Item(Section):
             ]
         else:
             self.explicit_mods = []
+
         self.implicit_mod_descriptions = [mod_description for mod_description in data.get(ModType.IMPLICIT.trade_result_key, [])]
         self.enchant_mod_descriptions = [mod_description for mod_description in data.get(ModType.ENCHANT.trade_result_key, [])]
         self.rune_mod_descriptions = [mod_description for mod_description in data.get(ModType.RUNE.trade_result_key, [])]

@@ -1,19 +1,30 @@
+from dataclasses import dataclass
+from enum import Enum
+
 import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
-from src.market_item_analysis.data_transforming import ListingsTransforming
-from src.market_item_analysis.program_logging import LogFile, LogsHandler
 
-from src.market_item_analysis.file_management.io_manager import PricePredictModelFiles, PricePredictCacheFile, PricePredictPerformanceFile
-from src.market_item_analysis.ai_model.dataframe_prep import DataFramePrep
-from src.market_item_analysis.database.postgres import PostgresClient
-from .stats_prep import StatsPrep
-from .utils import ModelLifeCycle
+from src.market_item_analysis.ai_modeling.stats.data import QuantileTier
+from src.market_item_analysis.ai_modeling.stats.listing_adapter import ListingAdapter
+from src.market_item_analysis.core.dictionary_service import DictionaryService
+from src.market_item_analysis.listing.objects import Listing
+
+
+@dataclass(frozen=True)
+class PricePredictPlan:
+    quantile_tiers: list[QuantileTier]
 
 price_predict_log = LogsHandler().fetch_log(LogFile.PRICE_PREDICT_MODEL)
 
+@dataclass(frozen=True)
+class XgboostModelTrainingSpecs:
+    eta: float = 0.00075,
+    boost_rounds: int = 1250
+    max_training_depth: int = 12
+    early_stop_rounds: int = 50
 
 class PricePredictModelPipeline:
     def __init__(self,
@@ -79,9 +90,13 @@ class PricePredictModelPipeline:
         return pd.DataFrame(cols)
 
     def run(self,
-            load_model_from_cache: bool = False):
-        model_df = self._load_training_data(from_cache=load_model_from_cache)
-        model_df['days_since_league_start'] = (model_df['minutes_since_league_start'] / (60 * 24)).astype(int)
+            listings: list[Listing],
+            price_predict_plan: PricePredictPlan):
+        vectors = [ListingAdapter.to_features_vector(listing=listing) for listing in listings]
+        vectors_dict = DictionaryService.combine_dictionaries(vectors)
+
+        for listing in listings:
+            vector = ListingAdapter.to_features_vector(listing)
 
         stratified_dfs = self._stratify_dataframe(model_df)
 
@@ -104,12 +119,9 @@ class PricePredictModelPipeline:
         self._performance_file.save(perf_df)
 
     def _train_model(self,
+                     model_training_specs: XgboostModelTrainingSpecs,
                      model_lifecycle: ModelLifeCycle,
-                     df_prep: DataFramePrep,
-                     training_depth: int = 12,
-                     eta: float = 0.00075,
-                     num_boost_rounds: int = 1250,
-                     early_stopping_rounds: int = 50):
+                     df_prep: DataFramePrep):
         """Train the XGBoost model on the input dataframe."""
         train_x, test_x, train_y, test_y = train_test_split(
             df_prep.features,

@@ -34,6 +34,10 @@ class Range(NamedTuple):
             'max': self.max
         }
 
+    @property
+    def average(self):
+        return (self.max + self.min) / 2
+
 class RangeService:
 
     @classmethod
